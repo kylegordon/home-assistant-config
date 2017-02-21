@@ -1,0 +1,84 @@
+kitchen:
+  name: Kitchen
+  view: yes
+  entities:
+    - switch.lightwaverf_appliance_10
+    - sensor.room_sensor_4_temperature
+    - sensor.room_sensor_4_humidity
+lounge:
+  name: Living Room
+  view: yes
+  entities:
+    - switch.living_room_kodi_power_on
+    - media_player.kodi_living_room
+    - switch.edison_lamp
+    - switch.lightwaverf_appliance_9
+    - switch.lightwaverf_appliance_8
+    - sensor.room_sensor_3_temperature
+    - sensor.room_sensor_3_humidity
+bedroom_1:
+  name: Main bedroom
+  view: yes
+  entities:
+    - switch.kyle_bedside
+    - sensor.room_sensor_2_temperature
+    - sensor.room_sensor_2_humidity
+bedroom_2:
+  name: Guest bedroom
+  view: yes
+  entities:
+    - switch.lightwaverf_appliance_2
+    - light.guest_bedroom_main_light
+    - light.guest_bedroom
+    - sensor.room_sensor_1_temperature
+    - sensor.room_sensor_1_humidity
+bedroom_3:
+  name: Study
+  view: yes
+  entities:
+    - switch.lightwaverf_appliance_4
+    - sensor.room_sensor_4_temperature
+    - sensor.room_sensor_4_humidity
+bedroom_4:
+  name: Craft room
+  view: yes
+hallway:
+  name: Hallway
+  view: yes
+  entities:
+    - switch.lightwaverf_appliance_5
+    - sensor.room_sensor_5_temperature
+    - sensor.room_sensor_5_humidity
+    - light.hall_bedrooms
+    - light.hall_entrance
+outside:
+  name: Outside
+  view: yes
+  entities:
+    - switch.lightwaverf_appliance_6
+    - switch.lightwaverf_appliance_7
+    - switch.nexa_pir_rear
+climate:
+  name: Climate
+  view: no
+  entities:
+    - sensor.house_average_mean
+    - sensor.house_average_humidity_mean
+garage:
+  name: Garage
+  view: yes
+  entities:
+    - sensor.garage_temperature
+    - sensor.rack_temperature
+people:
+  name: People
+  view: yes
+  entities:
+    - device_tracker.c0eefb33955b
+    - device_tracker.e891209f67f1
+    - camera.kyle
+    - sensor.charlotte_location_to_home
+    - sensor.charlotte_work_travel
+    - sensor.kyle_location_to_home
+    - sensor.kyle_work_travel
+
