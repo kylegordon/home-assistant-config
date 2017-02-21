@@ -94,3 +94,8 @@ people:
     - sensor.kyle_location_to_home
     - sensor.kyle_work_travel
 
+## Item groups ##
+bedside_lights:
+  name: Bedside Lights
+  entities:
+    - switch.kyle_bedside
