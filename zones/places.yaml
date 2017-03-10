@@ -1,0 +1,12 @@
+- name: Home
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  icon: mdi:home
+- name: "Kyle Work"
+  latitude: !secret kyle_work_latitude
+  longitude: !secret kyle_work_longitude
+  icon: mdi:worker
+- name: "Charlotte Work"
+  latitude: !secret charlotte_work_latitude
+  longitude: !secret charlotte_work_longitude
+  icon: mdi:worker
