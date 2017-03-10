@@ -1,10 +1,22 @@
 ## Rooms ##
 
+default_view:
+  view: yes
+  entities:
+    - group.hallway
+    - group.people
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_precip_probability
+    - group.all_lights
+    - group.all_switches
+    - sensor.electricity_energy_usage
+    - input_select.kyle_status
+    - input_select.charlotte_status
+
 kitchen:
   name: Kitchen
   view: yes
   entities:
-    - switch.lightwaverf_appliance_10
     - sensor.room_sensor_4_temperature
     - sensor.room_sensor_4_humidity
 
@@ -14,9 +26,8 @@ lounge:
   entities:
     - switch.living_room_kodi_power_on
     - media_player.kodi_living_room
+    - media_player.living_room
     - switch.edison_lamp
-    - switch.lightwaverf_appliance_9
-    - switch.lightwaverf_appliance_8
     - sensor.room_sensor_3_temperature
     - sensor.room_sensor_3_humidity
 
@@ -25,6 +36,7 @@ bedroom_1:
   view: yes
   entities:
     - switch.kyle_bedside
+    - light.master_bedroom_light
     - sensor.room_sensor_2_temperature
     - sensor.room_sensor_2_humidity
 
@@ -32,9 +44,7 @@ bedroom_2:
   name: Guest bedroom
   view: yes
   entities:
-    - switch.lightwaverf_appliance_2
     - light.guest_bedroom_main_light
-    - light.guest_bedroom
     - sensor.room_sensor_1_temperature
     - sensor.room_sensor_1_humidity
 
@@ -42,7 +52,7 @@ bedroom_3:
   name: Study
   view: yes
   entities:
-    - switch.lightwaverf_appliance_4
+    - light.study_main
     - sensor.room_sensor_4_temperature
     - sensor.room_sensor_4_humidity
 
@@ -54,9 +64,9 @@ hallway:
   name: Hallway
   view: yes
   entities:
-    - switch.lightwaverf_appliance_5
     - sensor.room_sensor_5_temperature
     - sensor.room_sensor_5_humidity
+    - switch.front_hall
     - light.hall_bedrooms
     - light.hall_entrance
 
@@ -64,9 +74,8 @@ outside:
   name: Outside
   view: yes
   entities:
-    - switch.lightwaverf_appliance_6
-    - switch.lightwaverf_appliance_7
-    - switch.nexa_pir_rear
+    - switch.nexa_pir_front
+    - group.climate
 
 climate:
   name: Climate
@@ -74,6 +83,19 @@ climate:
   entities:
     - sensor.house_average_mean
     - sensor.house_average_humidity_mean
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_apparent_temperature
+    - sensor.dark_sky_cloud_coverage
+    - sensor.dark_sky_dew_point
+    - sensor.dark_sky_precip
+    - sensor.dark_sky_precip_intensity
+    - sensor.dark_sky_precip_probability
+    - sensor.dark_sky_pressure
+    - sensor.dark_sky_summary
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_visibility
+    - sensor.dark_sky_wind_bearing
+    - sensor.dark_sky_wind_speed
 
 garage:
   name: Garage
@@ -84,14 +106,16 @@ garage:
 
 people:
   name: People
+  icon: mdi:account-multiple
   view: yes
   entities:
     - device_tracker.c0eefb33955b
     - device_tracker.e891209f67f1
     - camera.kyle
-    - sensor.charlotte_location_to_home
+    - camera.charlotte
+    - sensor.charlotte_to_home
     - sensor.charlotte_work_travel
-    - sensor.kyle_location_to_home
+    - sensor.kyle_to_home
     - sensor.kyle_work_travel
 
 ## Item groups ##
