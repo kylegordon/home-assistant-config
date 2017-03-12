@@ -1,0 +1,5 @@
+- platform: lifx
+  broadcast: 172.24.32.255
+- platform: rfxtrx
+  automatic_add: True
+
