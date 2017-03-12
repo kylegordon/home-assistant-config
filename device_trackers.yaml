@@ -1,0 +1,12 @@
+- platform: nmap_tracker
+  hosts:
+    - 172.24.32.148
+    - 172.24.32.144
+  track_new_devices: false
+- platform: owntracks
+- platform: snmp
+  host: 172.24.32.15
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.2.1.4.22.1.2
+  track_new_devices: true
+
