@@ -1,0 +1,9 @@
+- platform: kodi
+  name: Kodi Living Room
+  host: oxcart.vpn.glasgownet.com
+  turn_off_action: shutdown
+- platform: squeezebox
+  host: 172.24.32.13
+  port: 9191
+- platform: openhome
+
