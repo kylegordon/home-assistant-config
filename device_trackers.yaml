@@ -4,6 +4,7 @@
     - 172.24.32.144
   track_new_devices: false
 - platform: owntracks
+  max_gps_accuracy: 250
 - platform: snmp
   host: 172.24.32.15
   community: !secret snmp_community
