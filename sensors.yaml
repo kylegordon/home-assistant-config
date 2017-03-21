@@ -64,6 +64,11 @@
   name: Garage temperature
   unit_of_measurement: "°C"
 - platform: mqtt
+  state_topic: "devices/d5323ee0/$signal"
+  name: "Garage ESP8266 Signal Level"
+  unit_of_measurement: "%"
+
+- platform: mqtt
   state_topic: "devices/d8d915e0/temperature/degrees"    
   name: sht30-node-1 temperature
   unit_of_measurement: "°C"
