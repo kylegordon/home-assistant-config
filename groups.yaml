@@ -113,6 +113,7 @@ garage:
   entities:
     - sensor.garage_temperature
     - sensor.rack_temperature
+    - sensor.garage_esp8266_signal_level
 
 people:
   name: People
