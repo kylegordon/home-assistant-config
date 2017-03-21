@@ -1,0 +1,14 @@
+alias: "low battery RGB lamp"
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.charlotte_phone_battery
+    below: 15
+  - platform: numeric_state
+    entity_id: sensor.kyle_oneplus_one_battery
+    below: 15
+condition:
+  - condition: state
+    entity_id: group.all_devices
+    state: "home"
+action:
+  service: script.low_battery
