@@ -88,6 +88,13 @@
   name: sht30-node-3 humidity
   unit_of_measurement: "%"
 
+- platform: mqtt
+  state_topic: "owntracks/bagpuss/a0001"
+  name: "Kyle Oneplus One Battery"
+  unit_of_measurement: "%"
+  value_template: "{{ value_json.batt }}"
+
+
 
 - platform: nut
   name: UPS
