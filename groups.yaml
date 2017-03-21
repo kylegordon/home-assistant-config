@@ -1,18 +1,18 @@
 ## Rooms ##
 
-default_view:
-  view: yes
-  entities:
-    - scene.hall_off
-    - group.hallway
-    - group.people
-    - sensor.dark_sky_temperature
-    - sensor.dark_sky_precip_probability
-    - group.all_lights
-    - group.all_switches
-    - sensor.electricity_energy_usage
-    - input_select.kyle_status
-    - input_select.charlotte_status
+#default_view:
+#  view: yes
+#  entities:
+#    - scene.hall_off
+#    - group.hall
+#    - group.people
+#    - sensor.dark_sky_temperature
+#    - sensor.dark_sky_precip_probability
+#    - group.all_lights
+#    - group.all_switches
+#    - sensor.electricity_energy_usage
+#    - input_select.kyle_status
+#    - input_select.charlotte_status
 
 kitchen:
   name: Kitchen
@@ -38,16 +38,21 @@ bedroom_1:
   name: Main bedroom
   view: yes
   entities:
-    - switch.kyle_bedside
-    - light.master_bedroom_light
+    - group.bedroom_1_lights
     - sensor.room_sensor_2_temperature
     - sensor.room_sensor_2_humidity
+
+bedroom_1_lights:
+  name: Bedroom lights
+  entities:
+    - light.master_bedroom_light
+    - switch.kyle_bedside
 
 bedroom_2:
   name: Guest bedroom
   view: yes
   entities:
-    - light.guest_bedroom_main_light
+    - light.guest_bedroom_light
     - sensor.room_sensor_1_temperature
     - sensor.room_sensor_1_humidity
 
@@ -63,15 +68,23 @@ bedroom_4:
   name: Craft room
   view: yes
 
-hallway:
-  name: Hallway
+hall:
+  name: Hall lights
+  #view: yes
+  entities:
+      #- sensor.room_sensor_5_temperature
+      #- sensor.room_sensor_5_humidity
+    - switch.front_hall
+    - light.hall_bedrooms
+    - light.hall_entrance
+
+hall_view:
+  name: Hall
   view: yes
   entities:
     - sensor.room_sensor_5_temperature
     - sensor.room_sensor_5_humidity
-    - switch.front_hall
-    - light.hall_bedrooms
-    - light.hall_entrance
+    - group.hall
 
 outside:
   name: Outside
