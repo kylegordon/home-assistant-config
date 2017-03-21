@@ -39,8 +39,6 @@ bedroom_1:
   view: yes
   entities:
     - group.bedroom_1_lights
-    - sensor.room_sensor_2_temperature
-    - sensor.room_sensor_2_humidity
 
 bedroom_1_lights:
   name: Bedroom lights
@@ -53,16 +51,12 @@ bedroom_2:
   view: yes
   entities:
     - light.guest_bedroom_light
-    - sensor.room_sensor_1_temperature
-    - sensor.room_sensor_1_humidity
 
 bedroom_3:
   name: Study
   view: yes
   entities:
     - light.study_main
-    - sensor.room_sensor_4_temperature
-    - sensor.room_sensor_4_humidity
 
 bedroom_4:
   name: Craft room
@@ -82,8 +76,6 @@ hall_view:
   name: Hall
   view: yes
   entities:
-    - sensor.room_sensor_5_temperature
-    - sensor.room_sensor_5_humidity
     - group.hall
 
 outside:
