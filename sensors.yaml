@@ -1,0 +1,116 @@
+#!include travel_times.yaml
+
+# Improve with https://github.com/bah2830/Home-Assistant-Configs/blob/master/includes/automation/notifications.yaml
+
+- platform: google_travel_time
+  name: Kyle Work Travel
+  api_key: !secret google_api
+  origin: device_tracker.bagpuss_a0001
+  destination: zone.kyle_work
+
+- platform: google_travel_time
+  name: Charlotte Work Travel
+  api_key: !secret google_api
+  origin: zone.home
+  destination: zone.charlotte_work
+
+- platform: google_travel_time
+  name: Kyle To Home
+  api_key: !secret google_api
+  origin: device_tracker.bagpuss_a0001
+  destination: zone.home
+
+- platform: google_travel_time
+  name: Charlotte To Home
+  api_key: !secret google_api
+  origin: device_tracker.charlotte_phone
+  destination: zone.home
+
+## Weather ##
+- platform: yr
+
+- platform: darksky
+  api_key: !secret darksky_api_key
+  monitored_conditions:
+    - summary
+    - precip_type
+    - precip_intensity
+    - precip_probability
+    - temperature
+    - apparent_temperature
+    - dew_point
+    - wind_speed
+    - wind_bearing
+    - cloud_cover
+    - humidity
+    - pressure
+    - visibility
+
+## RFXcom ##
+
+- platform: rfxtrx
+  automatic_add: True
+  devices:
+    115a0100e452000000046600006462cb3e79:
+      name: Electricity
+
+## MQTT ## 
+- platform: mqtt
+  state_topic: "devices/d5323ee0/28b8c81d300e5/degrees"
+  name: Rack temperature
+  unit_of_measurement: "°C"
+- platform: mqtt
+  state_topic: "devices/d5323ee0/28ac871d300e4/degrees"
+  name: Garage temperature
+  unit_of_measurement: "°C"
+- platform: mqtt
+  state_topic: "devices/d8d915e0/temperature/degrees"    
+  name: sht30-node-1 temperature
+  unit_of_measurement: "°C"
+- platform: mqtt
+  state_topic: "devices/d8d915e0/humidity/percent"
+  name: sht30-node-1 humidity
+  unit_of_measurement: "%"
+- platform: mqtt
+  state_topic: "devices/d9283ae0/temperature/degrees"    
+  name: sht30-node-2 temperature
+  unit_of_measurement: "°C"
+- platform: mqtt
+  state_topic: "devices/d9283ae0/humidity/percent"
+  name: sht30-node-2 humidity
+  unit_of_measurement: "%"
+- platform: mqtt
+  state_topic: "devices/d9262de0/temperature/degrees"                                                                                                                                                                                                     
+  name: sht30-node-3 temperature
+  unit_of_measurement: "°C"
+- platform: mqtt
+  state_topic: "devices/d9262de0/humidity/percent"    
+  name: sht30-node-3 humidity
+  unit_of_measurement: "%"
+
+
+- platform: nut
+  name: UPS
+  hostname: 172.24.32.1
+  resources:
+    - ups.load
+    - ups.realpower.nominal
+    - input.voltage
+    - battery.runtime
+
+- platform: min_max
+  name: House Average
+  type: mean
+  entity_ids:
+    - sensor.sht30node1_temperature
+    - sensor.sht30node2_temperature
+    - sensor.sht30node3_temperature
+
+- platform: min_max
+  name: House Average Humidity
+  type: mean
+  entity_ids:
+    - sensor.sht30node1_humidity
+    - sensor.sht30node2_humidity
+    - sensor.sht30node3_humidity
+
