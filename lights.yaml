@@ -5,4 +5,7 @@
   devices:
     0a140029f0dd3c0e010060:
       name: Living Room
+    0a140017f090a201010070:
+      # Dimmable CFL Remote Left
+      name: Front Hall
 
