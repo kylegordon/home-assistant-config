@@ -1,0 +1,11 @@
+sequence:
+- service: logbook.log
+  data_template:
+    name: EVENT
+    message: "Welcome! Turning everything on."
+
+- service: alarm_control_panel.alarm_disarm
+
+- service: notify.notify
+  data:
+    message: "Welcome. It is daytime so keeping everything off!"
