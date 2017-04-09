@@ -1,11 +1,11 @@
 # Don't enable router tracking of Owntracks devices
 # If loss of wifi, user will be reported as 'away'
 # but Owntracks will not have reported a location.
-- platform: nmap_tracker
-  hosts:
+#- platform: nmap_tracker
+#hosts:
     # - 172.24.32.148
-    - 172.24.32.144
-  track_new_devices: true
+    # - 172.24.32.144
+    #  track_new_devices: true
 - platform: owntracks
   max_gps_accuracy: 250
 - platform: snmp
