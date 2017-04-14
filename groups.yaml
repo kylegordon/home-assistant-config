@@ -3,7 +3,6 @@
 #default_view:
 #  view: yes
 #  entities:
-#    - scene.hall_off
 #    - group.hall
 #    - group.people
 #    - sensor.dark_sky_temperature
