@@ -75,17 +75,19 @@ sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
 switch: !include switches.yaml
-scene: !include scenes.yaml
 media_player: !include media_players.yaml
 device_tracker: !include device_trackers.yaml
 group: !include groups.yaml
-input_select: !include input_select.yaml
 camera: !include cameras.yaml
 zone: !include zones/places.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
-input_boolean: !include_dir_merge_named input_boolean
+scene: !include_dir_list scenes
+
+# Merged items requiring a dictionary
+input_select: !include_dir_named input_select
+input_boolean: !include_dir_named input_boolean
 
 
 mqtt:

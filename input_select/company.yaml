@@ -1,0 +1,5 @@
+name: "Company"
+options:
+ - "enabled"
+ - "disabled"
+initial: "disabled"
