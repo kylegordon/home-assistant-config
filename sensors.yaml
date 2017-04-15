@@ -55,19 +55,35 @@
       name: Electricity
 
 ## MQTT ## 
+# Garage # 
 - platform: mqtt
-  state_topic: "devices/d5323ee0/28b8c81d300e5/degrees"
+  state_topic: "devices/garage-esp/28b8c81d300e5/degrees"
   name: Rack temperature
   unit_of_measurement: "°C"
 - platform: mqtt
-  state_topic: "devices/d5323ee0/28ac871d300e4/degrees"
+  state_topic: "devices/garage-esp/28ac871d300e4/degrees"
   name: Garage temperature
   unit_of_measurement: "°C"
 - platform: mqtt
-  state_topic: "devices/d5323ee0/$signal"
+  state_topic: "devices/garage-esp/$signal"
   name: "Garage ESP8266 Signal Level"
   unit_of_measurement: "%"
 
+# Utility Room #
+- platform: mqtt
+  state_topic: "devices/d5323ee0/28b8c81d300e5/degrees"
+  name: Kitchen temperature"
+  unit_of_measurement: "°C"
+- platform: mqtt
+  state_topic: "devices/d5323ee0/28ac871d300e4/degrees"
+  name: Utility room temperature"
+  unit_of_measurement: "°C"
+- platform: mqtt
+  state_topic: "devices/d5323ee0/$signal"
+  name: "Utility Room ESP8266 Signal Level"
+  unit_of_measurement: "%" 
+
+# Unassigned #
 - platform: mqtt
   state_topic: "devices/d8d915e0/temperature/degrees"    
   name: sht30-node-1 temperature
