@@ -72,11 +72,11 @@
 # Utility Room #
 - platform: mqtt
   state_topic: "devices/d5323ee0/28b8c81d300e5/degrees"
-  name: Kitchen temperature"
+  name: Kitchen temperature
   unit_of_measurement: "°C"
 - platform: mqtt
   state_topic: "devices/d5323ee0/28ac871d300e4/degrees"
-  name: Utility room temperature"
+  name: Utility room temperature
   unit_of_measurement: "°C"
 - platform: mqtt
   state_topic: "devices/d5323ee0/$signal"
