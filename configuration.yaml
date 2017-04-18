@@ -42,6 +42,14 @@ rfxtrx:
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
+notify:
+  name: twitter_thegordonhome
+  platform: twitter
+  consumer_key: !secret twitter_consumer_key
+  consumer_secret: !secret twitter_consumer_secret
+  access_token: !secret twitter_access_token
+  access_token_secret: !secret twitter_access_token_secret
+
 # Enables support for tracking state changes over time.
 history:
 
