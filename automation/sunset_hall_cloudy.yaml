@@ -1,0 +1,27 @@
+alias: "Sunset, hallway on, cloudy"
+trigger:
+  platform: sun
+  event: sunset
+  offset: "-01:30:00"
+condition:
+  - condition: numeric_state
+    entity_id: sensor.weather_cloud_coverage
+    above: 90
+  - condition: state
+    entity_id: group.all_devices
+    state: "home"
+action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "The sun is setting soon, and it's cloudy outside. Adjusting hall lighting"
+  - service: notify.notify
+    data:
+      message: "The sun is setting soon, and it's cloudy outside. Adjusting hall lighting"
+  - service: light.turn_on
+    data:
+      entity_id: group.hall
+      brightness: 255 
+      transition: 1800 
+      color_temp: 300 
+
