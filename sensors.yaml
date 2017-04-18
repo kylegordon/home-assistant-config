@@ -130,6 +130,8 @@
   name: House Average
   type: mean
   entity_ids:
+    - sensor.kitchen_temperature
+    - sensor.utility_room_temperature
     - sensor.sht30node1_temperature
     - sensor.sht30node2_temperature
     - sensor.sht30node3_temperature
