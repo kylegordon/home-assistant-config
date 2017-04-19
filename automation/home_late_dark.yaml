@@ -1,0 +1,32 @@
+alias: "Home late night"
+trigger:
+  - platform: state
+    entity_id: group.all_devices
+    from: "not_home"
+    to: "home"
+condition:
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+  - condition: time
+    after: 22:00
+  - condition: template
+    value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
+action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Home late..."
+  - service: notify.notify
+    data:
+      message: "home late..."
+  - service: light.turn_on
+    data:
+      entity_id: group.hall
+      brightness: 100
+      transition: 120
+      color_temp: 300
+  - service: switch.turn_on
+    data:
+      entity_id: group.bedside_lights
+
