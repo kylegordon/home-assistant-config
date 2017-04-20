@@ -9,7 +9,7 @@ condition:
     entity_id: sun.sun
     state: "below_horizon"
   - condition: time
-    after: 22:00
+    after: '22:00:00'
   - condition: template
     value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
 action:
@@ -19,7 +19,7 @@ action:
       message: "Home late..."
   - service: notify.notify
     data:
-      message: "home late..."
+      message: "Home late..."
   - service: light.turn_on
     data:
       entity_id: group.hall
