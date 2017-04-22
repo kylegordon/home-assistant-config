@@ -1,0 +1,3 @@
+restart_ha: service hass-daemon restart &
+kyle_phone_finder: 'echo run something to find phone'
+charlotte_phone_finder: 'echo run something to find phone'
