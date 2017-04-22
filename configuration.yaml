@@ -78,7 +78,7 @@ emulated_hue:
 # Includes #
 ############
 # automation: !include automation.yaml
-script: !include scripts.yaml
+#script: !include scripts.yaml
 sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
@@ -96,6 +96,7 @@ scene: !include_dir_list scenes
 # Merged items requiring a dictionary
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
+script: !include_dir_named scripts/
 
 
 mqtt:
