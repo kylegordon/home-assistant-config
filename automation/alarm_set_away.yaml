@@ -1,0 +1,15 @@
+alias: "Alarm Set Away"
+trigger:
+  - platform: state
+    entity_id: group.all_devices
+    from: "home"
+    to: "not_home"
+action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Away mode. Setting alarm."
+  - service: notify.notify
+    data:
+      message: "Away mode. Setting alarm."
+  - service: alarm_control_panel.alarm_arm_away

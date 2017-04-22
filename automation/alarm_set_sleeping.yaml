@@ -1,0 +1,21 @@
+alias: "Alarm Set Sleeping"
+trigger:
+  - platform: state
+    entity_id: input_select.kyle_status
+    state: "sleeping"
+  - platform: state
+    entity_id: input_select.charlotte_status
+    state: "sleeping"
+condition:
+  - condition: state
+    entity_id: input_select.company
+    state: "disabled"
+action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Sleeping. Setting alarm."
+  - service: notify.notify
+    data:
+      message: "Sleeping. Setting alarm."
+  - service: script.alarm_home
