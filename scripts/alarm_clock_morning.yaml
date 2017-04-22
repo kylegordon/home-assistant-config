@@ -1,5 +1,4 @@
 ﻿sequence:
-
 - service: logbook.log
   data_template:
     name: EVENT
