@@ -15,4 +15,4 @@ action:
     data:
       message: "Time to waken up!"
   # Trigger the morning lighting sequence
-  - service: script/alarm_clock_morning.yaml
+  - service: script.alarm_clock_morning
