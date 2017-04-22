@@ -1,0 +1,18 @@
+alias: "Wakeup transition"
+trigger:
+  - platform: time
+    after: '06:30:00'
+condition:
+  - condition: state
+    entity_id: group.all_devices
+    state: "home"
+action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Time to waken up!"
+  - service: notify.notify
+    data:
+      message: "Time to waken up!"
+  # Trigger the morning lighting sequence
+  - service: script/alarm_clock_morning.yaml

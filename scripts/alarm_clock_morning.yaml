@@ -1,0 +1,20 @@
+﻿sequence:
+
+- service: logbook.log
+  data_template:
+    name: EVENT
+    message: "Alarm Clock Trigger - turning on lights"
+- service: notify.notify
+  data:
+    message: "Good morning, sunshine!"
+- service: light.turn_on
+  data:
+    entity_id: light.master_bedroom
+    brightness: 255
+    color_temp: 300
+    transition: 1800
+- delay:
+    seconds: 1800
+- service: light.turn_off
+  data:
+    entity_id: light.master_bedroom
