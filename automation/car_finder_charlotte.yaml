@@ -1,0 +1,18 @@
+alias: "Charlotte Car Finder"
+trigger:
+  platform: state
+  entity_id: input_select.charlotte_status
+  from: "driving"
+  to: "standby"
+  for:
+    seconds: 10
+action:
+  service_template: mqtt.publish
+  data_template:
+    topic: >
+      {% if is_state('sensor.car_driving_charlotte', 'Prius') %}
+        owntracks/bruh2/prius
+      {% elif is_state('sensor.car_driving_charlotte', 'Civic')%}
+        owntracks/bruh2/civic
+      {% endif %}
+    payload: '{"_type":"location","lat":{{states.device_tracker.charlotte_a0001.attributes.latitude}},"lon":{{ states.device_tracker.charlotte_a0001.attributes.longitude}},"tst":1234,"acc":{{states.device_tracker.charlotte_a0001.attributes.gps_accuracy}}}'

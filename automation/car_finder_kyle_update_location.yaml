@@ -1,0 +1,8 @@
+alias: "Kyle Car Finder"
+trigger:
+  platform: state
+  entity_id: input_select.kyle_status
+  from: "driving"
+  to: "standby"
+action:
+  service: script.refresh_devices

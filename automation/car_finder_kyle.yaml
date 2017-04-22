@@ -1,0 +1,18 @@
+alias: "Kyle Car Finder"
+trigger:
+  platform: state
+  entity_id: input_select.kyle_status
+  from: "driving"
+  to: "standby"
+  for:
+    seconds: 10
+action:
+  service_template: mqtt.publish
+  data_template:
+    topic: >
+      {% if is_state('sensor.car_driving_kyle', 'Prius') %}
+        owntracks/bagpuss/prius
+      {% elif is_state('sensor.car_driving_kyle', 'Civic')%}
+        owntracks/bagpuss/civic
+      {% endif %}
+    payload: '{"_type":"location","lat":{{states.device_tracker.bagpuss_a0001.attributes.latitude}},"lon":{{ states.device_tracker.bagpuss_a0001.attributes.longitude}},"tst":1234,"acc":{{states.device_tracker.bagpuss_a0001.attributes.gps_accuracy}}}'
