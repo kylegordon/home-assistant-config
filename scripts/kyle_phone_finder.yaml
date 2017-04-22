@@ -1,0 +1,11 @@
+sequence:
+- service: logbook.log
+  data_template:
+    name: Lost Phone
+    message: "Lost phone. Making some noise"
+- event: LOGBOOK_ENTRY
+  event_data:
+    name: Lost Phone
+    message: Ringing Kyle's Phone
+- service: shell_command.kyle_finder
+
