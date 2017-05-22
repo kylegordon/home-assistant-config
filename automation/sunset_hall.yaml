@@ -12,7 +12,7 @@ action:
     data_template:
       name: EVENT
       message: "The sun is setting soon. Adjusting hall lighting"
-  - service: notify.gmail_kyle
+  - service: notify.email_kyle
     data:
       message: "The sun is setting soon. Adjusting hall lighting"
   - service: light.turn_on
