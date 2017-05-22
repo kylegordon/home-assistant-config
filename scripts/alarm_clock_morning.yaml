@@ -3,7 +3,7 @@
   data_template:
     name: EVENT
     message: "Alarm Clock Trigger - turning on lights"
-- service: notify.notify
+- service: notify.email_kyle
   data:
     message: "Good morning, sunshine!"
 - service: light.turn_on
@@ -13,7 +13,7 @@
     color_temp: 300
     transition: 1800
 - delay:
-    seconds: 1800
+    seconds: 5400
 - service: light.turn_off
   data:
     entity_id: light.master_bedroom
