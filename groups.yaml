@@ -69,6 +69,8 @@ bedroom_3:
 bedroom_4:
   name: Craft room
   view: yes
+  entities:
+    - light.craft_room
 
 hall:
   name: Hall lights
