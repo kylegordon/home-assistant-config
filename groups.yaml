@@ -65,6 +65,8 @@ bedroom_3:
   view: yes
   entities:
     - light.study_main
+    - sensor.study_temperature
+    - sensor.study_humidity
 
 bedroom_4:
   name: Craft room

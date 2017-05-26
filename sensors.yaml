@@ -81,7 +81,18 @@
 - platform: mqtt
   state_topic: "devices/d5323ee0/$signal"
   name: "Utility Room ESP8266 Signal Level"
+  unit_of_measurement: "%"
+
+# Study #
+- platform: mqtt
+  state_topic: "devices/d9283ae0/temperature/degrees"    
+  name: Study temperature
+  unit_of_measurement: "°C"
+- platform: mqtt
+  state_topic: "devices/d9283ae0/humidity/percent"
+  name: Study humidity
   unit_of_measurement: "%" 
+
 
 # Unassigned #
 - platform: mqtt
@@ -91,14 +102,6 @@
 - platform: mqtt
   state_topic: "devices/d8d915e0/humidity/percent"
   name: sht30-node-1 humidity
-  unit_of_measurement: "%"
-- platform: mqtt
-  state_topic: "devices/d9283ae0/temperature/degrees"    
-  name: sht30-node-2 temperature
-  unit_of_measurement: "°C"
-- platform: mqtt
-  state_topic: "devices/d9283ae0/humidity/percent"
-  name: sht30-node-2 humidity
   unit_of_measurement: "%"
 - platform: mqtt
   state_topic: "devices/d9262de0/temperature/degrees"                                                                                                                                                                                                     
@@ -132,8 +135,8 @@
   entity_ids:
     - sensor.kitchen_temperature
     - sensor.utility_room_temperature
+    - sensor.study_temperature
     #- sensor.sht30node1_temperature
-    #- sensor.sht30node2_temperature
     #- sensor.sht30node3_temperature
 
 - platform: min_max
@@ -141,6 +144,6 @@
   type: mean
   entity_ids:
     - sensor.sht30node1_humidity
-    - sensor.sht30node2_humidity
+    - sensor.study_humidity
     - sensor.sht30node3_humidity
 
