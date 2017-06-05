@@ -1,11 +1,18 @@
 alias: "Wakeup transition"
 trigger:
   - platform: time
-    after: '06:30:00'
+    at: '06:30:00'
 condition:
   - condition: state
     entity_id: group.all_devices
     state: "home"
+  - condition: time
+    weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
 action:
   - service: logbook.log
     data_template:
