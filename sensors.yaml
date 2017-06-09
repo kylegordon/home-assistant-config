@@ -55,6 +55,42 @@
       name: Electricity
 
 ## MQTT ## 
+
+# Weather #
+- platform: mqtt
+  state_topic: "weatherstation"
+  name: "Weather station temperature"
+  unit_of_measurement: "°C"
+  value_template: "{{ value_json.temperature }}"
+- platform: mqtt
+  state_topic: "weatherstation"
+  name: "Weather station relative humidity"
+  unit_of_measurement: "%"
+  value_template: "{{ value_json.relhumidity }}"
+- platform: mqtt
+  state_topic: "weatherstation"
+  name: "Weather station wind velocity"
+  unit_of_measurement: "m/s"
+  value_template: "{{ value_json.windvelocity }}"
+- platform: mqtt
+  state_topic: "weatherstation"
+  name: "Weather station wind maximum"
+  unit_of_measurement: "m/s"
+  value_template: "{{ value_json.windmaximum }}"
+- platform: mqtt
+  state_topic: "weatherstation"
+  name: "Weather station wind direction"
+  unit_of_measurement: ""
+  value_template: "{{ value_json.winddirection }}"
+- platform: mqtt
+  state_topic: "weatherstation"
+  name: "Weather station rainfall"
+  unit_of_measurement: "mm"
+  value_template: "{{ value_json.rain }}"
+
+
+
+
 # Garage # 
 - platform: mqtt
   state_topic: "devices/garage-esp/28b8c81d300e5/degrees"

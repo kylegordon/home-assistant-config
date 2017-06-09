@@ -118,6 +118,12 @@ climate:
     - sensor.dark_sky_visibility
     - sensor.dark_sky_wind_bearing
     - sensor.dark_sky_wind_speed
+    - sensor.weather_station_rainfall
+    - sensor.weather_station_wind_direction
+    - sensor.weather_station_wind_velocity
+    - sensor.weather_station_wind_maximum
+    - sensor.weather_station_temperature
+    - sensor.weather_station_relative_humidity
 
 garage:
   name: Garage
