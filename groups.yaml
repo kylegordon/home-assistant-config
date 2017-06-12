@@ -64,7 +64,7 @@ bedroom_3:
   name: Study
   view: yes
   entities:
-    - light.study_main
+    - light.study
     - sensor.study_temperature
     - sensor.study_humidity
 
