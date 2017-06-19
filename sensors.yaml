@@ -157,13 +157,16 @@
 
 
 - platform: nut
-  name: UPS
-  hostname: 172.24.32.1
+  name: Loft UPS
+  host: 172.24.32.254
   resources:
     - ups.load
-    - ups.realpower.nominal
+    - ups.temperature
+    - ups.status
+    - ups.test.result
     - input.voltage
     - battery.runtime
+    - battery.voltage
 
 - platform: min_max
   name: House Average
