@@ -1,0 +1,19 @@
+sequence:
+- service: logbook.log
+  data_template:
+    name: EVENT
+    message: "Welcome! Turning everything on."
+
+## Turn on Hall switches and lights
+- service: switch.turn_on
+  data:
+    entity_id: group.hall
+- service: light.turn_on
+  data:
+    entity_id: group.hall
+
+- service: alarm_control_panel.alarm_disarm
+
+- service: notify.email_kyle
+  data:
+    message: "Welcome. Turning lights on!"

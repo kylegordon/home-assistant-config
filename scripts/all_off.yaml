@@ -64,7 +64,7 @@ sequence:
     entity_id: media_player.kodi_living_room
 
 ## Tell the world
-- service: notify.notify
+- service: notify.email_kyle
   data:
     message: "Nobody is home. Everything is now off."
 

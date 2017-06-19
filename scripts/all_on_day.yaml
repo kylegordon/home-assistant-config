@@ -6,6 +6,6 @@ sequence:
 
 - service: alarm_control_panel.alarm_disarm
 
-- service: notify.notify
+- service: notify.email_kyle
   data:
     message: "Welcome. It is daytime so keeping everything off!"
