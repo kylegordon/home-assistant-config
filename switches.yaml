@@ -11,6 +11,10 @@
       name: Edison lamp
     0a14000bf0dd3c0f010070:
       name: Lava Lamp
+    0a140031f0dd3c0d010070:
+      name: Craft Room Bookcase
+    0a140037f0dd3c0b010060:
+      name: Sideboard light
 - platform: wake_on_lan
   name: Living Room Kodi Power On
   mac_address: "00-23-24-2c-9c-64"
