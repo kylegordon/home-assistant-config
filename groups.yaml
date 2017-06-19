@@ -27,8 +27,8 @@ living_room:
   entities:
     - group.living_room_lights
     - switch.living_room_kodi_power_on
-    - media_player.kodi_living_room
-    - media_player.living_room
+    - media_player.living_room_kodi
+    - media_player.living_room_ds
     - switch.living_room_television
     - sensor.room_sensor_3_temperature
     - sensor.room_sensor_3_humidity
@@ -40,6 +40,7 @@ living_room_lights:
     - light.living_room
     - switch.edison_lamp
     - switch.lava_lamp
+    - switch.sideboard_light
 
 bedroom_1:
   name: Main bedroom
@@ -64,6 +65,7 @@ bedroom_3:
   name: Study
   view: yes
   entities:
+    - media_player.study_ds
     - light.study
     - sensor.study_temperature
     - sensor.study_humidity
@@ -73,6 +75,7 @@ bedroom_4:
   view: yes
   entities:
     - light.craft_room
+    - switch.craft_room_bookcase
 
 hall:
   name: Hall lights
