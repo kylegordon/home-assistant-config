@@ -1,5 +1,5 @@
 - platform: kodi
-  name: Kodi Living Room
+  name: Living Room Kodi
   host: oxcart.vpn.glasgownet.com
   turn_off_action: shutdown
 - platform: openhome
