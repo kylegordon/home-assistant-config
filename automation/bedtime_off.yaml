@@ -1,0 +1,11 @@
+alias: "Bedtime"
+trigger:
+  - platform: time
+    at: '01:00:00'
+condition:
+  - condition: state
+    entity_id: group.all_devices
+    state: "home"
+action:
+  service: switch.turn_off
+  entity_id: group.bedside_lights
