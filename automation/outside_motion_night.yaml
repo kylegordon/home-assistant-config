@@ -1,0 +1,13 @@
+alias: Front outdoor lights on
+trigger:
+  platform: state
+  entity_id: switch.nexa_pir_front
+  to: 'on'
+condition:
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+action:
+  service: switch.turn_on
+  entity_id: switch.front_outdoor_floodlights
+

@@ -1,0 +1,11 @@
+alias: Front outdoor lights off
+trigger:
+  platform: state
+  entity_id: switch.nexa_pir_front
+  to: 'off'
+  for:
+    seconds: 30
+action:
+  service: switch.turn_off
+  entity_id: switch.front_outdoor_floodlights
+
