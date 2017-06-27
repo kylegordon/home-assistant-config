@@ -53,8 +53,10 @@ notify:
     platform: smtp
     server: smtp.gmail.com
     port: 587
+    starttls: true
     username: !secret gmail_username
     password: !secret gmail_password
+    sender: homeassistant@glasgownet.com
     recipient: kyle@glasgownet.com
   - name: kodi_living_room_info
     platform: kodi
@@ -73,7 +75,6 @@ logbook:
   include:
     domains:
       - sensor
-      - switch
       - media_player
 
 # Track the sun
