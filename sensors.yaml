@@ -105,18 +105,18 @@
   name: "Garage ESP8266 Signal Level"
   unit_of_measurement: "%"
 
-# Utility Room #
+# Kitchen #
 - platform: mqtt
   state_topic: "devices/d5323ee0/28b8c81d300e5/degrees"
   name: Kitchen temperature
   unit_of_measurement: "°C"
-- platform: mqtt
-  state_topic: "devices/d5323ee0/28ac871d300e4/degrees"
-  name: Utility room temperature
-  unit_of_measurement: "°C"
+#- platform: mqtt
+#  state_topic: "devices/d5323ee0/28ac871d300e4/degrees"
+#  name: Utility room temperature
+#  unit_of_measurement: "°C"
 - platform: mqtt
   state_topic: "devices/d5323ee0/$signal"
-  name: "Utility Room ESP8266 Signal Level"
+  name: "Kitchen ESP8266 Signal Level"
   unit_of_measurement: "%"
 
 # Study #
@@ -128,24 +128,37 @@
   state_topic: "devices/d9283ae0/humidity/percent"
   name: Study humidity
   unit_of_measurement: "%" 
-
-
-# Unassigned #
 - platform: mqtt
-  state_topic: "devices/d8d915e0/temperature/degrees"    
-  name: sht30-node-1 temperature
+  state_topic: "devices/d9283ae0/$signal"
+  name: "Study ESP8266 Signal Level"
+  unit_of_measurement: "%" 
+
+# Hallway #
+- platform: mqtt
+  state_topic: "devices/115e3fe0/temperature/degrees"    
+  name: Hallway temperature
   unit_of_measurement: "°C"
 - platform: mqtt
-  state_topic: "devices/d8d915e0/humidity/percent"
-  name: sht30-node-1 humidity
+  state_topic: "devices/115e3fe0/humidity/percent"
+  name: Hallway humidity
   unit_of_measurement: "%"
 - platform: mqtt
-  state_topic: "devices/d9262de0/temperature/degrees"                                                                                                                                                                                                     
-  name: sht30-node-3 temperature
+  state_topic: "devices/115e3fe0/$signal"
+  name: "Hallway ESP8266 Signal Level"
+  unit_of_measurement: "%"
+
+# Utility Room #
+- platform: mqtt
+  state_topic: "devices/d9262de0/temperature/degrees"
+  name: Utility room temperature
   unit_of_measurement: "°C"
 - platform: mqtt
   state_topic: "devices/d9262de0/humidity/percent"    
-  name: sht30-node-3 humidity
+  name: Utility room humidity
+  unit_of_measurement: "%"
+- platform: mqtt
+  state_topic: "devices/d9262de0/$signal"
+  name: "Utility Room ESP8266 Signal Level"
   unit_of_measurement: "%"
 
 - platform: mqtt

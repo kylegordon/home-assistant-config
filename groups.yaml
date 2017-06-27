@@ -18,7 +18,9 @@ kitchen:
   view: yes
   entities:
     - sensor.kitchen_temperature
+    - sensor.kitchen_esp8266_signal_level
     - sensor.utility_room_temperature
+    - sensor.utility_room_humidity
     - sensor.utility_room_esp8266_signal_level
 
 living_room:
@@ -66,9 +68,14 @@ bedroom_3:
   view: yes
   entities:
     - media_player.study_ds
+    - switch.study_amp
+    - switch.study_amplifier_ds
+    - switch.study_amplifier_pc
+    - switch.study_volume
     - light.study
     - sensor.study_temperature
     - sensor.study_humidity
+    - sensor.study_esp8266_signal_level
 
 bedroom_4:
   name: Craft room
@@ -76,6 +83,7 @@ bedroom_4:
   entities:
     - light.craft_room
     - switch.craft_room_bookcase
+    - switch.craft_room_fairy_lights
 
 hall:
   name: Hall lights
@@ -92,6 +100,9 @@ hall_view:
   view: yes
   entities:
     - group.hall
+    - sensor.hallway_temperature
+    - sensor.hallway_humidity
+    - sensor.hallway_esp8266_signal_level
 
 outside:
   name: Outside
