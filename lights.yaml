@@ -9,3 +9,10 @@
       # Dimmable CFL Remote Left
       name: Front Hall
 
+- platform: mqtt
+  name: "Garage Lights"
+  state_topic: "devices/e9b845e0/relay01/relayState"
+  command_topic: "devices/e9b845e0/relay01/relayState/set"
+  payload_on: "ON"
+  payload_off: "OFF"
+
