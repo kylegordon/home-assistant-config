@@ -110,7 +110,7 @@ outside:
   entities:
     - switch.nexa_pir_front
     - group.climate
-    - switch.front_outdoor_floodlights
+    - light.front_outdoor_floodlights
     - camera.iss
 
 climate:

@@ -52,14 +52,6 @@
       command_on: 'JgDMAAoZCRoIPQo8CxgJPAk9ChkJGQk9ChkJPAgbCBoJGggABcAKGQgbCD0KPAoZCRoJGQk8CT0KGQk9ChgJPAk9CjwKAAV6ChkKGAk8CT0KGQk9CjsJGggaCT0KGQk8CxgJGgkZCQAFwAoZChgJPAo8ChkKGAkaCT0KOwkaCD0KGQk9CjsJPQoABXoKGAoZCT0KOwkaCD0LOwoZCRoJPAgaCT0KGQkZChkJAAXAChgKGQk9CjsJGggaCRoIPgo8ChgKOwoZCD4KPAo7CQANBQAAAAAAAAAAAAAAAA=='
       command_off: 'JgDMAAoZCRoIPQo8CxgJPAk9ChkJGQk9ChkJPAgbCBoJGggABcAKGQgbCD0KPAoZCRoJGQk8CT0KGQk9ChgJPAk9CjwKAAV6ChkKGAk8CT0KGQk9CjsJGggaCT0KGQk8CxgJGgkZCQAFwAoZChgJPAo8ChkKGAkaCT0KOwkaCD0KGQk9CjsJPQoABXoKGAoZCT0KOwkaCD0LOwoZCRoJPAgaCT0KGQkZChkJAAXAChgKGQk9CjsJGggaCRoIPgo8ChgKOwoZCD4KPAo7CQANBQAAAAAAAAAAAAAAAA=='
 
-# https://github.com/enc-X/sonoff-homie
-- platform: mqtt
-  name: "Front Outdoor Floodlights"
-  state_topic: "devices/16854de0/relay01/relayState"
-  command_topic: "devices/16854de0/relay01/relayState/set"
-  payload_on: "ON"
-  payload_off: "OFF"
-
 - platform: mqtt
   name: "Sonoff Lightswitch Relay"
   state_topic: "devices/85376d51/relay/relayState"
