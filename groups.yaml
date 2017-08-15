@@ -40,12 +40,12 @@ living_room_lights:
   entities:
     - light.uplighter
     - light.living_room
-    - switch.edison_lamp
-    - switch.lava_lamp
-    - switch.sideboard_light
+    - light.edison_lamp
+    - light.lava_lamp
+    - light.sideboard_light
 
 bedroom_1:
-  name: Main bedroom
+  name: Master bedroom
   view: yes
   entities:
     - group.bedroom_1_lights
@@ -54,7 +54,7 @@ bedroom_1_lights:
   name: Bedroom lights
   entities:
     - light.master_bedroom
-    - switch.kyle_bedside
+    - light.kyles_bedside
     - group.bedside_lights
 
 bedroom_2:
@@ -82,8 +82,8 @@ bedroom_4:
   view: yes
   entities:
     - light.craft_room
-    - switch.craft_room_bookcase
-    - switch.craft_room_fairy_lights
+    - light.craft_room_bookcase
+    - light.craft_room_fairy_lights
 
 hall:
   name: Hall lights
@@ -146,6 +146,7 @@ garage:
     - sensor.garage_temperature
     - sensor.rack_temperature
     - sensor.garage_esp8266_signal_level
+    - light.garage_lights
 
 people:
   name: People
@@ -165,4 +166,4 @@ people:
 bedside_lights:
   name: Bedside Lights
   entities:
-    - switch.kyle_bedside
+    - light.kyles_bedside
