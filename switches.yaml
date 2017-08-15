@@ -3,20 +3,20 @@
   devices:
     0b11000000b82b560a000060:
       name: Nexa PIR front
-    0a140001f0dd3c01010070:
-      # White Remote A1
-      name: Kyle Bedside
-    0a140075f0dd3c10000060:
-      # Black Remote D4
-      name: Edison lamp
-    0a14000bf0dd3c0f010070:
-      name: Lava Lamp
-    0a140031f0dd3c0d010070:
-      name: Craft Room bookcase
-    0a140037f0dd3c0b010060:
-      name: Sideboard light
-    0a14003cf0dd3c0a010060:
-      name: Craft room fairy lights
+#    0a140001f0dd3c01010070:
+#      # White Remote A1
+#      name: Kyle Bedside
+#    0a140075f0dd3c10000060:
+#      # Black Remote D4
+#      name: Edison lamp
+#    0a14000bf0dd3c0f010070:
+#      name: Lava Lamp
+#    0a140031f0dd3c0d010070:
+#      name: Craft Room bookcase
+#    0a140037f0dd3c0b010060:
+#      name: Sideboard light
+#    0a14003cf0dd3c0a010060:
+#      name: Craft room fairy lights
 - platform: wake_on_lan
   name: Living Room Kodi Power On
   mac_address: "00-23-24-2c-9c-64"
