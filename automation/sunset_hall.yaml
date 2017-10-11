@@ -11,14 +11,16 @@ action:
   - service: logbook.log
     data_template:
       name: EVENT
-      message: "The sun is setting soon. Adjusting hall lighting"
+      message: "The sun is setting soon. Adjusting lighting"
   - service: notify.email_kyle
     data:
-      message: "The sun is setting soon. Adjusting hall lighting"
+      message: "The sun is setting soon. Adjusting lighting"
   - service: light.turn_on
     data:
       entity_id: group.hall
       brightness: 255 
       transition: 1800 
       color_temp: 300 
-
+  - service: light.turn_on
+    data:
+      entity_id: light.sideboard_light
