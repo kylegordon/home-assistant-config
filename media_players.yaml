@@ -1,6 +1,15 @@
 - platform: kodi
   name: Living Room Kodi
   host: oxcart.vpn.glasgownet.com
-  turn_off_action: shutdown
+  turn_off_action:
+    service: media_player.kodi_call_method
+    data:
+      entity_id: media_player.living_room_kodi
+      method: System.Shutdown
+  turn_on_action:
+    service: wake_on_lan.send_magic_packet
+    data:
+      mac: 00:23:24:2c:9c:64
+      broadcast_address: 172.24.32.255
 - platform: openhome
 
