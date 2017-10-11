@@ -25,16 +25,43 @@
 
 - platform: mqtt
   name: "Garage Lights"
-  state_topic: "devices/e9b845e0/relay01/relayState"
-  command_topic: "devices/e9b845e0/relay01/relayState/set"
+  state_topic: "devices/5ccf7fe9b845/relay01/relayState"
+  command_topic: "devices/5ccf7fe9b845/relay01/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
 
 # https://github.com/enc-X/sonoff-homie
 - platform: mqtt
   name: "Front Outdoor Floodlights"
-  state_topic: "devices/16854de0/relay01/relayState"
-  command_topic: "devices/16854de0/relay01/relayState/set"
+  state_topic: "devices/60019416854d/relay01/relayState"
+  command_topic: "devices/60019416854d/relay01/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
 
+- platform: mqtt
+  name: "Driveway Floodlights"
+  state_topic: "devices/5ccf7faf630b/relay01/relayState"
+  command_topic: "devices/5ccf7faf630b/relay01/relayState/set"
+  payload_on: "ON"
+  payload_off: "OFF"
+
+- platform: mqtt
+  name: "Sonoff switch 5ccf7faf5486"
+  state_topic: "devices/5ccf7faf5486/relay01/relayState"
+  command_topic: "devices/5ccf7faf5486/relay01/relayState/set"
+  payload_on: "ON"
+  payload_off: "OFF"
+
+- platform: mqtt_json
+  name: "Kitchen Cabinets"
+  state_topic: "devices/a020a61aafea/RGB/state"
+  command_topic: "devices/a020a61aafea/RGB/light/set"
+  brightness: true
+  rgb: true
+  effect: true
+  effect_list: [colorfade_slow, colorfade_fast, flash]
+  optimistic: false
+  qos: 0
+  # white_value: true
+  # effect:
+  # effect_list: 
