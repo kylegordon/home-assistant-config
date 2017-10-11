@@ -23,7 +23,7 @@
 - platform: google_travel_time
   name: Charlotte To Home
   api_key: !secret google_api
-  origin: device_tracker.charlotte_phone
+  origin: device_tracker.charlotte_thea
   destination: zone.home
 
 ## Weather ##
@@ -93,71 +93,87 @@
 
 # Garage # 
 - platform: mqtt
-  state_topic: "devices/garage-esp/28b8c81d300e5/degrees"
-  name: Rack temperature
+  state_topic: "devices/5ccf7f115d5f/Temp0/degrees"
+  name: Carport temperature
   unit_of_measurement: "°C"
 - platform: mqtt
-  state_topic: "devices/garage-esp/28ac871d300e4/degrees"
+  state_topic: "devices/5ccf7f115d5f/Temp1/degrees"
   name: Garage temperature
   unit_of_measurement: "°C"
 - platform: mqtt
-  state_topic: "devices/garage-esp/$signal"
+  state_topic: "devices/5ccf7f115d5f/$stats/signal"
   name: "Garage ESP8266 Signal Level"
   unit_of_measurement: "%"
 
 # Kitchen #
 - platform: mqtt
-  state_topic: "devices/d5323ee0/28b8c81d300e5/degrees"
+  # Start of string
+  state_topic: "devices/18fe34d5323e/Temp1/degrees"
   name: Kitchen temperature
   unit_of_measurement: "°C"
 #- platform: mqtt
-#  state_topic: "devices/d5323ee0/28ac871d300e4/degrees"
+   # Middle of string
+#  state_topic: "devices/18fe34d5323e/Temp0/degrees"
 #  name: Utility room temperature
 #  unit_of_measurement: "°C"
+#- platform: mqtt
+   # End of string
+#  state_topic: "devices/18fe34d5323e/Temp2/degrees"
+#  name: Utility room temperature
+#  unit_of_measurement: "°C"
+  
 - platform: mqtt
-  state_topic: "devices/d5323ee0/$signal"
+  state_topic: "devices/18fe34d5323e/$stats/signal"
   name: "Kitchen ESP8266 Signal Level"
   unit_of_measurement: "%"
+- platform: mqtt
+  state_topic: "devices/5ccf7faf630b/$stats/signal"
+  name: "Driveway Floodlights Signal Level"
+  unit_of_measurement: "%" 
+- platform: mqtt
+  state_topic: "devices/60019416854d/$stats/signal"
+  name: "Front Outdoor Floodlights Signal Level"
+  unit_of_measurement: "%" 
 
 # Study #
 - platform: mqtt
-  state_topic: "devices/d9283ae0/temperature/degrees"    
+  state_topic: "devices/5ccf7fd9283a/temperature/degrees"    
   name: Study temperature
   unit_of_measurement: "°C"
 - platform: mqtt
-  state_topic: "devices/d9283ae0/humidity/percent"
+  state_topic: "devices/5ccf7fd9283a/humidity/percent"
   name: Study humidity
   unit_of_measurement: "%" 
 - platform: mqtt
-  state_topic: "devices/d9283ae0/$signal"
+  state_topic: "devices/5ccf7fd9283a/$stats/signal"
   name: "Study ESP8266 Signal Level"
   unit_of_measurement: "%" 
 
 # Hallway #
 - platform: mqtt
-  state_topic: "devices/115e3fe0/temperature/degrees"    
+  state_topic: "devices/5ccf7f115e3f/temperature/degrees"    
   name: Hallway temperature
   unit_of_measurement: "°C"
 - platform: mqtt
-  state_topic: "devices/115e3fe0/humidity/percent"
+  state_topic: "devices/5ccf7f115e3f/humidity/percent"
   name: Hallway humidity
   unit_of_measurement: "%"
 - platform: mqtt
-  state_topic: "devices/115e3fe0/$signal"
+  state_topic: "devices/5ccf7f115e3f/$stats/signal"
   name: "Hallway ESP8266 Signal Level"
   unit_of_measurement: "%"
 
 # Utility Room #
 - platform: mqtt
-  state_topic: "devices/d9262de0/temperature/degrees"
+  state_topic: "devices/5ccf7fd9262d/temperature/degrees"
   name: Utility room temperature
   unit_of_measurement: "°C"
 - platform: mqtt
-  state_topic: "devices/d9262de0/humidity/percent"    
+  state_topic: "devices/5ccf7fd9262d/humidity/percent"    
   name: Utility room humidity
   unit_of_measurement: "%"
 - platform: mqtt
-  state_topic: "devices/d9262de0/$signal"
+  state_topic: "devices/5ccf7fd9262d/$stats/signal"
   name: "Utility Room ESP8266 Signal Level"
   unit_of_measurement: "%"
 
@@ -171,7 +187,8 @@
 
 - platform: nut
   name: Loft UPS
-  host: 172.24.32.254
+  host: 172.24.32.6
+  alias: APC1000
   resources:
     - ups.load
     - ups.temperature
@@ -181,6 +198,20 @@
     - battery.runtime
     - battery.voltage
 
+- platform: nut
+  name: ES700G UPS
+  host: 172.24.32.6
+  alias: ES700G
+  resources:
+    - ups.load
+    - ups.temperature
+    - ups.status
+    - ups.test.result
+    - input.voltage
+    - battery.runtime
+    - battery.voltage
+
+
 - platform: min_max
   name: House Average
   type: mean
@@ -188,14 +219,12 @@
     - sensor.kitchen_temperature
     - sensor.utility_room_temperature
     - sensor.study_temperature
-    #- sensor.sht30node1_temperature
-    #- sensor.sht30node3_temperature
+    - sensor.hallway_temperature
 
 - platform: min_max
   name: House Average Humidity
   type: mean
   entity_ids:
-    - sensor.sht30node1_humidity
+    - sensor.utility_room_humidity
     - sensor.study_humidity
-    - sensor.sht30node3_humidity
-
+    - sensor.hallway_humidity
