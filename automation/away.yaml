@@ -13,5 +13,5 @@ condition:
 action:
   - service: notify.email_kyle
     data:
-      message: "The sun is setting soon. Adjusting hall lighting"
+      message: "Everyone is away. Running all_off"
   - service: script.all_off
