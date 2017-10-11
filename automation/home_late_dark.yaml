@@ -17,7 +17,7 @@ action:
     data_template:
       name: EVENT
       message: "Home late..."
-  - service: notify.notify
+  - service: notify.email_kyle
     data:
       message: "Home late..."
   - service: light.turn_on
@@ -29,4 +29,7 @@ action:
   - service: switch.turn_on
     data:
       entity_id: group.bedside_lights
+  - service: light.turn_on
+    data:
+      entity_id: group.outside_lights
 
