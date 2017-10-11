@@ -36,9 +36,16 @@
       command_off: 'JgDMAAoZCRoIPQo8CxgJPAk9ChkJGQk9ChkJPAgbCBoJGggABcAKGQgbCD0KPAoZCRoJGQk8CT0KGQk9ChgJPAk9CjwKAAV6ChkKGAk8CT0KGQk9CjsJGggaCT0KGQk8CxgJGgkZCQAFwAoZChgJPAo8ChkKGAkaCT0KOwkaCD0KGQk9CjsJPQoABXoKGAoZCT0KOwkaCD0LOwoZCRoJPAgaCT0KGQkZChkJAAXAChgKGQk9CjsJGggaCRoIPgo8ChgKOwoZCD4KPAo7CQANBQAAAAAAAAAAAAAAAA=='
 
 - platform: mqtt
-  name: "Sonoff Lightswitch Relay"
-  state_topic: "devices/85376d51/relay/relayState"
-  command_topic: "devices/85376d51/relay/relayState/set"
+  name: "Master Bedroom Lightswitch Relay"
+  state_topic: "devices/60019485376d/relay/relayState"
+  command_topic: "devices/60019485376d/relay/relayState/set"
+  payload_on: "ON"
+  payload_off: "OFF"
+
+- platform: mqtt
+  name: "Sonoff Lightswitch 2 Relay"
+  state_topic: "devices/60019485412a/relay/relayState"
+  command_topic: "devices/60019485412a/relay/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
 
