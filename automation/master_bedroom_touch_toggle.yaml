@@ -1,0 +1,14 @@
+alias: Master Bedroom light toggle
+trigger:
+  platform: mqtt
+  topic: devices/60019485376d/button/event
+  # Optional
+  payload: 'SINGLE'
+
+action:
+  - service: light.toggle
+    entity_id: light.master_bedroom
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Toggling master bedroom light"
