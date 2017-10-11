@@ -22,6 +22,7 @@ kitchen:
     - sensor.utility_room_temperature
     - sensor.utility_room_humidity
     - sensor.utility_room_esp8266_signal_level
+    - light.kitchen_cabinets
 
 living_room:
   name: Living Room
@@ -61,7 +62,7 @@ bedroom_2:
   name: Guest bedroom
   view: yes
   entities:
-    - light.guest_bedroom_light
+    - light.guest_bedroom
 
 bedroom_3:
   name: Study
@@ -110,8 +111,17 @@ outside:
   entities:
     - switch.nexa_pir_front
     - group.climate
-    - light.front_outdoor_floodlights
+    - group.outside_lights
+    - sensor.driveway_floodlights_signal_level
+    - sensor.front_outdoor_floodlights_signal_level
     - camera.iss
+
+outside_lights:
+  name: Outside Lights
+  view: no
+  entities:
+    - light.front_outdoor_floodlights
+    - light.driveway_floodlights
 
 climate:
   name: Climate
@@ -144,7 +154,7 @@ garage:
   view: yes
   entities:
     - sensor.garage_temperature
-    - sensor.rack_temperature
+    - sensor.carport_temperature
     - sensor.garage_esp8266_signal_level
     - light.garage_lights
 
@@ -167,3 +177,8 @@ bedside_lights:
   name: Bedside Lights
   entities:
     - light.kyles_bedside
+
+lightswitch_relays:
+  name: Lightswitch Relays
+  entities:
+    - switch.master_bedroom_lightswitch_relay
