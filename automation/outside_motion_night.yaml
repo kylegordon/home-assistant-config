@@ -8,6 +8,9 @@ condition:
     entity_id: sun.sun
     state: "below_horizon"
 action:
-  service: light.turn_on
-  entity_id: light.front_outdoor_floodlights
+  - service: light.turn_on
+    entity_id: light.front_outdoor_floodlights
+  - service: light.turn_on
+    entity_id: light.driveway_floodlights
+  
 

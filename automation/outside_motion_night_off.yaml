@@ -4,8 +4,10 @@ trigger:
   entity_id: switch.nexa_pir_front
   to: 'off'
   for:
-    seconds: 30
+    seconds: 300
 action:
-  service: light.turn_off
-  entity_id: light.front_outdoor_floodlights
+  - service: light.turn_off
+    entity_id: light.front_outdoor_floodlights
+  - service: light.turn_off
+    entity_id: light.driveway_floodlights
 
