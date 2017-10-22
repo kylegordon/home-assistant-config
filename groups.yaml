@@ -109,7 +109,8 @@ outside:
   name: Outside
   view: yes
   entities:
-    - switch.nexa_pir_front
+    - binary_sensor.outside_front_motion
+    - binary_sensor.outside_rear_motion
     - group.climate
     - group.outside_lights
     - sensor.driveway_floodlights_signal_level
@@ -182,3 +183,4 @@ lightswitch_relays:
   name: Lightswitch Relays
   entities:
     - switch.master_bedroom_lightswitch_relay
+    - switch.guest_bedroom_lightswitch_relay
