@@ -1,0 +1,22 @@
+alias: "Media stopped at night"
+trigger:
+  - platform: state
+    entity_id: media_player.living_room_kodi
+    to: "off"
+  - platform: state
+    entity_id: media_player.living_room_kodi
+    to: "idle"
+condition:
+  - condition: sun
+    after: sunset
+    after_offset: "-1:30:00"
+action:
+  - service: light.turn_on
+    data:
+      entity_id: 
+        - light.kitchen_cabinets
+      brightness: 255 
+      color_temp: 233 
+      rgb_color: [255,255,255]
+      transition: 10
+

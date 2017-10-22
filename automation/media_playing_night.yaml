@@ -1,0 +1,21 @@
+alias: "Media playing at night"
+trigger:
+  - platform: state
+    entity_id: media_player.kodi_living_room
+    from: "idle"
+    to: "playing"
+  - platform: state
+    entity_id: media_player.kodi_living_room
+    from: "paused"
+    to: "playing"
+condition:
+  - condition: sun
+    after: sunset
+    after_offset: "-1:30:00"
+action:
+  - service: light.turn_off
+    data:
+      entity_id: 
+        - light.kitchen_cabinets
+      transition: 10
+
