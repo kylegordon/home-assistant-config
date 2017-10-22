@@ -1,10 +1,15 @@
 alias: Front outdoor lights off
 trigger:
-  platform: state
-  entity_id: switch.nexa_pir_front
-  to: 'off'
-  for:
-    seconds: 300
+  - platform: state
+    entity_id: binary_sensor.outside_front_motion
+    to: 'off'
+    for:
+      seconds: 1800
+  - platform: state
+    entity_id: binary_sensor.outside_rear_motion
+    to: 'off'
+    for:
+      seconds: 1800
 action:
   - service: light.turn_off
     entity_id: light.front_outdoor_floodlights

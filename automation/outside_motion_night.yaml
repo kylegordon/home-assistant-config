@@ -1,8 +1,11 @@
 alias: Front outdoor lights on
 trigger:
-  platform: state
-  entity_id: switch.nexa_pir_front
-  to: 'on'
+  - platform: state
+    entity_id: binary_sensor.outside_front_motion
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.outside_rear_motion
+    to: 'on'
 condition:
   - condition: state
     entity_id: sun.sun
