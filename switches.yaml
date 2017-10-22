@@ -1,8 +1,10 @@
 - platform: rfxtrx
   automatic_add: True
-  devices:
-    0b11000000b82b560a000060:
-      name: Nexa PIR front
+#  devices:
+#    0b11000000b82b560a000060:
+#      name: Nexa PIR front
+#    0b1100d800b8196e0a010f70:
+#      name: Nexa PIR rear
 - platform: broadlink
   host: 172.24.32.40
   mac: 'b4:43:0d:f9:19:b9'
@@ -43,7 +45,7 @@
   payload_off: "OFF"
 
 - platform: mqtt
-  name: "Sonoff Lightswitch 2 Relay"
+  name: "Guest Bedroom Lightswitch Relay"
   state_topic: "devices/60019485412a/relay/relayState"
   command_topic: "devices/60019485412a/relay/relayState/set"
   payload_on: "ON"
