@@ -6,3 +6,8 @@
 
 - platform: rfxtrx
   automatic_add: True
+  devices:
+    0b1100d800b8196e0a010f70:
+      name: Outside Rear Motion
+    0b11000000b82b560a000060:
+      name: Outside Front Motion
