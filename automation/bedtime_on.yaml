@@ -1,4 +1,4 @@
-alias: "Bedtime"
+alias: "Bedtime lights on"
 trigger:
   - platform: time
     at: '21:00:00'
