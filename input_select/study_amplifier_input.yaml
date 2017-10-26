@@ -1,0 +1,6 @@
+name: Study Amplifier Input
+options:
+ - DS
+ - PC
+ - Standby
+initial: DS

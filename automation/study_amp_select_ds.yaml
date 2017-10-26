@@ -1,0 +1,12 @@
+alias: "Study amp: select DS input"
+
+trigger:
+  platform: state
+  entity_id: input_select.study_amplifier_input
+  to: "DS"
+
+action:
+  service: broadlink.send_packet_172_24_32_41
+  data:
+    packet:
+      - "JgCqAAoYCxgJPAk9ChkJGQk9ChkJPAk9ChgKPAoZCRoJGQkABcAKGAoZCTwJPQoZCT0KGAk8CRoIGwg9ChkJPQo7CT0KAAV6ChgKGQk9CjsIGwgaCT0KGQk8CzsIGgk9ChkJGQkaCQAFwAoYChkJOww7CBsIPQoZCT0KGAoZCTwJGgg+CT0KOwgABXsKGQkaCD4JPAoZCRoJPAgaCT0JPQoZCTwJGggaCRoIAA0FAAAAAAAAAAAAAAAAAAA="

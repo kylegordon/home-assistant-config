@@ -73,6 +73,7 @@ bedroom_3:
     - switch.study_amplifier_ds
     - switch.study_amplifier_pc
     - switch.study_volume
+    - input_select.study_amplifier_input
     - light.study
     - sensor.study_temperature
     - sensor.study_humidity

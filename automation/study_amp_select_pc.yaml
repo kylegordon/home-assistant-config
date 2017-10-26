@@ -1,0 +1,13 @@
+alias: "Study amp: select PC input"
+
+trigger:
+  platform: state
+  entity_id: input_select.study_amplifier_input
+  to: "PC"
+
+action:
+  service: broadlink.send_packet_172_24_32_41
+  data:
+    packet:
+      - "JgDMAAoZCRoIPQo8CxgJPAk9ChkJGQk9ChkJPAgbCBoJGggABcAKGQgbCD0KPAoZCRoJGQk8CT0KGQk9ChgJPAk9CjwKAAV6ChkKGAk8CT0KGQk9CjsJGggaCT0KGQk8CxgJGgkZCQAFwAoZChgJPAo8ChkKGAkaCT0KOwkaCD0KGQk9CjsJPQoABXoKGAoZCT0KOwkaCD0LOwoZCRoJPAgaCT0KGQkZChkJAAXAChgKGQk9CjsJGggaCRoIPgo8ChgKOwoZCD4KPAo7CQANBQAAAAAAAAAAAAAAAA=="
+
