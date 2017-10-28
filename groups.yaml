@@ -173,6 +173,9 @@ people:
     - sensor.charlotte_work_travel
     - sensor.kyle_to_home
     - sensor.kyle_work_travel
+    - group.people_status
+    - input_select.kyle_status_dropdown
+    - input_select.charlotte_status_dropdown
 
 ## Item groups ##
 bedside_lights:
@@ -185,3 +188,9 @@ lightswitch_relays:
   entities:
     - switch.master_bedroom_lightswitch_relay
     - switch.guest_bedroom_lightswitch_relay
+
+people_status:
+  name: People Status
+  entities:
+    - sensor.kyle_status
+    - sensor.charlotte_status

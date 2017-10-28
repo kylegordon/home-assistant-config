@@ -1,0 +1,16 @@
+alias: Mark Kyle as away
+trigger:
+  - platform: state
+    entity_id: input_select.kyle_status_dropdown
+    to: 'Just Left'
+    for:
+      minutes: 10
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.kyle_status_dropdown
+      option: Away
+  - service: notify.email_kyle
+    data:
+      message: "Kyle is now marked as away"
+

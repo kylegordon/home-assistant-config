@@ -1,0 +1,17 @@
+alias: Mark Kyle as home
+trigger:
+  - platform: state
+    entity_id: input_select.kyle_status_dropdown
+    to: 'Just Arrived'
+    for:
+      minutes: 10
+  - platform: state
+    entity_id: input_select.kyle_status_dropdown
+    from: 'Just Left'
+    to: 'Just Arrived'
+condition:
+action:
+  - service: input_select.select_option
+    data:
+      entity_id: input_select.kyle_status_dropdown
+      option: Home

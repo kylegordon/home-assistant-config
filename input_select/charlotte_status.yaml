@@ -1,6 +1,0 @@
-name: Charlotte Status
-options:
- - driving
- - standby
- - sleeping
-initial: standby

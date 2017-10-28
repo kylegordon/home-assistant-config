@@ -1,0 +1,12 @@
+alias: Mark Kyle as extended away
+trigger:
+  - platform: state
+    entity_id: input_select.kyle_status_dropdown
+    to: 'Away'
+    for:
+      hours: 24
+action:
+  - service: input_select.select_option
+    data_template:
+      entity_id: input_select.kyle_status_dropdown
+      option: Extended Away

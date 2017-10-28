@@ -26,6 +26,20 @@
   origin: device_tracker.charlotte_thea
   destination: zone.home
 
+- platform: template
+  sensors:
+    kyle_status:
+      value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
+      friendly_name: 'Kyle'
+      entity_id: input_select.kyle_status_dropdown
+
+- platform: template
+  sensors:
+    charlotte_status:
+      value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
+      friendly_name: 'Charlotte'
+      entity_id: input_select.charlotte_status_dropdown
+
 ## Weather ##
 - platform: yr
 

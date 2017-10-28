@@ -1,6 +1,0 @@
-name: Kyle Status
-options:
- - driving
- - standby
- - sleeping
-initial: standby
