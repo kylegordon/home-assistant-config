@@ -6,7 +6,7 @@ trigger:
     for:
       minutes: 10
   - platform: state
-    entity_id: input_select.charlotte.status_dropdown
+    entity_id: input_select.charlotte_status_dropdown
     to: 'Just Left'
     for:
       minutes: 10
