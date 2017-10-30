@@ -5,8 +5,19 @@ trigger:
     to: 'Away'
     for:
       hours: 24
+  - platform: state
+    entity_id: input_select.charlotte_status_dropdown
+    to: 'Away'
+    for:
+      hours: 24
 action:
   - service: input_select.select_option
     data_template:
-      entity_id: input_select.kyle_status_dropdown
+      entity_id: >
+        {% if trigger.entity_id == 'device_tracker.bagpuss_a0001' %}
+          input_select.kyle_status_dropdown
+        {% else %}
+          input_select.charlotte_status_dropdown
+        {% endif %}
       option: Extended Away
+
