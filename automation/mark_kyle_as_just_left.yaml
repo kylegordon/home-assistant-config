@@ -4,12 +4,22 @@ trigger:
     entity_id: device_tracker.bagpuss_a0001
     from: 'home'
     to: 'not_home'
+  - platform: state
+    entity_id: device_Tracker.charlotte_thea
+    from: 'home'
+    to: 'not_home'
 action:
   - service: input_select.select_option
-    data:
-      entity_id: input_select.kyle_status_dropdown
+    data_template:
+      entity_id: >
+        {% if trigger.entity_id == 'device_tracker.bagpuss_a0001' %}
+          input_select.kyle_status_dropdown
+        {% else %}
+          input_select.charlotte_status_dropdown
+        {% endif %}
       option: Just Left
+
   - service: notify.email_kyle
     data:
-      message: "Kyle has just left"
+      message: "Person has just left"
 
