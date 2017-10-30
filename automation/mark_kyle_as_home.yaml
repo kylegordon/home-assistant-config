@@ -6,12 +6,27 @@ trigger:
     for:
       minutes: 10
   - platform: state
+    entity_id: input_select.charlotte_status_dropdown
+    to: 'Just Arrived'
+    for:
+      minutes: 10
+  - platform: state
     entity_id: input_select.kyle_status_dropdown
+    from: 'Just Left'
+    to: 'Just Arrived'
+  - platform: state
+    entity_id: input_select.charlotte_status_dropdown
     from: 'Just Left'
     to: 'Just Arrived'
 condition:
 action:
   - service: input_select.select_option
-    data:
-      entity_id: input_select.kyle_status_dropdown
+    data_template:
+      entity_id: >
+        {% if trigger.entity_id == 'device_tracker.bagpuss_a0001' %}
+          input_select.kyle_status_dropdown
+        {% else %}
+          input_select.charlotte_status_dropdown
+        {% endif %}
       option: Home
+
