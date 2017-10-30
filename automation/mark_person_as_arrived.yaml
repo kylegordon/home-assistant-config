@@ -1,4 +1,4 @@
-alias: Mark Kyle as just arrived
+alias: Mark Person as just arrived
 trigger:
   - platform: state
     entity_id: device_tracker.bagpuss_a0001

@@ -1,4 +1,4 @@
-alias: Mark Kyle as home
+alias: Mark Person as home
 trigger:
   - platform: state
     entity_id: input_select.kyle_status_dropdown

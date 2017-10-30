@@ -1,4 +1,4 @@
-alias: Mark Kyle as away
+alias: Mark Person as away
 trigger:
   - platform: state
     entity_id: input_select.kyle_status_dropdown

@@ -1,4 +1,4 @@
-alias: Mark Kyle as just left
+alias: Mark Person as just left
 trigger:
   - platform: state
     entity_id: device_tracker.bagpuss_a0001
