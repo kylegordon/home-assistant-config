@@ -176,6 +176,9 @@ people:
     - group.people_status
     - input_select.kyle_status_dropdown
     - input_select.charlotte_status_dropdown
+    - device_tracker.bagpuss_a0001
+    - device_tracker.charlotte_thea
+    - device_tracker.ronnie_thea
 
 ## Item groups ##
 bedside_lights:
