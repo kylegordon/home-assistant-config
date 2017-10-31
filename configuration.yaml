@@ -12,6 +12,28 @@ homeassistant:
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
+  customize:
+    sensor.garage_pir_sound:
+      friendly_name: Garage Motion
+    sensor.weather_station_rainfall:
+      icon: mdi:weather-rainy
+    sensor.weather_station_wind_velocity:
+        icon: mdi:weather-windy-variant
+    sensor.weather_station_wind_maximum:
+        icon: mdi:weather-windy
+    sensor.weather_station_relative_humidity:
+        icon: mdi:water-percent
+    sensor.house_average_humidity_mean:
+        icon: mdi:water-percent
+    switch.living_room_television:
+        icon: mdi:television
+    light.kyles_bedside:
+        icon: mdi:hotel
+    group.bedside_lights:
+        icon: mdi:hotel
+    sensor.kyle_status:
+        entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg
+
 
 # Enables the frontend
 frontend:
@@ -20,11 +42,16 @@ frontend:
 config: 
 
 recorder:
-  purge_days: 8
+  db_url: !secret db_url
+  purge_interval: 1
+  purge_keep_days: 8
 
 http:
   # Uncomment this to add a password (recommended!)
-  # api_password: PASSWORD
+  api_password: !secret api_password
+  trusted_networks: 
+      - 172.24.32.0/24
+      - 10.8.0.18/32
 
 # Checks for available updates
 updater:
@@ -41,6 +68,8 @@ rfxtrx:
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
+
+wake_on_lan:
 
 notify:
   - name: twitter_thegordonhome
@@ -77,6 +106,12 @@ logbook:
       - sensor
       - media_player
 
+logger:
+  default: warn
+#  logs:
+#    homeassistant.components.device_tracker: critical
+
+
 # Track the sun
 sun:
 
@@ -104,6 +139,7 @@ device_tracker: !include device_trackers.yaml
 group: !include groups.yaml
 camera: !include cameras.yaml
 zone: !include zones/places.yaml
+shell_command: !include shell_commands.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
