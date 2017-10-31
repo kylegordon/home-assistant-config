@@ -15,4 +15,4 @@ action:
       {% elif is_state('sensor.car_driving_charlotte', 'Civic')%}
         owntracks/bruh2/civic
       {% endif %}
-    payload: '{"_type":"location","lat":{{states.device_tracker.charlotte_a0001.attributes.latitude}},"lon":{{ states.device_tracker.charlotte_a0001.attributes.longitude}},"tst":1234,"acc":{{states.device_tracker.charlotte_a0001.attributes.gps_accuracy}}}'
+    payload: '{"_type":"location","lat":{{states.device_tracker.charlotte_thea.attributes.latitude}},"lon":{{ states.device_tracker.charlotte_thea.attributes.longitude}},"tst":1234,"acc":{{states.device_tracker.charlotte_thea.attributes.gps_accuracy}}}'
