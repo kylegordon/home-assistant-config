@@ -1,12 +1,12 @@
 alias: "Media playing at night"
 trigger:
   - platform: state
-    entity_id: media_player.kodi_living_room
-    from: "idle"
+    entity_id: media_player.living_room_kodi
+    #from: "idle"
     to: "playing"
   - platform: state
-    entity_id: media_player.kodi_living_room
-    from: "paused"
+    entity_id: media_player.living_room_kodi
+    #from: "paused"
     to: "playing"
 condition:
   - condition: sun
@@ -17,5 +17,4 @@ action:
     data:
       entity_id: 
         - light.kitchen_cabinets
-      transition: 10
-
+      transition: 5

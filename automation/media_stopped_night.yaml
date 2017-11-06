@@ -6,6 +6,9 @@ trigger:
   - platform: state
     entity_id: media_player.living_room_kodi
     to: "idle"
+  - platform: state
+    entity_id: media_player.living_room_kodi
+    to: "paused"
 condition:
   - condition: sun
     after: sunset
@@ -16,7 +19,5 @@ action:
       entity_id: 
         - light.kitchen_cabinets
       brightness: 255 
-      color_temp: 233 
       rgb_color: [255,255,255]
-      transition: 10
-
+      transition: 5
