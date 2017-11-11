@@ -1,11 +1,11 @@
 alias: "Alarm Set Sleeping"
 trigger:
   - platform: state
-    entity_id: input_select.kyle_status
-    to: "sleeping"
+    entity_id: sensor.kyle_status
+    to: "Sleeping"
   - platform: state
-    entity_id: input_select.charlotte_status
-    to: "sleeping"
+    entity_id: sensor.charlotte_status
+    to: "Sleeping"
 condition:
   - condition: state
     entity_id: input_select.company
@@ -15,7 +15,7 @@ action:
     data_template:
       name: EVENT
       message: "Sleeping. Setting alarm."
-  - service: notify.notify
+  - service: notify.email_kyle
     data:
       message: "Sleeping. Setting alarm."
   - service: script.alarm_home

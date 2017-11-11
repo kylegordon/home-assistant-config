@@ -9,7 +9,7 @@ action:
     data_template:
       name: EVENT
       message: "Away mode. Setting alarm."
-  - service: notify.notify
+  - service: notify.email_kyle
     data:
       message: "Away mode. Setting alarm."
   - service: alarm_control_panel.alarm_arm_away

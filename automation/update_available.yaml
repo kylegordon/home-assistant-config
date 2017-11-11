@@ -3,6 +3,6 @@ trigger:
   platform: state
   entity_id: updater.updater
 action:
-  service: notify.notify
+  service: notify.email_kyle
   data:
     message: 'Update for Home Assistant is available.'
