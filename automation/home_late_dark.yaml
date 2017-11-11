@@ -11,7 +11,7 @@ condition:
   - condition: time
     after: '22:00:00'
   - condition: template
-    value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
+    value_template: "{% if states('sensor.kyle_status') != 'sleeping' and states('sensor.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
 action:
   - service: logbook.log
     data_template:
