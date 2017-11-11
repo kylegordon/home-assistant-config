@@ -5,7 +5,7 @@ trigger:
     from: 'home'
     to: 'not_home'
   - platform: state
-    entity_id: device_Tracker.charlotte_thea
+    entity_id: device_tracker.charlotte_thea
     from: 'home'
     to: 'not_home'
 action:

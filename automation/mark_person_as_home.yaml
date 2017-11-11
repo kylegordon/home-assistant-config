@@ -23,7 +23,7 @@ action:
   - service: input_select.select_option
     data_template:
       entity_id: >
-        {% if trigger.entity_id == 'device_tracker.kyle_status_dropdown' %}
+        {% if trigger.entity_id == 'input_select.kyle_status_dropdown' %}
           input_select.kyle_status_dropdown
         {% else %}
           input_select.charlotte_status_dropdown
