@@ -1,0 +1,14 @@
+alias: Guest Bedroom light toggle
+trigger:
+  platform: mqtt
+  topic: devices/60019485412a/button/event
+  # Optional
+  payload: 'SINGLE'
+
+action:
+  - service: light.toggle
+    entity_id: light.study
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Toggling study light"
