@@ -5,9 +5,11 @@ trigger:
     to: "off"
   - platform: state
     entity_id: media_player.living_room_kodi
+    from: "playing"
     to: "idle"
   - platform: state
     entity_id: media_player.living_room_kodi
+    from: "playing"
     to: "paused"
 condition:
   - condition: sun
