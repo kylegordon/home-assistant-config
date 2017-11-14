@@ -29,14 +29,21 @@
   command_topic: "devices/5ccf7fe9b845/relay01/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
+  availability_topic: "devices/5ccf7fe9b845/online"
+  payload_available: "true"
+  payload_not_available: "false"
+
 
 # https://github.com/enc-X/sonoff-homie
 - platform: mqtt
-  name: "Front Outdoor Floodlights"
+  name: "Front Door Floodlights"
   state_topic: "devices/60019416854d/relay01/relayState"
   command_topic: "devices/60019416854d/relay01/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
+  availability_topic: "devices/60019416854d/online"
+  payload_available: "true"
+  payload_not_available: "false"
 
 - platform: mqtt
   name: "Driveway Floodlights"
@@ -44,13 +51,19 @@
   command_topic: "devices/5ccf7faf630b/relay01/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
+  availability_topic: "devices/5ccf7faf630b/online"
+  payload_available: "true"
+  payload_not_available: "false"
 
 - platform: mqtt
-  name: "Sonoff switch 5ccf7faf5486"
+  name: "Back Floodlights"
   state_topic: "devices/5ccf7faf5486/relay01/relayState"
   command_topic: "devices/5ccf7faf5486/relay01/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
+  availability_topic: "devices/5ccf7faf5486/online"
+  payload_available: "true"
+  payload_not_available: "false"
 
 - platform: mqtt_json
   name: "Kitchen Cabinets"
@@ -65,3 +78,7 @@
   # white_value: true
   # effect:
   # effect_list: 
+  availability_topic: "devices/a020a61aafea/online"
+  payload_available: "true"
+  payload_not_available: "false"
+

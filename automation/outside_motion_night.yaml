@@ -12,8 +12,9 @@ condition:
     state: "below_horizon"
 action:
   - service: light.turn_on
-    entity_id: light.front_outdoor_floodlights
+    entity_id: light.front_door_floodlights
   - service: light.turn_on
     entity_id: light.driveway_floodlights
-  
+  - service: light.turn_on
+    entity_id: light.back_floodlights
 

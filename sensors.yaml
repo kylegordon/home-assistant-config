@@ -119,6 +119,9 @@
   state_topic: "devices/5ccf7f115d5f/Temp0/degrees"
   name: Carport temperature
   unit_of_measurement: "°C"
+  availability_topic: "devices/5ccf7f115d5f/$online"
+  payload_available: "true"
+  payload_not_available: "false"
 - platform: mqtt
   state_topic: "devices/5ccf7f115d5f/Temp1/degrees"
   name: Garage temperature
@@ -134,6 +137,9 @@
   state_topic: "devices/18fe34d5323e/Temp1/degrees"
   name: Kitchen temperature
   unit_of_measurement: "°C"
+  availability_topic: "devices/18fe34d5323e/$online"
+  payload_available: "true"
+  payload_not_available: "false"
 #- platform: mqtt
    # Middle of string
 #  state_topic: "devices/18fe34d5323e/Temp0/degrees"
@@ -144,25 +150,37 @@
 #  state_topic: "devices/18fe34d5323e/Temp2/degrees"
 #  name: Utility room temperature
 #  unit_of_measurement: "°C"
-  
+
+
 - platform: mqtt
   state_topic: "devices/18fe34d5323e/$stats/signal"
   name: "Kitchen ESP8266 Signal Level"
   unit_of_measurement: "%"
+
 - platform: mqtt
   state_topic: "devices/5ccf7faf630b/$stats/signal"
   name: "Driveway Floodlights Signal Level"
   unit_of_measurement: "%" 
+
 - platform: mqtt
   state_topic: "devices/60019416854d/$stats/signal"
   name: "Front Outdoor Floodlights Signal Level"
   unit_of_measurement: "%" 
+
+- platform: mqtt
+  state_topic: "devices/5ccf7faf5486/$stats/signal"
+  name: "Back floodlights Signal Level"
+  unit_of_measurement: "%" 
+
 
 # Study #
 - platform: mqtt
   state_topic: "devices/5ccf7fd9283a/temperature/degrees"    
   name: Study temperature
   unit_of_measurement: "°C"
+  availability_topic: "devices/5ccf7fd9283a/$online"
+  payload_available: "true"
+  payload_not_available: "false"
 - platform: mqtt
   state_topic: "devices/5ccf7fd9283a/humidity/percent"
   name: Study humidity
@@ -177,6 +195,9 @@
   state_topic: "devices/5ccf7f115e3f/temperature/degrees"    
   name: Hallway temperature
   unit_of_measurement: "°C"
+  availability_topic: "devices/5ccf7115e3f/$online"
+  payload_available: "true"
+  payload_not_available: "false"
 - platform: mqtt
   state_topic: "devices/5ccf7f115e3f/humidity/percent"
   name: Hallway humidity
@@ -191,6 +212,9 @@
   state_topic: "devices/5ccf7fd9262d/temperature/degrees"
   name: Utility room temperature
   unit_of_measurement: "°C"
+  availability_topic: "devices/5ccf7fd9262d/$online"
+  payload_available: "true"
+  payload_not_available: "false"
 - platform: mqtt
   state_topic: "devices/5ccf7fd9262d/humidity/percent"    
   name: Utility room humidity

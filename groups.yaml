@@ -70,8 +70,6 @@ bedroom_3:
   entities:
     - media_player.study_ds
     - switch.study_amp
-    - switch.study_amplifier_ds
-    - switch.study_amplifier_pc
     - switch.study_volume
     - input_select.study_amplifier_input
     - light.study
@@ -115,15 +113,17 @@ outside:
     - group.climate
     - group.outside_lights
     - sensor.driveway_floodlights_signal_level
-    - sensor.front_outdoor_floodlights_signal_level
+    - sensor.front_door_floodlights_signal_level
+    - sensor.back_floodlights_signal_level
     - camera.iss
 
 outside_lights:
   name: Outside Lights
   view: no
   entities:
-    - light.front_outdoor_floodlights
+    - light.front_door_floodlights
     - light.driveway_floodlights
+    - light.back_floodlights
 
 climate:
   name: Climate
