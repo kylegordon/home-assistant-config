@@ -11,3 +11,27 @@
       name: Outside Rear Motion
     0b11000000b82b560a000060:
       name: Outside Front Motion
+
+- platform: template
+  sensors:
+    device_critical:
+      friendly_name: 'Device Critical'
+      value_template: >-
+                        {{ is_state('sensor.hallway_temperature', 'unavailable')
+                        or is_state('sensor.kitchen_temperature', 'unavailable')
+                        or is_state('sensor.utility_room_temperature', 'unavailable')
+                        or is_state('sensor.study_temperature', 'unavailable')
+                        or is_state('sensor.garage_temperature', 'unavailable')
+                        or is_state('switch.driveway_floodlights', 'unavailable')
+                        or is_state('switch.front_door_floodlights', 'unavailable')
+                        or is_state('switch.back_floodlights', 'unavailable')
+                        or is_state('switch.garage_lights', 'unavailable')
+                        or is_state('switch.guest_bedroom_lightswitch_relay', 'unavailable')
+                        or is_state('switch.master_bedroom_lightswitch_relay', 'unavailable')
+                        or is_state('light.study', 'unavailable')
+                        or is_state('light.guest_bedroom', 'unavailable')
+                        or is_state('light.master_bedroom', 'unavailable')
+                        or is_state('light.craft_room', 'unavailable')
+                        or is_state('light.hall_bedrooms', 'unavailable')
+                        or is_state('light.hall_entrance', 'unavailable')
+                        or is_state('light.uplighter', 'unavailable')   }}

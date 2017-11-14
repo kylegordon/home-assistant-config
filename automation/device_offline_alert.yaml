@@ -1,0 +1,24 @@
+alias: Alert when a critical device goes offline
+trigger:
+  - platform: state
+    entity_id: sensor.device_critical
+    from: 'Online'
+    to: 'Offline'
+    for:
+      minutes: 2
+condition:
+  condition: and
+  conditions:
+    - condition: template
+      value_template: >
+        {% if states.automation.alert_when_a_critical_device_goes_offline.last_triggered is not none %}
+          {% if as_timestamp(now()) | int   -  as_timestamp(states.automation.alert_when_a_critical_device_goes_offline.attributes.last_triggered) | int > 3600 %} true {% else %} false
+          {% endif %}
+        {% else %}
+        false
+        {% endif %}
+action:
+  - service: notify.email_kyle
+    data_template:
+      message: '{{trigger.to_state.attributes.friendly_name}} has gone offline. Please check the status of this device as some features may stop functioning.'
+      title: Device Alert
