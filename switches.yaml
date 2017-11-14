@@ -34,6 +34,9 @@
   command_topic: "devices/60019485376d/relay/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
+  availability_topic: "devices/60019485376d/$online"
+  payload_available: "true"
+  payload_not_available: "false"
 
 - platform: mqtt
   name: "Guest Bedroom Lightswitch Relay"
@@ -41,4 +44,7 @@
   command_topic: "devices/60019485412a/relay/relayState/set"
   payload_on: "ON"
   payload_off: "OFF"
+  availability_topic: "devices/60019485412a/$online"
+  payload_available: "true"
+  payload_not_available: "false"
 
