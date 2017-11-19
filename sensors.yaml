@@ -164,7 +164,7 @@
 
 - platform: mqtt
   state_topic: "devices/60019416854d/$stats/signal"
-  name: "Front Outdoor Floodlights Signal Level"
+  name: "Front Door Floodlights Signal Level"
   unit_of_measurement: "%" 
 
 - platform: mqtt
