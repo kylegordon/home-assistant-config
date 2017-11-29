@@ -1,0 +1,14 @@
+alias: "Home Day Time"
+trigger:
+  - platform: state
+    entity_id: group.all_devices
+    from: "not_home"
+    to: "home"
+condition:
+  - condition: state
+    entity_id: sun.sun
+    state: "above_horizon"
+  - condition: template
+    value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
+action:
+  - service: alarm_control_panel.alarm_disarm
