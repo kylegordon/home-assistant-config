@@ -2,10 +2,10 @@ sequence:
 - service: logbook.log
   data_template:
     name: EVENT
-    message: "Welcome! Turning everything on."
+    message: "Welcome! Disarming the alarm."
 
 - service: alarm_control_panel.alarm_disarm
 
 - service: notify.email_kyle
   data:
-    message: "Welcome. It is daytime so keeping everything off!"
+    message: "Welcome! Disarming the alarm."
