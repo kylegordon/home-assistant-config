@@ -14,7 +14,7 @@ action:
       entity_id: >
         {% if trigger.entity_id == 'device_tracker.bagpuss_a0001' %}
           input_select.kyle_status_dropdown
-        {% else %}
+        {% elif trigger.entity_id == 'device_tracker.charlotte_thea' %}
           input_select.charlotte_status_dropdown
         {% endif %}
       option: Just Left
