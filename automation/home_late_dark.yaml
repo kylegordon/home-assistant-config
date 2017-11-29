@@ -33,3 +33,4 @@ action:
     data:
       entity_id: group.outside_lights
 
+  - service: alarm_control_panel.alarm_disarm
