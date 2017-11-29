@@ -50,6 +50,9 @@ bedroom_1:
   view: yes
   entities:
     - group.bedroom_1_lights
+    - binary_sensor.bed_occupancy_1
+    - binary_sensor.bed_occupancy_2
+    - sensor.bed_sensor_signal_level
 
 bedroom_1_lights:
   name: Bedroom lights

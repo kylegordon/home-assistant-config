@@ -112,7 +112,23 @@
   value_template: "{{ value_json.rain }}"
 
 
+# Master Bedroom #
+- platform: mqtt
+  state_topic: "devices/5ccf7fd8d915/FSR1/voltage"
+  hidden: true
+  name: "Bed Sensor 1"
 
+- platform: mqtt
+  state_topic: "devices/5ccf7fd8d915/FSR2/voltage"
+  hidden: true
+  name: "Bed Sensor 2"
+
+- platform: mqtt
+  state_topic: "devices/5ccf7fd8d915/$stats/signal"
+  name: "Bed Sensor Signal Level"
+  availability_topic: "devices/5ccf7fd8d915/$online"
+  payload_available: "true"
+  payload_not_available: "false"
 
 # Garage # 
 - platform: mqtt
@@ -229,8 +245,6 @@
   name: "Kyle Oneplus One Battery"
   unit_of_measurement: "%"
   value_template: "{{ value_json.batt }}"
-
-
 
 - platform: nut
   name: Loft UPS
