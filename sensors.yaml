@@ -146,6 +146,10 @@
   state_topic: "devices/5ccf7f115d5f/$stats/signal"
   name: "Garage ESP8266 Signal Level"
   unit_of_measurement: "%"
+- platform: mqtt
+  state_topic: "devices/5ccf7fe9b845/$stats/signal"
+  name: "Garage Lights Signal Level"
+  unit_of_measurement: "%"
 
 # Kitchen #
 - platform: mqtt

@@ -177,6 +177,7 @@ garage:
     - sensor.garage_temperature
     - sensor.carport_temperature
     - sensor.garage_esp8266_signal_level
+    - sensor.garage_lights_signal_level
     - light.garage_lights
 
 people:
