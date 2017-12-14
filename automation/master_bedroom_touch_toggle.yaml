@@ -6,6 +6,8 @@ trigger:
   payload: 'SINGLE'
 
 action:
+  - service: switch.turn_on
+    entity_id: switch.master_bedroom_lightswitch_relay
   - service: light.toggle
     entity_id: light.master_bedroom
   - service: logbook.log
