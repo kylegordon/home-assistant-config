@@ -1,17 +1,16 @@
 ## Rooms ##
 
-#default_view:
-#  view: yes
-#  entities:
-#    - group.hall
-#    - group.people
-#    - sensor.dark_sky_temperature
-#    - sensor.dark_sky_precip_probability
-#    - group.all_lights
-#    - group.all_switches
-#    - sensor.electricity_energy_usage
-#    - input_select.kyle_status
-#    - input_select.charlotte_status
+default_view:
+  view: yes
+  entities:
+    - group.people_status
+    - sensor.dark_sky_temperature
+    - sensor.dark_sky_precip_probability
+    - sensor.electricity_energy_usage
+    - sensor.house_average_mean
+    - sensor.house_average_humidity_mean
+    - input_select.kyle_status
+    - input_select.charlotte_status
 
 kitchen:
   name: Kitchen
@@ -215,3 +214,10 @@ people_status:
   entities:
     - sensor.kyle_status
     - sensor.charlotte_status
+
+other:
+  name: Other
+  entities:
+    - group.all_scripts
+    - group.all_automations
+    - group.lightswitch_relays
