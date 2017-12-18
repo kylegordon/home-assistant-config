@@ -190,7 +190,6 @@ people:
     - sensor.charlotte_work_travel
     - sensor.kyle_to_home
     - sensor.kyle_work_travel
-    - group.people_status
     - input_select.kyle_status_dropdown
     - input_select.charlotte_status_dropdown
     - device_tracker.bagpuss_a0001
@@ -217,6 +216,7 @@ people_status:
 
 other:
   name: Other
+  view: yes
   entities:
     - group.all_scripts
     - group.all_automations
