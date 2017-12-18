@@ -92,9 +92,7 @@ hall:
   name: Hall lights
   #view: yes
   entities:
-      #- sensor.room_sensor_5_temperature
-      #- sensor.room_sensor_5_humidity
-    - light.front_hall
+    - light.front_door
     - light.hall_bedrooms
     - light.hall_entrance
 
