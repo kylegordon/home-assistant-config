@@ -77,6 +77,21 @@
     115a0100e452000000046600006462cb3e79:
       name: Electricity
 
+- platform: alpha_vantage
+  api_key: !secret alpha_vantage_key
+  symbols: 
+    - BTC
+    - TMO
+
+- platform: blockchain
+  addresses:
+    - !secret btc_wallet_1
+    - !secret btc_wallet_2
+    - !secret btc_wallet_3
+    - !secret btc_wallet_4
+    - !secret btc_wallet_5
+    - !secret btc_wallet_6
+
 ## MQTT ## 
 
 # Weather #

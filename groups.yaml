@@ -11,6 +11,9 @@ default_view:
     - sensor.house_average_humidity_mean
     - input_select.kyle_status
     - input_select.charlotte_status
+    - sensor.tmo
+    - sensor.btc
+    - sensor.bitcoin_balance
 
 kitchen:
   name: Kitchen
