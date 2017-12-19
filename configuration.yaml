@@ -65,6 +65,7 @@ discovery:
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
+  debug: true
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
