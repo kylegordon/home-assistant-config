@@ -11,6 +11,9 @@
       name: Outside Rear Motion
     0b11000000b82b560a000060:
       name: Outside Front Motion
+    0a1400002c22a70a010060:
+      name: Utility Room Door
+      device_class: opening
 
 - platform: template
   sensors:

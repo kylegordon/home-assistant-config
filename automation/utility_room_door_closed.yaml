@@ -1,0 +1,10 @@
+alias: Utility room light off
+trigger:
+  - platform: state
+    entity_id: binary_sensor.utility_room_door
+    to: 'off'
+    for:
+      seconds: 600
+action:
+  - service: light.turn_off
+    entity_id: light.utility_room

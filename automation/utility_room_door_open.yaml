@@ -1,0 +1,12 @@
+alias: Utility room light on
+trigger:
+  - platform: state
+    entity_id: binary_sensor.utility_room_door
+    to: 'on'
+condition:
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+action:
+  - service: light.turn_on
+    entity_id: light.utility_room
