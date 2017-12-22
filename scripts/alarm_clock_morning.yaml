@@ -12,26 +12,12 @@
     brightness: 255
     color_temp: 300
     transition: 1800
-- delay:
-    seconds: 30
 - service: light.turn_on
   data:
-    entity_id: light.hall_bedrooms
+    entity_id: group.hall
     brightness: 255
     color_temp: 300
     transition: 1800
-- delay:
-    seconds: 30
-- service: light.turn_on
-  data:
-    entity_id: light.hall_entrance
-    brightness: 255 
-    color_temp: 300 
-    transition: 1800
-- service: light.turn_on
-  data:
-    entity_id: light.front_hall
-    brightness: 255
 - delay:
     seconds: 5400
 - service: light.turn_off
