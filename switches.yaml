@@ -1,5 +1,5 @@
 - platform: rfxtrx
-  automatic_add: True
+  automatic_add: False
 #  devices:
 #    0b11000000b82b560a000060:
 #      name: Nexa PIR front

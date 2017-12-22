@@ -13,6 +13,10 @@ homeassistant:
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
   customize:
+    group.all_automations:
+      hidden: false
+    group.all_scripts:
+      hidden: false
     sensor.garage_pir_sound:
       friendly_name: Garage Motion
     sensor.weather_station_rainfall:
@@ -65,7 +69,7 @@ discovery:
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
-  debug: true
+  debug: True
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -111,6 +115,9 @@ logger:
   default: warn
   logs:
     homeassistant.components.switch.broadlink: debug
+    homeassistant.components.switch.rfxtrx: debug
+    homeassistant.components.binary_sensor.rfxtrx: debug
+    homeassistant.components.rfxtrx: debug
 
 # Track the sun
 sun:

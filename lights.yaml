@@ -1,7 +1,7 @@
 - platform: lifx
   broadcast: 172.24.32.255
 - platform: rfxtrx
-  automatic_add: True
+  automatic_add: False
   devices:
     0a140029f0dd3c0e010060:
       name: Living Room
