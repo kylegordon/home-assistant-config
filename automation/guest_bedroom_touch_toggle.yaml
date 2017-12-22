@@ -9,8 +9,8 @@ action:
   - service: switch.turn_on
     entity_id: switch.guest_bedroom_lightswitch_relay
   - service: light.toggle
-    entity_id: light.study
+    entity_id: light.guest_bedroom
   - service: logbook.log
     data_template:
       name: EVENT
-      message: "Toggling study light"
+      message: "Toggling guest room light"
