@@ -41,6 +41,7 @@ living_room:
     - switch.living_room_kodi_power_on
     - media_player.living_room_kodi
     - media_player.living_room_ds
+    - media_player.main_room
     - switch.living_room_television
     - sensor.room_sensor_3_temperature
     - sensor.room_sensor_3_humidity
