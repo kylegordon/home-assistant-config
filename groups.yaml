@@ -84,7 +84,7 @@ bedroom_3:
     - switch.study_amp
     - switch.study_volume
     - input_select.study_amplifier_input
-    - light.study
+    - light.study_light
     - sensor.study_temperature
     - sensor.study_humidity
     - sensor.study_esp8266_signal_level

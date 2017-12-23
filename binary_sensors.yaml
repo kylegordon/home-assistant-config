@@ -47,7 +47,7 @@
                         or is_state('light.front_door_floodlights', 'unavailable')
                         or is_state('light.back_floodlights', 'unavailable')
                         or is_state('light.garage_lights', 'unavailable')
-                        or is_state('light.study', 'unavailable')
+                        or is_state('light.study_light', 'unavailable')
                         or is_state('light.guest_bedroom', 'unavailable')
                         or is_state('light.master_bedroom', 'unavailable')
                         or is_state('light.craft_room', 'unavailable')
