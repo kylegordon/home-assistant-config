@@ -22,4 +22,15 @@ action:
   - service: notify.email_kyle
     data:
       message: "Person has just arrived"
+  - service: script.tweet_engine
+    data_template:
+      tweet: >
+        {{ [ 
+        "Yay! Company!",
+        "A resident has just arrived!"
+         ] | random + " http://amzn.to/2D3J8jW" }}
+
+  - service: notify.twitter_thegordonhome
+    data:
+      message: "A resident has just arrived!"
 

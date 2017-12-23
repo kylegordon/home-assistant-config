@@ -11,6 +11,14 @@ condition:
     entity_id: sun.sun
     state: "below_horizon"
 action:
+  - service: script.tweet_engine
+    data_template:
+      tweet: >
+        {{ [ 
+        "Dark outside and motion detected! Scared! Turning on my outside lights!",
+        "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
+        "Did you hear that? I can't see a thing. Turning on the outside lights"
+         ] | random + " http://amzn.to/2D3J8jW" }}
   - service: light.turn_on
     entity_id: light.front_door_floodlights
   - service: light.turn_on

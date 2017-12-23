@@ -6,6 +6,13 @@
 - service: notify.email_kyle
   data:
     message: "Good morning, sunshine!"
+- service: script.tweet_engine
+  data_template:
+    tweet: >
+      {{ [
+      "This is way early.  We need some lights on. (http://amzn.to/2DFAd9w)",
+      "Time to wake up the house with some gentle lighting. (http://amzn.to/2Bsko4x)"
+      ] | random + " #Hue #Lifx"}}
 - service: light.turn_on
   data:
     entity_id: light.master_bedroom
