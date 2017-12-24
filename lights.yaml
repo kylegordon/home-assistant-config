@@ -22,6 +22,9 @@
       name: Sideboard light
     0a14003cf0dd3c0a010060:
       name: Craft room fairy lights
+    0a14005ff0dd3c05010060:
+      # This is actually a socket/switch
+      name: Christmas Tree
 
 - platform: mqtt
   name: "Garage Lights"

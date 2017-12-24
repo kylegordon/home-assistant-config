@@ -54,6 +54,7 @@ living_room_lights:
     - light.edison_lamp
     - light.lava_lamp
     - light.sideboard_light
+    - light.christmas_tree
 
 bedroom_1:
   name: Master bedroom
