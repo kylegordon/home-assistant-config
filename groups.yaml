@@ -232,3 +232,7 @@ other:
     - group.all_scripts
     - group.all_automations
     - group.lightswitch_relays
+    - switch.energenie_1
+    - switch.energenie_2
+    - switch.energenie_3
+    - switch.energenie_4
