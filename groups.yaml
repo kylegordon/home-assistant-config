@@ -38,7 +38,6 @@ living_room:
   view: yes
   entities:
     - group.living_room_lights
-    - switch.living_room_kodi_power_on
     - media_player.living_room_kodi
     - media_player.living_room_ds
     - media_player.main_room
