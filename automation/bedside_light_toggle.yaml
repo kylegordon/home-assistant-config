@@ -1,0 +1,14 @@
+alias: Bedside light toggle
+trigger:
+  platform: mqtt
+  topic: devices/60019485376d/button/event
+  # Optional
+  payload: 'DOUBLE'
+
+action:
+  - service: light.toggle
+    entity_id: light.kyles_bedside
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Toggling bedside lights"
