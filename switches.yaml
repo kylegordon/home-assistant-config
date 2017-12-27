@@ -3,12 +3,6 @@
   devices:
     710080041010000:
       name: Energenie 1
-    710080041020000:
-      name: Energenie 2
-    710080041030000:
-      name: Energenie 3
-    710080041040000:
-      name: Energenie 4
 
 - platform: broadlink
   host: 172.24.32.40

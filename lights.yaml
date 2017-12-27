@@ -25,6 +25,12 @@
     0a14005ff0dd3c05010060:
       # This is actually a socket/switch
       name: Christmas Tree
+    710080041020000:
+      name: Star Burst
+    710080041040000:
+      name: Arc Lamp
+    710080041030000:
+      name: Candle Arch
 
 - platform: mqtt
   name: "Garage Lights"
