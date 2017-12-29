@@ -4,7 +4,7 @@ trigger:
     at: '06:45:00'
 condition:
   - condition: state
-    entity_id: input_boolean.holiday_mode
+    entity_id: calendar.holiday_mode
     state: 'off'
   - condition: state
     entity_id: group.all_devices

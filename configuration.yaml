@@ -57,6 +57,11 @@ http:
       - 172.24.32.0/24
       - 10.8.0.18/32
 
+google:
+  client_id: !secret google_oauth_client_id
+  client_secret: !secret google_oauth_client_secret
+  track_new_calendar: False
+
 # Checks for available updates
 updater:
 
