@@ -12,6 +12,8 @@ default_view:
     - input_select.kyle_status
     - input_select.charlotte_status
     - calendar.holiday_mode
+    - calendar.next_bin
+    - sensor.next_bin
     - sensor.tmo
     - sensor.btc
     - sensor.bitcoin_balance

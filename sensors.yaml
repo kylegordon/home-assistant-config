@@ -28,6 +28,13 @@
 
 - platform: template
   sensors:
+    next_bin:
+      value_template: "{{ states.calendar.next_bin.attributes.message }}"
+      friendly_name: Next Bin
+      entity_id: calendar.next_bin
+
+- platform: template
+  sensors:
     kyle_status:
       value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
       friendly_name: 'Kyle'
@@ -128,6 +135,11 @@
 
 
 # Master Bedroom #
+- platform: mqtt
+  state_topic: "devices/5ccf7fd8d915/FSR1/voltage"
+  hidden: true
+  name: "Bed Sensor 1"
+
 - platform: mqtt
   state_topic: "devices/5ccf7fd8d915/FSR1/voltage"
   hidden: true
