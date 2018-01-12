@@ -52,6 +52,7 @@
 
 - platform: darksky
   api_key: !secret darksky_api_key
+  scan_interval: 300
   monitored_conditions:
     - summary
     - precip_type
@@ -86,6 +87,7 @@
 
 - platform: alpha_vantage
   api_key: !secret alpha_vantage_key
+  scan_interval: 300
   symbols: 
     - BTC
     - TMO
