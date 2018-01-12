@@ -39,6 +39,8 @@ homeassistant:
         entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg
     input_boolean.guest_mode:
         icon: mdi:account-multiple-plus
+    light.craft_room_desk_level:
+        friendly_name: Craft Room Desk
 
 
 # Enables the frontend
@@ -80,6 +82,7 @@ rfxtrx:
 
 zwave:
   usb_path: /dev/ttyUSB1
+  debug: true
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:

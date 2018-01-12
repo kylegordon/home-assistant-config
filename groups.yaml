@@ -4,6 +4,7 @@ default_view:
   view: yes
   entities:
     - group.people_status
+    - input_boolean.guest_mode
     - sensor.dark_sky_temperature
     - sensor.dark_sky_precip_probability
     - sensor.electricity_energy_usage
@@ -108,6 +109,7 @@ bedroom_4:
     - light.craft_room
     - light.craft_room_bookcase
     - light.craft_room_fairy_lights
+    - light.craft_room_desk_level
 
 hall:
   name: Hall lights
@@ -240,6 +242,8 @@ other:
   name: Other
   view: yes
   entities:
+    - zwave.tester
+    - light.tester_level
     - group.all_scripts
     - group.all_automations
     - group.lightswitch_relays
