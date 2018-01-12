@@ -37,6 +37,8 @@ homeassistant:
         icon: mdi:hotel
     sensor.kyle_status:
         entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg
+    input_boolean.guest_mode:
+        icon: mdi:account-multiple-plus
 
 
 # Enables the frontend
@@ -75,6 +77,9 @@ rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
   debug: True
+
+zwave:
+  usb_path: /dev/ttyUSB1
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
