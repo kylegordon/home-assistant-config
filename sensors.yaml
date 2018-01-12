@@ -141,11 +141,6 @@
   name: "Bed Sensor 1"
 
 - platform: mqtt
-  state_topic: "devices/5ccf7fd8d915/FSR1/voltage"
-  hidden: true
-  name: "Bed Sensor 1"
-
-- platform: mqtt
   state_topic: "devices/5ccf7fd8d915/FSR2/voltage"
   hidden: true
   name: "Bed Sensor 2"
