@@ -6,9 +6,12 @@ condition:
   - condition: state
     entity_id: calendar.holiday_mode
     state: 'off'
-  - condition: state
-    entity_id: group.all_devices
-    state: "home"
+  - condition: zone
+    entity_id: device_tracker.bagpuss_a0001
+    zone: zone.home
+  - condition: zone
+    entity_id: device_tracker.charlotte_thea
+    zone: zone.home
   - condition: time
     weekday:
       - mon
