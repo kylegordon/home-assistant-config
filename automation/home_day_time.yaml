@@ -11,4 +11,7 @@ condition:
   - condition: template
     value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
 action:
+  - service: notify.email_kyle
+    data:
+      message: "Someone has arrived. Disarming alarm"
   - service: alarm_control_panel.alarm_disarm
