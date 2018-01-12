@@ -9,8 +9,6 @@ default_view:
     - sensor.electricity_energy_usage
     - sensor.house_average_mean
     - sensor.house_average_humidity_mean
-    - input_select.kyle_status
-    - input_select.charlotte_status
     - calendar.holiday_mode
     - calendar.next_bin
     - sensor.next_bin
