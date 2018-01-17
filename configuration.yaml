@@ -60,6 +60,7 @@ http:
   trusted_networks: 
       - 172.24.32.0/24
       - 10.8.0.18/32
+      - 127.0.0.1
 
 google:
   client_id: !secret google_oauth_client_id
