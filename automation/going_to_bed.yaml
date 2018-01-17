@@ -1,0 +1,82 @@
+alias: "Going to bed"
+trigger:
+    # Guest bedroom
+  - platform: mqtt
+    topic: devices/60019485412a/button/event
+    payload: 'TRIPLE'
+    # Master bedroom
+  - platform: mqtt
+    topic: devices/60019485376d/button/event
+    payload: 'TRIPLE'
+
+
+action:
+
+- service: logbook.log
+  data_template:
+    name: EVENT
+    message: "Going to bed triggered."
+
+## Turn off main bedroom lights and switches
+- service: switch.turn_off
+  data:
+    entity_id: group.bedroom_1
+- service: light.turn_off
+  data:
+    entity_id: light.master_bedroom
+
+## Turn off guest bedroom lights and switches
+- service: switch.turn_off
+  data:
+    entity_id: group.bedroom_2
+- service: light.turn_off
+  data:
+    entity_id: group.bedroom_2
+
+## Turn off study lights and switches
+- service: switch.turn_off
+  data:
+    entity_id: group.bedroom_3
+- service: light.turn_off
+  data:
+    entity_id: group.bedroom_3
+
+## Turn off craft room group
+- service: switch.turn_off
+  data:
+    entity_id: group.bedroom_4
+- service: light.turn_off
+  data:
+    entity_id: group.bedroom_4
+
+## Turn off Kitchen group
+- service: switch.turn_off
+  data:
+    entity_id: group.kitchen
+
+## Turn off Hall switches and lights
+- service: switch.turn_off
+  data:
+    entity_id: group.hall
+- service: light.turn_off
+  data:
+    entity_id: group.hall
+
+- service: light.turn_off
+  data:
+    entity_id: group.outside_lights
+- service: light.turn_off
+  data:
+    entity_id: light.garage_lights
+
+## Turn off living room switches and lights
+- service: switch.turn_off
+  data:
+    entity_id: group.living_room
+- service: light.turn_off
+  data:
+    entity_id: group.living_room
+- service: media_player.turn_off
+  data:
+    entity_id: media_player.kodi_living_room
+
