@@ -17,13 +17,14 @@
   data:
     entity_id: light.master_bedroom
     brightness: 255
-    color_temp: 300
+    color_temp: 200
+    rgb_color: [255,217,143]
     transition: 1800
 - service: light.turn_on
   data:
     entity_id: group.hall
     brightness: 255
-    color_temp: 300
+    color_temp: 200
     transition: 1800
 - delay:
     seconds: 5400
