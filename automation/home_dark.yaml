@@ -28,6 +28,12 @@ action:
       color_temp: 300
   - service: light.turn_on
     data:
+      entity_id: light.sideboard_light
+  - service: light.turn_on
+    data:
+      entity_id: light.uplighter
+  - service: light.turn_on
+    data:
       entity_id: group.outside_lights
 
   - service: alarm_control_panel.alarm_disarm
