@@ -231,6 +231,9 @@ lightswitch_relays:
   entities:
     - switch.master_bedroom_lightswitch_relay
     - switch.guest_bedroom_lightswitch_relay
+    - switch.study_lightswitch_relay
+    - switch.craft_room_lightswitch_relay
+    - switch.ensuite_lightswitch_relay
 
 people_status:
   name: People Status

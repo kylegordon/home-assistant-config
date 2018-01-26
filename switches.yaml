@@ -47,3 +47,32 @@
   payload_available: "true"
   payload_not_available: "false"
 
+- platform: mqtt
+  name: "Study Lightswitch Relay"
+  state_topic: "devices/6001949b9222/relay/relayState"
+  command_topic: "devices/6001949b9222/relay/relayState/set"
+  payload_on: "ON"
+  payload_off: "OFF"
+  availability_topic: "devices/6001949b9222/$online"
+  payload_available: "true"
+  payload_not_available: "false"
+
+- platform: mqtt
+  name: "Craft Room Lightswitch Relay"
+  state_topic: "devices/6001948e0f19/relay/relayState"
+  command_topic: "devices/6001948e0f19/relay/relayState/set"
+  payload_on: "ON"
+  payload_off: "OFF"
+  availability_topic: "devices/6001948e0f19/$online"
+  payload_available: "true"
+  payload_not_available: "false"
+
+- platform: mqtt
+  name: "Ensuite Lightswitch Relay"
+  state_topic: "devices/6001948e0f70/relay/relayState"
+  command_topic: "devices/6001948e0f70/relay/relayState/set"
+  payload_on: "ON"
+  payload_off: "OFF"
+  availability_topic: "devices/6001948e0f70/$online"
+  payload_available: "true"
+  payload_not_available: "false"
