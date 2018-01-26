@@ -8,8 +8,8 @@ default_view:
     - sensor.dark_sky_temperature
     - sensor.dark_sky_precip_probability
     - sensor.electricity_energy_usage
-    - sensor.house_average_mean
-    - sensor.house_average_humidity_mean
+    - sensor.house_average
+    - sensor.house_average_humidity
     - calendar.holiday_mode
     - calendar.next_bin
     - sensor.next_bin
@@ -153,8 +153,8 @@ climate:
   name: Climate
   view: no
   entities:
-    - sensor.house_average_mean
-    - sensor.house_average_humidity_mean
+    - sensor.house_average
+    - sensor.house_average_humidity
     - sensor.dark_sky_temperature
     - sensor.dark_sky_apparent_temperature
     - sensor.dark_sky_cloud_coverage
