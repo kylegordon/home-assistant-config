@@ -50,9 +50,13 @@ action:
     entity_id: group.bedroom_4
 
 ## Turn off Kitchen group
-- service: switch.turn_off
+- service: light.turn_off
   data:
     entity_id: group.kitchen
+
+- service: light.turn_off
+  data:
+    entity_id: group.utility_room
 
 ## Turn off Hall switches and lights
 - service: switch.turn_off
