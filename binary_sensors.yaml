@@ -9,8 +9,10 @@
   devices:
     0b1100d800b8196e0a010f70:
       name: Outside Rear Motion
+      device_class: motion
     0b11000000b82b560a000060:
       name: Outside Front Motion
+      device_class: motion
     0a1400002c22a70a010060:
       name: Utility Room Door
       device_class: opening
@@ -20,16 +22,18 @@
     bed_occupancy_1:
       friendly_name: Kyles Bed
       device_class: occupancy
-      delay_on: 5
-      value_template: "{{ states('sensor.bed_sensor_1')|float > 500 }}"
+#      delay_on: 
+#        minutes: 5
+      value_template: "{{ states('sensor.bed_sensor_1')|float > 100000 }}"
 
 - platform: template
   sensors:
     bed_occupancy_2:
       friendly_name: Charlottes Bed
-      delay_on: 5
+#      delay_on:
+#        minutes: 5
       device_class: occupancy
-      value_template: "{{ states('sensor.bed_sensor_2')|float > 500 }}"
+      value_template: "{{ states('sensor.bed_sensor_2')|float > 100000 }}"
 
 - platform: template
   sensors:
