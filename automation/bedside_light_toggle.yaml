@@ -3,7 +3,7 @@ trigger:
   platform: mqtt
   topic: devices/60019485376d/button/event
   # Optional
-  payload: 'DOUBLE'
+  payload: 'DOUBLEHELD'
 
 action:
   - service: light.toggle
