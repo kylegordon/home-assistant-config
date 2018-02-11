@@ -47,6 +47,7 @@
       friendly_name: 'Charlotte'
       entity_id: input_select.charlotte_status_dropdown
 
+
 ## Weather ##
 - platform: yr
 
@@ -200,21 +201,25 @@
   state_topic: "devices/18fe34d5323e/$stats/signal"
   name: "Kitchen ESP8266 Signal Level"
   unit_of_measurement: "%"
+  force_update: true
 
 - platform: mqtt
   state_topic: "devices/5ccf7faf630b/$stats/signal"
   name: "Driveway Floodlights Signal Level"
   unit_of_measurement: "%" 
+  force_update: true
 
 - platform: mqtt
   state_topic: "devices/60019416854d/$stats/signal"
   name: "Front Door Floodlights Signal Level"
   unit_of_measurement: "%" 
+  force_update: true
 
 - platform: mqtt
   state_topic: "devices/5ccf7faf5486/$stats/signal"
   name: "Back floodlights Signal Level"
   unit_of_measurement: "%" 
+  force_update: true
 
 
 # Study #
@@ -233,6 +238,7 @@
   state_topic: "devices/5ccf7fd9283a/$stats/signal"
   name: "Study ESP8266 Signal Level"
   unit_of_measurement: "%" 
+  force_update: true
 
 # Hallway #
 - platform: mqtt
@@ -250,6 +256,7 @@
   state_topic: "devices/5ccf7f115e3f/$stats/signal"
   name: "Hallway ESP8266 Signal Level"
   unit_of_measurement: "%"
+  force_update: true
 
 # Utility Room #
 - platform: mqtt
@@ -267,6 +274,7 @@
   state_topic: "devices/5ccf7fd9262d/$stats/signal"
   name: "Utility Room ESP8266 Signal Level"
   unit_of_measurement: "%"
+  force_update: true
 
 - platform: mqtt
   state_topic: "owntracks/bagpuss/a0001"
