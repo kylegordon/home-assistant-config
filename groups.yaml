@@ -46,6 +46,9 @@ living_room:
     - switch.living_room_television
     - sensor.room_sensor_3_temperature
     - sensor.room_sensor_3_humidity
+    - sensor.living_room_motion_hue
+    - sensor.living_room_temperature
+    - sensor.living_room_light_level
 
 living_room_lights:
   name: Living Room Lights
