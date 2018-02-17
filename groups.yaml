@@ -143,6 +143,7 @@ outside:
     - sensor.front_door_floodlights_signal_level
     - sensor.back_floodlights_signal_level
     - camera.iss
+    - camera.drivewaycam
 
 outside_lights:
   name: Outside Lights
