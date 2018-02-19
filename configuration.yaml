@@ -136,7 +136,7 @@ logger:
     homeassistant.components.switch.broadlink: debug
     homeassistant.components.switch.rfxtrx: debug
     homeassistant.components.binary_sensor.rfxtrx: debug
-    homeassistant.components.rfxtrx: debug
+    # homeassistant.components.rfxtrx: debug
 
 # Track the sun
 sun:
