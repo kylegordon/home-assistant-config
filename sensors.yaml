@@ -47,6 +47,18 @@
       friendly_name: 'Charlotte'
       entity_id: input_select.charlotte_status_dropdown
 
+# Hue motion sensor breakout
+- platform: template
+  sensors:
+    living_room_temperature:
+      friendly_name: 'Living room temperature'
+      value_template: '{{states.sensor.living_room_motion_hue.attributes.temperature}}'
+      unit_of_measurement: °C
+
+    living_room_light_level:
+      friendly_name: 'Living room light level'
+      value_template: '{{states.sensor.living_room_motion_hue.attributes.lux}}'
+      unit_of_measurement: lux 
 
 ## Weather ##
 - platform: yr
