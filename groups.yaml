@@ -16,6 +16,14 @@ default_view:
     - sensor.tmo
     - sensor.btc
     - sensor.bitcoin_balance
+    - group.environment_summary
+
+environment_summary:
+  view: no
+  entities:
+    - sensor.house_average 
+    - sensor.house_average_humidity
+    - sensor.dark_sky_temperature
 
 kitchen:
   name: Kitchen
