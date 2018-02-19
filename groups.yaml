@@ -75,9 +75,27 @@ bedroom_1:
   view: yes
   entities:
     - group.bedroom_1_lights
+    - group.ensuite
     - binary_sensor.bed_occupancy_1
     - binary_sensor.bed_occupancy_2
     - sensor.bed_sensor_signal_level
+
+ensuite:
+  name: Ensuite
+  view: no
+  entities:
+    - light.ensuite_entrance
+    - light.ensuite_towels
+    - light.ensuite_shower
+    - light.ensuite_space
+    - light.ensuite_toilet
+    - light.ensuite_sink
+
+ensuite_facilities:
+  view: no
+  entities:
+    - light.toilet
+    - light.sink
 
 bedroom_1_lights:
   name: Bedroom lights
