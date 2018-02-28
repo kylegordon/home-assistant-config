@@ -1,18 +1,11 @@
-alias: Front outdoor lights off
+alias: Back outdoor lights off
 trigger:
-  - platform: state
-    entity_id: binary_sensor.outside_front_motion
-    to: 'off'
-    for:
-      seconds: 1800
   - platform: state
     entity_id: binary_sensor.outside_rear_motion
     to: 'off'
     for:
       seconds: 1800
 action:
-  - service: light.turn_off
-    entity_id: light.front_door_floodlights
   - service: light.turn_off
     entity_id: light.driveway_floodlights
   - service: light.turn_off
