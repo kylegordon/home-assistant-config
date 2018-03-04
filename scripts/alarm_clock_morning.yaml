@@ -14,14 +14,14 @@
       "Time to wake up the house with some gentle lighting. (http://amzn.to/2Bsko4x)"
       ] | random + " #Hue #Lifx"}}
 - service: light.turn_on
+  entity_id: light.master_bedroom
   data:
-    entity_id: light.master_bedroom
     brightness: 255
     color_temp: 200
     transition: 1800
 - service: light.turn_on
+  entity_id: group.hall
   data:
-    entity_id: group.hall
     brightness: 255
     color_temp: 200
     transition: 1800
