@@ -27,8 +27,10 @@ homeassistant:
         icon: mdi:weather-windy
     sensor.weather_station_relative_humidity:
         icon: mdi:water-percent
-    sensor.house_average_humidity_mean:
+    sensor.house_average_humidity:
         icon: mdi:water-percent
+    sensor.house_average_temperature:
+        icon: mdi:thermometer
     switch.living_room_television:
         icon: mdi:television
     light.kyles_bedside:
@@ -41,7 +43,6 @@ homeassistant:
         icon: mdi:account-multiple-plus
     light.craft_room_desk_level:
         friendly_name: Craft Room Desk
-
 
 # Enables the frontend
 frontend:

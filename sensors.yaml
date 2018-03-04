@@ -101,9 +101,14 @@
 - platform: alpha_vantage
   api_key: !secret alpha_vantage_key
   scan_interval: 300
-  symbols: 
-    - BTC
-    - TMO
+  foreign_exchange: 
+    - from: BTC
+      to: GBP
+      name: Bitcoin
+  symbols:
+    - name: ThermoFisher Scientific
+      currency: USD
+      symbol: TMO
 
 - platform: blockchain
   addresses:
@@ -322,7 +327,7 @@
 
 
 - platform: min_max
-  name: House Average
+  name: House Average Temperature
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
