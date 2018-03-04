@@ -1,0 +1,23 @@
+alias: 'Bin notification'
+trigger:
+  - platform: template
+    value_template: '{{ states.sensor.date.state == strptime(states.calendar.next_bin.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")}}'
+  - platform: time
+    at: '17:00:00'
+condition:
+  - condition: and
+    conditions:
+      - condition: time
+        after: '12:00'
+        weekday:
+          - sun
+      - condition: time
+        before: '07:00'
+        weekday:
+          - mon
+    
+action:
+- service: persistent_notification.create
+  data:
+    message: "Next bin: {{ states.calendar.next_bin.attributes.message }}. "
+    title: "Bin Reminder"
