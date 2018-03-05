@@ -18,8 +18,3 @@ action:
           input_select.charlotte_status_dropdown
         {% endif %}
       option: Just Left
-
-  - service: notify.email_kyle
-    data:
-      message: "Person has just left"
-
