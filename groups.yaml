@@ -19,6 +19,7 @@ default_view:
     - group.environment_summary
 
 environment_summary:
+  name: Environment Summary
   view: no
   entities:
     - sensor.house_average_temperature
