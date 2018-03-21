@@ -63,6 +63,10 @@ http:
       - 10.8.0.18/32
       - 127.0.0.1
 
+deconz:
+  host: 172.24.32.13
+  port: 8100
+
 google:
   client_id: !secret google_oauth_client_id
   client_secret: !secret google_oauth_client_secret
