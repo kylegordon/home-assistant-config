@@ -1,6 +1,7 @@
 ## Rooms ##
 
 default_view:
+  name: Home
   view: yes
   entities:
     - group.people_status
