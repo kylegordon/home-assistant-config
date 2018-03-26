@@ -1,0 +1,21 @@
+alias: Hallway light motion - evening
+trigger:
+  - platform: state
+    entity_id: binary_sensor.hall_door_motion
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.hall_rooms_motion
+    to: 'on'
+condition:
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+  - condition: time
+    before: '22:00'
+action:
+  service: homeassistant.turn_on
+  entity_id: light.hallway
+  data:
+    transition: 2
+    color_temp: 300
+    brightness: 255

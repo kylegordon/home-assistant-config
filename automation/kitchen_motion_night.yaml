@@ -1,0 +1,19 @@
+alias: Kitchen motion - night
+trigger:
+  platform: state
+  entity_id: binary_sensor.kitchen_motion
+  to: 'on'
+condition:
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+  - condition: time
+    after: '22:00'
+    before: '06:00'
+action:
+  - service: homeassistant.turn_on
+    entity_id: light.kitchen_cabinets
+    data:
+      brightness: 125
+      transition: 5
+      color_temp: 375
