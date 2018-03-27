@@ -17,6 +17,6 @@ action:
   - service: homeassistant.turn_on
     entity_id: light.hallway
     data:
-      brightness: 125
+      brightness: 75
       transition: 5
       color_temp: 375
