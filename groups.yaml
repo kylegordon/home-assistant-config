@@ -164,6 +164,7 @@ outside:
   name: Outside
   view: yes
   entities:
+    - sun.sun
     - binary_sensor.outside_front_motion
     - binary_sensor.outside_rear_motion
     - group.climate
