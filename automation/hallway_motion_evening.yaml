@@ -11,11 +11,16 @@ condition:
     entity_id: sun.sun
     state: "below_horizon"
   - condition: time
+    after: '06:00'
     before: '22:00'
 action:
-  service: homeassistant.turn_on
-  entity_id: light.hallway
-  data:
-    transition: 2
-    color_temp: 300
-    brightness: 255
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Hallway motion - evening"
+  - service: homeassistant.turn_on
+    entity_id: light.hallway
+    data:
+      transition: 2
+      color_temp: 300
+      brightness: 255
