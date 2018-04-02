@@ -1,7 +1,7 @@
 - platform: rfxtrx
   automatic_add: False
   devices:
-    710080041010000:
+    0710080041010000:
       name: Energenie 1
 
 - platform: broadlink
