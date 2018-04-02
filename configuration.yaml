@@ -88,7 +88,8 @@ rfxtrx:
 
 hue:
   bridges:
-    - host: hue1.vpn.glasgownet.com
+    #- host: hue1.vpn.glasgownet.com
+    - host: 172.24.32.12
       filename: phue-00178817a562.conf
 
 zwave:
