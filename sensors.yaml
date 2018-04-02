@@ -262,7 +262,7 @@
   state_topic: "devices/5ccf7f115e3f/temperature/degrees"    
   name: Hallway temperature
   unit_of_measurement: "°C"
-  availability_topic: "devices/5ccf7115e3f/$online"
+  availability_topic: "devices/5ccf7f115e3f/$online"
   payload_available: "true"
   payload_not_available: "false"
 - platform: mqtt
