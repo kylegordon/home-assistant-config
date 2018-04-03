@@ -41,6 +41,13 @@
   payload_on: "true"
   payload_off: "false"
 
+- platform: mqtt
+  name: "Charlotte Driving"
+  state_topic: "driving/mode/charlotte"
+  payload_on: "true"
+  payload_off: "false"
+
+
 - platform: template
   sensors:
     device_critical:
