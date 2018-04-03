@@ -35,6 +35,12 @@
       device_class: occupancy
       value_template: "{{ states('sensor.bed_sensor_2')|float > 100000 }}"
 
+- platform: mqtt
+  name: "Kyle Driving"
+  state_topic: "driving/mode/kyle"
+  payload_on: "true"
+  payload_off: "false"
+
 - platform: template
   sensors:
     device_critical:
