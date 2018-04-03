@@ -103,8 +103,8 @@ ensuite:
 ensuite_facilities:
   view: no
   entities:
-    - light.toilet
-    - light.sink
+    - light.ensuite_toilet
+    - light.ensuite_sink
 
 bedroom_1_lights:
   name: Bedroom lights
@@ -281,12 +281,7 @@ other:
   name: Other
   view: yes
   entities:
-    - zwave.tester
-    - light.tester_level
     - group.all_scripts
     - group.all_automations
     - group.lightswitch_relays
     - switch.energenie_1
-    - switch.energenie_2
-    - switch.energenie_3
-    - switch.energenie_4
