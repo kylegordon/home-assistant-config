@@ -55,8 +55,6 @@ living_room:
     - media_player.living_room_ds
     - media_player.main_room
     - switch.living_room_television
-    - sensor.room_sensor_3_temperature
-    - sensor.room_sensor_3_humidity
     - binary_sensor.living_room_motion
 
 living_room_lights:
@@ -207,11 +205,11 @@ climate:
     - sensor.dark_sky_minutely_summary
     - sensor.dark_sky_hourly_summary
     - sensor.dark_sky_daily_summary
-    - sensor.dark_sky_temperature_max
-    - sensor.dark_sky_temperature_min
-    - sensor.dark_sky_apparent_temperature_max
-    - sensor.dark_sky_apparent_temperature_min
-    - sensor.dark_sky_precip_intensity_max
+    - sensor.dark_sky_daily_high_temperature
+    - sensor.dark_sky_daily_low_temperature
+    - sensor.dark_sky_daily_high_apparent_temperature
+    - sensor.dark_sky_daily_low_apparent_temperature
+    - sensor.dark_sky_daily_max_precip_intensity
     - sensor.weather_station_rainfall
     - sensor.weather_station_wind_direction
     - sensor.weather_station_wind_velocity
@@ -240,8 +238,6 @@ people:
   icon: mdi:account-multiple
   view: yes
   entities:
-    - device_tracker.c0eefb33955b
-    - device_tracker.e891209f67f1
     - camera.kyle
     - camera.charlotte
     - sensor.charlotte_to_home
