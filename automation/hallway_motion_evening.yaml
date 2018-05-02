@@ -7,9 +7,13 @@ trigger:
     entity_id: binary_sensor.hall_rooms_motion
     to: 'on'
 condition:
-  - condition: state
+  - condition: numeric_state
     entity_id: sun.sun
-    state: "below_horizon"
+    value_template: '{{ state.attributes.elevation }}'
+    below: 30
+#  - condition: state
+#    entity_id: sun.sun
+#    state: "below_horizon"
   - condition: time
     after: '06:00'
     before: '22:00'
@@ -18,8 +22,8 @@ action:
     data_template:
       name: EVENT
       message: "Hallway motion - evening"
-  - service: homeassistant.turn_on
-    entity_id: light.hallway
+  - service: light.turn_on
+    entity_id: group.hall
     data:
       transition: 2
       color_temp: 300
