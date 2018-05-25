@@ -10,12 +10,12 @@ condition:
   - condition: numeric_state
     entity_id: sun.sun
     value_template: '{{ state.attributes.elevation }}'
-    below: 30
+    below: 15
 #  - condition: state
 #    entity_id: sun.sun
 #    state: "below_horizon"
   - condition: time
-    after: '06:00'
+    after: '12:00'
     before: '22:00'
 action:
   - service: logbook.log
