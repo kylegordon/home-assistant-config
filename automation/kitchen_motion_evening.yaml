@@ -1,18 +1,24 @@
-alias: Kitchen motion - evening
+alias: Kitchen light motion - evening
 trigger:
-  platform: state
-  entity_id: binary_sensor.kitchen_motion
-  to: 'on'
+  - platform: state
+    entity_id: binary_sensor.kitchen_motion
+    to: 'on'
 condition:
-  - condition: state
+  - condition: numeric_state
     entity_id: sun.sun
-    state: "below_horizon"
+    value_template: '{{ state.attributes.elevation }}'
+    below: 15
   - condition: time
+    after: '12:00'
     before: '22:00'
 action:
-  service: homeassistant.turn_on
-  entity_id: light.kitchen_cabinets
-  data:
-    transition: 2
-    color_temp: 300
-    brightness: 255
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Kitchen motion - evening"
+  - service: light.turn_on
+    entity_id: light.kitchen_cabinets
+    data:
+      transition: 2
+      color_temp: 300
+      brightness: 255

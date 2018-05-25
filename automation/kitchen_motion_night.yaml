@@ -4,9 +4,10 @@ trigger:
   entity_id: binary_sensor.kitchen_motion
   to: 'on'
 condition:
-  - condition: state
+  - condition: numeric_state
     entity_id: sun.sun
-    state: "below_horizon"
+    value_template: '{{ state.attributes.elevation }}'
+    below: 30
   - condition: time
     after: '22:00'
     before: '06:00'
