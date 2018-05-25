@@ -1,8 +1,9 @@
 alias: "Sunset, hallway on"
 trigger:
-  platform: sun
-  event: sunset
-  offset: "-02:00:00"
+  - platform: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    below: 30
 condition:
   - condition: state
     entity_id: group.all_devices
