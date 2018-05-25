@@ -4,7 +4,7 @@ trigger:
     entity_id: binary_sensor.outside_rear_motion
     to: 'off'
     for:
-      seconds: 1800
+      seconds: 600
 action:
   - service: light.turn_off
     entity_id: light.driveway_floodlights
