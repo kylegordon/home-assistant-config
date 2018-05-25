@@ -31,3 +31,23 @@ action:
       message: "Time to waken up!"
   # Trigger the morning lighting sequence
   - service: script.alarm_clock_morning
+
+  - service: script.tweet_engine
+    data_template:
+      tweet: >
+        {{ [
+        "This is way early.  We need some lights on. (http://amzn.to/2DFAd9w)",
+        "Time to wake up the house with some gentle lighting. (http://amzn.to/2Bsko4x)"
+        ] | random + " #Hue #Lifx"}}
+  - service: light.turn_on
+    entity_id: light.master_bedroom
+    data:
+      brightness: 255
+      color_temp: 200
+      transition: 1800
+  - wait_template: >-
+     {{ is_state('binary_sensor.hall_rooms_motion', 'on') }}
+- service: light.turn_off
+  data:
+    entity_id: light.master_bedroom
+
