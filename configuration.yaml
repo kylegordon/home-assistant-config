@@ -58,6 +58,8 @@ recorder:
 http:
   # Uncomment this to add a password (recommended!)
   api_password: !secret api_password
+  cors_allowed_origins:
+    - http://homeauto.vpn.glasgownet.com
   trusted_networks: 
       - 172.24.32.0/24
       - 10.8.0.18/32
