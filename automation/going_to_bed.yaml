@@ -1,4 +1,4 @@
-alias: "Going to bed"
+alias: "Going to bed - no guests"
 trigger:
     # Guest bedroom
   - platform: mqtt
@@ -9,9 +9,12 @@ trigger:
     topic: devices/60019485376d/button/event
     payload: 'TRIPLE'
 
+condition:
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
 
 action:
-
 - service: logbook.log
   data_template:
     name: EVENT
@@ -25,62 +28,73 @@ action:
   data:
     entity_id: light.master_bedroom
 
+- service: homeassistant.turn_off
+  entity_id:
+    - group.living_room
+    - group.outside_lights
+    - group.utility_room
+    - group.kitchen
+    - group.hall
+    - group.bedroom_2
+    - group.bedroom_3
+    - group.bedroom_4
+
 ## Turn off guest bedroom lights and switches
-- service: switch.turn_off
-  data:
-    entity_id: group.bedroom_2
-- service: light.turn_off
-  data:
-    entity_id: group.bedroom_2
+#- service: switch.turn_off
+#  data:
+#    entity_id: group.bedroom_2
+#- service: light.turn_off
+#  data:
+#    entity_id: group.bedroom_2
 
 ## Turn off study lights and switches
-- service: switch.turn_off
-  data:
-    entity_id: group.bedroom_3
-- service: light.turn_off
-  data:
-    entity_id: group.bedroom_3
-
-## Turn off craft room group
-- service: switch.turn_off
-  data:
-    entity_id: group.bedroom_4
-- service: light.turn_off
-  data:
-    entity_id: group.bedroom_4
-
-## Turn off Kitchen group
-- service: light.turn_off
-  data:
-    entity_id: group.kitchen
-
-- service: light.turn_off
-  data:
-    entity_id: group.utility_room
-
-## Turn off Hall switches and lights
-- service: switch.turn_off
-  data:
-    entity_id: group.hall
-- service: light.turn_off
-  data:
-    entity_id: group.hall
-
-- service: light.turn_off
-  data:
-    entity_id: group.outside_lights
-- service: light.turn_off
-  data:
-    entity_id: light.garage_lights
-
-## Turn off living room switches and lights
-- service: switch.turn_off
-  data:
-    entity_id: group.living_room
-- service: light.turn_off
-  data:
-    entity_id: group.living_room
-- service: media_player.turn_off
-  data:
-    entity_id: media_player.kodi_living_room
+#- service: switch.turn_off
+#  data:
+#    entity_id: group.bedroom_3
+#- service: light.turn_off
+#  data:
+#    entity_id: group.bedroom_3
+#
+### Turn off craft room group
+#- service: switch.turn_off
+#  data:
+#    entity_id: group.bedroom_4
+#- service: light.turn_off
+#  data:
+#    entity_id: group.bedroom_4
+#
+### Turn off Kitchen group
+#- service: light.turn_off
+#  data:
+#    entity_id: group.kitchen
+#
+#- service: light.turn_off
+#  data:
+#    entity_id: group.utility_room
+#
+### Turn off Hall switches and lights
+#- service: switch.turn_off
+#  data:
+#    entity_id: group.hall
+#- service: light.turn_off
+#  data:
+#    entity_id: group.hall
+#
+#- service: light.turn_off
+#  data:
+#    entity_id: group.outside_lights
+#- service: light.turn_off
+#  data:
+#    entity_id: light.garage_lights
+#
+### Turn off living room switches and lights
+#- service: switch.turn_off
+#  data:
+#    entity_id: group.living_room
+#- service: light.turn_off
+#  data:
+#    entity_id: group.living_room
+#- service: media_player.turn_off
+#  data:
+#    entity_id: media_player.kodi_living_room
 
