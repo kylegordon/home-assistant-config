@@ -1,0 +1,16 @@
+alias: Study light toggle
+trigger:
+  platform: mqtt
+  topic: devices/6001949b9222/button/event
+  # Optional
+  payload: 'SINGLE'
+
+action:
+  - service: switch.turn_on
+    entity_id: switch.study_lightswitch_relay
+  - service: light.toggle
+    entity_id: light.study_light
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Toggling study light"

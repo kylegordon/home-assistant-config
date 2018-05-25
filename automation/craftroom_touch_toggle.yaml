@@ -1,0 +1,16 @@
+alias: Craft Room light toggle
+trigger:
+  platform: mqtt
+  topic: devices/6001948e0f19/button/event
+  # Optional
+  payload: 'SINGLE'
+
+action:
+  - service: switch.turn_on
+    entity_id: switch.craftroom_lightswitch_relay
+  - service: light.toggle
+    entity_id: light.craft_room
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Toggling craft room light"
