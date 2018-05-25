@@ -11,7 +11,4 @@ condition:
     entity_id: input_select.company
     state: "disabled"
 action:
-  - service: notify.email_kyle
-    data:
-      message: "Everyone is away. Running all_off"
   - service: script.all_off
