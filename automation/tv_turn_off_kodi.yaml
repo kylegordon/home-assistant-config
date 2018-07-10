@@ -1,7 +1,7 @@
 alias: TV turn off Kodi
 trigger:
   - platform: state
-    entity_id: switch.living_room_television
+    entity_id: switch.tellybox
     from: 'on'
     to: 'off'
 action:
