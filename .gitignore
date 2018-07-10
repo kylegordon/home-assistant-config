@@ -6,3 +6,5 @@ home-assistant_v2.db
 .uuid
 emulated_hue_ids.json
 deconz.conf
+.config_entries.json
+.google.token
