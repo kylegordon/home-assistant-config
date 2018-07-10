@@ -34,6 +34,7 @@ kitchen:
     - sensor.kitchen_temperature
     - sensor.kitchen_esp8266_signal_level
     - binary_sensor.kitchen_motion
+    - sensor.kitchen_motion
     - light.kitchen_cabinets
 
 utility_room:
@@ -54,8 +55,9 @@ living_room:
     - media_player.living_room_kodi
     - media_player.living_room_ds
     - media_player.main_room
-    - switch.living_room_television
+    - switch.tellybox
     - binary_sensor.living_room_motion
+    - sensor.living_room_motion
 
 living_room_lights:
   name: Living Room Lights
@@ -153,7 +155,9 @@ hall_view:
   entities:
     - group.hall
     - binary_sensor.hall_rooms_motion
+    - sensor.hall_rooms_motion
     - binary_sensor.hall_door_motion
+    - sensor.hall_door_motion
     - sensor.hallway_temperature
     - sensor.hallway_humidity
     - sensor.hallway_esp8266_signal_level
