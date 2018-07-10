@@ -1,0 +1,27 @@
+alias: Living Room motion - night
+trigger:
+  - platform: state
+    entity_id: binary_sensor.living_room_motion
+    to: 'on'
+condition:
+  - condition: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    below: 30
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+  - condition: time
+    after: '23:30'
+    before: '06:00'
+action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Living room motion - night"
+  - service: light.turn_on
+    entity_id: light.living_room
+    data:
+      brightness: 100
+      transition: 5
+      color_temp: 375

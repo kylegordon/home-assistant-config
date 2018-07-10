@@ -1,0 +1,10 @@
+alias: Living Room motion - 10 minute timeout
+trigger:
+  - platform: state
+    entity_id: binary_sensor.living_room_motion
+    to: 'off'
+    for:
+      minutes: 10
+action:
+  service: light.turn_off
+  entity_id: light.living_room
