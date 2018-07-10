@@ -28,6 +28,39 @@
 
 - platform: template
   sensors:
+    hall_rooms_motion_sensor_battery:
+      friendly_name: "Hall rooms motion sensor battery"
+      value_template: '{{ state_attr("binary_sensor.hall_rooms_motion","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%' 
+
+- platform: template
+  sensors:
+    hall_door_motion_sensor_battery:
+      friendly_name: "Hall door motion sensor battery"
+      value_template: '{{ state_attr("binary_sensor.hall_door_motion","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%'
+
+- platform: template
+  sensors:
+    kitchen_motion_sensor_battery:
+      friendly_name: "Kitchen motion sensor battery"
+      value_template: '{{ state_attr("binary_sensor.kitchen_motion","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%'
+
+- platform: template
+  sensors:
+    living_room_motion_sensor_battery:
+      friendly_name: "Living room motion sensor battery"
+      value_template: '{{ state_attr("binary_sensor.living_room_motion","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%'
+
+
+- platform: template
+  sensors:
     next_bin:
       value_template: "{{ states.calendar.next_bin.attributes.message }}"
       friendly_name: Next Bin
@@ -82,7 +115,8 @@
 - platform: rfxtrx
   automatic_add: True
   devices:
-    115a0100e452000000046600006462cb3e79:
+    # Old 115a0100e452000000046600006462cb3e79:
+    115a0102e20200000003e500000000d02979:
       name: Electricity
 
 - platform: alpha_vantage
