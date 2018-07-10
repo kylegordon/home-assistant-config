@@ -1,3 +1,4 @@
-restart_ha: service hass-daemon restart &
+#restart_ha: service hass-daemon restart &
+restart_ha: pkill python &
 kyle_phone_finder: 'echo run something to find phone'
 charlotte_phone_finder: 'echo run something to find phone'
