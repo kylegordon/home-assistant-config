@@ -13,6 +13,9 @@ homeassistant:
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
   customize:
+    script.restart_ha:
+      icon: mdi:power
+      friendly_name: "Restart Home Assistant"
     group.all_automations:
       hidden: false
     group.all_scripts:
