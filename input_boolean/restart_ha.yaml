@@ -1,0 +1,3 @@
+name: Restart Home Assistant
+icon: mdi:restart
+initial: off
