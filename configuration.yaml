@@ -89,7 +89,7 @@ discovery:
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
-  debug: True
+  debug: False
 
 #hue:
 #  bridges:
@@ -99,7 +99,7 @@ rfxtrx:
 
 zwave:
   usb_path: /dev/ttyUSB1
-  debug: true
+  debug: false
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -145,8 +145,8 @@ logger:
   default: warn
   logs:
     homeassistant.components.switch.broadlink: debug
-    homeassistant.components.switch.rfxtrx: debug
-    homeassistant.components.binary_sensor.rfxtrx: debug
+    # homeassistant.components.switch.rfxtrx: debug
+    # homeassistant.components.binary_sensor.rfxtrx: debug
     # homeassistant.components.rfxtrx: debug
 
 # Track the sun
