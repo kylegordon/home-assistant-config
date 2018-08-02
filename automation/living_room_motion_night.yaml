@@ -4,10 +4,23 @@ trigger:
     entity_id: binary_sensor.living_room_motion
     to: 'on'
 condition:
+  condition: and
+  conditions:
   - condition: numeric_state
     entity_id: sun.sun
     value_template: '{{ state.attributes.elevation }}'
     below: 30
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: media_player.living_room_kodi
+        state: idle
+      - condition: state
+        entity_id: media_player.living_room_kodi
+        state: stopped
+      - condition: state
+        entity_id: media_player.living_room_kodi
+        state: paused
   - condition: state
     entity_id: sun.sun
     state: "below_horizon"
