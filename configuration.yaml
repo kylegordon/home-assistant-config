@@ -177,6 +177,7 @@ group: !include groups.yaml
 camera: !include cameras.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
+climate: !include climate.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
