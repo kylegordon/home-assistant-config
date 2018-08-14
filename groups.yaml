@@ -5,7 +5,7 @@ default_view:
   view: yes
   entities:
     - group.people_status
-    - input_boolean.guest_mode
+    - group.modes
     - sensor.dark_sky_temperature
     - sensor.dark_sky_precip_probability
     - sensor.electricity_energy_usage
@@ -19,10 +19,18 @@ default_view:
     - sensor.bitcoin_balance
     - group.environment_summary
 
+modes:
+  name: Modes
+  view: no
+  entities:
+    - input_boolean.guest_mode
+
 environment_summary:
   name: Environment Summary
   view: no
   entities:
+    - climate.house
+    - climate.hot_water
     - sensor.house_average_temperature
     - sensor.house_average_humidity
     - sensor.dark_sky_temperature
@@ -85,8 +93,8 @@ bedroom_1:
   entities:
     - group.bedroom_1_lights
     - group.ensuite
-    - binary_sensor.bed_occupancy_1
-    - binary_sensor.bed_occupancy_2
+    - binary_sensor.kyle_bed_sensor
+    - binary_sensor.charlotte_bed_sensor
     - sensor.bed_sensor_signal_level
 
 ensuite:
@@ -189,6 +197,7 @@ climate:
   name: Climate
   view: no
   entities:
+    - climate.house
     - sensor.house_average_temperature
     - sensor.house_average_humidity
     - sensor.dark_sky_temperature

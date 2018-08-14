@@ -2,3 +2,9 @@
   name: House
   heater: switch.heating
   target_sensor: sensor.house_average_temperature
+
+- platform: generic_thermostat
+  name: Hot Water
+  heater: switch.hot_water
+  target_sensor: sensor.hot_water_tank
+  max_temp: 60
