@@ -7,7 +7,7 @@ trigger:
 
 action:
   - service: light.toggle
-    entity_id: light.kyles_bedside
+    entity_id: group.bedside_lights
   - service: logbook.log
     data_template:
       name: EVENT
