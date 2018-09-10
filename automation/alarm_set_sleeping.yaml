@@ -8,8 +8,8 @@ trigger:
     to: "Sleeping"
 condition:
   - condition: state
-    entity_id: input_select.company
-    state: "disabled"
+    entity_id: input_boolean.guest_mode
+    state: "off"
 action:
   - service: logbook.log
     data_template:
