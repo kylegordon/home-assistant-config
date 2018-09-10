@@ -4,6 +4,8 @@ trigger:
     entity_id: group.all_devices
     from: "home"
     to: "not_home"
+    for:
+      minutes: 5
 action:
   - service: logbook.log
     data_template:
