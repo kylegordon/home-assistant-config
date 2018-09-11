@@ -44,6 +44,7 @@ kitchen:
     - binary_sensor.kitchen_motion
     - sensor.kitchen_motion
     - light.kitchen_cabinets
+    - media_player.kitchen
 
 utility_room:
   name: Utility Room
@@ -66,12 +67,14 @@ living_room:
     - switch.tellybox
     - binary_sensor.living_room_motion
     - sensor.living_room_motion
+    - media_player.living_room
 
 living_room_lights:
   name: Living Room Lights
   entities:
     - light.uplighter
-    - light.living_room
+    - light.sofa_overhead
+    - light.dining_table_overhead
     - light.edison_lamp
     - light.lava_lamp
     - light.sideboard_light
@@ -92,10 +95,12 @@ bedroom_1:
   view: yes
   entities:
     - group.bedroom_1_lights
+    - group.bedside_lights
     - group.ensuite
     - binary_sensor.kyle_bed_sensor
     - binary_sensor.charlotte_bed_sensor
     - sensor.bed_sensor_signal_level
+    - media_player.bedroom
 
 ensuite:
   name: Ensuite
@@ -118,8 +123,6 @@ bedroom_1_lights:
   name: Bedroom lights
   entities:
     - light.master_bedroom
-    - light.kyles_bedside
-    - group.bedside_lights
 
 bedroom_2:
   name: Guest bedroom
@@ -132,6 +135,7 @@ bedroom_3:
   view: yes
   entities:
     - media_player.study_ds
+    - media_player.study
     - switch.study_amp
     - switch.study_volume
     - input_select.study_amplifier_input
@@ -269,7 +273,8 @@ people:
 bedside_lights:
   name: Bedside Lights
   entities:
-    - light.kyles_bedside
+    - light.bedside_kyle
+    - light.bedside_charlotte
 
 lightswitch_relays:
   name: Lightswitch Relays
@@ -286,6 +291,14 @@ people_status:
     - sensor.kyle_status
     - sensor.charlotte_status
 
+test:
+  name: Test
+  view: no
+  entities:
+    - switch.tellybox
+    - switch.yamaha
+    - media_player.living_room_panasonic_tv
+    - media_player.living_room_amplifier
 other:
   name: Other
   view: yes
@@ -294,3 +307,4 @@ other:
     - group.all_automations
     - group.lightswitch_relays
     - switch.energenie_1
+    - group.test
