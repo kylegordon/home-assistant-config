@@ -20,8 +20,14 @@ action:
       option: Just Arrived
 
   - service: notify.email_kyle
-    data:
-      message: "Person has just arrived"
+    data_template:
+      message: >
+        {% if trigger.entity_id == 'device_tracker.bagpuss_a0001' %}
+          Kyle has just arrived.
+        {% elif trigger.entity_id == 'device_tracker.charlotte_thea' %}
+          Charlotte has just arrived.
+        {% endif %}
+
   - service: script.tweet_engine
     data_template:
       tweet: >

@@ -30,3 +30,12 @@ action:
         {% endif %}
       option: Home
 
+  - service: notify.email_kyle
+    data_template:
+      message: >
+        {% if trigger.entity_id == 'device_tracker.bagpuss_a0001' %}
+          Kyle is home!
+        {% elif trigger.entity_id == 'device_tracker.charlotte_thea' %}
+          Charlotte is home!
+        {% endif %}
+

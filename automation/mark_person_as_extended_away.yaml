@@ -21,3 +21,12 @@ action:
         {% endif %}
       option: Extended Away
 
+  - service: notify.email_kyle
+    data_template:
+      message: >
+        {% if trigger.entity_id == 'device_tracker.bagpuss_a0001' %}
+          Kyle has been away for an extended time.
+        {% elif trigger.entity_id == 'device_tracker.charlotte_thea' %}
+          Charlotte has been away for an extended time.
+        {% endif %}
+
