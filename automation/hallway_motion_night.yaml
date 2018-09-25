@@ -10,7 +10,7 @@ condition:
   - condition: numeric_state
     entity_id: sun.sun
     value_template: '{{ state.attributes.elevation }}'
-    below: 30
+    below: 15
 #  - condition: state
 #    entity_id: sun.sun
 #    state: "below_horizon"
