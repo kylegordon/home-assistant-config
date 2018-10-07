@@ -10,6 +10,8 @@ condition:
     state: "below_horizon"
   - condition: time
     after: '22:00:00'
+  - condition: time
+    before: '05:00:00'
   - condition: template
     value_template: "{% if states('sensor.kyle_status') != 'sleeping' and states('sensor.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
 action:
@@ -26,7 +28,7 @@ action:
       brightness: 100
       transition: 120
       color_temp: 300
-  - service: switch.turn_on
+  - service: light.turn_on
     data:
       entity_id: group.bedside_lights
   - service: light.turn_on
@@ -34,3 +36,10 @@ action:
       entity_id: group.outside_lights
 
   - service: alarm_control_panel.alarm_disarm
+
+  - delay:
+      minutes: 5
+  - service: light.turn_off
+    data:
+      entity_id: group.outside_lights
+
