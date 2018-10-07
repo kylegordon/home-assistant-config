@@ -9,6 +9,7 @@
 #  new_device_defaults:
 #    track_new_devices: True
 - platform: ping
+  consider_home: 3700
   hosts:
     charlotte_thea: 172.24.32.144
 - platform: owntracks
