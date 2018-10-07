@@ -26,12 +26,7 @@ action:
     data_template:
       name: EVENT
       message: "Time to waken up!"
-  - service: notify.email_kyle
-    data:
-      message: "Time to waken up!"
   # Trigger the morning lighting sequence
-  - service: script.alarm_clock_morning
-
   - service: script.tweet_engine
     data_template:
       tweet: >
