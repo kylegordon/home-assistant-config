@@ -38,6 +38,20 @@ homeassistant:
         icon: mdi:television
     light.kyles_bedside:
         icon: mdi:hotel
+    light.edison_lamp:
+      assumed_state: false
+    light.sideboard_light:
+      assumed_state: false
+    light.lava_lamp:
+      assumed_state: false
+    light.christmas_tree:
+      assumed_state: false
+    light.candle_arch:
+      assumed_state: false
+    light.star_burst:
+      assumed_state: false
+    light.arc_lamp:
+      assumed_state: false
     group.bedside_lights:
         icon: mdi:hotel
     sensor.kyle_status:
@@ -153,14 +167,66 @@ logger:
 sun:
 
 emulated_hue:
+  # Max of 49! 
+  # https://www.home-assistant.io/components/emulated_hue/
+  expose_by_default: false
   exposed_domains:
     - switch
     - light
     - group
     - input_boolean
-    - input_select
     - media_player
-    - fan
+  entities:
+    group.lightswitch_relays:
+      hidden: false
+    group.ensuite:
+      hidden: false
+    group.bedside_lights:
+      hidden: false
+    group.outside_lights:
+      hidden: false
+    group.hall:
+      hidden: false
+    group.living_room_lights:
+      hidden: false
+    input_boolean.guest_mode:
+      hidden: false
+    light.study_light:
+      hidden: false
+    light.bedside_charlotte:
+      hidden: false
+    light.bedside_kyle:
+      hidden: false
+    light.garage_lights:
+      hidden: false
+    light.craft_room:
+      hidden: false
+    light.craft_room_bookcase:
+      hidden: false
+    light.craft_room_fairy_lights:
+      hidden: false
+    light.craft_room_desk_level:
+      hidden: false
+    light.utility_room:
+      hidden: false
+    light.master_bedroom:
+      hidden: false
+    light.sideboard_light:
+      hidden: false
+    light.uplighter:
+      hidden: false
+    light.sofa_overhead:
+      hidden: false
+    light.dining_table_overhead:
+      hidden: false
+    light.star_burst:
+      hidden: false
+    light.arc_lamp:
+      hidden: false
+    switch.tellybox:
+      hidden: false
+    input_boolean.restart_ha:
+      hidden: false
 
 ############
 # Includes #
