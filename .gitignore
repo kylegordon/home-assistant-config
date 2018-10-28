@@ -8,3 +8,4 @@ emulated_hue_ids.json
 deconz.conf
 .config_entries.json
 .google.token
+google_calendars.yaml
