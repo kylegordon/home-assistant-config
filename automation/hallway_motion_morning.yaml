@@ -1,0 +1,30 @@
+alias: Hallway light motion - morning
+trigger:
+  - platform: state
+    entity_id: binary_sensor.hall_door_motion
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.hall_rooms_motion
+    to: 'on'
+condition:
+  - condition: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    below: 15
+#  - condition: state
+#    entity_id: sun.sun
+#    state: "below_horizon"
+  - condition: time
+    after: '06:00'
+    before: '12:00'
+action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Hallway motion - morning"
+  - service: light.turn_on
+    entity_id: group.hall
+    data:
+      brightness: 255
+      transition: 10
+      color_temp: 375
