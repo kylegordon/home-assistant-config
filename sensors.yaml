@@ -26,6 +26,9 @@
 #  origin: device_tracker.charlotte_thea
 #  destination: zone.home
 
+- platform: pi_hole
+  host: 172.24.32.246
+
 - platform: sonarr
   api_key: f9808f9afd094ac4998b06dd543d1aad
   host: homeauto.vpn.glasgownet.com
@@ -90,9 +93,6 @@
       value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
       friendly_name: 'Charlotte'
       entity_id: input_select.charlotte_status_dropdown
-
-## Weather ##
-- platform: yr
 
 - platform: darksky
   api_key: !secret darksky_api_key
