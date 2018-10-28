@@ -18,6 +18,7 @@ default_view:
     - sensor.btc
     - sensor.bitcoin_balance
     - group.environment_summary
+    - weather.dark_sky
 
 modes:
   name: Modes
