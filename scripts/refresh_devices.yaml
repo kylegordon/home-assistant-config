@@ -1,9 +1,10 @@
-sequence:
-- service: mqtt.publish
-  data:
-    topic: "owntracks/bagpuss/a0001/cmd"
-    payload_template: '{"_type":"cmd","action":"reportLocation"}'
-- service: mqtt.publish
-  data:
-    topic: "owntracks/charlotte/thea/cmd"
-    payload_template: '{"_type":"cmd","action":"reportLocation"}'
+refresh_devices:
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: "owntracks/bagpuss/a0001/cmd"
+      payload_template: '{"_type":"cmd","action":"reportLocation"}'
+  - service: mqtt.publish
+    data:
+      topic: "owntracks/charlotte/thea/cmd"
+      payload_template: '{"_type":"cmd","action":"reportLocation"}'

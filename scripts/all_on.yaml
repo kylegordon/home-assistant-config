@@ -1,22 +1,23 @@
-sequence:
-- service: logbook.log
-  data_template:
-    name: EVENT
-    message: "Welcome! Turning everything on."
+all_on:
+  sequence:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Welcome! Turning everything on."
 
-## Turn on Hall switches and lights
-- service: switch.turn_on
-  data:
-    entity_id: group.hall
-- service: light.turn_on
-  data:
-    entity_id: group.hall
+  ## Turn on Hall switches and lights
+  - service: switch.turn_on
+    data:
+      entity_id: group.hall
+  - service: light.turn_on
+    data:
+      entity_id: group.hall
 
 
-## Turn on outside lights. PIR will also be triggered on arrival, starting the timer.
-- service: light.turn_on
-  data:
-    entity_id: group.outside_lights
+  ## Turn on outside lights. PIR will also be triggered on arrival, starting the timer.
+  - service: light.turn_on
+    data:
+      entity_id: group.outside_lights
 
-- service: alarm_control_panel.alarm_disarm
+  - service: alarm_control_panel.alarm_disarm
 

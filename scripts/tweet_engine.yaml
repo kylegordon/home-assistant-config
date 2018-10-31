@@ -2,8 +2,40 @@
 ###Script to send notifications to Twitter as @thegordonhome.
 ######################################################################################################
 
-sequence:
- - service: notify.twitter_thegordonhome
-   data_template:
-     message: >-
-       {{ tweet }} #IOT #SmartHome
+#sequence:
+# - service: notify.twitter_thegordonhome
+#   data_template:
+#     message: >-
+#       {{ tweet }} #IOT #SmartHome
+
+
+tweet_engine_image:
+   sequence:
+#    - service: mqtt.publish
+#      data_template:
+#        topic: 'ifttt/message'
+#        payload: >-
+#          {{ tweet }}
+#        retain: true
+
+    - service: notify.twitter_thegordonhome
+      data_template:
+        message: >-
+          {{ tweet }} #IOT #SmartHome
+        data:
+          media: >-
+            {{ image }}
+
+tweet_engine:
+   sequence:
+#    - service: mqtt.publish
+#      data_template:
+#        topic: 'ifttt/message'
+#        payload: >-
+#          {{ tweet }}
+#        retain: true
+
+    - service: notify.twitter_thegordonhome
+      data_template:
+        message: >-
+          {{ tweet }} #IOT #SmartHome

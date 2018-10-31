@@ -1,11 +1,12 @@
-sequence:
-- service: logbook.log
-  data_template:
-    name: EVENT
-    message: "Welcome! Disarming the alarm."
+all_on_day:
+  sequence:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Welcome! Disarming the alarm."
 
-- service: alarm_control_panel.alarm_disarm
+  - service: alarm_control_panel.alarm_disarm
 
-- service: notify.email_kyle
-  data:
-    message: "Welcome! Disarming the alarm."
+  - service: notify.email_kyle
+    data:
+      message: "Welcome! Disarming the alarm."

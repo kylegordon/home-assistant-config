@@ -1,9 +1,10 @@
-sequence:
-- service: logbook.log
-  data_template:
-    name: EVENT
-    message: "Restarting Home Assistant"
-- service: notify.email_kyle
-  data:
-    message: "Restarting Home Assistant at {{ states('sensor.date__time') }}"
-- service: shell_command.restart_ha
+restart_ha:
+  sequence:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Restarting Home Assistant"
+  - service: notify.email_kyle
+    data:
+      message: "Restarting Home Assistant at {{ states('sensor.date__time') }}"
+  - service: shell_command.restart_ha
