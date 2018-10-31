@@ -26,9 +26,6 @@
 #  origin: device_tracker.charlotte_thea
 #  destination: zone.home
 
-- platform: pi_hole
-  host: 172.24.32.246
-
 - platform: sonarr
   api_key: f9808f9afd094ac4998b06dd543d1aad
   host: homeauto.vpn.glasgownet.com
@@ -115,10 +112,6 @@
     - minutely_summary
     - hourly_summary
     - daily_summary
-    - temperature_max
-    - temperature_min
-    - apparent_temperature_max
-    - apparent_temperature_min
     - precip_intensity_max
 
 ## RFXcom ##
