@@ -1,8 +1,0 @@
-sequence:
-- service: logbook.log
-  data_template:
-    name: UPDATE
-    message: "New Home Assistant update available"
-- service: notify.notify
-  data:
-    message: "New Home Assistant update available."
