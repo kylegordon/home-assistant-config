@@ -1,4 +1,4 @@
-alias: "Charlotte Car Finder"
+alias: "Charlotte Car Finder Refresh"
 trigger:
   platform: state
   entity_id: input_select.charlotte_status

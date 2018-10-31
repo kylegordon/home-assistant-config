@@ -1,4 +1,4 @@
-alias: "Kyle Car Finder"
+alias: "Kyle Car Finder Refresh"
 trigger:
   platform: state
   entity_id: input_select.kyle_status
