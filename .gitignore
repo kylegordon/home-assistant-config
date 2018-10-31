@@ -9,3 +9,4 @@ deconz.conf
 .config_entries.json
 .google.token
 google_calendars.yaml
+custom_components/media_player/__pycache__/
