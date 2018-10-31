@@ -82,6 +82,12 @@ http:
       - 10.8.0.18/32
       - 127.0.0.1
 
+weather:
+  - platform: darksky
+    api_key: !secret darksky_api_key
+    update_interval: 
+      minutes: 5
+
 deconz:
   host: 172.24.32.13
   port: 8100
@@ -111,9 +117,9 @@ rfxtrx:
 #    - host: 172.24.32.12
 #      filename: phue-00178817a562.conf
 
-zwave:
-  usb_path: /dev/ttyUSB1
-  debug: false
+#zwave:
+  #usb_path: /dev/ttyUSB1
+  #debug: false
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -252,8 +258,7 @@ scene: !include_dir_list scenes
 # Merged items requiring a dictionary
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
-script: !include_dir_named scripts/
-
+script: !include_dir_merge_named scripts/
 
 mqtt:
   broker: 172.24.32.13
