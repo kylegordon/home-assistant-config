@@ -1,9 +1,25 @@
 alias: Alert when a critical device goes offline
 trigger:
   - platform: state
-    entity_id: binary_sensor.device_critical
-    from: 'Online'
-    to: 'Offline'
+    entity_id: 
+      - sensor.hallway_temperature
+      - sensor.kitchen_temperature
+      - sensor.utility_room_temperature
+      - sensor.study_temperature
+      - sensor.garage_temperature
+      - switch.guest_bedroom_lightswitch_relay
+      - switch.master_bedroom_lightswitch_relay
+      - light.driveway_floodlights
+      - light.front_door_floodlights
+      - light.garage_lights
+      - light.study_light
+      - light.guest_bedroom
+      - light.master_bedroom
+      - light.craft_room
+      - light.hall_bedrooms
+      - light.hall_entrance
+      - light.uplighter
+    to: 'unavailable'
     for:
       minutes: 2
 condition:
