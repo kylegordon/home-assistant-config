@@ -35,7 +35,7 @@ action:
         "Time to wake up the house with some gentle lighting. (http://amzn.to/2Bsko4x)"
         ] | random + " #Hue #Lifx"}}
   - service: light.turn_on
-    entity_id: light.master_bedroom
+    entity_id: light.master_bedroom, light.bedside_charlotte, light.bedside_kyle
     data:
       brightness_pct: 100
       color_temp: 200
