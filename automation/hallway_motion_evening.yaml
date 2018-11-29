@@ -19,4 +19,4 @@ action:
     data:
       transition: 2
       color_temp: 300
-      brightness: 255
+      brightness_pct: 100

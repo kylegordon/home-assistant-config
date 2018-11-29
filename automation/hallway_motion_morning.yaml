@@ -17,6 +17,6 @@ action:
   - service: light.turn_on
     entity_id: group.hall
     data:
-      brightness: 255
+      brightness_pct: 100
       transition: 10
       color_temp: 375
