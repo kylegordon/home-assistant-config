@@ -7,5 +7,10 @@ condition:
     entity_id: group.all_devices
     state: "home"
 action:
-  service: light.turn_on
-  entity_id: group.bedside_lights
+  - service: light.turn_on
+    entity_id: group.bedside_lights
+    data:
+      brightness_pct: 75
+      color_temp: 400
+      transition: 30
+
