@@ -8,20 +8,12 @@ trigger:
     to: 'on'
 condition:
   - condition: numeric_state
-    entity_id: sun.sun
-    value_template: '{{ state.attributes.elevation }}'
-    below: 15
-#  - condition: state
-#    entity_id: sun.sun
-#    state: "below_horizon"
+    entity_id: sensor.sunlight_pct
+    below: 20
   - condition: time
     after: '22:00'
     before: '06:00'
 action:
-  #  - service: logbook.log
-  #  data_template:
-  #    name: EVENT
-  #    message: "Hallway motion - night"
   - service: light.turn_on
     entity_id: group.hall
     data:
