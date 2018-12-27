@@ -71,7 +71,8 @@
   payload_available: "true"
   payload_not_available: "false"
 
-- platform: mqtt_json
+- platform: mqtt
+  schema: json
   name: "Kitchen Cabinets"
   state_topic: "devices/a020a61aafea/RGB/state"
   command_topic: "devices/a020a61aafea/RGB/light/set"
