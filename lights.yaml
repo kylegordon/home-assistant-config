@@ -1,5 +1,3 @@
-- platform: lifx
-  broadcast: 172.24.32.255
 - platform: rfxtrx
   automatic_add: False
   devices:
@@ -13,24 +11,23 @@
       name: Surplus
     0a140075f0dd3c10000060:
       # Black Remote D4
-      name: Edison lamp
+      name: Edison lamp old
     0a14000bf0dd3c0f010070:
       name: Lava Lamp
     0a140031f0dd3c0d010070:
       name: Craft Room bookcase
     0a140037f0dd3c0b010060:
-      name: Sideboard light
+      name: Christmas Tree
     0a14003cf0dd3c0a010060:
       name: Craft room fairy lights
-    0a14005ff0dd3c05010060:
-      # This is actually a socket/switch
-      name: Christmas Tree
     0710080041020000:
       name: Star Burst
-    0710080041040000:
-      name: Arc Lamp
     0710080041030000:
       name: Candle Arch
+    0a140041f0dd3c09010070:
+      name: Arc Lamp
+    0a14005ff0dd3c05010060:
+      name: Twig lights
 
 - platform: mqtt
   name: "Garage Lights"
