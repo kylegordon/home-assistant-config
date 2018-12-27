@@ -41,7 +41,7 @@ homeassistant:
         icon: mdi:hotel
     light.edison_lamp:
       assumed_state: false
-    light.sideboard_light:
+    light.sideboard:
       assumed_state: false
     light.lava_lamp:
       assumed_state: false
@@ -52,6 +52,8 @@ homeassistant:
     light.star_burst:
       assumed_state: false
     light.arc_lamp:
+      assumed_state: false
+    light.twig_lights:
       assumed_state: false
     group.bedside_lights:
         icon: mdi:hotel
@@ -82,6 +84,13 @@ http:
       - 172.24.32.0/24
       - 10.8.0.18/32
       - 127.0.0.1
+
+konnected:
+  access_token: !secret konnected_key
+  devices:
+    - id: bcddc2fdd1b2
+    - id: dc4f22199839
+    - id: dc4f22195dec
 
 weather:
   - platform: darksky
@@ -119,8 +128,8 @@ rfxtrx:
 #      filename: phue-00178817a562.conf
 
 #zwave:
-  #usb_path: /dev/ttyUSB1
-  #debug: false
+#  usb_path: /dev/zwave
+#  debug: false
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -164,11 +173,14 @@ logbook:
 
 logger:
   default: warn
-  logs:
-    homeassistant.components.switch.broadlink: debug
+  # logs:
+    # pydeconz: debug
+    # homeassistant.components.deconz: debug
+    # homeassistant.components.switch.broadlink: debug
     # homeassistant.components.switch.rfxtrx: debug
     # homeassistant.components.binary_sensor.rfxtrx: debug
     # homeassistant.components.rfxtrx: debug
+    # homeassistant.components.discovery: debug
 
 # Track the sun
 sun:
@@ -196,6 +208,8 @@ emulated_hue:
       hidden: false
     group.living_room_lights:
       hidden: false
+    group.christmas_lights:
+      hidden: false
     input_boolean.guest_mode:
       hidden: false
     light.study_light:
@@ -218,7 +232,7 @@ emulated_hue:
       hidden: false
     light.master_bedroom:
       hidden: false
-    light.sideboard_light:
+    light.sideboard:
       hidden: false
     light.uplighter:
       hidden: false
@@ -230,9 +244,13 @@ emulated_hue:
       hidden: false
     light.arc_lamp:
       hidden: false
+    light.lava_lamp:
+      hidden: false
     switch.tellybox:
       hidden: false
     input_boolean.restart_ha:
+      hidden: false
+    light.outside_decorations:
       hidden: false
 
 ############
