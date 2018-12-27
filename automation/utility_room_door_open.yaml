@@ -3,11 +3,13 @@ trigger:
   - platform: state
     entity_id: binary_sensor.utility_room_door
     to: 'on'
+  - platform: state
+    entity_id: binary_sensor.utility_room_motion
+    to: 'on'
 condition:
   - condition: numeric_state
-    entity_id: sun.sun
-    value_template: '{{ state.attributes.elevation }}'
-    below: 30
+    entity_id: sensor.sunlight_pct
+    below: 20
 action:
   - service: light.turn_on
     entity_id: light.utility_room
