@@ -350,6 +350,10 @@
     - sensor.utility_room_temperature
     - sensor.study_temperature
     - sensor.hallway_temperature
+    - sensor.craft_room_temperature
+    - sensor.guest_room_temperature
+    - sensor.living_room_temperature
+    - sensor.master_bedroom_temperature
 
 - platform: min_max
   name: House Average Humidity
@@ -358,6 +362,10 @@
     - sensor.utility_room_humidity
     - sensor.study_humidity
     - sensor.hallway_humidity
+    - sensor.craft_room_humidity
+    - sensor.guest_room_humidity
+    - sensor.living_room_humidity
+    - sensor.master_bedroom_humidity
 
 - platform: template
   sensors:
