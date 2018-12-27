@@ -19,12 +19,6 @@
   mac: 'b4:43:0d:f9:19:b9'
   ircodes_ini: 'broadlink_media_codes/living_room_panasonic.ini'
 
-- platform: broadlink
-  name: Living Room Amplifier
-  host: 172.24.32.40
-  mac: 'b4:43:0d:f9:19:b9'
-  ircodes_ini: 'broadlink_media_codes/living_room_yamaha.ini'
-
 - platform: alexa
   email: !secret alexa_email
   password: !secret alexa_password
