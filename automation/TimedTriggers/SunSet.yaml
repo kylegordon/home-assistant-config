@@ -1,9 +1,8 @@
 alias: "Sunset things"
 trigger:
   - platform: numeric_state
-    entity_id: sun.sun
-    value_template: '{{ state.attributes.elevation }}'
-    below: 30
+    entity_id: sensor.sunlight_pct
+    below: 20
 condition:
   - condition: state
     entity_id: group.all_devices
@@ -16,4 +15,5 @@ action:
       message: "The sun is setting soon. Adjusting lighting"
   - service: homeassistant.turn_on
     entity_id:
-      - light.sideboard_light
+      - light.sideboard
+      - light.twig_lights
