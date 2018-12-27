@@ -28,7 +28,7 @@ action:
       color_temp: 300
   - service: light.turn_on
     data:
-      entity_id: light.sideboard_light
+      entity_id: light.sideboard
   - service: light.turn_on
     data:
       entity_id: light.uplighter
