@@ -5,6 +5,7 @@ import socket
 import os.path
 import platform
 import subprocess as sp
+import time
 import voluptuous as vol
 import homeassistant.util as util
 import homeassistant.helpers.config_validation as cv
@@ -17,7 +18,7 @@ from homeassistant.const import (
     CONF_HOST, CONF_MAC, CONF_TIMEOUT, STATE_OFF, STATE_ON,
     STATE_PLAYING, STATE_PAUSED, STATE_UNKNOWN, CONF_NAME, CONF_FILENAME)
 from homeassistant.helpers.event import (async_track_state_change)
-from homeassistant.helpers.restore_state import async_get_last_state
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.core import callback
 from configparser import ConfigParser
 from base64 import b64encode, b64decode
@@ -51,8 +52,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_POWER_CONS_THRESHOLD, default=10): cv.positive_int,
 })
 
-@asyncio.coroutine 
-def async_setup_platform(hass, config, async_add_devices, discovery_info=None):    
+async def async_setup_platform(hass, config, async_add_devices, discovery_info=None):    
     """Set up the Broadlink IR Media Player platform."""
     name = config.get(CONF_NAME)
     ip_addr = config.get(CONF_HOST)
@@ -90,7 +90,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     async_add_devices([BroadlinkIRMediaPlayer(hass, name, broadlink_device, ircodes_ini, ping_host, power_cons_entity_id, power_cons_threshold)], True)
     
     
-class BroadlinkIRMediaPlayer(MediaPlayerDevice):
+class BroadlinkIRMediaPlayer(MediaPlayerDevice, RestoreEntity):
 
     def __init__(self, hass, name, broadlink_device, ircodes_ini, ping_host, power_cons_entity_id, power_cons_threshold):
         self._name = name
@@ -129,14 +129,13 @@ class BroadlinkIRMediaPlayer(MediaPlayerDevice):
             if sensor_state:
                 self._async_update_power_cons(sensor_state)
                 
-    @asyncio.coroutine
-    def _async_power_cons_sensor_changed(self, entity_id, old_state, new_state):
+    async def _async_power_cons_sensor_changed(self, entity_id, old_state, new_state):
         """Handle temperature changes."""
         if new_state is None:
             return
 
         self._async_update_power_cons(new_state)
-        yield from self.async_update_ha_state()
+        await self.async_update_ha_state()
         
     @callback
     def _async_update_power_cons(self, state):
@@ -173,6 +172,9 @@ class BroadlinkIRMediaPlayer(MediaPlayerDevice):
                     except socket.timeout:
                         if retry == DEFAULT_RETRY-1:
                             _LOGGER.error("Failed to send packet to Broadlink RM Device")
+                            
+            if len(commands) > 1:
+                time.sleep(.500)
         
     @property
     def name(self):
@@ -292,9 +294,11 @@ class BroadlinkIRMediaPlayer(MediaPlayerDevice):
         elif self._power_cons_entity_id:
             self._state = STATE_ON if self._current_power_cons > self._power_cons_threshold else STATE_OFF
             
-    @asyncio.coroutine
-    def async_added_to_hass(self):
-        state = yield from async_get_last_state(self.hass, self.entity_id)
+    async def async_added_to_hass(self):
+        """Run when entity about to be added."""
+        await super().async_added_to_hass()
         
-        if state is not None:
-            self._state = state.state
+        last_state = await self.async_get_last_state()
+        
+        if last_state is not None:
+            self._state = last_state.state
