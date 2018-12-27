@@ -9,9 +9,9 @@ action:
       seconds: 5
   - service: media_player.turn_on
     entity_id: media_player.living_room_kodi
-  - service: media_player.turn_on
-    entity_id: media_player.main_room
+  #- service: media_player.turn_on
+  #  entity_id: media_player.main_room
   - service: media_player.select_source
     data:
-      entity_id: media_player.main_room
-      source: PC
+      entity_id: media_player.linn_223637
+      source: Television
