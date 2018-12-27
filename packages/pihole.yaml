@@ -113,7 +113,7 @@ automation:
             {{ [
             "I blocked {{states.sensor.pihole_ads_blocked_today.state}} ads. That is {{states.sensor.pihole_ads_percentage_blocked_today.state}}% of my internet traffic.",
             "Today was a good day! Why, you ask? Because I blocked {{states.sensor.pihole_ads_blocked_today.state}} ads via Pi-Hole!",
-            ] | random + " #PiHole #Security Status:({{states.sensor.server_pihole.state}})"}}
+            ] | random + " #PiHole #Security Status:({{states.sensor.server_pihole.state}}) https://amzn.to/2CTOzFi"}}
           image: >-
             {{ [
             "/config/www/custom_ui/images/pihole/Vortex-R.png",
@@ -133,7 +133,7 @@ automation:
             {{ [
             "There are currently {{states.sensor.pihole_dns_unique_clients.state}} clients on my network.",
             "As reported by #pihole, there are {{states.sensor.pihole_dns_unique_clients.state}} clients on my network.",
-            ] | random + "#Security https://github.com/CCOSTAN/Home-AssistantConfig#networking"}}
+            ] | random + "#Security https://amzn.to/2CTOzFi"}}
           image: >-
             {{ [
             "/config/www/custom_ui/images/pihole/Vortex-R.png",
