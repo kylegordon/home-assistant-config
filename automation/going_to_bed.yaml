@@ -35,6 +35,7 @@ action:
     - group.utility_room
     - group.kitchen
     - group.hall
+    - light.twig_lights
     - group.bedroom_2
     - group.bedroom_3
     - group.bedroom_4
