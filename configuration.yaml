@@ -35,8 +35,9 @@ homeassistant:
         icon: mdi:water-percent
     sensor.house_average_temperature:
         icon: mdi:thermometer
-    switch.living_room_television:
+    switch.tellybox:
         icon: mdi:television
+        assumed_state: false
     light.kyles_bedside:
         icon: mdi:hotel
     light.edison_lamp:
@@ -82,6 +83,7 @@ http:
     - http://homeauto.vpn.glasgownet.com
   trusted_networks: 
       - 172.24.32.0/24
+      - 172.24.34.0/24
       - 10.8.0.18/32
       - 127.0.0.1
 
@@ -251,6 +253,8 @@ emulated_hue:
     input_boolean.restart_ha:
       hidden: false
     light.outside_decorations:
+      hidden: false
+    scene.movie_time:
       hidden: false
 
 ############
