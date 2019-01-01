@@ -327,3 +327,4 @@ other:
     - switch.energenie_1
     - switch.energenie_4
     - group.test
+    - scene.movie_time
