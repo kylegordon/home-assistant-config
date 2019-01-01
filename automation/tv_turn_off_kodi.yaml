@@ -7,3 +7,8 @@ trigger:
 action:
   - service: media_player.turn_off
     entity_id: media_player.living_room_kodi
+  # If this evaluates to false, the action will stop here.
+  - condition: template
+    value_template: '{{ states.media_player.linn_223637.attributes.source == "Television" }}'
+  - service: media_player.turn_off
+    entity_id: media_player.linn_223637
