@@ -1,0 +1,19 @@
+alias: Ensuite motion - night
+trigger:
+  - platform: state
+    entity_id: binary_sensor.ensuite_motion
+    to: 'on'
+condition:
+  - condition: numeric_state
+    entity_id: sensor.sunlight_pct
+    below: 20
+  - condition: time
+    after: '22:00'
+    before: '06:00'
+action:
+  - service: light.turn_on
+    entity_id: group.ensuite_facilities
+    data:
+      brightness_pct: 50
+      transition: 5
+      color_temp: 375
