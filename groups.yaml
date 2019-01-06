@@ -111,6 +111,8 @@ ensuite:
   name: Ensuite
   view: no
   entities:
+    - sensor.ensuite_lightlevel
+    - binary_sensor.ensuite_motion
     - light.ensuite_entrance
     - light.ensuite_towels
     - light.ensuite_shower
