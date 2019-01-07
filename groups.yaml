@@ -55,6 +55,8 @@ utility_room:
     - sensor.utility_room_temperature
     - sensor.utility_room_humidity
     - sensor.utility_room_esp8266_signal_level
+    - sensor.utility_room_lightlevel
+    - binary_sensor.utility_room_motion
     - binary_sensor.utility_room_door
 
 living_room:
