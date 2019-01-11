@@ -12,7 +12,7 @@ condition:
     before: '06:00'
 action:
   - service: light.turn_on
-    entity_id: group.ensuite_facilities
+    entity_id: light.ensuite_facilities
     data:
       brightness_pct: 50
       transition: 5
