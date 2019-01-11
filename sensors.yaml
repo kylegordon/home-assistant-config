@@ -389,3 +389,20 @@
         {{ brightness | round }}
       unit_of_measurement: '%'
       device_class: 'illuminance'
+
+- platform: time_date
+  display_options:
+    - 'time'
+
+- platform: template
+  sensors:
+    time_of_day:
+      value_template: >
+        {% set current_hour = strptime(states('sensor.time'), "%H:%M").hour %}
+        {% if 6 <= current_hour < 12 %}
+          Morning
+        {% elif 12 <= current_hour < 22 %}
+          Day
+        {% else %}
+          Night
+        {% endif %}
