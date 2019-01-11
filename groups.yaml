@@ -101,6 +101,8 @@ bedroom_1:
     - group.bedroom_1_lights
     - group.bedside_lights
     - group.ensuite
+    - light.ensuite
+    - light.ensuite_facilities
     - binary_sensor.kyle_bed_sensor
     - binary_sensor.charlotte_bed_sensor
     - sensor.bed_sensor_signal_level
