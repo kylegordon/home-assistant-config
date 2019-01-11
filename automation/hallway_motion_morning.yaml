@@ -1,4 +1,5 @@
 alias: Hallway light motion - morning
+initial_state: false
 trigger:
   - platform: state
     entity_id: binary_sensor.hall_door_motion
