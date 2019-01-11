@@ -12,18 +12,19 @@ condition:
     below: 20
 action:
   - service: light.turn_on
-    entity_id: group.hall
     data_template:
-      {% if time_of_day == "Morning" %}
-        brightness_pct: 100
-        transition: 10
-        color_temp: 375
-      {% elif time_of_day == "Day" %}
-        brightness_pct: 100
-        transition: 2
-        color_temp: 300
-      {% elif time_of_day == "Night" %}
-        brightness_pct: 30
-        transition: 5
-        color_temp: 375
-      {% endif %}
+      entity_id: group.hall
+      data: >
+        {% if time_of_day == "Morning" %}
+          brightness_pct: 100
+          transition: 10
+          color_temp: 375
+        {% elif time_of_day == "Day" %}
+          brightness_pct: 100
+          transition: 2
+          color_temp: 300
+        {% elif time_of_day == "Night" %}
+          brightness_pct: 30
+          transition: 5
+          color_temp: 375
+        {% endif %}
