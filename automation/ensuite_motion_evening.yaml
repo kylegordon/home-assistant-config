@@ -12,7 +12,7 @@ condition:
     before: '22:00'
 action:
   - service: light.turn_on
-    entity_id: group.ensuite
+    entity_id: light.ensuite
     data:
       transition: 2
       color_temp: 300
