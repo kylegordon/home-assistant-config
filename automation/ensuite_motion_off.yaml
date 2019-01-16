@@ -7,4 +7,4 @@ trigger:
       minutes: 10
 action:
   service: light.turn_off
-  entity_id: group.ensuite
+  entity_id: light.ensuite

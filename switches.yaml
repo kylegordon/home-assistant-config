@@ -12,6 +12,8 @@
     - light.hall_bedrooms
     - light.hall_entrance
     - light.kitchen_cabinets
+    - light.ensuite
+    - light.ensuite_facilities
 
 - platform: broadlink
   host: 172.24.32.40
