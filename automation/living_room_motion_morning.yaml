@@ -1,43 +1,39 @@
-alias: Living Room motion - evening
+alias: Living Room motion - morning
 trigger:
   - platform: state
     entity_id: binary_sensor.living_room_motion
     to: 'on'
 condition:
-  condition: and 
+  condition: and
   conditions:
   - condition: numeric_state
-    entity_id: sun.sun
-    value_template: '{{ state.attributes.elevation }}'
-    below: 15
+    entity_id: sensor.sunlight_pct
+    below: 20
   - condition: or
     conditions:
       - condition: state
         entity_id: media_player.living_room_kodi
-        state: "idle"
+        state: idle
       - condition: state
         entity_id: media_player.living_room_kodi
-        state: "stopped"
+        state: stopped
       - condition: state
         entity_id: media_player.living_room_kodi
-        state: "paused"
+        state: paused
       - condition: state
         entity_id: media_player.living_room_kodi
         state: "off"
-  - condition: state
-    entity_id: sun.sun
-    state: "below_horizon"
   - condition: time
-    after: '12:00'
-    before: '23:30'
+    after: '06:00'
+    before: '12:00'
 action:
   - service: logbook.log
     data_template:
       name: EVENT
-      message: "Living room motion - evening"
+      message: "Living room motion - morning"
   - service: homeassistant.turn_on
-    entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
+    entity_id: light.dining_table_overhead, light.uplighter, light.sideboard
     data:
-      transition: 2
-      color_temp: 300
-      brightness_pct: 50
+      brightness_pct: 100
+      transition: 5
+      color_temp: 375

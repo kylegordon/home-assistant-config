@@ -4,7 +4,7 @@ trigger:
     entity_id: binary_sensor.living_room_motion
     to: 'off'
     for:
-      minutes: 10
+      minutes: 60
 action:
-  service: light.turn_off
-  entity_id: light.living_room
+  service: homeassistant.turn_off
+  entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard

@@ -14,13 +14,16 @@ condition:
     conditions:
       - condition: state
         entity_id: media_player.living_room_kodi
-        state: idle
+        state: "idle"
       - condition: state
         entity_id: media_player.living_room_kodi
-        state: stopped
+        state: "stopped"
       - condition: state
         entity_id: media_player.living_room_kodi
-        state: paused
+        state: "paused"
+      - condition: state
+        entity_id: media_player.living_room_kodi
+        state: "off"
   - condition: state
     entity_id: sun.sun
     state: "below_horizon"
@@ -32,9 +35,9 @@ action:
     data_template:
       name: EVENT
       message: "Living room motion - night"
-  - service: light.turn_on
-    entity_id: light.living_room
+  - service: homeassistant.turn_on
+    entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
     data:
-      brightness: 100
+      brightness_pct: 15
       transition: 5
       color_temp: 375
