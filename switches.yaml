@@ -7,6 +7,7 @@
       name: Energenie 4
 
 - platform: flux
+  disable_brightness_adjust: True
   lights:
     - light.front_door
     - light.hall_bedrooms
@@ -14,6 +15,7 @@
     - light.kitchen_cabinets
     - light.ensuite
     - light.ensuite_facilities
+    - light.study_light
 
 - platform: broadlink
   host: 172.24.32.40
