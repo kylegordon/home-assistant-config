@@ -35,7 +35,6 @@ action:
         {% else %}
         light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
         {% endif %}
-      entity_id:
       brightness_pct: >
         {% if states('sensor.time_of_day') == "Morning" %}
         100
