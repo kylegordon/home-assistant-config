@@ -31,11 +31,3 @@ action:
         {% elif states('sensor.time_of_day') == "Night" %}
         5
         {% endif %}
-#      color_temp: >
-#        {% if states('sensor.time_of_day') == "Morning" %}
-#        375
-#        {% elif states('sensor.time_of_day') == "Day" %}
-#        300
-#        {% elif states('sensor.time_of_day') == "Night" %}
-#        375
-#        {% endif %}
