@@ -6,6 +6,11 @@
     0710080041040000:
       name: Energenie 4
 
+- platform: flux
+  lights:
+    - light.front_door
+    - light.hall_bedrooms
+    - light.hall_entrance
 
 - platform: broadlink
   host: 172.24.32.40
