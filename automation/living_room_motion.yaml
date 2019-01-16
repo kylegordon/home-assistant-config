@@ -1,0 +1,62 @@
+alias: Living Room motion
+trigger:
+  - platform: state
+    entity_id: binary_sensor.living_room_motion
+    to: 'on'
+condition:
+  condition: and
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.sunlight_pct
+    below: 20
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: media_player.living_room_kodi
+        state: "idle"
+      - condition: state
+        entity_id: media_player.living_room_kodi
+        state: "stopped"
+      - condition: state
+        entity_id: media_player.living_room_kodi
+        state: "paused"
+      - condition: state
+        entity_id: media_player.living_room_kodi
+        state: "off"
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+action:
+  - service: homeassistant.turn_on
+    data_template:
+      entity_id: >
+        {% if states('sensor.time_of_day') == "Morning" %}
+        light.dining_table_overhead, light.uplighter, light.sideboard
+        {% else %}
+        light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
+        {% endif %}
+      entity_id:
+      brightness_pct: >
+        {% if states('sensor.time_of_day') == "Morning" %}
+        100
+        {% elif states('sensor.time_of_day') == "Day" %}
+        100
+        {% elif states('sensor.time_of_day') == "Night" %}
+        30
+        {% endif %}
+      transition: >
+        {% if states('sensor.time_of_day') == "Morning" %}
+        10
+        {% elif states('sensor.time_of_day') == "Day" %}
+        2
+        {% elif states('sensor.time_of_day') == "Night" %}
+        5
+        {% endif %}
+      color_temp: >
+        {% if states('sensor.time_of_day') == "Morning" %}
+        200
+        {% elif states('sensor.time_of_day') == "Day" %}
+        300
+        {% elif states('sensor.time_of_day') == "Night" %}
+        375
+        {% endif %}
