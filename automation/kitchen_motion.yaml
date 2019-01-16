@@ -1,0 +1,38 @@
+alias: Kitchen motion
+trigger:
+  platform: state
+  entity_id: binary_sensor.kitchen_motion
+  to: 'on'
+condition:
+  - condition: numeric_state
+    entity_id: sun.sun
+    value_template: '{{ state.attributes.elevation }}'
+    below: 30
+action:
+  - service: homeassistant.turn_on
+    data_template:
+      entity_id: light.kitchen_cabinets
+      brightness_pct: >
+        {% if states('sensor.time_of_day') == "Morning" %}
+        100
+        {% elif states('sensor.time_of_day') == "Day" %}
+        100
+        {% elif states('sensor.time_of_day') == "Night" %}
+        30
+        {% endif %}
+      transition: >
+        {% if states('sensor.time_of_day') == "Morning" %}
+        10
+        {% elif states('sensor.time_of_day') == "Day" %}
+        2
+        {% elif states('sensor.time_of_day') == "Night" %}
+        5
+        {% endif %}
+#      color_temp: >
+#        {% if states('sensor.time_of_day') == "Morning" %}
+#        375
+#        {% elif states('sensor.time_of_day') == "Day" %}
+#        300
+#        {% elif states('sensor.time_of_day') == "Night" %}
+#        375
+#        {% endif %}

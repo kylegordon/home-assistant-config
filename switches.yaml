@@ -11,6 +11,7 @@
     - light.front_door
     - light.hall_bedrooms
     - light.hall_entrance
+    - light.kitchen_cabinets
 
 - platform: broadlink
   host: 172.24.32.40
