@@ -27,7 +27,7 @@ condition:
     entity_id: sun.sun
     state: "below_horizon"
 action:
-  - service: homeassistant.turn_on
+  - service: light.turn_on
     data_template:
       entity_id: >
         {% if states('sensor.time_of_day') == "Morning" %}
