@@ -13,6 +13,8 @@ action:
       entity_id: >
         {% if states('sensor.time_of_day') == "Morning" %}
         light.ensuite_facilities
+        {% elif states('sensor.time_of_day') == "Night" %}
+        light.ensuite_facilities
         {% else %}
         light.ensuite
         {% endif %}
