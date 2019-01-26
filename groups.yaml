@@ -34,7 +34,6 @@ environment_summary:
     - climate.hot_water
     - sensor.house_average_humidity
     - sensor.dark_sky_temperature
-    - sensor.sunlight_pct
 
 kitchen:
   name: Kitchen
