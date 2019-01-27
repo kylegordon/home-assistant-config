@@ -99,6 +99,9 @@ weather:
     api_key: !secret darksky_api_key
     update_interval: 
       minutes: 5
+  - platform: openweathermap
+    mode: daily
+    api_key: !secret openweathermap_api_key
 
 deconz:
   host: 172.24.32.13
