@@ -11,5 +11,8 @@ trigger:
     for:
       minutes: 10
 action:
-  service: light.turn_off
-  entity_id: group.hall
+  - service: light.turn_off
+    entity_id: group.hall
+  - service: light.turn_off
+    entity_id: light.twig_lights
+
