@@ -7,6 +7,9 @@ trigger:
   - platform: state
     entity_id: binary_sensor.hall_rooms_motion
     to: 'on'
+  - platform: state
+    entity_id: binary_sensor.garden_hall_motion
+    to: 'on'
 condition:
   - condition: numeric_state
     entity_id: sensor.sunlight_pct
@@ -39,3 +42,5 @@ action:
         {% elif states('sensor.time_of_day') == "Night" %}
         375
         {% endif %}
+  - service: light.turn_on
+    entity_id: light.twig_lights
