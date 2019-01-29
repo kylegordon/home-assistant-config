@@ -19,6 +19,6 @@
   key: !secret uvc_key
   password: !secret uvc_password
 
-- platform: generic
+- platform: ffmpeg
   name: D-Link
-  still_image_url: http://172.24.32.180/video/mjpg.cgi
+  input: rtsp://admin@172.24.32.180/play1.sdp
