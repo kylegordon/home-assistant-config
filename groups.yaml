@@ -206,7 +206,7 @@ outside:
     - sensor.back_floodlights_signal_level
     - camera.iss
     - camera.drivewaycam
-    - camera.dlink
+    - camera.d_link
 
 outside_lights:
   name: Outside Lights
