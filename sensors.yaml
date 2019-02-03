@@ -72,7 +72,8 @@
 - platform: template
   sensors:
     next_bin:
-      value_template: "{{ states.calendar.next_bin.attributes.message }}"
+      #value_template: "{{ states.calendar.next_bin.attributes.message }}"
+      value_template: "{{ states.calendar.next_bin.attributes.message|replace(' bin','') }}"
       friendly_name: Next Bin
       #friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
       entity_id: calendar.next_bin
