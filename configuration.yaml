@@ -35,6 +35,8 @@ homeassistant:
         icon: mdi:water-percent
     sensor.house_average_temperature:
         icon: mdi:thermometer
+    sensor.next_bin:
+      icon: mdi:delete-empty
     switch.tellybox:
         icon: mdi:television
         assumed_state: false
