@@ -58,6 +58,8 @@ homeassistant:
       assumed_state: false
     light.twig_lights:
       assumed_state: false
+    light.utility_room:
+      assumed_state: false
     group.bedside_lights:
         icon: mdi:hotel
     sensor.kyle_status:
