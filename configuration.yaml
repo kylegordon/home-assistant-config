@@ -237,8 +237,6 @@ emulated_hue:
       hidden: false
     light.craft_room_desk_level:
       hidden: false
-    light.utility_room:
-      hidden: false
     light.master_bedroom:
       hidden: false
     light.sideboard:
