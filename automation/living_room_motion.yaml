@@ -23,9 +23,6 @@ condition:
       - condition: state
         entity_id: media_player.living_room_kodi
         state: "off"
-  - condition: state
-    entity_id: sun.sun
-    state: "below_horizon"
 action:
   - service: light.turn_on
     data_template:
