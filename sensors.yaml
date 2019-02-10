@@ -124,6 +124,12 @@
     115a0102e20200000003e500000000d02979:
       name: Electricity
 
+- platform: integration
+  source: sensor.electricity_energy_usage
+  name: energy_spent
+  unit_prefix: k
+  round: 2
+
 #- platform: alpha_vantage
 #  api_key: !secret alpha_vantage_key
 #  scan_interval: 300

@@ -68,6 +68,10 @@ homeassistant:
         icon: mdi:account-multiple-plus
     light.craft_room_desk_level:
         friendly_name: Craft Room Desk
+    sensor.daily_energy:
+      friendly_name: Daily energy usage
+    sensor.monthly_energy:
+      friendly_name: Monthly energy usage
 
 # Enables the frontend
 frontend:
@@ -304,3 +308,11 @@ mqtt:
     payload: 'offline'
     qos: 1
     retain: true
+
+utility_meter:
+  daily_energy:
+    source: sensor.energy_spent
+    cycle: daily
+  monthly_energy:
+    source: sensor.energy_spent
+    cycle: monthly
