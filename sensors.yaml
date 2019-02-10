@@ -50,6 +50,24 @@
       icon_template: mdi:battery
       unit_of_measurement: '%'
 
+    garden_hall_motion_sensor_battery:
+      friendly_name: "Garden hall motion sensor battery"
+      value_template: '{{ state_attr("binary_sensor.garden_hall_motion","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%' 
+
+    garden_hall_door_sensor_battery:
+      friendly_name: "Garden hall door sensor battery"
+      value_template: '{{ state_attr("binary_sensor.garden_hall_door","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%'
+
+    ensuite_motion_sensor_battery:
+      friendly_name: "Ensuite motion sensor battery"
+      value_template: '{{ state_attr("binary_sensor.ensuite_motion","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%'
+
     kitchen_motion_sensor_battery:
       friendly_name: "Kitchen motion sensor battery"
       value_template: '{{ state_attr("binary_sensor.kitchen_motion","battery_level") }}'
@@ -59,6 +77,18 @@
     living_room_motion_sensor_battery:
       friendly_name: "Living room motion sensor battery"
       value_template: '{{ state_attr("binary_sensor.living_room_motion","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%'
+
+    utility_room_motion_sensor_battery:
+      friendly_name: "Utility room motion sensor battery"
+      value_template: '{{ state_attr("binary_sensor.utility_room_motion","battery_level") }}'
+      icon_template: mdi:battery
+      unit_of_measurement: '%'
+
+    utility_room_door_sensor_battery:
+      friendly_name: "Utility room door sensor battery"
+      value_template: '{{ state_attr("binary_sensor.utlity_room_door","battery_level") }}'
       icon_template: mdi:battery
       unit_of_measurement: '%'
 
