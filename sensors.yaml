@@ -44,33 +44,24 @@
       icon_template: mdi:battery
       unit_of_measurement: '%' 
 
-- platform: template
-  sensors:
     hall_door_motion_sensor_battery:
       friendly_name: "Hall door motion sensor battery"
       value_template: '{{ state_attr("binary_sensor.hall_door_motion","battery_level") }}'
       icon_template: mdi:battery
       unit_of_measurement: '%'
 
-- platform: template
-  sensors:
     kitchen_motion_sensor_battery:
       friendly_name: "Kitchen motion sensor battery"
       value_template: '{{ state_attr("binary_sensor.kitchen_motion","battery_level") }}'
       icon_template: mdi:battery
       unit_of_measurement: '%'
 
-- platform: template
-  sensors:
     living_room_motion_sensor_battery:
       friendly_name: "Living room motion sensor battery"
       value_template: '{{ state_attr("binary_sensor.living_room_motion","battery_level") }}'
       icon_template: mdi:battery
       unit_of_measurement: '%'
 
-
-- platform: template
-  sensors:
     next_bin:
       #value_template: "{{ states.calendar.next_bin.attributes.message }}"
       value_template: "{{ states.calendar.next_bin.attributes.message|replace(' bin','') }}"
@@ -78,15 +69,11 @@
       #friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
       entity_id: calendar.next_bin
 
-- platform: template
-  sensors:
     kyle_status:
       value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
       friendly_name: 'Kyle'
       entity_id: input_select.kyle_status_dropdown
 
-- platform: template
-  sensors:
     charlotte_status:
       value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
       friendly_name: 'Charlotte'
