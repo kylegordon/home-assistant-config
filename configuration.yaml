@@ -21,8 +21,6 @@ homeassistant:
       hidden: false
     group.all_scripts:
       hidden: false
-    sensor.garage_pir_sound:
-      friendly_name: Garage Motion
     sensor.weather_station_rainfall:
       icon: mdi:weather-rainy
     sensor.weather_station_wind_velocity:
