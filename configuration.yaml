@@ -99,6 +99,25 @@ konnected:
     - id: bcddc2fdd1b2
     - id: dc4f22199839
     - id: dc4f22195dec
+      binary_sensors:
+        - zone: 1
+          type: window
+          name: 'Kitchen window'
+        - zone: 2
+          type: door
+          name: 'Garden door'
+        - zone: 3
+          type: door
+          name: 'Living room doors'
+        - zone: 4
+          type: window
+          name: 'Bathroom window'
+        - zone: 5
+          type: window
+          name: 'Dining table window'
+
+alarm_control_panel:
+    - platform: manual
 
 weather:
   - platform: darksky
