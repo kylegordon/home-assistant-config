@@ -1,5 +1,11 @@
-# Relies on the bin reminder input_boolean, which is configured separately. input_booleans cannot be part of packages (yet)
 # Good better example at https://www.home-assistant.io/components/sensor.rova/
+
+input_boolean:
+  bin_reminder:
+    name: Bin reminder
+    icon: mdi:delete-empty
+    initial: on
+
 automation:
   - alias: Bin Reminder TTS
     condition:
