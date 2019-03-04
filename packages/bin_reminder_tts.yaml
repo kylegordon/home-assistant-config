@@ -1,5 +1,11 @@
 # Good better example at https://www.home-assistant.io/components/sensor.rova/
 
+homeassistant:
+  customize:
+    input_boolean.bin_reminder:
+      hidden: false
+
+
 input_boolean:
   bin_reminder:
     name: Bin reminder
