@@ -14,7 +14,7 @@ automation:
   action:
     - service: notify.email_kyle
       data:
-        message: "Update for Home Assistant is available. Version {{ states.updater.updater.state }} is out now!\n Release notes: {{ states.updater.updater.attributes.release_notes }}"
+        message: "Update for Home Assistant is available. Version {{ states.updater.updater.state }} is out now!\nRelease notes: {{ states.updater.updater.attributes.release_notes }}"
     - service: rest_command.new_version_github_issue
       data_template:
         version: "{{ states.updater.updater.state }}"
