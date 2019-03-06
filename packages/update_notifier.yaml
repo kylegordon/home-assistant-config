@@ -1,0 +1,21 @@
+rest_command:
+  new_version_github_issue:
+    url: https://api.github.com/repos/kylegordon/home-assistant-config/issues
+    method: POST
+    headers:
+      Authorization: !secret github_token
+    payload: '{"title":"Home-Assistant {{ version }} available","body":"Home-Assistant {{ version }} is now available"}'
+
+automation:
+  alias: 'Update Available Notifications'
+  trigger:
+    platform: state
+    entity_id: updater.updater
+  action:
+    - service: notify.email_kyle
+      data:
+        message: "Update for Home Assistant is available. Version {{ states.updater.updater.state }} is out now!\n Release notes: {{ states.updater.updater.attributes.release_notes }}"
+    - service: rest_command.new_version_github_issue
+      data_template:
+        version: "{{ states.updater.updater.state }}"
+
