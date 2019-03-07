@@ -313,6 +313,8 @@ mqtt:
   broker: 172.24.32.13
   port: 1883
   client_id: home-assistant-1
+  discovery: true
+  discovery_prefix: "homeassistant"
   keepalive: 60
   protocol: 3.1
   birth_message:
