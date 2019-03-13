@@ -212,22 +212,6 @@
   payload_available: "true"
   payload_not_available: "false"
 
-# Garage # 
-- platform: mqtt
-  state_topic: "devices/5ccf7f115d5f/Temp0/degrees"
-  name: Carport temperature
-  unit_of_measurement: "°C"
-  availability_topic: "devices/5ccf7f115d5f/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-- platform: mqtt
-  state_topic: "devices/5ccf7f115d5f/Temp1/degrees"
-  name: Garage temperature
-  unit_of_measurement: "°C"
-- platform: mqtt
-  state_topic: "devices/5ccf7f115d5f/$stats/signal"
-  name: "Garage ESP8266 Signal Level"
-  unit_of_measurement: "%"
 - platform: mqtt
   state_topic: "devices/5ccf7fe9b845/$stats/signal"
   name: "Garage Lights Signal Level"
@@ -278,60 +262,41 @@
   unit_of_measurement: "%" 
   force_update: true
 
-
-# Study #
 - platform: mqtt
-  state_topic: "devices/5ccf7fd9283a/temperature/degrees"    
-  name: Study temperature
-  unit_of_measurement: "°C"
-  availability_topic: "devices/5ccf7fd9283a/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-- platform: mqtt
-  state_topic: "devices/5ccf7fd9283a/humidity/percent"
-  name: Study humidity
-  unit_of_measurement: "%" 
-- platform: mqtt
-  state_topic: "devices/5ccf7fd9283a/$stats/signal"
-  name: "Study ESP8266 Signal Level"
-  unit_of_measurement: "%" 
-  force_update: true
-
-# Hallway #
-- platform: mqtt
-  state_topic: "devices/5ccf7f115e3f/temperature/degrees"    
-  name: Hallway temperature
-  unit_of_measurement: "°C"
-  availability_topic: "devices/5ccf7f115e3f/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-- platform: mqtt
-  state_topic: "devices/5ccf7f115e3f/humidity/percent"
-  name: Hallway humidity
-  unit_of_measurement: "%"
-- platform: mqtt
-  state_topic: "devices/5ccf7f115e3f/$stats/signal"
-  name: "Hallway ESP8266 Signal Level"
-  unit_of_measurement: "%"
-  force_update: true
-
-# Utility Room #
-- platform: mqtt
-  state_topic: "devices/5ccf7fd9262d/temperature/degrees"
-  name: Utility room temperature
-  unit_of_measurement: "°C"
-  availability_topic: "devices/5ccf7fd9262d/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-- platform: mqtt
-  state_topic: "devices/5ccf7fd9262d/humidity/percent"    
-  name: Utility room humidity
-  unit_of_measurement: "%"
-- platform: mqtt
-  state_topic: "devices/5ccf7fd9262d/$stats/signal"
+  state_topic: "utility-sensor/stat/STATUS11"
   name: "Utility Room ESP8266 Signal Level"
   unit_of_measurement: "%"
-  force_update: true
+  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
+
+- platform: mqtt
+  state_topic: "hallway-sensor/stat/STATUS11"
+  name: "Hallway ESP8266 Signal Level"
+  unit_of_measurement: "%" 
+  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
+
+- platform: mqtt
+  state_topic: "study-sensor/stat/STATUS11"
+  name: "Study ESP8266 Signal Level"
+  unit_of_measurement: "%" 
+  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
+
+- platform: mqtt
+  state_topic: "dishwasher/stat/STATUS11"
+  name: "Dishwasher signal Level"
+  unit_of_measurement: "%" 
+  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
+
+- platform: mqtt
+  state_topic: "washing-machine/stat/STATUS11"
+  name: "Washing machine signal Level"
+  unit_of_measurement: "%" 
+  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
+
+- platform: mqtt
+  state_topic: "garage-sensor/stat/STATUS11"
+  name: "Garage ESP8266 Signal Level"
+  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
+  unit_of_measurement: "%"
 
 - platform: mqtt
   state_topic: "owntracks/bagpuss/a0001"
