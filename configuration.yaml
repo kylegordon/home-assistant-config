@@ -122,7 +122,7 @@ alarm_control_panel:
 weather:
   - platform: darksky
     api_key: !secret darksky_api_key
-    update_interval: 
+    scan_interval: 
       minutes: 5
   - platform: openweathermap
     mode: daily
