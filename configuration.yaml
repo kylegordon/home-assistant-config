@@ -190,6 +190,8 @@ notify:
     host: oxcart.vpn.glasgownet.com
     data:
       icon: "warning"
+  - name: alexa_media
+    platform: alexa_media
 
 # Enables support for tracking state changes over time.
 history:
