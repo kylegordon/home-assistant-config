@@ -10,3 +10,4 @@ deconz.conf
 .google.token
 google_calendars.yaml
 custom_components/media_player/__pycache__/
+custom_components/alexa_media/__pycache__/
