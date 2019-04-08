@@ -185,6 +185,7 @@ hall_view:
     - binary_sensor.hall_rooms_motion
     - sensor.hall_rooms_motion
     - binary_sensor.hall_door_motion
+    - binary_sensor.garden_hall_motion
     - sensor.hall_door_motion
     - sensor.hallway_temperature
     - sensor.hallway_humidity
@@ -263,9 +264,6 @@ garage:
   name: Garage
   view: yes
   entities:
-    - sensor.garage_temperature
-    - sensor.carport_temperature
-    - sensor.garage_esp8266_signal_level
     - sensor.garage_lights_signal_level
     - light.garage_lights
     - media_player.garage
@@ -318,9 +316,7 @@ test:
   view: no
   entities:
     - switch.tellybox
-    - switch.yamaha
     - media_player.living_room_panasonic_tv
-    - media_player.living_room_amplifier
     - light.surplus
     - light.outside_decorations
 
@@ -329,7 +325,6 @@ other:
   view: yes
   entities:
     - group.all_scripts
-    - group.all_automations
     - group.lightswitch_relays
     - switch.energenie_1
     - switch.energenie_4
