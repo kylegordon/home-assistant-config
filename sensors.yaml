@@ -217,27 +217,6 @@
   name: "Garage Lights Signal Level"
   unit_of_measurement: "%"
 
-# Kitchen #
-- platform: mqtt
-  # Start of string
-  state_topic: "devices/18fe34d5323e/Temp1/degrees"
-  name: Kitchen temperature
-  unit_of_measurement: "°C"
-  availability_topic: "devices/18fe34d5323e/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-#- platform: mqtt
-   # Middle of string
-#  state_topic: "devices/18fe34d5323e/Temp0/degrees"
-#  name: Utility room temperature
-#  unit_of_measurement: "°C"
-#- platform: mqtt
-   # End of string
-#  state_topic: "devices/18fe34d5323e/Temp2/degrees"
-#  name: Utility room temperature
-#  unit_of_measurement: "°C"
-
-
 - platform: mqtt
   state_topic: "devices/18fe34d5323e/$stats/signal"
   name: "Kitchen ESP8266 Signal Level"
