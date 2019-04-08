@@ -278,6 +278,8 @@ emulated_hue:
       hidden: false
     input_boolean.restart_ha:
       hidden: false
+    input_boolean.bin_reminder:
+      hidden: false
     light.outside_decorations:
       hidden: false
     scene.movie_time:
