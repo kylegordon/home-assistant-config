@@ -111,14 +111,18 @@
 
 - platform: darksky
   api_key: !secret darksky_api_key
-  update_interval: 300
+  scan_interval: 300
   monitored_conditions:
     - summary
     - precip_type
     - precip_intensity
     - precip_probability
     - temperature
+    - temperature_high
+    - temperature_low
     - apparent_temperature
+    - apparent_temperature_high
+    - apparent_temperature_low
     - dew_point
     - wind_speed
     - wind_bearing
