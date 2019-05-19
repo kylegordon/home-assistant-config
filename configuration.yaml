@@ -346,3 +346,4 @@ alexa_media:
     password: !secret alexa_password
     url: "amazon.co.uk"
 
+smartir:

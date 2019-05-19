@@ -13,8 +13,13 @@
       broadcast_address: 172.24.32.255
 - platform: openhome
 
-- platform: broadlink
-  name: Living Room Panasonic TV
-  host: 172.24.32.40
-  mac: 'b4:43:0d:f9:19:b9'
-  ircodes_ini: 'broadlink_media_codes/living_room_panasonic.ini'
+#- platform: broadlink
+#  name: Living Room Panasonic TV
+#  host: 172.24.32.40
+#  mac: 'b4:43:0d:f9:19:b9'
+#  ircodes_ini: 'broadlink_media_codes/living_room_panasonic.ini'
+
+- platform: smartir
+  name: "Living Room Panasonic TV"
+  device_code: 1200
+  controller_data: 172.24.32.40
