@@ -347,3 +347,11 @@ alexa_media:
     url: "amazon.co.uk"
 
 smartir:
+
+speedtestdotnet:
+  scan_interval:
+    minutes: 30
+  monitored_conditions:
+    - ping
+    - download
+    - upload
