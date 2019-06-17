@@ -8,7 +8,7 @@ condition:
   conditions:
   - condition: numeric_state
     entity_id: sensor.sunlight_pct
-    below: 20
+    below: 15
   - condition: or
     conditions:
       - condition: state
@@ -36,7 +36,7 @@ action:
         {% if states('sensor.time_of_day') == "Morning" %}
         100
         {% elif states('sensor.time_of_day') == "Day" %}
-        100
+        60
         {% elif states('sensor.time_of_day') == "Night" %}
         30
         {% endif %}
