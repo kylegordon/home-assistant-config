@@ -2,9 +2,7 @@
   automatic_add: False
   devices:
     0710080041010000:
-      name: Energenie 1
-    0710080041040000:
-      name: Energenie 4
+      name: Cordless phone
 
 - platform: broadlink
   host: 172.24.32.40
