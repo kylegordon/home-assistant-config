@@ -35,9 +35,6 @@ homeassistant:
         icon: mdi:thermometer
     sensor.next_bin:
       icon: mdi:delete-empty
-    switch.tellybox:
-        icon: mdi:television
-        assumed_state: false
     light.kyles_bedside:
         icon: mdi:hotel
     light.edison_lamp:
@@ -276,7 +273,7 @@ emulated_hue:
       hidden: false
     light.lava_lamp:
       hidden: false
-    switch.tellybox:
+    media_player.living_room_television:
       hidden: false
     input_boolean.restart_ha:
       hidden: false

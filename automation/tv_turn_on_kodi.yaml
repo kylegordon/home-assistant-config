@@ -1,17 +1,15 @@
 alias: TV turn on Kodi
 trigger:
   - platform: state
-    entity_id: switch.tellybox
+    entity_id: media_player.living_room_television
     from: 'off'
     to: 'on'
 action:
-  - delay:
-      seconds: 5
-  - service: media_player.turn_on
-    entity_id: media_player.living_room_kodi
-  #- service: media_player.turn_on
-  #  entity_id: media_player.main_room
   - service: media_player.select_source
     data:
       entity_id: media_player.linn_223637
-      source: USB
+      source: KODI
+  - delay:
+      seconds: 10
+  - service: media_player.turn_on
+    entity_id: media_player.living_room_kodi

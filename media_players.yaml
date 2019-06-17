@@ -20,6 +20,7 @@
 #  ircodes_ini: 'broadlink_media_codes/living_room_panasonic.ini'
 
 - platform: smartir
-  name: "Living Room Panasonic TV"
+  name: "Living Room Television"
   device_code: 1200
   controller_data: 172.24.32.40
+  power_sensor: binary_sensor.living_room_tv_power
