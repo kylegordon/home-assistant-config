@@ -9,7 +9,7 @@
   turn_on_action:
     service: wake_on_lan.send_magic_packet
     data:
-      mac: 00:23:24:2c:9c:64
+      mac: 6c:3b:e5:25:8b:29
       broadcast_address: 172.24.32.255
 - platform: openhome
 
