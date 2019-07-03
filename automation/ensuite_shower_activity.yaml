@@ -1,0 +1,26 @@
+alias: Ensuite shower activity
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.shower_pump_energy_power
+    above: 10
+condition:
+  - condition: numeric_state
+    entity_id: sensor.sunlight_pct
+    below: 20
+action:
+  - service: light.turn_on
+    data_template:
+      entity_id: >
+        light.ensuite
+      brightness_pct: >
+        100
+      transition: >
+        {% if states('sensor.time_of_day') == "Morning" %}
+        10
+        {% elif states('sensor.time_of_day') == "Day" %}
+        2
+        {% elif states('sensor.time_of_day') == "Night" %}
+        5
+        {% endif %}
+      color_temp: >
+        200
