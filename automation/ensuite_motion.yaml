@@ -6,7 +6,7 @@ trigger:
 condition:
   - condition: numeric_state
     entity_id: sensor.sunlight_pct
-    below: 20
+    below: 30
 action:
   - service: light.turn_on
     data_template:
