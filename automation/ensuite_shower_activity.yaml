@@ -24,3 +24,7 @@ action:
         {% endif %}
       color_temp: >
         200
+  - service: media_player.alexa_tts
+    data_template:
+      entity_id: media_player.bedroom
+      message: "Hello! Enjoy your shower!"
