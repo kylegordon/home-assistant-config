@@ -24,7 +24,7 @@ action:
         {% elif states('sensor.time_of_day') == "Day" %}
         100
         {% elif states('sensor.time_of_day') == "Night" %}
-        30
+        20
         {% endif %}
       transition: >
         {% if states('sensor.time_of_day') == "Morning" %}
@@ -32,7 +32,7 @@ action:
         {% elif states('sensor.time_of_day') == "Day" %}
         2
         {% elif states('sensor.time_of_day') == "Night" %}
-        5
+        10
         {% endif %}
       color_temp: >
         {% if states('sensor.time_of_day') == "Morning" %}
