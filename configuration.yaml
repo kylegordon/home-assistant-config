@@ -90,6 +90,8 @@ http:
       - 10.8.0.18/32
       - 127.0.0.1
 
+system_health:
+
 konnected:
   access_token: !secret konnected_key
   devices:
