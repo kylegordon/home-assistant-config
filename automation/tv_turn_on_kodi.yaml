@@ -5,6 +5,14 @@ trigger:
     from: 'off'
     to: 'on'
 action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Turning on Kodi system"
+  - service: media_player.alexa_tts
+    entity_id: media_player.living_room
+    data_template:
+      message: "The TV has turned on. Turning on the Hi-Fi and powering up Kodi"
   - service: media_player.select_source
     data:
       entity_id: media_player.linn_223637

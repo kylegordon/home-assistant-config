@@ -4,7 +4,19 @@ trigger:
     entity_id: media_player.living_room_television
     from: 'on'
     to: 'off'
+    for:
+      seconds: 30
 action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Turning off Kodi system"
+  - service: media_player.alexa_tts
+    entity_id: media_player.living_room
+    data_template:
+      message: "The TV has turned off. I will shortly turn off Kodi as well"
+  - delay:
+      seconds: 10
   - service: media_player.turn_off
     entity_id: media_player.living_room_kodi
   # If this evaluates to false, the action will stop here.
