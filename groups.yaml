@@ -199,7 +199,8 @@ outside:
   entities:
     - sun.sun
     - binary_sensor.outside_front_motion
-    - binary_sensor.outside_rear_motion
+    - binary_sensor.outside_driveway_motion
+    - binary_sensor.outside_utility_room_motion
     - group.climate
     - group.outside_lights
     - sensor.driveway_floodlights_signal_level
