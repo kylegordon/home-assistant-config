@@ -37,11 +37,15 @@ automation:
         entity_id: binary_sensor.utility_room_door
         to: 'on'
     action:
-      - service: media_player.alexa_tts
-        #entity_id: media_player.living_room, media_player.kitchen, media_player.study, media_player.bedroom
-        entity_id: media_player.kitchen
+      - service: notify.alexa_media
         data_template:
+          target:
+            - media_player.kitchen
+          data:
+            type: announce
+            #method: all
           message: "Hello! It's {{ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][now().weekday()] }}. Don't forget to take the {{ states.calendar.next_bin.attributes.message }} out. If you wish to disable this message, just ask me to 'turn off bin reminder'"
+
 
   - alias: Bin reminder reset
     condition:
