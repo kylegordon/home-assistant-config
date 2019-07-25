@@ -3,9 +3,9 @@
   devices:
     #0a140029f0dd3c0e010060:
     #  name: Living Room
-    0a140017f090a201010070:
-      # Dimmable CFL Remote Left
-      name: Utility Room
+    #0a140017f090a201010070:
+    #  # Dimmable CFL Remote Left
+    #  name: Utility Room
     0a140001f0dd3c01010070:
       # White Remote A1
       name: Surplus
