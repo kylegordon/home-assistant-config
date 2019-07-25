@@ -12,8 +12,8 @@
   consider_home: 3700
   hosts:
     charlotte_thea: 172.24.32.144
-- platform: owntracks
-  max_gps_accuracy: 250
+#- platform: owntracks
+#  max_gps_accuracy: 250
 #- platform: snmp
 #  new_device_defaults:
 #    track_new_devices: True
