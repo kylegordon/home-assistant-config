@@ -14,17 +14,39 @@
     charlotte_thea: 172.24.32.144
 #- platform: owntracks
 #  max_gps_accuracy: 250
-#- platform: snmp
-#  new_device_defaults:
-#    track_new_devices: True
-#  host: 172.24.32.15
-#  community: !secret snmp_community
-#  baseoid: 1.3.6.1.2.1.4.22.1.2
-#  track_new_devices: false
-#- platform: snmp
-#  new_device_defaults:
-#    track_new_devices: True
-#  host: 172.24.32.16
-#  community: !secret snmp_community
-#  baseoid: 1.3.6.1.2.1.4.22.1.2
-#  track_new_devices: false
+
+# Monitor firewall clients
+- platform: snmp
+  host: 172.24.32.254
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.2.1.4.22.1.2
+
+# Monitor access point clients
+# Remember OpenWRT SNMP only returns ARP table data
+# Populate it with a periodic fping -g 172.24.32.0/24 on each device
+- platform: snmp
+  host: 172.24.32.14
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.2.1.4.22.1.2
+- platform: snmp
+  host: 172.24.32.15
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.2.1.4.22.1.2
+- platform: snmp
+  host: 172.24.32.16
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.2.1.4.22.1.2
+
+- platform: luci
+  host: 172.24.32.14
+  username: !secret access_point_user
+  password: !secret access_point_pass
+- platform: luci
+  host: 172.24.32.15
+  username: !secret access_point_user
+  password: !secret access_point_pass
+- platform: luci
+  host: 172.24.32.16
+  username: !secret access_point_user
+  password: !secret access_point_pass
+
