@@ -131,7 +131,7 @@ class OpenhomeDevice(MediaPlayerDevice):
         track_details = {}
         track_details["title"] = "Home Assistant"
         track_details["uri"] = media_id
-        track_details["albumArtwork"] = None
+        track_details["albumArtwork"] = ""
         self._device.PlayMedia(track_details)
 
     def media_pause(self):
