@@ -1,9 +1,8 @@
 alias: Study light toggle
 trigger:
-  platform: mqtt
-  topic: devices/6001949b9222/button/event
-  # Optional
-  payload: 'SINGLE'
+  - platform: state
+    entity_id: binary_sensor.study_lightswitch_touch
+    to: 'on'
 
 action:
   - service: switch.turn_on

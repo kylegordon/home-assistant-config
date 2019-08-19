@@ -1,9 +1,8 @@
 alias: Master Bedroom light toggle
 trigger:
-  platform: mqtt
-  topic: devices/60019485376d/button/event
-  # Optional
-  payload: 'SINGLE'
+  - platform: state
+    entity_id: binary_sensor.master_bedroom_lightswitch_touch
+    to: 'on'
 
 action:
   - service: switch.turn_on
