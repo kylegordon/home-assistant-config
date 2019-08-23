@@ -1,9 +1,8 @@
 alias: Craft Room light toggle
 trigger:
-  platform: mqtt
-  topic: devices/6001948e0f19/button/event
-  # Optional
-  payload: 'SINGLE'
+  - platform: state
+    entity_id: binary_sensor.craft_room_lightswitch_touch
+    to: 'on'
 
 action:
   - service: switch.turn_on

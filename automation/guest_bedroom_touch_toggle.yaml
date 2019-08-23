@@ -1,9 +1,8 @@
 alias: Guest Bedroom light toggle
 trigger:
-  platform: mqtt
-  topic: devices/60019485412a/button/event
-  # Optional
-  payload: 'SINGLE'
+  - platform: state
+    entity_id: binary_sensor.guest_bedroom_lightswitch_touch
+    to: 'on'
 
 action:
   - service: switch.turn_on
