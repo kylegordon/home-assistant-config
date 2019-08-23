@@ -287,6 +287,8 @@ emulated_hue:
       hidden: false
     scene.movie_time:
       hidden: false
+    input_boolean.classicfm:
+      hidden: false
 
 ############
 # Includes #
