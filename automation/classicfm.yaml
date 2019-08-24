@@ -2,6 +2,7 @@ alias: "Play Classic FM"
 trigger:
   platform: state
   entity_id: input_boolean.classic_fm
+  from: 'off'
   to: 'on'
 action:
   - service: media_player.play_media
