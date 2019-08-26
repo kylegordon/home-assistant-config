@@ -1,0 +1,44 @@
+esphome:
+  name: study_switch
+  platform: ESP8266
+  board: esp8285
+
+wifi:
+  ssid: "Glasgownet"
+  password: "always32"
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Sonoff Touch Pad"
+  - platform: status
+    name: "Sonoff Touch Status"
+
+switch:
+  - platform: gpio
+    name: "Sonoff Touch Relay"
+    pin: GPIO12
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: GPIO13
+    inverted: True
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "Sonoff Touch Blue LED"
+    output: blue_led
