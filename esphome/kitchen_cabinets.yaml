@@ -17,8 +17,10 @@ ota:
 
 sensor:
   - platform: wifi_signal
-    name: "WiFi Signal H801"
+    name: "WiFi Signal Kitchen Cabinets"
     update_interval: 60s
+  - platform: uptime
+    name: "Switch uptime"
 
 #RGB
 output:

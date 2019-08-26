@@ -19,6 +19,8 @@ sensor:
   - platform: wifi_signal
     name: "WiFi Signal Craft Room Lightswitch"
     update_interval: 60s
+  - platform: uptime
+    name: "Device uptime"
 
 binary_sensor:
   - platform: gpio
