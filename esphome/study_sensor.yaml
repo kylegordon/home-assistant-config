@@ -1,0 +1,50 @@
+esphome:
+  name: study_sensor
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: "***REMOVED***"
+  password: "***REMOVED***"
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+
+i2c:
+  sda: D2
+  scl: D1
+  scan: True
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Study Sensor"
+    update_interval: 60s 
+  - platform: uptime
+    name: "Device uptime"
+  - platform: sht3xd
+    address: 0x45
+    temperature:
+      name: "Study Temperature"
+    humidity:
+      name: "Study Humidity"
+    update_interval: 60s
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: True
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "Wemos Blue LED"
+    output: blue_led
