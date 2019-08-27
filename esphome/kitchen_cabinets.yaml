@@ -4,8 +4,8 @@ esphome:
   board: esp01_1m
 
 wifi:
-  ssid: "***REMOVED***"
-  password: "***REMOVED***"
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
 
 # Enable logging
 logger:
