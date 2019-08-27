@@ -11,3 +11,5 @@ action:
         - media_player.linn_223637
       media_content_id: "http://media-ice.musicradio.com:80/ClassicFMMP3"
       media_content_type: audio/mp4
+  - service: homeassistant.turn_off
+    entity_id: input_boolean.classic_fm
