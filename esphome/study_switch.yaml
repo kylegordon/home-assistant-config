@@ -4,8 +4,8 @@ esphome:
   board: esp8285
 
 wifi:
-  ssid: "Glasgownet"
-  password: "always32"
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
 
 # Enable logging
 logger:
