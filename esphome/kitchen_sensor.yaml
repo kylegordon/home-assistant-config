@@ -1,0 +1,50 @@
+esphome:
+  name: kitchen_sensor
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+
+dallas:
+  - pin: GPIO2
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Kitchen Sensor"
+    update_interval: 60s 
+  - platform: uptime
+    name: "Device uptime"
+  - platform: dallas
+    address: 0x490000031D4F3C28
+    name: "Kitchen Temperature"
+  - platform: dallas
+    address: 0xF10000031DBFDD28
+    name: "Freezer Temperature"
+  - platform: dallas
+    address: 0x620000040DD4C828
+    name: "Fridge Temperature"
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: True
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "Wemos Blue LED"
+    output: blue_led
