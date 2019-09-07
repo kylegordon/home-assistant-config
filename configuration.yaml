@@ -206,8 +206,12 @@ logbook:
 
 logger:
   default: warn
-  # logs:
+  logs:
     # pydeconz: debug
+    homeassistant.components.openhome: debug
+    openhomedevice: debug
+    homeassistant.components.device_tracker: debug
+    # homeassistant.components.esphome: debug
     # homeassistant.components.deconz: debug
     # homeassistant.components.switch.broadlink: debug
     # homeassistant.components.switch.rfxtrx: debug
