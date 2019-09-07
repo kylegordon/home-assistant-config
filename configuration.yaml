@@ -77,14 +77,27 @@ config:
 recorder:
   db_url: !secret db_url
   purge_interval: 1
-  purge_keep_days: 8
+  purge_keep_days: 5
+  exclude:
+    domains:
+      - automation
+      - group
+      - input_boolean
+      - zha
+      - zwave
+      - script
+    entities:
+      - sun.sun
 
 http:
   # Uncomment this to add a password (recommended!)
   api_password: !secret api_password
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
-  trusted_networks: 
+
+auth_providers:
+  - type: trusted_networks
+    trusted_networks: 
       - 172.24.32.0/24
       - 172.24.34.0/24
       - 10.8.0.18/32
