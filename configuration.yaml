@@ -1,6 +1,15 @@
 # Inspired by https://github.com/bruhautomation/BRUH2-Home-Assistant-Configuration
 
 homeassistant:
+
+	auth_providers:
+  	- type: trusted_networks
+    	trusted_networks: 
+	      - 172.24.32.0/24
+  	    - 172.24.34.0/24
+    	  - 10.8.0.18/32
+      	- 127.0.0.1
+
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
@@ -94,14 +103,6 @@ http:
   api_password: !secret api_password
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
-
-auth_providers:
-  - type: trusted_networks
-    trusted_networks: 
-      - 172.24.32.0/24
-      - 172.24.34.0/24
-      - 10.8.0.18/32
-      - 127.0.0.1
 
 system_health:
 
@@ -304,7 +305,7 @@ emulated_hue:
       hidden: false
     scene.movie_time:
       hidden: false
-    input_boolean.classicfm:
+    input_boolean.classic_fm:
       hidden: false
 
 ############
