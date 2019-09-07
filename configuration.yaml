@@ -2,13 +2,13 @@
 
 homeassistant:
 
-	auth_providers:
-  	- type: trusted_networks
-    	trusted_networks: 
-	      - 172.24.32.0/24
-  	    - 172.24.34.0/24
-    	  - 10.8.0.18/32
-      	- 127.0.0.1
+  auth_providers:
+    - type: trusted_networks
+      trusted_networks: 
+        - 172.24.32.0/24
+        - 172.24.34.0/24
+        - 10.8.0.18/32
+        - 127.0.0.1
 
   # Name of the location where Home Assistant is running
   name: Home
