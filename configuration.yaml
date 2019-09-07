@@ -9,6 +9,8 @@ homeassistant:
         - 172.24.34.0/24
         - 10.8.0.18/32
         - 127.0.0.1
+    - type: legacy_api_password
+      api_password: !secret api_password
 
   # Name of the location where Home Assistant is running
   name: Home
@@ -99,8 +101,6 @@ recorder:
       - sun.sun
 
 http:
-  # Uncomment this to add a password (recommended!)
-  api_password: !secret api_password
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
 
