@@ -67,21 +67,3 @@
   payload_available: "true"
   payload_not_available: "false"
 
-- platform: mqtt
-  schema: json
-  name: "Kitchen Cabinets"
-  state_topic: "devices/a020a61aafea/RGB/state"
-  command_topic: "devices/a020a61aafea/RGB/light/set"
-  brightness: true
-  rgb: true
-  effect: true
-  effect_list: [colorfade_slow, colorfade_fast, flash]
-  optimistic: false
-  qos: 0
-  # white_value: true
-  # effect:
-  # effect_list: 
-  availability_topic: "devices/a020a61aafea/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-
