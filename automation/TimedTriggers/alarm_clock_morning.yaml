@@ -9,10 +9,10 @@ condition:
   - condition: or
     conditions:
       - condition: zone
-        entity_id: device_tracker.bagpuss_a0001
+        entity_id: person.kyle
         zone: zone.home
       - condition: zone
-        entity_id: device_tracker.charlotte_thea
+        entity_id: person.charlotte
         zone: zone.home
   - condition: time
     weekday:
