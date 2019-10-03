@@ -31,6 +31,11 @@ switch:
     pin: GPIO12
     id: relay
 
+sensor:
+  - platform: wifi_signal
+    name: "Sonoff Basic WiFi signal"
+    update_interval: 60s
+
 status_led:
   pin:
     number: GPIO13
