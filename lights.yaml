@@ -31,16 +31,9 @@
     0a14005ff0dd3c05010060:
       name: Twig lights
 
-- platform: mqtt
+- platform: switch
   name: "Garage Lights"
-  state_topic: "devices/5ccf7fe9b845/relay01/relayState"
-  command_topic: "devices/5ccf7fe9b845/relay01/relayState/set"
-  payload_on: "ON"
-  payload_off: "OFF"
-  availability_topic: "devices/5ccf7fe9b845/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-
+  entity_id: switch.garage_lights_relay
 
 - platform: switch
   name: "Front Door Floodlights"
