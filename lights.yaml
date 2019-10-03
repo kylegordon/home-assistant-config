@@ -39,16 +39,9 @@
   name: "Front Door Floodlights"
   entity_id: switch.front_door_floodlight_relay
 
-# https://github.com/enc-X/sonoff-homie
-- platform: mqtt
+- platform: switch
   name: "Driveway Floodlights"
-  state_topic: "devices/5ccf7faf630b/relay01/relayState"
-  command_topic: "devices/5ccf7faf630b/relay01/relayState/set"
-  payload_on: "ON"
-  payload_off: "OFF"
-  availability_topic: "devices/5ccf7faf630b/$online"
-  payload_available: "true"
-  payload_not_available: "false"
+  entity_id: switch.driveway_floodlights_relay
 
 - platform: mqtt
   name: "Back Floodlights"
