@@ -377,3 +377,8 @@ speedtestdotnet:
     - ping
     - download
     - upload
+
+nzbget:
+  host: 172.24.32.13
+  username: !secret nzbget_username
+  password: !secret nzbget_password
