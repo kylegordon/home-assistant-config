@@ -48,6 +48,9 @@
   host: homeauto.vpn.glasgownet.com
   port: 7878
 
+- platform: opensky
+  radius: 10
+
 - platform: template
   sensors:
     hall_rooms_motion_sensor_battery:
