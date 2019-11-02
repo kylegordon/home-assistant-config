@@ -237,12 +237,6 @@
   unit_of_measurement: "%"
 
 - platform: mqtt
-  state_topic: "devices/18fe34d5323e/$stats/signal"
-  name: "Kitchen ESP8266 Signal Level"
-  unit_of_measurement: "%"
-  force_update: true
-
-- platform: mqtt
   state_topic: "devices/5ccf7faf630b/$stats/signal"
   name: "Driveway Floodlights Signal Level"
   unit_of_measurement: "%" 
@@ -264,18 +258,6 @@
   state_topic: "utility-sensor/stat/STATUS11"
   name: "Utility Room ESP8266 Signal Level"
   unit_of_measurement: "%"
-  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
-
-- platform: mqtt
-  state_topic: "hallway-sensor/stat/STATUS11"
-  name: "Hallway ESP8266 Signal Level"
-  unit_of_measurement: "%" 
-  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
-
-- platform: mqtt
-  state_topic: "study-sensor/stat/STATUS11"
-  name: "Study ESP8266 Signal Level"
-  unit_of_measurement: "%" 
   value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
 
 - platform: mqtt
@@ -303,25 +285,43 @@
   value_template: "{{ value_json.batt }}"
 
 - platform: snmp
-  host: 192.168.88.1
-  name: "Mikrotik LTE RSSI"
+  host: 192.168.1.1
+  name: "Modem RSSI"
   accept_errors: true
-  baseoid: 1.3.6.1.4.1.14988.1.1.16.1.1.2.2
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.4.1.48690.2.4.0
   unit_of_measurement: 'dBm'
 
 - platform: snmp
-  host: 192.168.88.1
-  name: "Mikrotik LTE RSRQ"
+  host: 192.168.1.1
+  name: "Modem LTE RSRQ"
   accept_errors: true
-  baseoid: 1.3.6.1.4.1.14988.1.1.16.1.1.3.2
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.4.1.48690.2.24.0
   unit_of_measurement: 'dBm'
 
 - platform: snmp
-  host: 192.168.88.1
-  name: "Mikrotik LTE RSRP"
+  host: 192.168.1.1
+  name: "Modem LTE RSRP"
   accept_errors: true
-  baseoid: 1.3.6.1.4.1.14988.1.1.16.1.1.4.2
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.4.1.48690.2.23.0
   unit_of_measurement: 'dBm'
+
+- platform: snmp
+  host: 192.168.1.1
+  name: "Modem Connection Uptime"
+  accept_errors: true
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.4.1.48690.2.17.0
+  unit_of_measurement: seconds
+
+- platform: snmp
+  host: 192.168.1.1
+  name: "Modem Network Registration State"
+  accept_errors: true
+  community: !secret snmp_community
+  baseoid: 1.3.6.1.4.1.48690.2.3.0
 
 - platform: nut
   name: Loft UPS
