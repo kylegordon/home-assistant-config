@@ -1,9 +1,9 @@
 alias: "Alarm Set Away"
 trigger:
   - platform: state
-    entity_id: group.all_devices
-    from: "home"
-    to: "not_home"
+    entity_id: binary_sensor.home_occupied
+    from: "on"
+    to: "off"
     for:
       minutes: 5
 action:
@@ -12,6 +12,10 @@ action:
       name: EVENT
       message: "Away mode. Setting alarm."
   - service: notify.email_kyle
-    data:
-      message: "Away mode. Setting alarm."
+    data_template:
+      title: >
+        {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+      message: >
+        {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+        Away mode. Setting alarm.
   - service: alarm_control_panel.alarm_arm_away
