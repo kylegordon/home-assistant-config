@@ -9,6 +9,8 @@ trigger:
       - sensor.garage_temperature
       - switch.guest_bedroom_lightswitch_relay
       - switch.master_bedroom_lightswitch_relay
+      - switch.study_lightswitch_relay
+      - switch.craft_room_lightswitch_relay
       - light.driveway_floodlights
       - light.front_door_floodlights
       - light.garage_lights
@@ -18,7 +20,6 @@ trigger:
       - light.craft_room
       - light.hall_bedrooms
       - light.hall_entrance
-      - light.uplighter
     to: 'unavailable'
     for:
       minutes: 2
