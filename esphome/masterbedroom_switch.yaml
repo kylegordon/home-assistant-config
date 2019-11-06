@@ -36,6 +36,9 @@ switch:
   - platform: gpio
     name: "Sonoff Touch Relay"
     pin: GPIO12
+  - platform: restart
+    id: switch_restart
+    name: "Master Bedroom Lightswitch Restart"
 
 output:
   # Register the blue LED as a dimmable output ....
