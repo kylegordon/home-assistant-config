@@ -414,3 +414,17 @@
         {% else %}
           Night
         {% endif %}
+
+    forecast_2_hours:
+      value_template: "{{state_attr('weather.dark_sky', 'forecast')[2].temperature}}"
+    forecast_4_hours:
+      value_template: "{{state_attr('weather.dark_sky', 'forecast')[4].temperature}}"
+    forecast_6_hours:
+      value_template: "{{state_attr('weather.dark_sky', 'forecast')[6].temperature}}"
+    forecast_8_hours:
+      value_template: "{{state_attr('weather.dark_sky', 'forecast')[8].temperature}}"
+    forecast_10_hours:
+      value_template: "{{state_attr('weather.dark_sky', 'forecast')[10].temperature}}"
+    forecast_12_hours:
+      value_template: "{{state_attr('weather.dark_sky', 'forecast')[12].temperature}}"
+
