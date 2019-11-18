@@ -239,6 +239,7 @@ sun:
 emulated_hue:
   # Max of 49! 
   # https://www.home-assistant.io/components/emulated_hue/
+  listen_port: 80
   expose_by_default: false
   exposed_domains:
     - switch
