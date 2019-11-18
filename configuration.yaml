@@ -383,3 +383,28 @@ nzbget:
   host: 172.24.32.13
   username: !secret nzbget_username
   password: !secret nzbget_password
+
+panel_iframe:
+  esphome:
+    title: "ESPHome"
+    url: "http://homeauto.vpn.glasgownet.com:6052"
+  unifi:
+    title: "Unifi CCTV"
+    url: "http://homeauto.vpn.glasgownet.com:7080/"
+  sonarr:
+    title: "Sonarr TV"
+    url: "http://homeauto.vpn.glasgownet.com:8989/sonarr/"
+  radarr:
+    title: "Radar Movies"
+    url: "http://homeauto.vpn.glasgownet.com:7878/radarr/"
+  lazylibrarian:
+    title: "LazyLibrarian Books"
+    url: "http://homeauto.vpn.glasgownet.com:5299"
+    icon: "https://assets.gitlab-static.net/uploads/-/system/project/avatar/9317860/ll.png"
+  airsonic:
+    title: "AirSonic Music"
+    url: "http://homeauto.vpn.glasgownet.com:4040/index"
+  nzbget:
+    title: "NZBGet Downloader"
+    url: "http://homeauto.vpn.glasgownet.com:6789/"
+
