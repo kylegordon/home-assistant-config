@@ -373,7 +373,7 @@ smartir:
 
 speedtestdotnet:
   scan_interval:
-    minutes: 30
+    minutes: 5
   monitored_conditions:
     - ping
     - download
