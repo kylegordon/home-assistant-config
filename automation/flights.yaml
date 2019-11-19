@@ -6,5 +6,6 @@ action:
   service: notify.email_kyle
   data_template:
     title: "Overflight event"
-    message : 'Flight {{ trigger.event.data.callsign }} is passing nearby\n\n
+    message : 'Flight {{ trigger.event.data.callsign }} is passing nearby.
+
     https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
