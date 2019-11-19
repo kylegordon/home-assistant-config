@@ -1,0 +1,40 @@
+alias: "Chicken things"
+trigger:
+#  - platform: numeric_state
+#    entity_id: weather.dark_sky
+#    value_template: "{{ state.attributes.forecast[6].temperature}}"
+#    # "{{state_attr('weather.dark_sky', 'forecast')[6].temperature}}
+#    below: 2
+#  - platform: numeric_state
+#    entity_id: sensor.dark_sky_temperature_low
+#    below: 5
+  - platform: numeric_state
+    entity_id: sensor.forecast_2_hours
+    below: 0
+  - platform: numeric_state
+    entity_id: sensor.forecast_4_hours
+    below: 0
+  - platform: numeric_state
+    entity_id: sensor.forecast_6_hours
+    below: 0
+  - platform: numeric_state
+    entity_id: sensor.forecast_8_hours
+    below: 0
+  - platform: numeric_state
+    entity_id: sensor.forecast_10_hours
+    below: 0
+  - platform: numeric_state
+    entity_id: sensor.forecast_12_hours
+    below: 0
+action:
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "You should bring in the chickens water to stop it freezing"
+  - service: notify.email_kyle
+    data_template:
+      title: Low temperature warning
+      message: >
+        {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+        Bring in the chickens water to stop it freezing
+
