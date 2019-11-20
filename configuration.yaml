@@ -308,6 +308,8 @@ emulated_hue:
       hidden: false
     input_boolean.classic_fm:
       hidden: false
+    input_boolean.goodnight_process:
+      hidden: false
 
 ############
 # Includes #
