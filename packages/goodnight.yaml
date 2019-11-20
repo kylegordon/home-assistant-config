@@ -1,0 +1,40 @@
+homeassistant:
+  ## This doesn't seem to work. It needs to be surfaced in configuration.yaml
+  customize:
+    input_boolean.goodnight:
+      hidden: false
+
+input_boolean:
+  goodnight_process:
+    name: Goodnight process
+    icon: mdi:sleep
+    initial: off
+
+automation:
+  - alias: Goodnight process
+    trigger:
+      - platform: state
+        entity_id: input_boolean.goodnight_process
+        to: 'on'
+    action:
+      - service: homeassistant.turn_off
+        entity_id:
+        - group.living_room
+        - group.outside_lights
+        - group.utility_room
+        - group.kitchen
+        - group.hall
+        - light.twig_lights
+        - group.bedroom_1
+        - group.bedroom_3
+        - group.bedroom_4
+        - input_boolean.goodnight_process
+      - condition: or
+        # If guests are staying, don't turn off their bedroom lights
+        conditions: 
+          - condition: state
+            entity_id: input_boolean.guest_mode
+            state: 'off'
+      - service: homeassistant.turn_off
+        entity_id:
+        - group.bedroom_2
