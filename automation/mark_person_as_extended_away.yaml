@@ -21,8 +21,9 @@ action:
         {% endif %}
       option: Extended Away
 
-  - service: notify.email_kyle
+  - service: logbook.log
     data_template:
+      name: EVENT
       message: >
         {% if trigger.entity_id == 'input_select.kyle_status_dropdown' %}
           Kyle has been away for an extended time.
