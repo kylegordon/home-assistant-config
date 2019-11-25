@@ -5,8 +5,7 @@ trigger:
   to: 'on'
 condition:
   - condition: numeric_state
-    entity_id: sun.sun
-    value_template: '{{ state.attributes.elevation }}'
+    entity_id: sensor.sunlight_pct
     below: 30
 action:
   - service: homeassistant.turn_on
@@ -28,11 +27,12 @@ action:
         {% elif states('sensor.time_of_day') == "Night" %}
         5
         {% endif %}
-      color_temp: >
-        {% if states('sensor.time_of_day') == "Morning" %}
-        200
-        {% elif states('sensor.time_of_day') == "Day" %}
-        300
-        {% elif states('sensor.time_of_day') == "Night" %}
-        375
-        {% endif %}
+#      color_temp: >
+#        {% if states('sensor.time_of_day') == "Morning" %}
+#        200
+#        {% elif states('sensor.time_of_day') == "Day" %}
+#        300
+#        {% elif states('sensor.time_of_day') == "Night" %}
+#        375
+#        {% endif %}
+      rgb_color: [255,255,255]
