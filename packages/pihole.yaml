@@ -1,9 +1,15 @@
 #-------------------------------------------
 #  PiHole ad Blocking Related Packages
 #-------------------------------------------
-homeassistant:
-  customize:
 
+pi_hole:
+  host: 172.24.32.246
+  ssl: false
+  verify_ssl: false
+
+homeassistant:
+
+  customize:
     sensor.pi_hole_ads_percentage_today:
       friendly_name: Percentage of Ad Traffic Blocked
       unit_of_measurement: '%'
@@ -39,13 +45,6 @@ device_tracker:
       server_pihole: 172.24.32.246
 
 sensor:
-  - platform: pi_hole
-    host: 172.24.32.246
-    monitored_conditions:
-      - dns_queries_today
-      - ads_blocked_today
-      - ads_percentage_today
-      - unique_clients
 
 ######Custom Version sensor
   # - platform: command_line
