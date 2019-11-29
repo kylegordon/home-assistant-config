@@ -8,7 +8,7 @@ action:
   - service: switch.turn_on
     entity_id: switch.craft_room_lightswitch_relay
   - service: light.toggle
-    entity_id: light.craft_room
+    entity_id: group.craft_room_lighting
   - service: logbook.log
     data_template:
       name: EVENT
