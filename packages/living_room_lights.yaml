@@ -1,9 +1,6 @@
 automation:
   - alias: Living Room motion - motion timeout
     trigger:
-      - platform: time_pattern
-        minutes: "/5"
-    condition:
       - condition: state
         entity_id: binary_sensor.living_room_motion
         state: 'off'
@@ -15,9 +12,6 @@ automation:
 
   - alias: Living Room motion - sunlight timeout
     trigger:
-      - platform: time_pattern
-        minutes: "/5"
-    condition:
       - condition: numeric_state
         entity_id: sensor.sunlight_pct
         above: 15
