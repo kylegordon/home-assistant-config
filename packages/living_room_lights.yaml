@@ -1,88 +1,89 @@
 automation:
-alias: Living Room motion - 10 minute timeout
-trigger:
-  - platform: time_pattern
-    minutes: "/5"
-condition:
-  condition: or
-  conditions:
-    - condition: state
-      entity_id: binary_sensor.living_room_motion
-      state: 'off'
-      #for:
-      #  minutes: 60
-    - condition: numeric_state
-      entity_id: sensor.sunlight_pct
-      above: 30
-      #for:
-      #  minutes: 30
+  - alias: Living Room motion - 10 minute timeout
+    trigger:
+      - platform: time_pattern
+        minutes: "/5"
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: binary_sensor.living_room_motion
+          state: 'off'
+          #for:
+          #  minutes: 60
+        - condition: numeric_state
+          entity_id: sensor.sunlight_pct
+          above: 30
+          #for:
+          #  minutes: 30
 
-action:
-  service: homeassistant.turn_off
-  entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
-alias: Living Room motion
-trigger:
-  - platform: state
-    entity_id: binary_sensor.living_room_motion
-    to: 'on'
-condition:
-  condition: and
-  conditions:
-  - condition: and
-    conditions:
-      - condition: state
-        entity_id: light.dining_table_overhead
-        state: "off"
-      - condition: state
-        entity_id: light.sofa_overhead
-        state: "off"
-  - condition: numeric_state
-    entity_id: sensor.sunlight_pct
-    below: 15
-  - condition: or
-    conditions:
-      - condition: state
-        entity_id: media_player.living_room_kodi
-        state: "idle"
-      - condition: state
-        entity_id: media_player.living_room_kodi
-        state: "stopped"
-      - condition: state
-        entity_id: media_player.living_room_kodi
-        state: "paused"
-      - condition: state
-        entity_id: media_player.living_room_kodi
-        state: "off"
-action:
-  - service: light.turn_on
-    data_template:
-      entity_id: >
-        {% if states('sensor.time_of_day') == "Morning" %}
-        light.dining_table_overhead, light.uplighter, light.sideboard
-        {% else %}
-        light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
-        {% endif %}
-      brightness_pct: >
-        {% if states('sensor.time_of_day') == "Morning" %}
-        100
-        {% elif states('sensor.time_of_day') == "Day" %}
-        60
-        {% elif states('sensor.time_of_day') == "Night" %}
-        30
-        {% endif %}
-      transition: >
-        {% if states('sensor.time_of_day') == "Morning" %}
-        10
-        {% elif states('sensor.time_of_day') == "Day" %}
-        2
-        {% elif states('sensor.time_of_day') == "Night" %}
-        5
-        {% endif %}
-      color_temp: >
-        {% if states('sensor.time_of_day') == "Morning" %}
-        200
-        {% elif states('sensor.time_of_day') == "Day" %}
-        300
-        {% elif states('sensor.time_of_day') == "Night" %}
-        375
-        {% endif %}
+    action:
+      service: homeassistant.turn_off
+      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
+
+  - alias: Living Room motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.living_room_motion
+        to: 'on'
+    condition:
+      condition: and
+      conditions:
+      - condition: and
+        conditions:
+          - condition: state
+            entity_id: light.dining_table_overhead
+            state: "off"
+          - condition: state
+            entity_id: light.sofa_overhead
+            state: "off"
+      - condition: numeric_state
+        entity_id: sensor.sunlight_pct
+        below: 15
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: media_player.living_room_kodi
+            state: "idle"
+          - condition: state
+            entity_id: media_player.living_room_kodi
+            state: "stopped"
+          - condition: state
+            entity_id: media_player.living_room_kodi
+            state: "paused"
+          - condition: state
+            entity_id: media_player.living_room_kodi
+            state: "off"
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            light.dining_table_overhead, light.uplighter, light.sideboard
+            {% else %}
+            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
+            {% endif %}
+          brightness_pct: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            100
+            {% elif states('sensor.time_of_day') == "Day" %}
+            60
+            {% elif states('sensor.time_of_day') == "Night" %}
+            30
+            {% endif %}
+          transition: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            10
+            {% elif states('sensor.time_of_day') == "Day" %}
+            2
+            {% elif states('sensor.time_of_day') == "Night" %}
+            5
+            {% endif %}
+          color_temp: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            200
+            {% elif states('sensor.time_of_day') == "Day" %}
+            300
+            {% elif states('sensor.time_of_day') == "Night" %}
+            375
+            {% endif %}
