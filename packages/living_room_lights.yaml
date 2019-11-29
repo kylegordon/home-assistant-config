@@ -1,22 +1,28 @@
 automation:
-  - alias: Living Room motion - 10 minute timeout
+  - alias: Living Room motion - motion timeout
     trigger:
       - platform: time_pattern
         minutes: "/5"
     condition:
-      condition: or
-      conditions:
-        - condition: state
-          entity_id: binary_sensor.living_room_motion
-          state: 'off'
-          #for:
-          #  minutes: 60
-        - condition: numeric_state
-          entity_id: sensor.sunlight_pct
-          above: 30
-          #for:
-          #  minutes: 30
+      - condition: state
+        entity_id: binary_sensor.living_room_motion
+        state: 'off'
+        for:
+          minutes: 60
+    action:
+      service: homeassistant.turn_off
+      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
 
+  - alias: Living Room motion - sunlight timeout
+    trigger:
+      - platform: time_pattern
+        minutes: "/5"
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.sunlight_pct
+        above: 15
+        for:
+          minutes: 30
     action:
       service: homeassistant.turn_off
       entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
