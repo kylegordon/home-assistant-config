@@ -6,6 +6,14 @@ trigger:
 condition:
   condition: and
   conditions:
+  - condition: and
+    conditions:
+      - condition: state
+        entity_id: light.dining_table_overhead
+        state: "off"
+      - condition: state
+        entity_id: light.sofa_overhead
+        state: "off"
   - condition: numeric_state
     entity_id: sensor.sunlight_pct
     below: 15
