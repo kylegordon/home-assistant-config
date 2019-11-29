@@ -1,11 +1,8 @@
 language: python
-python:
-      - "3.6"
 services:
       - mysql
-install:
-      - pip3 install homeassistant
+      - docker
 script:
-      - hass -c . --script check_config
+      - docker run --rm -v "${PWD}":/config -it homeassistant/home-assistant:latest hass -c . --script check_config
 before_script:
       - mv travis_secrets.yaml secrets.yaml
