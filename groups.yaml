@@ -169,6 +169,12 @@ bedroom_4:
     - sensor.craft_room_pressure
     - sensor.craft_room_humidity
 
+craft_room_lighting:
+  name: Craft Room Lights
+  entities:
+    - light.craft_room
+    - light.craft_room_fairy_lights
+
 hall:
   name: Hall lights
   #view: yes
