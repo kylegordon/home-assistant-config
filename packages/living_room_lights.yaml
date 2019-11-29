@@ -3,7 +3,7 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.living_room_motion
-        state: 'off'
+        to: 'off'
         for:
           minutes: 60
     action:
