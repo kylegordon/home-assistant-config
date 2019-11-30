@@ -33,7 +33,7 @@ switch:
 
 sensor:
   - platform: wifi_signal
-    name: "Sonoff Basic  WiFi signal"
+    name: "Driveway Floodlights Signal Level"
     update_interval: 60s
 
 status_led:
