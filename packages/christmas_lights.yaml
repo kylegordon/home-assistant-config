@@ -1,5 +1,5 @@
-lights:
-  - platform: rftrx
+light:
+  - platform: rfxtrx
     devices:
         0a140001f0dd3c01010070:
         name: Utility Room Decorations
