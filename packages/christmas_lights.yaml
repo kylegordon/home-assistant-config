@@ -1,0 +1,54 @@
+lights:
+  - platform: rftrx
+    devices:
+        0a140001f0dd3c01010070:
+        name: Utility Room Decorations
+
+group:
+  outside_decorations:
+    name: Outside Decorations
+    view: no
+    entities:
+      - light.utility_room_decorations
+      - switch.garage_decorations
+
+automation:
+  - alias: Christmas decorations - on evening
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.sunlight_pct
+        below: 15
+    condition:
+      - platform: time
+        after: "16:00:00"
+        before: "00:00:00"
+    action:
+      - service: homeassistant.turn_on
+        entity_id: group.outside_decorations
+
+  - alias: Christmas decorations - on morning
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.sunlight_pct
+        below: 15
+    condition:
+      - platform: time
+        after: "05:00:00"
+        before: "12:00:00"
+    action:
+      - service: homeassistant.turn_on
+        entity_id: group.outside_decorations
+
+
+  - alias: Christmas decorations - off
+    trigger:
+      - platform: time
+        at: "00:00:00"
+      - platform: time
+        at: "12:00:00"
+      - platform: numeric_state
+        entity_id: sensor.sunlight_pct
+        above: 15
+    action:
+      - service: homeassistant.turn_off
+        entity_id: group.outside_decorations
