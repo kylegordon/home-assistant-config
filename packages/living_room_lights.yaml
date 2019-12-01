@@ -13,10 +13,8 @@ automation:
   - alias: Living Room motion - sunlight timeout
     trigger:
       - platform: numeric_state
-        entity_id: sensor.sunlight_pct
-        above: 15
-        for:
-          minutes: 30
+        entity_id: sensor.outside_utility_room_lightlevel
+        below: 300
     action:
       service: homeassistant.turn_off
       entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
