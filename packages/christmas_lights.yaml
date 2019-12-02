@@ -1,6 +1,6 @@
 group:
-  outside_decorations:
-    name: Outside Decorations
+  outside_christmas_decorations:
+    name: Outside Christmas Decorations
     view: no
     entities:
       - light.utility_room_decorations
@@ -12,6 +12,8 @@ automation:
       - platform: numeric_state
         entity_id: sensor.sunlight_pct
         below: 15
+        for:
+          minutes: 5
     condition:
       - condition: and
         conditions:
@@ -29,6 +31,8 @@ automation:
       - platform: numeric_state
         entity_id: sensor.sunlight_pct
         below: 15
+        for:
+          minutes: 5
     condition:
       - condition: and
         conditions:
