@@ -25,6 +25,8 @@ automation:
     action:
       - service: homeassistant.turn_on
         entity_id: group.outside_decorations
+      - service: homeassistant.turn_on
+        entity_id: group.christmas_lights
 
   - alias: Christmas decorations - on morning
     trigger:
@@ -44,6 +46,8 @@ automation:
     action:
       - service: homeassistant.turn_on
         entity_id: group.outside_decorations
+      - service: homeassistant.turn_on
+        entity_id: group.christmas_lights
 
 
   - alias: Christmas decorations - off
@@ -58,3 +62,5 @@ automation:
     action:
       - service: homeassistant.turn_off
         entity_id: group.outside_decorations
+      - service: homeassistant.turn_off
+        entity_id: group.christmas_lights
