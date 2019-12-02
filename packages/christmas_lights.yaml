@@ -10,8 +10,8 @@ automation:
   - alias: Christmas decorations - on evening
     trigger:
       - platform: numeric_state
-        entity_id: sensor.sunlight_pct
-        below: 15
+        entity_id: sensor.outside_utility_room_light_level
+        below: 100
         for:
           minutes: 5
     condition:
@@ -49,8 +49,8 @@ automation:
       - platform: time
         at: "12:00:00"
       - platform: numeric_state
-        entity_id: sensor.sunlight_pct
-        above: 15
+        entity_id: sensor.outside_utility_room_light_level
+        above: 100
     action:
       - service: homeassistant.turn_off
         entity_id: group.outside_decorations
