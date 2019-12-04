@@ -7,7 +7,7 @@ group:
       - switch.garage_decorations
 
 automation:
-  - alias: Christmas decorations - on evening
+  - alias: Outside decorations - on evening
     trigger:
       - platform: numeric_state
         entity_id: sensor.outside_utility_room_light_level
@@ -23,7 +23,7 @@ automation:
       - service: homeassistant.turn_on
         entity_id: group.christmas_lights
 
-  - alias: Christmas decorations - on morning
+  - alias: Outside decorations - on morning
     trigger:
       - platform: time
         at: "06:00:00"
@@ -37,7 +37,7 @@ automation:
         entity_id: group.christmas_lights
 
 
-  - alias: Christmas decorations - off
+  - alias: Outside decorations - off
     trigger:
       - platform: time
         at: "00:00:00"
