@@ -20,8 +20,6 @@ automation:
     action:
       - service: homeassistant.turn_on
         entity_id: group.outside_decorations
-      - service: homeassistant.turn_on
-        entity_id: group.christmas_lights
 
   - alias: Outside decorations - on morning
     trigger:
@@ -33,9 +31,6 @@ automation:
     action:
       - service: homeassistant.turn_on
         entity_id: group.outside_decorations
-      - service: homeassistant.turn_on
-        entity_id: group.christmas_lights
-
 
   - alias: Outside decorations - off
     trigger:
@@ -49,5 +44,34 @@ automation:
     action:
       - service: homeassistant.turn_off
         entity_id: group.outside_decorations
+
+  - alias: Christmas decorations - on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "off"
+        to: "on"
+      - platform: time
+        at: "06:00:00"
+    condition:
+      - condition: template
+        value_template: '{{ now().strftime("%m") == "12" }}'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: group.christmas_lights
+
+
+  - alias: Christmas decorations - off
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "off"
+        to: "on"
+      - platform: time
+        at: "00:00:00"
+    condition:
+      - condition: template
+        value_template: '{{ now().strftime("%m") == "12" }}'
+    action:
       - service: homeassistant.turn_off
         entity_id: group.christmas_lights
