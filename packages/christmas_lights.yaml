@@ -10,7 +10,7 @@ automation:
   - alias: Outside decorations - on evening
     trigger:
       - platform: numeric_state
-        entity_id: sensor.outside_utility_room_light_level
+        entity_id: sensor.outside_utility_room_lightlevel
         below: 100
         for:
           minutes: 5
@@ -39,7 +39,7 @@ automation:
       - platform: time
         at: "12:00:00"
       - platform: numeric_state
-        entity_id: sensor.outside_utility_room_light_level
+        entity_id: sensor.outside_utility_room_lightlevel
         above: 100
     action:
       - service: homeassistant.turn_off
