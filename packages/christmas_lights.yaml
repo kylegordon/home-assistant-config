@@ -65,8 +65,8 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
-        from: "off"
-        to: "on"
+        from: "on"
+        to: "off"
       - platform: time
         at: "00:00:00"
     condition:
