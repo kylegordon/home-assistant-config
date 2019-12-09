@@ -324,8 +324,6 @@ test:
   entities:
     - switch.tellybox
     - media_player.living_room_panasonic_tv
-    - light.surplus
-    - light.outside_decorations
 
 other:
   name: Other
