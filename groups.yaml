@@ -86,13 +86,6 @@ living_room_lights:
     - light.star_burst
     - light.arc_lamp
 
-christmas_lights:
-  name: Christmas Lights
-  entities:
-    - light.christmas_tree
-    - light.candle_arch
-    - light.star_burst
-
 bedroom_1:
   name: Master bedroom
   view: yes

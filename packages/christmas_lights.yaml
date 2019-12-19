@@ -1,3 +1,11 @@
+group:
+  christmas_lights:
+    name: Christmas Lights
+    entities:
+      - light.christmas_tree
+      - light.candle_arch
+      - light.star_burst
+
 automation:
   - alias: Outside decorations - on evening
     trigger:
