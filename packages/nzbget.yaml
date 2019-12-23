@@ -1,0 +1,32 @@
+automation:
+  - alias: Pause nzbget when occupied
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "off"
+        to: "on"
+    action:
+      - service: nzbget.pause
+
+  - alias: Resume nzbget when unoccupied
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "on"
+        to: "off"
+	for: 
+          minutes: 5
+    action:
+      - service: nzbget.resume
+
+  - alias: Completed Download
+    trigger:
+      platform: event
+      event_type: nzbget_download_complete
+    - event_data:
+      category: tv
+    action:
+      service: notify.email_kyle
+      data_template:
+        title: "Download completed!"
+        message: "{{trigger.event.data.name}}"
