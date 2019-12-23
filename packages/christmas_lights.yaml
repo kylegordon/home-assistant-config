@@ -1,16 +1,16 @@
 group:
-  outside_christmas_decorations:
-    name: Outside Christmas Decorations
-    view: no
+  christmas_lights:
+    name: Christmas Lights
     entities:
-      - light.utility_room_decorations
-      - switch.garage_decorations
+      - light.christmas_tree
+      - light.candle_arch
+      - light.star_burst
 
 automation:
   - alias: Outside decorations - on evening
     trigger:
       - platform: numeric_state
-        entity_id: sensor.outside_utility_room_light_level
+        entity_id: sensor.outside_utility_room_lightlevel
         below: 100
         for:
           minutes: 5
@@ -19,7 +19,7 @@ automation:
         value_template: '{{ now().strftime("%m") == "12" }}'
     action:
       - service: homeassistant.turn_on
-        entity_id: group.outside_decorations
+        entity_id: light.outside_decorations
 
   - alias: Outside decorations - on morning
     trigger:
@@ -30,7 +30,7 @@ automation:
         value_template: '{{ now().strftime("%m") == "12" }}'
     action:
       - service: homeassistant.turn_on
-        entity_id: group.outside_decorations
+        entity_id: light.outside_decorations
 
   - alias: Outside decorations - off
     trigger:
@@ -39,11 +39,11 @@ automation:
       - platform: time
         at: "12:00:00"
       - platform: numeric_state
-        entity_id: sensor.outside_utility_room_light_level
+        entity_id: sensor.outside_utility_room_lightlevel
         above: 100
     action:
       - service: homeassistant.turn_off
-        entity_id: group.outside_decorations
+        entity_id: light.outside_decorations
 
   - alias: Christmas decorations - on
     trigger:
@@ -65,8 +65,8 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
-        from: "off"
-        to: "on"
+        from: "on"
+        to: "off"
       - platform: time
         at: "00:00:00"
     condition:
