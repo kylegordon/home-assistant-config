@@ -14,7 +14,7 @@ automation:
         entity_id: binary_sensor.home_occupied
         from: "on"
         to: "off"
-	for: 
+        for: 
           minutes: 5
     action:
       - service: nzbget.resume
