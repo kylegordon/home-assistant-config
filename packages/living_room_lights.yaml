@@ -27,14 +27,6 @@ automation:
     condition:
       condition: and
       conditions:
-      - condition: and
-        conditions:
-          - condition: state
-            entity_id: light.dining_table_overhead
-            state: "off"
-          - condition: state
-            entity_id: light.sofa_overhead
-            state: "off"
       - condition: numeric_state
         entity_id: sensor.sunlight_pct
         below: 15
@@ -57,7 +49,7 @@ automation:
         data_template:
           entity_id: >
             {% if states('sensor.time_of_day') == "Morning" %}
-            light.dining_table_overhead, light.uplighter, light.sideboard
+            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
             {% else %}
             light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
             {% endif %}
@@ -65,7 +57,7 @@ automation:
             {% if states('sensor.time_of_day') == "Morning" %}
             100
             {% elif states('sensor.time_of_day') == "Day" %}
-            60
+            100
             {% elif states('sensor.time_of_day') == "Night" %}
             30
             {% endif %}
@@ -79,7 +71,7 @@ automation:
             {% endif %}
           color_temp: >
             {% if states('sensor.time_of_day') == "Morning" %}
-            200
+            500
             {% elif states('sensor.time_of_day') == "Day" %}
             300
             {% elif states('sensor.time_of_day') == "Night" %}
