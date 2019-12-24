@@ -1,0 +1,13 @@
+default: warn
+logs:
+  # pydeconz: debug
+  homeassistant.components.openhome: debug
+  openhomedevice: debug
+  homeassistant.components.device_tracker: debug
+  # homeassistant.components.esphome: debug
+  # homeassistant.components.deconz: debug
+  # homeassistant.components.switch.broadlink: debug
+  # homeassistant.components.switch.rfxtrx: debug
+  # homeassistant.components.binary_sensor.rfxtrx: debug
+  # homeassistant.components.rfxtrx: debug
+  # homeassistant.components.discovery: debug
