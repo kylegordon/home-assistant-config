@@ -17,3 +17,7 @@ action:
         {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
         Home is occupied. Disarming alarm.
   - service: alarm_control_panel.alarm_disarm
+  - service: climate.set_temperature
+    data:
+      entity_id: climate.house
+      temperature: 19.5
