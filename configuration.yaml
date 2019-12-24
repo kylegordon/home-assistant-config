@@ -85,7 +85,7 @@ frontend:
 # Enable the config panel
 config: 
 
-recorder: !includer recorder.yaml
+recorder: !include recorder.yaml
 
 http:
   cors_allowed_origins:
@@ -276,8 +276,6 @@ emulated_hue:
       hidden: false
     input_boolean.bin_reminder:
       hidden: false
-    light.outside_decorations:
-      hidden: false
     scene.movie_time:
       hidden: false
     input_boolean.classic_fm:
@@ -346,6 +344,8 @@ alexa_media:
     url: "amazon.co.uk"
 
 smartir:
+
+mobile_app:
 
 speedtestdotnet:
   scan_interval:
