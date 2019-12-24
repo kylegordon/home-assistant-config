@@ -85,20 +85,7 @@ frontend:
 # Enable the config panel
 config: 
 
-recorder:
-  db_url: !secret db_url
-  purge_interval: 1
-  purge_keep_days: 5
-  exclude:
-    domains:
-      - automation
-      - group
-      - input_boolean
-      - zha
-      - zwave
-      - script
-    entities:
-      - sun.sun
+recorder: !include recorder.yaml
 
 http:
   cors_allowed_origins:
@@ -218,20 +205,7 @@ logbook:
       - sensor
       - media_player
 
-logger:
-  default: warn
-  logs:
-    # pydeconz: debug
-    homeassistant.components.openhome: debug
-    openhomedevice: debug
-    homeassistant.components.device_tracker: debug
-    # homeassistant.components.esphome: debug
-    # homeassistant.components.deconz: debug
-    # homeassistant.components.switch.broadlink: debug
-    # homeassistant.components.switch.rfxtrx: debug
-    # homeassistant.components.binary_sensor.rfxtrx: debug
-    # homeassistant.components.rfxtrx: debug
-    # homeassistant.components.discovery: debug
+logger: !include logger.yaml
 
 # Track the sun
 sun:
@@ -302,8 +276,6 @@ emulated_hue:
       hidden: false
     input_boolean.bin_reminder:
       hidden: false
-    light.outside_decorations:
-      hidden: false
     scene.movie_time:
       hidden: false
     input_boolean.classic_fm:
@@ -372,6 +344,8 @@ alexa_media:
     url: "amazon.co.uk"
 
 smartir:
+
+mobile_app:
 
 speedtestdotnet:
   scan_interval:
