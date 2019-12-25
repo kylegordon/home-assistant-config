@@ -5,6 +5,7 @@ group:
       - light.christmas_tree
       - light.candle_arch
       - light.star_burst
+      - light.christmas_star
 
 automation:
   - alias: Outside decorations - on evening
