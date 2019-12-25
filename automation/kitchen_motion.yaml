@@ -10,7 +10,9 @@ condition:
 action:
   - service: homeassistant.turn_on
     data_template:
-      entity_id: light.kitchen_cabinets, light.kitchen
+      entity_id:
+        - light.kitchen_cabinets
+        - light.kitchen
       brightness_pct: >
         {% if states('sensor.time_of_day') == "Morning" %}
         100
