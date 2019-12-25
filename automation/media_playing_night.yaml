@@ -17,4 +17,5 @@ action:
     data:
       entity_id: 
         - light.kitchen_cabinets
+        - light.kitchen
       transition: 5
