@@ -7,4 +7,6 @@ trigger:
     minutes: 10
 action:
   service: homeassistant.turn_off
-  entity_id: light.kitchen_cabinets, light.kitchen
+  entity_id:
+    - light.kitchen_cabinets
+    - light.kitchen
