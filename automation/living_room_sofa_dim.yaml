@@ -4,9 +4,16 @@ trigger:
     entity_id: media_player.living_room_kodi
     to: 'playing'
 condition:
-  - condition: state
-    entity_id: light.sofa_overhead
-    state: "on"
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: light.sofa_overhead
+        state: 'on'
+      - condition: state
+        entity_id: light.uplighter
+        state: 'on'
 action:
   - service: light.turn_off
-    entity_id: light.sofa_overhead
+    entity_id:
+      - light.sofa_overhead
+      - light.uplighter
