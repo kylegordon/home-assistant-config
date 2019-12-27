@@ -5,15 +5,15 @@ trigger:
     to: 'playing'
 condition:
   - condition: or
-      conditions:
-        - condition: state
-          entity_id: light.sofa_overhead
-          state: 'on'
-        - condition: state
-          entity_id: light.uplighter
-          state: 'on'
+    conditions:
+      - condition: state
+        entity_id: light.sofa_overhead
+        state: 'on'
+      - condition: state
+        entity_id: light.uplighter
+        state: 'on'
 action:
   - service: light.turn_off
-    entity_id: 
+    entity_id:
       - light.sofa_overhead
       - light.uplighter
