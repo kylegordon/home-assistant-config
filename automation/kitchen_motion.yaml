@@ -5,8 +5,8 @@ trigger:
   to: 'on'
 condition:
   - condition: numeric_state
-    entity_id: sensor.sunlight_pct
-    below: 30
+    entity_id: sensor.outside_utility_room_lightlevel
+    below: 300
 action:
   - service: homeassistant.turn_on
     data_template:
