@@ -17,9 +17,9 @@ automation:
           minutes: 5
     condition:
       - condition: template
-        value_template:  '{{ now().strftime("%m") == "12"
+        value_template:  '{{ now().strftime("%m")|int == "12"
                           or
-                          now().strftime("%m%d") <= 0106 }}'
+                          now().strftime("%m%d")|int <= 0106 }}'
     action:
       - service: homeassistant.turn_on
         entity_id: light.outside_decorations
@@ -30,9 +30,9 @@ automation:
         at: "06:00:00"
     condition:
       - condition: template
-        value_template: '{{ now().strftime("%m") == "12"
+        value_template: '{{ now().strftime("%m")|int == "12"
                          or
-                         now().strftime("%m%d") <= 0106 }}'
+                         now().strftime("%m%d")|int <= 0106 }}'
     action:
       - service: homeassistant.turn_on
         entity_id: light.outside_decorations
@@ -60,9 +60,9 @@ automation:
         at: "06:00:00"
     condition:
       - condition: template
-        value_template: '{{ now().strftime("%m") == "12"
+        value_template: '{{ now().strftime("%m")|int == "12"
                          or
-                         now().strftime("%m%d") <= 0106 }}'
+                         now().strftime("%m%d")|int <= 0106 }}'
     action:
       - service: homeassistant.turn_on
         entity_id: group.christmas_lights
@@ -78,9 +78,9 @@ automation:
         at: "00:00:00"
     condition:
       - condition: template
-        value_template: '{{ now().strftime("%m") == "12"
+        value_template: '{{ now().strftime("%m")|int == "12"
                          or
-                         now().strftime("%m%d") <= 0106 }}'
+                         now().strftime("%m%d")|int <= 0106 }}'
     action:
       - service: homeassistant.turn_off
         entity_id: group.christmas_lights
