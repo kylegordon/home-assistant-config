@@ -168,32 +168,7 @@ person:
 
 wake_on_lan:
 
-notify:
-  - name: twitter_thegordonhome
-    platform: twitter
-    consumer_key: !secret twitter_consumer_key
-    consumer_secret: !secret twitter_consumer_secret
-    access_token: !secret twitter_access_token
-    access_token_secret: !secret twitter_access_token_secret
-  - name: email_kyle
-    platform: smtp
-    server: smtp.gmail.com
-    port: 587
-    starttls: true
-    username: !secret gmail_username
-    password: !secret gmail_password
-    sender: homeassistant@glasgownet.com
-    recipient: kyle@glasgownet.com
-  - name: kodi_living_room_info
-    platform: kodi
-    host: oxcart.vpn.glasgownet.com
-  - name: kodi_living_room_warning
-    platform: kodi
-    host: oxcart.vpn.glasgownet.com
-    data:
-      icon: "warning"
-  - name: alexa_media
-    platform: alexa_media
+notify: !include notify.yaml
 
 # Enables support for tracking state changes over time.
 history:
@@ -211,7 +186,7 @@ logger: !include logger.yaml
 sun:
 
 emulated_hue:
-  # Max of 49! 
+  # Max of 49!
   # https://www.home-assistant.io/components/emulated_hue/
   listen_port: 80
   expose_by_default: false
