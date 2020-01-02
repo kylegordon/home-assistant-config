@@ -23,3 +23,5 @@
         icon: "warning"
   - platform: alexa_media
     name: alexa_media
+  - platform: syslog
+    name: syslog
