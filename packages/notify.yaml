@@ -1,0 +1,25 @@
+- platform: twitter
+  name: twitter_thegordonhome:
+  consumer_key: !secret twitter_consumer_key
+  consumer_secret: !secret twitter_consumer_secret
+  access_token: !secret twitter_access_token
+  access_token_secret: !secret twitter_access_token_secret
+- platform: smtp
+  name: email_kyle:
+  server: smtp.gmail.com
+  port: 587
+  starttls: true
+  username: !secret gmail_username
+  password: !secret gmail_password
+  sender: homeassistant@glasgownet.com
+  recipient: kyle@glasgownet.com
+- platform: kodi
+  name: kodi_living_room_info:
+  host: oxcart.vpn.glasgownet.com
+- platform: kodi
+  name: kodi_living_room_warning:
+  host: oxcart.vpn.glasgownet.com
+  data:
+    icon: "warning"
+- platform: alexa_media
+  name: alexa_media
