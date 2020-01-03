@@ -5,7 +5,6 @@ services:
 script:
       - docker run --rm -v "${PWD}":/config -it homeassistant/home-assistant:latest hass -c . --script check_config
       - |
-        ls -ltr
         echo ${PWD}/esphome/
         for file in $(find \
             ${PWD}/esphome/ \
@@ -14,6 +13,7 @@ script:
             -not -name "secrets.yaml"\
             -printf "%f\n"
             ); do
+            set -o errexit
             echo "Testing $file"
             docker run --rm -v "${PWD}":/config -it esphome/esphome esphome/$file config
         done
