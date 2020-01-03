@@ -50,14 +50,14 @@ binary_sensor:
           not:
             api.connected:
         then:
-          - light.turn_on: sonoff_touch_relay
+          - switch.turn_on: sonoff_touch_relay
     on_release:
       if:
         condition:
           not:
             api.connected:
         then:
-          - light.turn_off: sonoff_touch_relay
+          - switch.turn_off: sonoff_touch_relay
 
 switch:
   - platform: gpio
