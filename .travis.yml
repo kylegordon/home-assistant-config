@@ -15,7 +15,7 @@ script:
             ); do
             set -o errexit
             echo "Testing $file"
-            docker run --rm -v "${PWD}":/config -it esphome/esphome esphome/$file config
+            docker run --rm -v "${PWD}":/config -it esphome/esphome esphome/$file compile
         done
 before_script:
       - mv travis_secrets.yaml secrets.yaml
