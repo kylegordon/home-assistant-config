@@ -29,6 +29,15 @@ binary_sensor:
       mode: INPUT_PULLUP
       inverted: True
     name: "Sonoff Touch Pad"
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - lambda: |-
+              id(failover_control).publish_state(true);
+              if(failover_control).publish_state(false);
   - platform: status
     name: "Sonoff Touch Status"
 
