@@ -11,8 +11,10 @@ script:
             ${PWD}/esphome/ \
             -type f \
             -name "*.yaml"\
-            -not -name "secrets.yaml"
+            -not -name "secrets.yaml"\
+            -printf "%f\n"
             ); do
+            echo "Testing $file"
             docker run --rm -v "${PWD}":/config -it esphome/esphome esphome/$file config
         done
 before_script:
