@@ -61,6 +61,7 @@ binary_sensor:
 
 switch:
   - platform: gpio
+    id: sonoff_touch_relay
     name: "Sonoff Touch Relay"
     pin: GPIO12
 
