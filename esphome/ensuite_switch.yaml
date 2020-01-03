@@ -18,7 +18,7 @@ ota:
 sensor:
   - platform: wifi_signal
     name: "WiFi Signal Ensuite Lightswitch"
-    update_interval: 60s 
+    update_interval: 60s
   - platform: uptime
     name: "Device uptime"
 
