@@ -4,5 +4,15 @@ services:
       - docker
 script:
       - docker run --rm -v "${PWD}":/config -it homeassistant/home-assistant:latest hass -c . --script check_config
+      - |
+        for file in $(find \
+            ./config/esphome \
+            -type f \
+            -name "*.yaml"\
+            -not -name "secrets.yaml"
+            ); do
+            docker run --rm -v "${PWD}":/config -it esphome/esphome $file config
+        done
 before_script:
       - mv travis_secrets.yaml secrets.yaml
+      - mv esphome/travis_secrets.yaml esphome/secrets.yaml
