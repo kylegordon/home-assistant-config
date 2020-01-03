@@ -25,7 +25,7 @@ i2c:
 sensor:
   - platform: wifi_signal
     name: "WiFi Signal Utility Room Sensor"
-    update_interval: 60s 
+    update_interval: 60s
   - platform: uptime
     name: "Device uptime"
   - platform: sht3xd
