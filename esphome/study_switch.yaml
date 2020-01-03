@@ -39,7 +39,7 @@ binary_sensor:
         then:
           - lambda: |-
               id(failover_control).publish_state(true);
-              if(failover_control).publish_state(false);
+              id(failover_control).publish_state(false);
   - platform: template
     id: failover_control
     filters:
