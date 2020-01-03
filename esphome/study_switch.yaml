@@ -40,6 +40,24 @@ binary_sensor:
           - lambda: |-
               id(failover_control).publish_state(true);
               if(failover_control).publish_state(false);
+  - platform: template
+    id: failover_control
+    filters:
+      - delayed_off: 90s
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - light.turn_on: sonoff_touch_relay
+    on_release:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - light.turn_off: sonoff_touch_relay
 
 switch:
   - platform: gpio
