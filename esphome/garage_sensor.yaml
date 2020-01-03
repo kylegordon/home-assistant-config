@@ -23,7 +23,7 @@ dallas:
 sensor:
   - platform: wifi_signal
     name: "WiFi Signal Garage Sensor"
-    update_interval: 60s 
+    update_interval: 60s
   - platform: uptime
     name: "Device uptime"
   - platform: dallas
