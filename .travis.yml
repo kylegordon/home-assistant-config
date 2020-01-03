@@ -6,9 +6,9 @@ script:
       - docker run --rm -v "${PWD}":/config -it homeassistant/home-assistant:latest hass -c . --script check_config
       - |
         ls -ltr
-        echo ${PWD}
+        echo ${PWD}/esphome/
         for file in $(find \
-            ${PWD} \
+            ${PWD}/esphome/ \
             -type f \
             -name "*.yaml"\
             -not -name "secrets.yaml"
