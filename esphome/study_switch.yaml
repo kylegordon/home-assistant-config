@@ -1,3 +1,5 @@
+## https://community.home-assistant.io/t/make-esphome-node-fallback-when-not-connected-to-ha-api/116615/16
+
 esphome:
   name: study_switch
   platform: ESP8266
@@ -42,22 +44,13 @@ binary_sensor:
               id(failover_control).publish_state(false);
   - platform: template
     id: failover_control
-    filters:
-      - delayed_off: 90s
     on_press:
       if:
         condition:
           not:
             api.connected:
         then:
-          - switch.turn_on: sonoff_touch_relay
-    on_release:
-      if:
-        condition:
-          not:
-            api.connected:
-        then:
-          - switch.turn_off: sonoff_touch_relay
+          - switch.toggle: sonoff_touch_relay
 
 switch:
   - platform: gpio
