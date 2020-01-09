@@ -40,7 +40,7 @@
     living_room_tv_power:
       friendly_name: Living Room TV Power
       device_class: power
-      value_template: "{{ states('sensor.tv_energy_power') | float > 20 }}"
+      value_template: "{{ states('sensor.living_room_tv_power') | float > 20 }}"
     home_occupied:
       friendly_name: Home Occupied
       device_class: occupancy
@@ -63,7 +63,7 @@
   name: Kyle Bed Sensor
   device_class: occupancy
   state_topic: "devices/5ccf7fd8d915/Contact2/state"
-  payload_on: "1" 
+  payload_on: "1"
   payload_off: "0"
 
 
