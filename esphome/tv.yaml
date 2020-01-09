@@ -43,6 +43,7 @@ sensor:
     name: Uptime Sensor
   # Power sensor
   - platform: hlw8012
+    icon: "mdi:power-socket-uk"
     sel_pin:
       number: GPIO12
       inverted: true
