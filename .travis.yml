@@ -19,4 +19,4 @@ script:
         done
 before_script:
       - mv travis_secrets.yaml secrets.yaml
-      - mv esphome/travis_secrets.yaml esphome/secrets.yaml
+      - mv esphome/travis_secrets.yaml.txt esphome/secrets.yaml
