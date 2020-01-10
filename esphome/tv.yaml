@@ -38,7 +38,7 @@ text_sensor:
 sensor:
   - platform: wifi_signal
     name: "WiFi Signal TV Plug"
-    update_interval: 60s 
+    update_interval: 60s
   - platform: uptime
     name: Uptime Sensor
   # Power sensor
