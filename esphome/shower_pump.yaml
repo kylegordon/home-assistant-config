@@ -3,7 +3,7 @@
 # Sourced from https://frenck.dev/calibrating-an-esphome-flashed-power-plug/
 
 esphome:
-  name: shower
+  name: shower_pump
   platform: ESP8266
   board: esp8285
 
