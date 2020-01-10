@@ -30,6 +30,11 @@ text_sensor:
   name: "Firmware version"
 
 sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Washing Machine Plug"
+    update_interval: 60s
+  - platform: uptime
+    name: Uptime Sensor
   # Power sensor
   - platform: hlw8012
     sel_pin:
