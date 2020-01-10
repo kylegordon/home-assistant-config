@@ -40,10 +40,14 @@ sensor:
     sel_pin:
       number: GPIO12
       inverted: true
-    cf_pin: GPIO04
-    cf1_pin: GPIO05
+    cf_pin: GPIO05
+    cf1_pin: GPIO14
+    # Higher value gives lower watt readout
+    current_resistor: 0.00221
+    # Lower value gives lower voltage readout
+    voltage_divider: 871
     change_mode_every: 3
-    update_interval: 3s
+    update_interval: 1s
     # Current sensor
     current:
       name: current
