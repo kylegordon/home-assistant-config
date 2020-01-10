@@ -231,58 +231,10 @@
 # Master Bedroom #
 
 - platform: mqtt
-  state_topic: "devices/5ccf7fd8d915/$stats/signal"
-  name: "Bed Sensor Signal Level"
-  availability_topic: "devices/5ccf7fd8d915/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-
-- platform: mqtt
-  state_topic: "devices/5ccf7fe9b845/$stats/signal"
-  name: "Garage Lights Signal Level"
-  unit_of_measurement: "%"
-
-- platform: mqtt
-  state_topic: "devices/5ccf7faf630b/$stats/signal"
-  name: "Driveway Floodlights Signal Level"
-  unit_of_measurement: "%" 
-  force_update: true
-
-- platform: mqtt
   state_topic: "devices/60019416854d/$stats/signal"
   name: "Front Door Floodlights Signal Level"
   unit_of_measurement: "%" 
   force_update: true
-
-- platform: mqtt
-  state_topic: "devices/5ccf7faf5486/$stats/signal"
-  name: "Back floodlights Signal Level"
-  unit_of_measurement: "%" 
-  force_update: true
-
-- platform: mqtt
-  state_topic: "utility-sensor/stat/STATUS11"
-  name: "Utility Room ESP8266 Signal Level"
-  unit_of_measurement: "%"
-  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
-
-- platform: mqtt
-  state_topic: "dishwasher/stat/STATUS11"
-  name: "Dishwasher signal Level"
-  unit_of_measurement: "%" 
-  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
-
-- platform: mqtt
-  state_topic: "washing-machine/stat/STATUS11"
-  name: "Washing machine signal Level"
-  unit_of_measurement: "%" 
-  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
-
-- platform: mqtt
-  state_topic: "garage-sensor/stat/STATUS11"
-  name: "Garage ESP8266 Signal Level"
-  value_template: "{{ value_json.StatusSTS.Wifi.RSSI }}"
-  unit_of_measurement: "%"
 
 - platform: mqtt
   state_topic: "owntracks/bagpuss/a0001"
