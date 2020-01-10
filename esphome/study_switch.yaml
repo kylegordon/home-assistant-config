@@ -1,3 +1,5 @@
+## https://community.home-assistant.io/t/make-esphome-node-fallback-when-not-connected-to-ha-api/116615/16
+
 esphome:
   name: study_switch
   platform: ESP8266
