@@ -102,7 +102,7 @@ binary_sensor:
   - platform: gpio
     name: button
     pin:
-      number: GPIO3
+      number: GPIO13
       inverted: true
     on_press:
       - switch.toggle: relay
@@ -112,7 +112,7 @@ switch:
   - platform: gpio
     id: relay
     name: switch
-    pin: GPIO14
+    pin: GPIO15
     on_turn_on:
       - light.turn_on: led
     on_turn_off:
@@ -123,7 +123,7 @@ output:
   - platform: esp8266_pwm
     id: state_led
     pin:
-      number: GPIO1
+      number: GPIO2
       inverted: true
 
 light:
@@ -135,5 +135,5 @@ light:
 # Uses the red LED as a status indicator
 status_led:
   pin:
-    number: GPIO13
+    number: GPIO0
     inverted: true
