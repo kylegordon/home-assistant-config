@@ -20,7 +20,7 @@ web_server:
 sensor:
   - platform: wifi_signal
     name: "Hall 2 Gang Signal Strength"
-    update_interval: 60s 
+    update_interval: 60s
   - platform: uptime
     name: "Hall 2 Gang Device Uptime"
 
@@ -34,7 +34,7 @@ binary_sensor:
       inverted: True
     name: "Hall 2 Gang Touchpad 1"
     on_press:
-      if: 
+      if:
         condition:
           not:
             api.connected:
@@ -44,22 +44,13 @@ binary_sensor:
               id(failover_control).publish_state(false);
   - platform: template
     id: failover_control
-#    filters:
-#      - delayed_off: 90s 
     on_press:
-      if: 
+      if:
         condition:
           not:
             api.connected:
         then:
           - switch.turn_on: hall_2_gang_relay_1
-    on_release:
-      if: 
-        condition:
-          not:
-            api.connected:
-        then:
-          - switch.turn_off: hall_2_gang_relay_1
 
 
 # binary_sensor:
