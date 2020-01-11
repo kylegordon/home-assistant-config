@@ -42,6 +42,21 @@ binary_sensor:
           - lambda: |-
               id(failover_control_1).publish_state(true);
               id(failover_control_1).publish_state(false);
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Hall 2 Gang Touchpad 2"
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - lambda: |-
+              id(failover_control_2).publish_state(true);
+              id(failover_control_2).publish_state(false);
   - platform: template
     id: failover_control_1
     on_press:
@@ -51,7 +66,15 @@ binary_sensor:
             api.connected:
         then:
           - switch.turn_on: hall_2_gang_relay_1
-
+  - platform: template
+    id: failover_control_2
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - switch.turn_on: hall_2_gang_relay_2
 
 # binary_sensor:
 #   - platform: status
