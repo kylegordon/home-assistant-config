@@ -40,10 +40,10 @@ binary_sensor:
             api.connected:
         then:
           - lambda: |-
-              id(failover_control).publish_state(true);
-              id(failover_control).publish_state(false);
+              id(failover_control_1).publish_state(true);
+              id(failover_control_1).publish_state(false);
   - platform: template
-    id: failover_control
+    id: failover_control_1
     on_press:
       if:
         condition:
