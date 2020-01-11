@@ -1,0 +1,130 @@
+esphome:
+  name: hall_dual_switch
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+
+sensor:
+  - platform: wifi_signal
+    name: "Hall 2 Gang Signal Strength"
+    update_interval: 60s 
+  - platform: uptime
+    name: "Hall 2 Gang Device Uptime"
+
+binary_sensor:
+  - platform: status
+    name: "Hall 2 Gang Status"
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Hall 2 Gang Touchpad 1"
+    on_press:
+      if: 
+        condition:
+          not:
+            api.connected:
+        then:
+          - lambda: |-
+              id(failover_control).publish_state(true);
+              id(failover_control).publish_state(false);
+  - platform: template
+    id: failover_control
+#    filters:
+#      - delayed_off: 90s 
+    on_press:
+      if: 
+        condition:
+          not:
+            api.connected:
+        then:
+          - switch.turn_on: hall_2_gang_relay_1
+    on_release:
+      if: 
+        condition:
+          not:
+            api.connected:
+        then:
+          - switch.turn_off: hall_2_gang_relay_1
+
+
+# binary_sensor:
+#   - platform: status
+#     name: "Hall 2 Gang Status"
+#   - platform: gpio
+#     pin:
+#       number: GPIO0
+#       mode: INPUT_PULLUP
+#       inverted: True
+#     name: "Hall 2 Gang Touchpad 1"
+#   - platform: gpio
+#     pin:
+#       number: GPIO9
+#       mode: INPUT_PULLUP
+#       inverted: True
+#     name: "Hall 2 Gang Touchpad 2"
+#   - platform: status
+#     name: "Hall 2 Gang Status"
+
+#   - platform: gpio
+#     name: "Hall 2 Gang Touchpad 2"
+#     pin:
+#       number: GPIO9
+#       mode: INPUT_PULLUP
+#       inverted: True
+#     on_multi_click:
+#     - timing:
+#         - ON for at most 1s
+#         - OFF for at most 1s
+#         - ON for at most 1s
+#         - OFF for at least 0.5s
+#       then:
+#         - logger.log: "Double Click"
+#     - timing:
+#         - ON for 1s to 2s
+#         - OFF for at least 0.5s
+#       then:
+#         - logger.log: "LongPress"
+#     - timing:
+#         - ON for at most 1s
+#         - OFF for at least 0.5s
+#       then:
+#         - logger.log: "Click"
+ 
+
+switch:
+  - platform: gpio
+    id: hall_2_gang_relay_1
+    name: "Hall 2 Gang Relay 1"
+    pin: GPIO12
+  - platform: gpio
+    id: hall_2_gang_relay_2
+    name: "Hall 2 Gang Relay 2"
+    pin: GPIO5
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: GPIO13
+    inverted: True
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "Hall 2 Gang Blue LED"
+    output: blue_led
