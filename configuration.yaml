@@ -98,6 +98,10 @@ konnected:
   devices:
     - id: bcddc2fdd1b2
     - id: dc4f22199839
+      binary_sensors:
+        - zone: 1
+          type: window
+          name: 'Bedrooms Zone'
     - id: dc4f22195dec
       binary_sensors:
         - zone: 1
