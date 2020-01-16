@@ -1,9 +1,9 @@
 alias: "Home in the dark"
 trigger:
   - platform: state
-    entity_id: group.all_devices
-    from: "not_home"
-    to: "home"
+    entity_id: binary_sensor.home_occupied
+    from: "off"
+    to: "on"
 condition:
   - condition: state
     entity_id: sun.sun
@@ -36,7 +36,6 @@ action:
     data:
       entity_id: group.outside_lights
 
-  - service: alarm_control_panel.alarm_disarm
   - delay:
       minutes: 5
   - service: light.turn_off
