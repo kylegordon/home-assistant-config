@@ -4,10 +4,10 @@ trigger:
     at: '01:00:00'
 condition:
   - condition: state
-    entity_id: group.all_devices
-    state: "home"
+    entity_id: binary_sensor.home_occupied
+    state: "on"
 action:
   - service: light.turn_off
-    entity_id: 
+    entity_id:
       - group.bedside_lights
       - light.twig_lights
