@@ -322,7 +322,6 @@ other:
   name: Other
   view: yes
   entities:
-    - group.all_scripts
     - group.lightswitch_relays
     - switch.energenie_1
     - switch.energenie_4
