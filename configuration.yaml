@@ -28,10 +28,6 @@ homeassistant:
     script.restart_ha:
       icon: mdi:power
       friendly_name: "Restart Home Assistant"
-    group.all_automations:
-      hidden: false
-    group.all_scripts:
-      hidden: false
     sensor.weather_station_rainfall:
       icon: mdi:weather-rainy
     sensor.weather_station_wind_velocity:
