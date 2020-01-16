@@ -1,9 +1,9 @@
 alias: "Away"
 trigger:
   - platform: state
-    entity_id: group.all_devices
-    from: "home"
-    to: "not_home"
+    entity_id: binary_sensor.home_occupied
+    from: "on"
+    to: "off"
     for:
       minutes: 5
 condition:
