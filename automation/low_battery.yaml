@@ -1,4 +1,4 @@
-alias: "low battery RGB lamp"
+alias: "Low battery RGB lamp"
 trigger:
   - platform: numeric_state
     entity_id: sensor.charlotte_phone_battery
@@ -8,7 +8,7 @@ trigger:
     below: 15
 condition:
   - condition: state
-    entity_id: group.all_devices
-    state: "home"
+    entity_id: binary_sensor.home_occupied
+    state: "on"
 action:
   service: script.low_battery
