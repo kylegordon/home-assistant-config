@@ -101,7 +101,19 @@ konnected:
       binary_sensors:
         - zone: 1
           type: window
-          name: 'Bedrooms Zone'
+          name: 'Ensuite'
+        - zone: 2
+          type: window
+          name: 'Craft room window'
+        - zone: 3
+          type: window
+          name: 'Master bedroom window'
+        - zone: 4
+          type: window
+          name: 'Guest bedroom window'
+        - zone: 5
+          type: window
+          name: 'Study window'
     - id: dc4f22195dec
       binary_sensors:
         - zone: 1
