@@ -97,7 +97,7 @@ konnected:
       binary_sensors:
         - zone: 1
           type: window
-          name: 'Ensuite'
+          name: 'Ensuite window'
         - zone: 2
           type: window
           name: 'Craft room window'
