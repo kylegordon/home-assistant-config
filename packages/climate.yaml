@@ -1,0 +1,26 @@
+automation:
+  - alias: "Set home temperature"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "off"
+        to: "on"
+    action:
+      - service: climate.set_temperature
+        data:
+          entity_id: climate.house
+          temperature: 19.5
+
+  - alias: "Set away temperature"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "on"
+        to: "off"
+        for:
+          minutes: 5
+    action:
+      - service: climate.set_temperature
+        data:
+          entity_id: climate.house
+          temperature: 12

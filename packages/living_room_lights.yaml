@@ -14,7 +14,7 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.outside_utility_room_lightlevel
-        below: 300
+        above: 300
     action:
       service: homeassistant.turn_off
       entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
@@ -28,8 +28,8 @@ automation:
       condition: and
       conditions:
       - condition: numeric_state
-        entity_id: sensor.sunlight_pct
-        below: 15
+        entity_id: sensor.outside_utility_room_lightlevel
+        below: 300
       - condition: or
         conditions:
           - condition: state

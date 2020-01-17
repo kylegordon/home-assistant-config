@@ -28,10 +28,6 @@ homeassistant:
     script.restart_ha:
       icon: mdi:power
       friendly_name: "Restart Home Assistant"
-    group.all_automations:
-      hidden: false
-    group.all_scripts:
-      hidden: false
     sensor.weather_station_rainfall:
       icon: mdi:weather-rainy
     sensor.weather_station_wind_velocity:
@@ -85,20 +81,7 @@ frontend:
 # Enable the config panel
 config: 
 
-recorder:
-  db_url: !secret db_url
-  purge_interval: 1
-  purge_keep_days: 5
-  exclude:
-    domains:
-      - automation
-      - group
-      - input_boolean
-      - zha
-      - zwave
-      - script
-    entities:
-      - sun.sun
+recorder: !include recorder.yaml
 
 http:
   cors_allowed_origins:
@@ -111,6 +94,22 @@ konnected:
   devices:
     - id: bcddc2fdd1b2
     - id: dc4f22199839
+      binary_sensors:
+        - zone: 1
+          type: window
+          name: 'Ensuite window'
+        - zone: 2
+          type: window
+          name: 'Craft room window'
+        - zone: 3
+          type: window
+          name: 'Master bedroom window'
+        - zone: 4
+          type: window
+          name: 'Guest bedroom window'
+        - zone: 5
+          type: window
+          name: 'Study window'
     - id: dc4f22195dec
       binary_sensors:
         - zone: 1
@@ -181,32 +180,7 @@ person:
 
 wake_on_lan:
 
-notify:
-  - name: twitter_thegordonhome
-    platform: twitter
-    consumer_key: !secret twitter_consumer_key
-    consumer_secret: !secret twitter_consumer_secret
-    access_token: !secret twitter_access_token
-    access_token_secret: !secret twitter_access_token_secret
-  - name: email_kyle
-    platform: smtp
-    server: smtp.gmail.com
-    port: 587
-    starttls: true
-    username: !secret gmail_username
-    password: !secret gmail_password
-    sender: homeassistant@glasgownet.com
-    recipient: kyle@glasgownet.com
-  - name: kodi_living_room_info
-    platform: kodi
-    host: oxcart.vpn.glasgownet.com
-  - name: kodi_living_room_warning
-    platform: kodi
-    host: oxcart.vpn.glasgownet.com
-    data:
-      icon: "warning"
-  - name: alexa_media
-    platform: alexa_media
+notify: !include notify.yaml
 
 # Enables support for tracking state changes over time.
 history:
@@ -218,26 +192,13 @@ logbook:
       - sensor
       - media_player
 
-logger:
-  default: warn
-  logs:
-    # pydeconz: debug
-    homeassistant.components.openhome: debug
-    openhomedevice: debug
-    homeassistant.components.device_tracker: debug
-    # homeassistant.components.esphome: debug
-    # homeassistant.components.deconz: debug
-    # homeassistant.components.switch.broadlink: debug
-    # homeassistant.components.switch.rfxtrx: debug
-    # homeassistant.components.binary_sensor.rfxtrx: debug
-    # homeassistant.components.rfxtrx: debug
-    # homeassistant.components.discovery: debug
+logger: !include logger.yaml
 
 # Track the sun
 sun:
 
 emulated_hue:
-  # Max of 49! 
+  # Max of 49!
   # https://www.home-assistant.io/components/emulated_hue/
   listen_port: 80
   expose_by_default: false
@@ -301,8 +262,6 @@ emulated_hue:
     input_boolean.restart_ha:
       hidden: false
     input_boolean.bin_reminder:
-      hidden: false
-    light.outside_decorations:
       hidden: false
     scene.movie_time:
       hidden: false
@@ -372,6 +331,8 @@ alexa_media:
     url: "amazon.co.uk"
 
 smartir:
+
+mobile_app:
 
 speedtestdotnet:
   scan_interval:

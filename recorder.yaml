@@ -1,0 +1,13 @@
+db_url: !secret db_url
+purge_interval: 1
+purge_keep_days: 5
+exclude:
+  domains:
+    - automation
+    - group
+    - input_boolean
+    - zha
+    - zwave
+    - script
+  entities:
+    - sun.sun

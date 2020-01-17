@@ -6,6 +6,10 @@ trigger:
     to: "off"
     for:
       minutes: 5
+condition:
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
 action:
   - service: logbook.log
     data_template:
