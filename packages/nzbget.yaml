@@ -41,5 +41,5 @@ automation:
       service: notify.email_kyle
       data_template:
         title: "Star Trek download completed!"
-        message: "{{ trigger.event.data.name | regex_search('lost.in.space', ignorecase=TRUE) }}"
+        message: "{{ trigger.event.data.name }} {{ trigger.event.data.name | regex_search('lost.in.space', ignorecase=TRUE) }}"
 
