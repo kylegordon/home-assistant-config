@@ -38,7 +38,10 @@ automation:
       event_data:
         category: tv
     action:
-      service: notify.email_kyle
+      service_template: >
+        {% if trigger.event.data.name | regex_search('star.trek', ignorecase=TRUE)  %}
+          notify.email_kyle
+        {% endif %}
       data_template:
         title: "Star Trek download completed!"
         message: "{{ trigger.event.data.name }} {{ trigger.event.data.name | regex_search('lost.in.space', ignorecase=TRUE) }}"
