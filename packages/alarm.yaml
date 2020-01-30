@@ -1,0 +1,26 @@
+automation:
+    - alias: Alarm sensor state change notification
+      trigger:
+        - platform: state
+          entity_id:
+                - binary_sensor.back_door
+                - binary_sensor.front_door
+                - binary_sensor.patio_door
+                - binary_sensor.ensuite_window
+                - binary_sensor.master_bedroom_window
+                - binary_sensor.guest_bedroom_window
+                - binary_sensor.study_window
+                - binary_sensor.craft_room_window
+                - binary_sensor.bathroom_window
+                - binary_sensor.dining_table_window
+                - binary_sensor.kitchen_window
+                - binary_sensor.utility_room_window
+      action:
+        - service: notify.alexa_media
+          data_template:
+            target:
+              - media_player.kitchen
+            data:
+              type: announce
+              #method: all
+            message: "{{ trigger.to_state.attributes.friendly_name }} has changed to {{ trigger.to_state.state }}"
