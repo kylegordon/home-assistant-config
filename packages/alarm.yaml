@@ -70,3 +70,25 @@ automation:
             {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
             Home is occupied. Disarming alarm.
       - service: alarm_control_panel.alarm_disarm
+
+  - alias: "Alarm Set Sleeping"
+    trigger:
+      - platform: state
+        entity_id: sensor.kyle_status
+        to: "Sleeping"
+      - platform: state
+        entity_id: sensor.charlotte_status
+        to: "Sleeping"
+    condition:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: "off"
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Sleeping. Setting alarm."
+      - service: notify.email_kyle
+        data:
+          message: "Sleeping. Setting alarm."
+      - service: script.alarm_home
