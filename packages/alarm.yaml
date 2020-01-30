@@ -24,3 +24,29 @@ automation:
             type: announce
             #method: all
           message: "{{ trigger.to_state.attributes.friendly_name }} has changed to {{ trigger.to_state.state }}"
+
+  - alias: "Alarm Set Away"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "on"
+        to: "off"
+        for:
+          minutes: 5
+    condition:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: 'off'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Away mode. Setting alarm."
+      - service: notify.email_kyle
+        data_template:
+          title: >
+            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+          message: >
+            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+            Away mode. Setting alarm.
+      - service: alarm_control_panel.alarm_arm_away
