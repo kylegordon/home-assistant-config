@@ -24,7 +24,7 @@ automation:
             type: announce
             #method: all
           message: >-
-            {% if trigger.to_state.state == 'on'}
+            {% if trigger.to_state.state == 'on' %}
               {{ trigger.to_state.attributes.friendly_name }} has opened
             {% else %}
               {{ trigger.to_state.attributes.friendly_name }} has closed
