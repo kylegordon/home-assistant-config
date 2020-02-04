@@ -17,6 +17,10 @@ api:
 
 ota:
 
+text_sensor:
+- platform: version
+  name: "Firmware version"
+
 sensor:
   - platform: wifi_signal
     name: "WiFi Signal Study Lightswitch"
