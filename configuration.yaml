@@ -117,10 +117,10 @@ konnected:
           name: 'Kitchen window'
         - zone: 2
           type: door
-          name: 'Garden door'
+          name: 'Back door'
         - zone: 3
           type: door
-          name: 'Living room doors'
+          name: 'Patio door'
         - zone: 4
           type: window
           name: 'Bathroom window'
