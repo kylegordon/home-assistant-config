@@ -17,6 +17,10 @@ ota:
 
 web_server:
 
+text_sensor:
+- platform: version
+  name: "Firmware version"
+
 i2c:
   sda: D2
   scl: D1

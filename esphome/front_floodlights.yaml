@@ -15,6 +15,10 @@ api:
 
 ota:
 
+text_sensor:
+- platform: version
+  name: "Firmware version"
+
 binary_sensor:
   - platform: gpio
     pin:
