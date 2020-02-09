@@ -44,5 +44,5 @@ automation:
         {% endif %}
       data_template:
         title: "Star Trek download completed!"
-        message: "{{ trigger.event.data.name }} {{ trigger.event.data.name | regex_search('lost.in.space', ignorecase=TRUE) }}"
+        message: "{{ trigger.event.data.name }} {{ trigger.event.data.name | regex_search('star.trek', ignorecase=TRUE) }}"
 
