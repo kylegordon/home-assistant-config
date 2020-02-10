@@ -2,7 +2,6 @@
 
 default_view:
   name: Home
-  view: yes
   entities:
     - group.people_status
     - group.modes
@@ -22,13 +21,11 @@ default_view:
 
 modes:
   name: Modes
-  view: no
   entities:
     - input_boolean.guest_mode
 
 environment_summary:
   name: Environment Summary
-  view: no
   entities:
     - climate.house
     - climate.hot_water
@@ -37,7 +34,6 @@ environment_summary:
 
 kitchen:
   name: Kitchen
-  view: yes
   entities:
     - sensor.kitchen_temperature
     - sensor.kitchen_esp8266_signal_level
@@ -48,7 +44,6 @@ kitchen:
 
 utility_room:
   name: Utility Room
-  view: yes
   entities:
     - light.utility_room
     - sensor.utility_room_temperature
@@ -60,7 +55,6 @@ utility_room:
 
 living_room:
   name: Living Room
-  view: yes
   entities:
     - group.living_room_lights
     - media_player.living_room_kodi
@@ -88,7 +82,6 @@ living_room_lights:
 
 bedroom_1:
   name: Master bedroom
-  view: yes
   entities:
     - group.bedroom_1_lights
     - group.bedside_lights
@@ -105,7 +98,6 @@ bedroom_1:
 
 ensuite:
   name: Ensuite
-  view: no
   entities:
     - sensor.ensuite_lightlevel
     - binary_sensor.ensuite_motion
@@ -117,7 +109,6 @@ ensuite:
     - light.ensuite_sink
 
 ensuite_facilities:
-  view: no
   entities:
     - light.ensuite_toilet
     - light.ensuite_sink
@@ -129,7 +120,6 @@ bedroom_1_lights:
 
 bedroom_2:
   name: Guest bedroom
-  view: yes
   entities:
     - light.guest_bedroom
     - sensor.guest_room_temperature
@@ -138,7 +128,6 @@ bedroom_2:
 
 bedroom_3:
   name: Study
-  view: yes
   entities:
     - media_player.study_ds
     - media_player.study
@@ -152,7 +141,6 @@ bedroom_3:
 
 bedroom_4:
   name: Craft room
-  view: yes
   entities:
     - light.craft_room
     - light.craft_room_bookcase
@@ -194,7 +182,6 @@ hall_view:
 
 outside:
   name: Outside
-  view: yes
   entities:
     - sun.sun
     - binary_sensor.outside_front_motion
@@ -211,7 +198,6 @@ outside:
 
 outside_lights:
   name: Outside Lights
-  view: no
   entities:
     - light.front_door_floodlights
     - light.driveway_floodlights
@@ -219,7 +205,6 @@ outside_lights:
 
 climate:
   name: Climate
-  view: no
   entities:
     - climate.house
     - sensor.house_average_temperature
@@ -262,7 +247,6 @@ climate:
 
 garage:
   name: Garage
-  view: yes
   entities:
     - sensor.garage_lights_signal_level
     - light.garage_lights
@@ -273,7 +257,6 @@ garage:
 people:
   name: People
   icon: mdi:account-multiple
-  view: yes
   entities:
     - camera.kyle
     - camera.charlotte
@@ -320,7 +303,6 @@ test:
 
 other:
   name: Other
-  view: yes
   entities:
     - group.lightswitch_relays
     - switch.energenie_1
