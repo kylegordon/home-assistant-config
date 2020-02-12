@@ -1,4 +1,49 @@
 automation:
+  - alias: Ensuite motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.ensuite_motion
+        to: 'on'
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.sunlight_pct
+        below: 30
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            light.ensuite_facilities
+            {% elif states('sensor.time_of_day') == "Night" %}
+            light.ensuite_facilities
+            {% else %}
+            light.ensuite
+            {% endif %}
+          brightness_pct: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            100
+            {% elif states('sensor.time_of_day') == "Day" %}
+            100
+            {% elif states('sensor.time_of_day') == "Night" %}
+            20
+            {% endif %}
+          transition: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            10
+            {% elif states('sensor.time_of_day') == "Day" %}
+            2
+            {% elif states('sensor.time_of_day') == "Night" %}
+            10
+            {% endif %}
+          color_temp: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            200
+            {% elif states('sensor.time_of_day') == "Day" %}
+            300
+            {% elif states('sensor.time_of_day') == "Night" %}
+            375
+            {% endif %}
+
   - alias: Ensuite motion - 10 minute timeout
     trigger:
       - platform: state
