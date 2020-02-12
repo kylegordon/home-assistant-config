@@ -71,7 +71,7 @@ automation:
             200
       - service: notify.alexa_media
         data:
-          target: 
+          target:
             - media_player.bedroom
           data:
             type: announce
