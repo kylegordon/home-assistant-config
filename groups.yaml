@@ -158,7 +158,6 @@ craft_room_lighting:
 
 hall:
   name: Hall lights
-  #view: yes
   entities:
     - light.front_door
     - light.hall_bedrooms
@@ -166,7 +165,6 @@ hall:
 
 hall_view:
   name: Hall
-  view: yes
   entities:
     - group.hall
     - binary_sensor.hall_rooms_motion
@@ -296,7 +294,6 @@ people_status:
 
 test:
   name: Test
-  view: no
   entities:
     - switch.tellybox
     - media_player.living_room_panasonic_tv
