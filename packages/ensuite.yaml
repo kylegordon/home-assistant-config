@@ -43,6 +43,7 @@ automation:
             {% elif states('sensor.time_of_day') == "Night" %}
             375
             {% endif %}
+
   - alias: Ensuite shower activity
     trigger:
       - platform: numeric_state
