@@ -108,3 +108,17 @@ automation:
     action:
       service: light.turn_off
       entity_id: light.ensuite
+
+  - alias: Ensuite motion - regular timeout
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.ensuite_motion
+        to: 'off'
+        for:
+          minutes: 4
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.time_of_day', 'Night') }}"
+    action:
+      service: light.turn_off
+      entity_id: light.ensuite
