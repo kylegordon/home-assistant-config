@@ -94,13 +94,17 @@ automation:
             #method: all
           message: "Hello! Enjoy your shower!"
 
-  - alias: Ensuite motion - 10 minute timeout
+  - alias: Ensuite motion - night timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.ensuite_motion
         to: 'off'
         for:
           minutes: 4
+    condition:
+      - condition: state
+        entity_id: sensor.time_of_day
+        state: "Night"
     action:
       service: light.turn_off
       entity_id: light.ensuite
