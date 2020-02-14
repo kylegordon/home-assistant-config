@@ -1,0 +1,99 @@
+automation:
+  - alias: Alarm sensor state change notification
+    trigger:
+      - platform: state
+        entity_id:
+              - binary_sensor.back_door
+              - binary_sensor.front_door
+              - binary_sensor.patio_door
+              - binary_sensor.ensuite_window
+              - binary_sensor.master_bedroom_window
+              - binary_sensor.guest_bedroom_window
+              - binary_sensor.study_window
+              - binary_sensor.craft_room_window
+              - binary_sensor.bathroom_window
+              - binary_sensor.dining_table_window
+              - binary_sensor.kitchen_window
+              - binary_sensor.utility_room_window
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.kitchen
+          data:
+            type: announce
+            #method: all
+          message: >-
+            {% if trigger.to_state.state == 'on' %}
+              {{ trigger.to_state.attributes.friendly_name }} has opened
+            {% else %}
+              {{ trigger.to_state.attributes.friendly_name }} has closed
+            {% endif %}
+
+  - alias: "Alarm Set Away"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "on"
+        to: "off"
+        for:
+          minutes: 5
+    condition:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: 'off'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Away mode. Setting alarm."
+      - service: notify.email_kyle
+        data_template:
+          title: >
+            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+          message: >
+            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+            Away mode. Setting alarm.
+      - service: alarm_control_panel.alarm_arm_away
+
+  - alias: "Alarm Set Home"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "off"
+        to: "on"
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Away mode. Setting alarm."
+      - service: notify.email_kyle
+        data_template:
+          title: >
+            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+          message: >
+            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+            Home is occupied. Disarming alarm.
+      - service: alarm_control_panel.alarm_disarm
+
+  - alias: "Alarm Set Sleeping"
+    trigger:
+      - platform: state
+        entity_id: sensor.kyle_status
+        to: "Sleeping"
+      - platform: state
+        entity_id: sensor.charlotte_status
+        to: "Sleeping"
+    condition:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: "off"
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Sleeping. Setting alarm."
+      - service: notify.email_kyle
+        data:
+          message: "Sleeping. Setting alarm."
+      - service: script.alarm_home

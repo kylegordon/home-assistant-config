@@ -1,0 +1,124 @@
+automation:
+  - alias: Ensuite light toggle
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.ensuite_lightswitch_touch
+        to: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id: switch.ensuite_lightswitch_relay
+      - service: light.toggle
+        entity_id: light.ensuite
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling ensuite light"
+
+  - alias: Ensuite motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.ensuite_motion
+        to: 'on'
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.outside_utility_room_lightlevel
+        below: 400
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            light.ensuite_facilities
+            {% elif states('sensor.time_of_day') == "Night" %}
+            light.ensuite_facilities
+            {% else %}
+            light.ensuite
+            {% endif %}
+          brightness_pct: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            100
+            {% elif states('sensor.time_of_day') == "Day" %}
+            100
+            {% elif states('sensor.time_of_day') == "Night" %}
+            20
+            {% endif %}
+          transition: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            10
+            {% elif states('sensor.time_of_day') == "Day" %}
+            2
+            {% elif states('sensor.time_of_day') == "Night" %}
+            10
+            {% endif %}
+          color_temp: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            200
+            {% elif states('sensor.time_of_day') == "Day" %}
+            300
+            {% elif states('sensor.time_of_day') == "Night" %}
+            375
+            {% endif %}
+
+  - alias: Ensuite shower activity
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.shower_pump_energy_power
+        above: 10
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.outside_utility_room_lightlevel
+        below: 300
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: >
+            light.ensuite
+          brightness_pct: >
+            100
+          transition: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            10
+            {% elif states('sensor.time_of_day') == "Day" %}
+            2
+            {% elif states('sensor.time_of_day') == "Night" %}
+            5
+            {% endif %}
+          color_temp: >
+            200
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.bedroom
+          data:
+            type: announce
+            #method: all
+          message: "Hello! Enjoy your shower!"
+
+  - alias: Ensuite motion - night timeout
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.ensuite_motion
+        to: 'off'
+        for:
+          minutes: 4
+    condition:
+      - condition: state
+        entity_id: sensor.time_of_day
+        state: "Night"
+    action:
+      service: light.turn_off
+      entity_id: light.ensuite
+
+  - alias: Ensuite motion - regular timeout
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.ensuite_motion
+        to: 'off'
+        for:
+          minutes: 4
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.time_of_day', 'Night') }}"
+    action:
+      service: light.turn_off
+      entity_id: light.ensuite
