@@ -172,27 +172,6 @@
   unit_prefix: k
   round: 2
 
-#- platform: alpha_vantage
-#  api_key: !secret alpha_vantage_key
-#  scan_interval: 300
-#  foreign_exchange: 
-#    - from: BTC
-#      to: GBP
-#      name: Bitcoin
-#  symbols:
-#    - name: ThermoFisher Scientific
-#      currency: USD
-#      symbol: TMO
-
-- platform: blockchain
-  addresses:
-    - !secret btc_wallet_1
-    - !secret btc_wallet_2
-    - !secret btc_wallet_3
-    - !secret btc_wallet_4
-    - !secret btc_wallet_5
-    - !secret btc_wallet_6
-
 ## MQTT ## 
 
 # Weather #
