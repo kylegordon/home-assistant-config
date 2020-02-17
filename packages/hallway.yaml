@@ -1,0 +1,48 @@
+automation:
+  - alias: Hallway light motion
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.hall_door_motion
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.hall_rooms_motion
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.garden_hall_motion
+        to: 'on'
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.sunlight_pct
+        below: 20
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: group.hall
+          brightness_pct: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            100
+            {% elif states('sensor.time_of_day') == "Day" %}
+            100
+            {% elif states('sensor.time_of_day') == "Night" %}
+            30
+            {% endif %}
+          transition: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            10
+            {% elif states('sensor.time_of_day') == "Day" %}
+            2
+            {% elif states('sensor.time_of_day') == "Night" %}
+            5
+            {% endif %}
+          color_temp: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            200
+            {% elif states('sensor.time_of_day') == "Day" %}
+            300
+            {% elif states('sensor.time_of_day') == "Night" %}
+            375
+            {% endif %}
+      - service: light.turn_on
+        entity_id: light.twig_lights
+
