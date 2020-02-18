@@ -115,7 +115,7 @@ automation:
         entity_id: binary_sensor.ensuite_motion
         to: 'off'
         for:
-          minutes: 4
+          minutes: 10
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.time_of_day', 'Night') }}"
