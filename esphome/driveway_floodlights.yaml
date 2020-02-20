@@ -3,4 +3,4 @@ substitutions:
   device_description: Driveway floodlights
   friendly_name: Driveway floodlights
 
-<<: !include sonoff_basic_switch_common.yaml
+<<: !include common/sonoff_basic_switch_common.yaml

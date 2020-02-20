@@ -3,4 +3,4 @@ substitutions:
   device_description: Front floodlights
   friendly_name: Front floodlights
 
-<<: !include sonoff_basic_switch_common.yaml
+<<: !include common/sonoff_basic_switch_common.yaml
