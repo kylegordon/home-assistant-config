@@ -1,5 +1,7 @@
 # Common code for Novostella 20W Flood Lights
 
+# Credit to https://esphome-configs.io/devices/novostella-20w/
+
 #Novostella 20W Flood Light, https://smile.amazon.com/gp/product/B07VH1VHYL
 #https://fccid.io/2AI5T-SFGD-002
 #https://blakadder.github.io/templates/novostella_20W_flood.html
