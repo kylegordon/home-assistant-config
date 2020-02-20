@@ -9,9 +9,9 @@ script:
         for file in $(find \
             ${PWD}/esphome/ \
             -type f \
+            -maxdepth 1\
             -name "*.yaml"\
             -not -name "secrets.yaml"\
-            -not -name "novoflood_common.yaml"\
             -printf "%f\n"
             ); do
             set -o errexit
