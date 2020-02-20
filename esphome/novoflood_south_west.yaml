@@ -1,6 +1,6 @@
 substitutions:
   device_name: decking_west_rgbww_flood
   device_description: 20W RGBWW flood light, West half of decking.
-  friendly_name: Decking RGBWW Flood Light West
+  friendly_name: Decking RGBWW Flood West
 
 <<: !include common/novoflood_common.yaml
