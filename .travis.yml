@@ -9,6 +9,7 @@ script:
         for file in $(find \
             ${PWD}/esphome/ \
             -type f \
+            -maxdepth 1\
             -name "*.yaml"\
             -not -name "secrets.yaml"\
             -printf "%f\n"
@@ -19,4 +20,5 @@ script:
         done
 before_script:
       - mv travis_secrets.yaml secrets.yaml
+      - cp esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
       - mv esphome/travis_secrets.yaml.txt esphome/secrets.yaml
