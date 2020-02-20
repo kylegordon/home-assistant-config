@@ -11,6 +11,7 @@ script:
             -type f \
             -name "*.yaml"\
             -not -name "secrets.yaml"\
+            -not -name "novoflood_common.yaml"\
             -printf "%f\n"
             ); do
             set -o errexit
