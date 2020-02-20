@@ -1,0 +1,74 @@
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: esp8285
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+text_sensor:
+- platform: version
+  name: "${friendly_name} Firmware version"
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 60s
+  - platform: uptime
+    name: "${friendly_name} uptime"
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "${friendly_name} Touch Pad"
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - lambda: |-
+              id(failover_control).publish_state(true);
+              id(failover_control).publish_state(false);
+  - platform: template
+    id: failover_control
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - switch.toggle: sonoff_touch_relay
+
+switch:
+  - platform: gpio
+    id: sonoff_touch_relay
+    name: "${friendly_name} Relay"
+    pin: GPIO12
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: GPIO13
+    inverted: True
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "${friendly_name} Blue LED"
+    output: blue_led
