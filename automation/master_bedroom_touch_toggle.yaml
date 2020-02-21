@@ -1,12 +1,12 @@
 alias: Master Bedroom light toggle
 trigger:
   - platform: state
-    entity_id: binary_sensor.master_bedroom_lightswitch_touch
+    entity_id: binary_sensor.master_bedroom_switch_touch_pad
     to: 'on'
 
 action:
   - service: switch.turn_on
-    entity_id: switch.master_bedroom_lightswitch_relay
+    entity_id: switch.master_bedroom_switch_relay
   - service: light.toggle
     entity_id: light.master_bedroom
   - service: logbook.log
