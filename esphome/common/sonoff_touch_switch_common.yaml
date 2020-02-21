@@ -88,10 +88,10 @@ interval:
             wifi.connected:
         then:
           - light.turn_on:
-              id: output
+              id: blue_led
               brightness: 50%
               transition_length: 0s
           - delay: 250ms
           - light.turn_off:
-              id: output
+              id: blue_led
               transition_length: 250ms
