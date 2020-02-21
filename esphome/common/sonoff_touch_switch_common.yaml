@@ -76,6 +76,7 @@ light:
   # ... and then make a light out of it.
   - platform: monochromatic
     name: "${friendly_name} Blue LED"
+    id: blue_led_light
     output: blue_led
 
 # Blink the light if we aren't connected to WiFi.
@@ -88,10 +89,10 @@ interval:
             wifi.connected:
         then:
           - light.turn_on:
-              id: blue_led
+              id: blue_led_light
               brightness: 50%
               transition_length: 0s
           - delay: 250ms
           - light.turn_off:
-              id: blue_led
+              id: blue_led_light
               transition_length: 250ms
