@@ -15,7 +15,6 @@ esphome:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
-  fast_connect: on #we only have one WiFi AP so just use the first one that matches
   ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
     ssid: ${friendly_name}_AP
     password: !secret wifi_pass
@@ -116,21 +115,3 @@ light:
           state += 1;
           if (state == 2)
             state = 0;
-
-# Blink the light if we aren't connected to WiFi.
-interval:
-- interval: 500ms
-  then:
-  - if:
-      condition:
-        not:
-          wifi.connected:
-      then:
-        - light.turn_on:
-            id: thelight
-            brightness: 50%
-            transition_length: 0s
-        - delay: 250ms
-        - light.turn_off:
-            id: thelight
-            transition_length: 250ms
