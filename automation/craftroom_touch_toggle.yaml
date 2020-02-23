@@ -1,12 +1,12 @@
 alias: Craft Room light toggle
 trigger:
   - platform: state
-    entity_id: binary_sensor.craft_room_lightswitch_touch
+    entity_id: binary_sensor.craft_room_switch_touch_pad
     to: 'on'
 
 action:
   - service: switch.turn_on
-    entity_id: switch.craft_room_lightswitch_relay
+    entity_id: switch.craft_room_switch_relay
   - service: light.toggle
     entity_id: group.craft_room_lighting
   - service: logbook.log
