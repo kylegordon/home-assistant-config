@@ -2,11 +2,11 @@ automation:
   - alias: Ensuite light toggle
     trigger:
       - platform: state
-        entity_id: binary_sensor.ensuite_lightswitch_touch
+        entity_id: binary_sensor.ensuite_switch_touch_pad
         to: 'on'
     action:
       - service: switch.turn_on
-        entity_id: switch.ensuite_lightswitch_relay
+        entity_id: switch.ensuite_switch_relay
       - service: light.toggle
         entity_id: light.ensuite
       - service: logbook.log
