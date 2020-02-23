@@ -115,21 +115,3 @@ light:
           state += 1;
           if (state == 2)
             state = 0;
-
-# Blink the light if we aren't connected to WiFi.
-interval:
-- interval: 500ms
-  then:
-  - if:
-      condition:
-        not:
-          wifi.connected:
-      then:
-        - light.turn_on:
-            id: thelight
-            brightness: 50%
-            transition_length: 0s
-        - delay: 250ms
-        - light.turn_off:
-            id: thelight
-            transition_length: 250ms
