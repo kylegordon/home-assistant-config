@@ -31,6 +31,11 @@ i2c:
   scl: D1
   scan: True
 
+  binary_sensor:
+    # Report if connected or not
+    - platform: status
+      name: "${friendly_name} Status"
+
 sensor:
   - platform: wifi_signal
     name: "${friendly_name} Signal Level"
