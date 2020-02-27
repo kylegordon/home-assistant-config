@@ -24,7 +24,7 @@ web_server:
 
 text_sensor:
 - platform: version
-  name: "Firmware version"
+  name: "${friendly_name} Firmware version"
 
 i2c:
   sda: D2
@@ -33,16 +33,16 @@ i2c:
 
 sensor:
   - platform: wifi_signal
-    name: "WiFi Signal Hallway Sensor"
+    name: "${friendly_name} Signal Level"
     update_interval: 60s
   - platform: uptime
-    name: "Device uptime"
+    name: "${friendly_name} uptime"
   - platform: sht3xd
     address: 0x45
     temperature:
-      name: "Hallway Temperature"
+      name: "${friendly_name} Temperature"
     humidity:
-      name: "Hallway Humidity"
+      name: "${friendly_name} Humidity"
     update_interval: 60s
 
 output:
@@ -55,5 +55,5 @@ output:
 light:
   # ... and then make a light out of it.
   - platform: monochromatic
-    name: "Wemos Blue LED"
+    name: "${friendly_name} Blue LED"
     output: blue_led
