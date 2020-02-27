@@ -25,6 +25,8 @@ text_sensor:
   name: "${friendly_name} Firmware version"
 
 binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
   - platform: gpio
     pin:
       number: GPIO0
@@ -39,13 +41,13 @@ switch:
     name: "${friendly_name} Relay"
     pin: GPIO12
     id: relay
-  - platform: uptime
-    name: "${friendly_name} uptime"
 
 sensor:
   - platform: wifi_signal
     name: "${friendly_name} Signal Level"
     update_interval: 60s
+  - platform: uptime
+    name: "${friendly_name} uptime"
 
 status_led:
   pin:
