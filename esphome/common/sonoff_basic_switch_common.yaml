@@ -39,6 +39,8 @@ switch:
     name: "${friendly_name} Relay"
     pin: GPIO12
     id: relay
+  - platform: uptime
+    name: "${friendly_name} uptime"
 
 sensor:
   - platform: wifi_signal
