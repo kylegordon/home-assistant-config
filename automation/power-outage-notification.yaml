@@ -1,0 +1,20 @@
+alias: "UPS Not OK"
+trigger:
+  - platform: template
+    value_template: "{{ not is_state('sensor.loft_ups_status_data', '0L') }}"
+action:
+  - service: notify.email_kyle
+    data:
+      message: "UPS not online"
+
+    - data:
+        entity_id: camera.camera_1
+        filename: /tmp/snapshot1.jpg
+    service: camera.snapshot
+    - data:
+        data:
+        images:
+        - /tmp/snapshot1.jpg
+        message: oki
+        title: example
+    service: notify.mail_1
