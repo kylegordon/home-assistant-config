@@ -62,7 +62,7 @@ automation:
   - alias: Ensuite shower activity
     trigger:
       - platform: numeric_state
-        entity_id: sensor.shower_pump_energy_power
+        entity_id: sensor.shower_pump_power_plug_power
         above: 10
     condition:
       - condition: numeric_state
