@@ -3,10 +3,6 @@ trigger:
   - platform: template
     value_template: "{{ not is_state('sensor.loft_ups_status_data', '0L') }}"
 action:
-  - service: notify.email_kyle
-    data:
-      message: "UPS not online"
-
   - service: camera.snapshot
     data:
       entity_id: camera.driveway
@@ -33,6 +29,6 @@ action:
               </style>
             </head>
             <body>
-              <h1>Motion detected</h1>
+              <h1>UPS Triggered</h1>
               <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:driveway_snapshot.jpg" />
           </html>

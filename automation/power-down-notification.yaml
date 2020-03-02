@@ -4,10 +4,6 @@ trigger:
     entity_id: sensor.loft_ups_battery_runtime
     below: 600
 action:
-  - service: notify.email_kyle
-    data:
-      message: "UPS running low"
-
   - service: camera.snapshot
     data:
       entity_id: camera.driveway
@@ -34,6 +30,6 @@ action:
               </style>
             </head>
             <body>
-              <h1>Motion detected</h1>
+              <h1>UPS shutdown imminent</h1>
               <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:driveway_snapshot.jpg" />
           </html>
