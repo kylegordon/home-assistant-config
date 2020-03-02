@@ -14,7 +14,6 @@ action:
       filename: /tmp/driveway_snapshot.jpg
   - service: notify.email_kyle
     data:
-      data:
       images:
       - /tmp/driveway_snapshot.jpg
       message: oki
