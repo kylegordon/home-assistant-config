@@ -7,14 +7,14 @@ action:
     data:
       message: "UPS not online"
 
-    - data:
-        entity_id: camera.camera_1
-        filename: /tmp/snapshot1.jpg
-    service: camera.snapshot
-    - data:
-        data:
-        images:
-        - /tmp/snapshot1.jpg
-        message: oki
-        title: example
-    service: notify.mail_1
+  - service: camera.snapshot
+    data:
+      entity_id: camera.driveway
+      filename: /tmp/driveway_snapshot.jpg
+  - service: notify.email_kyle
+    data:
+      data:
+      images:
+      - /tmp/driveway_snapshot.jpg
+      message: oki
+      title: example
