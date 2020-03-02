@@ -13,7 +13,7 @@ action:
       filename: /tmp/driveway_snapshot.jpg
   - service: notify.email_kyle
     data_template:
-      title: 'Power failure'
+      title: 'Power failure - UPS responding'
       message: "Cameras summary"
       data:
         images:
