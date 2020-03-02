@@ -1,1 +1,21 @@
-sensor.loft_ups_battery_runtime <= 600
+alias: "UPS Shutdown Imminent"
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.loft_ups_battery_runtime
+    below: 600
+action:
+  - service: notify.email_kyle
+    data:
+      message: "UPS running low"
+
+  - service: camera.snapshot
+    data:
+      entity_id: camera.driveway
+      filename: /tmp/driveway_snapshot.jpg
+  - service: notify.email_kyle
+    data:
+      data:
+      images:
+      - /tmp/driveway_snapshot.jpg
+      message: oki
+      title: example
