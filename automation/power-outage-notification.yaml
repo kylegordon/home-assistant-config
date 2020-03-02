@@ -10,10 +10,10 @@ action:
   - service: camera.snapshot
     data:
       entity_id: camera.driveway
-      filename: tmp/driveway_snapshot.jpg
+      filename: /tmp/driveway_snapshot.jpg
   - service: notify.email_kyle
     data:
       images:
-      - tmp/driveway_snapshot.jpg
+      - /tmp/driveway_snapshot.jpg
       message: oki
       title: example
