@@ -15,6 +15,8 @@ api:
 
 ota:
 
+captive_portal:
+
 text_sensor:
 - platform: version
   name: "Firmware version"
