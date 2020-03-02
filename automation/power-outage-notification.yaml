@@ -13,8 +13,8 @@ action:
       filename: /tmp/driveway_snapshot.jpg
   - service: notify.email_kyle
     data_template:
-      title: 'Someone is here'
-      message: "Who is it?"
+      title: 'Power failure'
+      message: "Cameras summary"
       data:
         images:
           - /tmp/driveway_snapshot.jpg
