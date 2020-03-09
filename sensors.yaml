@@ -48,15 +48,6 @@
   host: homeauto.vpn.glasgownet.com
   port: 7878
 
-- platform: opensky
-  radius: 5
-
-- platform: opensky
-  name: opensky_uplawmoor
-  radius: 5
-  latitude: 55.765
-  longitude: -4.496
-
 - platform: template
   sensors:
     hall_rooms_motion_sensor_battery:

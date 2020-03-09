@@ -1,7 +1,20 @@
+sensor:
+  - platform: opensky
+    name: opensky_home
+    radius: 5
+
+  - platform: opensky
+    name: opensky_uplawmoor
+    radius: 5
+    latitude: 55.765
+    longitude: -4.496
+
 automation:
   - alias: 'Flight entry notification - Home'
     trigger:
       platform: event
+      event_data:
+        sensor: opensky_home
       event_type: opensky_entry
     condition:
     - condition: template
