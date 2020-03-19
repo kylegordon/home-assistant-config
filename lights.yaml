@@ -37,7 +37,7 @@
 
 - platform: switch
   name: "Front Door Floodlights"
-  entity_id: switch.front_door_floodlight_relay
+  entity_id: switch.front_floodlights_relay
 
 - platform: switch
   name: "Driveway Floodlights"

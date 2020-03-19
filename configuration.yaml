@@ -12,6 +12,9 @@ homeassistant:
     - type: legacy_api_password
       api_password: !secret api_password
 
+  whitelist_external_dirs:
+    - /tmp
+
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
@@ -88,6 +91,8 @@ http:
     - http://homeauto.vpn.glasgownet.com
 
 system_health:
+
+stream:
 
 konnected:
   access_token: !secret konnected_key

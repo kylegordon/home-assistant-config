@@ -5,18 +5,24 @@ services:
 script:
       - docker run --rm -v "${PWD}":/config -it homeassistant/home-assistant:latest hass -c . --script check_config
       - |
-        echo ${PWD}/esphome/
-        for file in $(find \
-            ${PWD}/esphome/ \
-            -type f \
-            -name "*.yaml"\
-            -not -name "secrets.yaml"\
-            -printf "%f\n"
-            ); do
-            set -o errexit
-            echo "Testing $file"
-            docker run --rm -v "${PWD}":/config -it esphome/esphome esphome/$file compile
-        done
+        CHANGED_FILES=$(git diff --name-status HEAD~1...HEAD . | grep -i esphome)
+        if [ -n "$CHANGED_FILES" ]
+        then
+          echo ${PWD}/esphome/
+          for file in $(find \
+              ${PWD}/esphome/ \
+              -type f \
+              -maxdepth 1\
+              -name "*.yaml"\
+              -not -name "secrets.yaml"\
+              -printf "%f\n"
+              ); do
+              set -o errexit
+              echo "Testing $file"
+              docker run --rm -v "${PWD}":/config -it esphome/esphome esphome/$file compile
+          done
+        fi
 before_script:
       - mv travis_secrets.yaml secrets.yaml
+      - cp esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
       - mv esphome/travis_secrets.yaml.txt esphome/secrets.yaml

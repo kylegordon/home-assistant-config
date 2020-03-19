@@ -2,11 +2,11 @@ automation:
   - alias: Ensuite light toggle
     trigger:
       - platform: state
-        entity_id: binary_sensor.ensuite_lightswitch_touch
+        entity_id: binary_sensor.ensuite_switch_touch_pad
         to: 'on'
     action:
       - service: switch.turn_on
-        entity_id: switch.ensuite_lightswitch_relay
+        entity_id: switch.ensuite_switch_relay
       - service: light.toggle
         entity_id: light.ensuite
       - service: logbook.log
@@ -62,7 +62,7 @@ automation:
   - alias: Ensuite shower activity
     trigger:
       - platform: numeric_state
-        entity_id: sensor.shower_pump_energy_power
+        entity_id: sensor.shower_pump_power_plug_power
         above: 10
     condition:
       - condition: numeric_state
@@ -115,7 +115,7 @@ automation:
         entity_id: binary_sensor.ensuite_motion
         to: 'off'
         for:
-          minutes: 4
+          minutes: 10
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.time_of_day', 'Night') }}"
