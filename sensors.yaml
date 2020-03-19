@@ -48,15 +48,6 @@
   host: homeauto.vpn.glasgownet.com
   port: 7878
 
-- platform: opensky
-  radius: 5
-
-- platform: opensky
-  name: opensky_uplawmoor
-  radius: 5
-  latitude: 55.765
-  longitude: -4.496
-
 - platform: template
   sensors:
     hall_rooms_motion_sensor_battery:
@@ -272,20 +263,6 @@
     - input.voltage
     - battery.runtime
     - battery.voltage
-
-- platform: nut
-  name: ES700G UPS
-  host: 172.24.32.5
-  alias: ES700G
-  resources:
-    - ups.load
-    - ups.temperature
-    - ups.status
-    - ups.test.result
-    - input.voltage
-    - battery.runtime
-    - battery.voltage
-
 
 - platform: min_max
   name: House Average Temperature
