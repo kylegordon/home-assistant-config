@@ -1,5 +1,6 @@
 automation:
   - alias: Pause nzbget when occupied
+    initial_state: false
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
@@ -9,6 +10,7 @@ automation:
       - service: nzbget.pause
 
   - alias: Resume nzbget when unoccupied
+    initial_state: false
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
