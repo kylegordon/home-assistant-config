@@ -181,7 +181,7 @@ rfxtrx:
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
-person:
+person: !include persons.yaml
 
 wake_on_lan:
 
