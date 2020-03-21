@@ -8,6 +8,7 @@
   id: Charlotte001
   device_trackers:
     - device_tracker.charlotte_thea
+    - device_tracker.e4_a7_c5_0c_96_4c
 
 - name: Ronnie
   id: Ronnie0001
