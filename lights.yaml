@@ -43,13 +43,6 @@
   name: "Driveway Floodlights"
   entity_id: switch.driveway_floodlights_relay
 
-- platform: mqtt
+- platform: switch
   name: "Back Floodlights"
-  state_topic: "devices/5ccf7faf5486/relay01/relayState"
-  command_topic: "devices/5ccf7faf5486/relay01/relayState/set"
-  payload_on: "ON"
-  payload_off: "OFF"
-  availability_topic: "devices/5ccf7faf5486/$online"
-  payload_available: "true"
-  payload_not_available: "false"
-
+  entity_id: switch.back_floodlights_relay
