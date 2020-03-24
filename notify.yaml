@@ -4,6 +4,12 @@
     consumer_secret: !secret twitter_consumer_secret
     access_token: !secret twitter_access_token
     access_token_secret: !secret twitter_access_token_secret
+  - platform: twitter
+    name: twitter_overuplawmoor
+    consumer_key: !secret overuplawmoor_consumer_key
+    consumer_secret: !secret overuplawmoor_consumer_secret
+    access_token: !secret overuplawmoor_access_token
+    access_token_secret: !secret overuplawmoor_access_token_secret
   - platform: smtp
     name: email_kyle
     server: smtp.gmail.com

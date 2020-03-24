@@ -6,6 +6,7 @@ sensor:
   - platform: opensky
     name: opensky_uplawmoor
     radius: 5
+    altitude: 5000
     latitude: 55.765
     longitude: -4.496
 
@@ -33,13 +34,15 @@ automation:
       event_data:
         sensor: opensky_uplawmoor
       event_type: opensky_entry
-    condition:
-      - condition: template
-        value_template: "{{ trigger.event.data.altitude <= 5000 }}"
     action:
       - service: notify.email_kyle
         data_template:
           title: "Overflight event - Uplawmoor"
           message : 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
+
+          https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
+      - service: notify.twitter_overuplawmoor
+        data_template:
+          message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
