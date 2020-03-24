@@ -46,9 +46,9 @@ utility_room:
   name: Utility Room
   entities:
     - light.utility_room
-    - sensor.utility_room_temperature
-    - sensor.utility_room_humidity
-    - sensor.utility_room_esp8266_signal_level
+    - sensor.utility_room_sensor_temperature
+    - sensor.utility_room_sensor_humidity
+    - sensor.utility_room_sensor_signal_level
     - sensor.utility_room_lightlevel
     - binary_sensor.utility_room_motion
     - binary_sensor.utility_room_door
@@ -135,9 +135,9 @@ bedroom_3:
     - switch.study_volume
     - input_select.study_amplifier_input
     - light.study_light
-    - sensor.study_temperature
-    - sensor.study_humidity
-    - sensor.study_esp8266_signal_level
+    - sensor.study_sensor_temperature
+    - sensor.study_sensor_humidity
+    - sensor.study_sensor_signal_level
 
 bedroom_4:
   name: Craft room
@@ -172,9 +172,9 @@ hall_view:
     - binary_sensor.hall_door_motion
     - binary_sensor.garden_hall_motion
     - sensor.hall_door_motion
-    - sensor.hallway_temperature
-    - sensor.hallway_humidity
-    - sensor.hallway_esp8266_signal_level
+    - sensor.hallway_sensor_temperature
+    - sensor.hallway_sensor_humidity
+    - sensor.hallway_sensor_signal_level
     - light.twig_lights
     - binary_sensor.garden_hall_door
 
