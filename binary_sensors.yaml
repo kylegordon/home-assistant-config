@@ -85,10 +85,10 @@
     device_critical:
       friendly_name: 'Device Critical'
       value_template: >-
-                        {{ is_state('sensor.hallway_temperature', 'unavailable')
+                        {{ is_state('binary_sensor.hallway_sensor_status', 'unavailable')
                         or is_state('sensor.kitchen_temperature', 'unavailable')
-                        or is_state('sensor.utility_room_temperature', 'unavailable')
-                        or is_state('sensor.study_temperature', 'unavailable')
+                        or is_state('binary_sensor.utility_room_sensor_status', 'unavailable')
+                        or is_state('binary_sensor.study_sensor_status', 'unavailable')
                         or is_state('sensor.garage_temperature', 'unavailable')
                         or is_state('switch.guest_bedroom_lightswitch_relay', 'unavailable')
                         or is_state('switch.master_bedroom_lightswitch_relay', 'unavailable')

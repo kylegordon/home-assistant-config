@@ -269,9 +269,9 @@
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
-    - sensor.utility_room_temperature
-    - sensor.study_temperature
-    - sensor.hallway_temperature
+    - sensor.utility_room_sensor_temperature
+    - sensor.study_sensor_temperature
+    - sensor.hallway_sensor_temperature
     - sensor.craft_room_temperature
     - sensor.guest_room_temperature
     - sensor.living_room_temperature
@@ -281,9 +281,9 @@
   name: House Average Humidity
   type: mean
   entity_ids:
-    - sensor.utility_room_humidity
-    - sensor.study_humidity
-    - sensor.hallway_humidity
+    - sensor.utility_room_sensor_humidity
+    - sensor.study_sensor_humidity
+    - sensor.hallway_sensor_humidity
     - sensor.craft_room_humidity
     - sensor.guest_room_humidity
     - sensor.living_room_humidity
