@@ -1,0 +1,6 @@
+substitutions:
+  device_name: back_floodlights
+  device_description: Back floodlights
+  friendly_name: Back floodlights
+
+<<: !include common/sonoff_basic_switch_common.yaml
