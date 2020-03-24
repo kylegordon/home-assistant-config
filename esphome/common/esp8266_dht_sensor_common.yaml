@@ -1,0 +1,64 @@
+esphome:
+  name: ${device_name}
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
+    ssid: ${friendly_name}_AP
+    password: !secret wifi_pass
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+
+text_sensor:
+- platform: version
+  name: "${friendly_name} Firmware version"
+
+i2c:
+  sda: D2
+  scl: D1
+  scan: True
+
+binary_sensor:
+  # Report if connected or not
+  - platform: status
+    name: "${friendly_name} Status"
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} Signal Level"
+    update_interval: 60s
+  - platform: uptime
+    name: "${friendly_name} uptime"
+  - platform: sht3xd
+    address: 0x45
+    temperature:
+      name: "${friendly_name} Temperature"
+    humidity:
+      name: "${friendly_name} Humidity"
+    update_interval: 60s
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: True
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "${friendly_name} Blue LED"
+    output: blue_led
