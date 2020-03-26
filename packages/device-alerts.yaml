@@ -38,6 +38,10 @@ automation:
           - binary_sensor.hall_door_motion
           - binary_sensor.hall_rooms_motion
           - binary_sensor.ensuite_motion
+          - binary_sensor.living_room_motion
+          - binary_sensor.kitchen_motion
+          - binary_sensor.utility_room_motion
+          - binary_sensor.outside_utility_room_motion
           - light.ensuite_entrance
           - light.ensuite_towels
           - light.ensuite_shower
