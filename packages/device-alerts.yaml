@@ -35,6 +35,15 @@ automation:
           - binary_sensor.utility_room_sensor_status
           - binary_sensor.study_sensor_status
           - sensor.garage_temperature
+          - binary_sensor.hall_door_motion
+          - binary_sensor.hall_rooms_motion
+          - binary_sensor.ensuite_motion
+          - light.ensuite_entrance
+          - light.ensuite_towels
+          - light.ensuite_shower
+          - light.ensuite_space
+          - light.ensuite_toilet
+          - light.ensuite_sink
           - switch.guest_bedroom_lightswitch_relay
           - switch.master_bedroom_lightswitch_relay
           - switch.study_lightswitch_relay
