@@ -22,7 +22,7 @@ automation:
     condition:
       - condition: numeric_state
         entity_id: sensor.outside_utility_room_lightlevel
-        below: 400
+        below: 600
     action:
       - service: light.turn_on
         data_template:
@@ -67,7 +67,7 @@ automation:
     condition:
       - condition: numeric_state
         entity_id: sensor.outside_utility_room_lightlevel
-        below: 300
+        below: 600
     action:
       - service: light.turn_on
         data_template:
