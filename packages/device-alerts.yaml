@@ -46,6 +46,16 @@ automation:
           - binary_sensor.dishwasher_power_plug_status
           - binary_sensor.shower_pump_power_plug_status
           - binary_sensor.tv_power_plug_status
+          - binary_sensor.craft_room_window
+          - binary_sensor.ensuite_window
+          - binary_sensor.guest_bedroom_window
+          - binary_sensor.master_bedroom_window
+          - binary_sensor.study_window
+          - binary_sensor.garden_door
+          - binary_sensor.bathroom_window
+          - binary_sensor.dining_table_window
+          - binary_sensor.kitchen_window
+          - binary_sensor.patio_door
           - light.ensuite_entrance
           - light.ensuite_towels
           - light.ensuite_shower
