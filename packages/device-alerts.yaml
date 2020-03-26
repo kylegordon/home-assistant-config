@@ -42,6 +42,10 @@ automation:
           - binary_sensor.kitchen_motion
           - binary_sensor.utility_room_motion
           - binary_sensor.outside_utility_room_motion
+          - binary_sensor.washing_machine_power_plug_status
+          - binary_sensor.dishwasher_power_plug_status
+          - binary_sensor.shower_pump_power_plug_status
+          - binary_sensor.tv_power_plug_status
           - light.ensuite_entrance
           - light.ensuite_towels
           - light.ensuite_shower
