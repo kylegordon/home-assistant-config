@@ -9,11 +9,9 @@ automation:
         event: 2002
     action:
     - service: light.turn_on
-        data_template:
+        data:
         entity_id: light.study_light
-        brightness: >
-            {% set bri = states.light.study_light.attributes.brightness | int %}
-            {{ [bri+10, 249] | min }}
+        brightness_step_pct: 10
 
   - alias: 'Decrease brightness of lamp from dimmer'
     initial_state: 'on'
@@ -25,8 +23,6 @@ automation:
         event: 3002
     action:
       - service: light.turn_on
-        data_template:
+        data:
           entity_id: light.study_light
-          brightness: >
-            {% set bri = states.light.study_light.attributes.brightness | int %}
-            {{ [bri-10, 0] | max }}
+          brightness_step_pct: -10
