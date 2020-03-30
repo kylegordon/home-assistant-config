@@ -11,6 +11,7 @@ automation:
     - service: light.turn_on
       data:
         entity_id: light.study_light
+        transition: 1
         brightness_step_pct: 10
 
   - alias: 'Decrease brightness of lamp from dimmer'
@@ -25,4 +26,5 @@ automation:
       - service: light.turn_on
         data:
           entity_id: light.study_light
+          transition: 1
           brightness_step_pct: -10
