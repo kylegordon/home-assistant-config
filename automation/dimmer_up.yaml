@@ -1,0 +1,15 @@
+alias: 'Increase brightness of lamp from dimmer'
+initial_state: 'on'
+trigger:
+  platform: event
+  event_type: deconz_event
+  event_data:
+    id: "tradfri_wireless_dimmer"
+    event: 2002
+action:
+  - service: light.turn_on
+    data_template:
+      entity_id: light.study_light
+      brightness: >
+        {% set bri = states.light.study_light.attributes.brightness | int %}
+        {{ [bri+10, 249] | min }}
