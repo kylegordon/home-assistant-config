@@ -2,9 +2,9 @@ automation:
   - alias: 'Increase brightness of lamp from dimmer'
     initial_state: 'on'
     trigger:
-    platform: event
-    event_type: deconz_event
-    event_data:
+      platform: event
+      event_type: deconz_event
+      event_data:
         id: "tradfri_wireless_dimmer"
         event: 2002
     action:
