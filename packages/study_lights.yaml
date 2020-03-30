@@ -10,8 +10,8 @@ automation:
     action:
     - service: light.turn_on
         data:
-        entity_id: light.study_light
-        brightness_step_pct: 10
+          entity_id: light.study_light
+          brightness_step_pct: 10
 
   - alias: 'Decrease brightness of lamp from dimmer'
     initial_state: 'on'
