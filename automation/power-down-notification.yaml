@@ -6,8 +6,10 @@ trigger:
 action:
   - service: camera.snapshot
     data:
-      entity_id: camera.driveway
-      filename: /tmp/driveway_snapshot.jpg
+      - entity_id: camera.driveway
+        filename: /tmp/driveway_snapshot.jpg
+      - entity_id: camera.backdoor
+        filename: /tmp/backdoor_snapshot.jpg
   - service: notify.email_kyle
     data_template:
       title: 'Power outage - UPS shutting down'
@@ -15,6 +17,7 @@ action:
       data:
         images:
           - /tmp/driveway_snapshot.jpg
+          - /tmp/backdoor_snapshot.jpg
         html: >
           <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
           <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
@@ -32,4 +35,5 @@ action:
             <body>
               <h1>UPS shutdown imminent</h1>
               <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:driveway_snapshot.jpg" />
+              <img style="width: 100%; max-width: 640px;"  alt="Image from backdoor camera" src="cid:backdoor_snapshot.jpg" />
           </html>
