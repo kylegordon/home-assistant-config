@@ -13,8 +13,8 @@ action:
       message: "Cameras summary"
       data:
         images:
-          - /tmp/driveway_snapshot.jpg
-          - /tmp/backdoor_snapshot.jpg
+          - /tmp/camera.driveway_snapshot.jpg
+          - /tmp/camera.backdoor_snapshot.jpg
         html: >
           <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
           <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
@@ -31,6 +31,6 @@ action:
             </head>
             <body>
               <h1>UPS Triggered</h1>
-              <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:driveway_snapshot.jpg" />
-              <img style="width: 100%; max-width: 640px;"  alt="Image from backdoor camera" src="cid:backdoor_snapshot.jpg" />
+              <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:camera.driveway_snapshot.jpg" />
+              <img style="width: 100%; max-width: 640px;"  alt="Image from backdoor camera" src="cid:camera.backdoor_snapshot.jpg" />
           </html>
