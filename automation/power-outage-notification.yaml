@@ -6,7 +6,7 @@ action:
   - service: camera.snapshot
     data:
       entity_id: camera.driveway, camera.backdoor
-      filename: /tmp/{{ entity_id }}_snapshot.jpg
+      filename: /tmp/{{ entity_id.entity_id }}_snapshot.jpg
   - service: notify.email_kyle
     data_template:
       title: 'Power failure - UPS responding'
