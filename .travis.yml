@@ -22,6 +22,8 @@ script:
               docker run --rm -v "${PWD}":/config -it esphome/esphome esphome/$file compile
           done
         fi
+before_install:
+      - mysql -e 'CREATE DATABASE homeassistant;'
 before_script:
       - mv travis_secrets.yaml secrets.yaml
       - cp esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
