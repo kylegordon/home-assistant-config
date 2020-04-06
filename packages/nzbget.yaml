@@ -74,4 +74,4 @@ automation:
           data:
             type: announce
             #method: all
-          message: "Hello! Westworld has finished downloading!"
+          message: "Hello! You have a new show to watch. Westworld has finished downloading!"
