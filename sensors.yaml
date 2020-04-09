@@ -198,12 +198,6 @@
   value_template: "{{ value_json.rain }}"
 
 - platform: mqtt
-  state_topic: "devices/60019416854d/$stats/signal"
-  name: "Front Door Floodlights Signal Level"
-  unit_of_measurement: "%" 
-  force_update: true
-
-- platform: mqtt
   state_topic: "owntracks/bagpuss/a0001"
   name: "Kyle Oneplus One Battery"
   unit_of_measurement: "%"
