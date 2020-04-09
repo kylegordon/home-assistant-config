@@ -92,6 +92,8 @@ http:
 
 system_health:
 
+zeroconf:
+
 stream:
 
 konnected:
