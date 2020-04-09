@@ -49,4 +49,4 @@
 
 - platform: switch
   name: "Mini Deck Floodlight"
-  entity_id: switch.minideck_floodlights_relay"
+  entity_id: switch.minideck_floodlights_relay
