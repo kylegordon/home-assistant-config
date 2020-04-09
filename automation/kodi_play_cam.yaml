@@ -1,0 +1,18 @@
+alias: Kodi player test
+# curl -i -X POST -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"Player.Open","params":{"options":{"shuffled":false,"repeat":"off"},"item":{"file":"special://profile/playlists/video/StudyCam.m3u"}},"id":"1"}' http://172.24.32.8:8080/jsonrpc
+
+trigger:
+  - platform: time
+    at: '21:00:00'
+
+
+
+action:
+  - service: media_player.kodi_call_method
+    data:
+      entity_id: media_player.living_room_kodi
+      method: Player.Open
+      data:
+          item: 
+          data:
+              file:special://profile/playlists/video/DrivewayCam.m3u
