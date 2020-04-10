@@ -1,0 +1,45 @@
+automation:
+  - alias: Study light toggle
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.study_switch_touch_pad
+        to: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id: switch.study_switch_relay
+      - service: light.toggle
+        entity_id: light.study_light
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling study light"
+
+  - alias: 'Increase brightness of lamp from dimmer'
+    initial_state: 'on'
+    trigger:
+      platform: event
+      event_type: deconz_event
+      event_data:
+        id: "tradfri_wireless_dimmer"
+        event: 2002
+    action:
+    - service: light.turn_on
+      data:
+        entity_id: light.study_light
+        transition: 1
+        brightness_step_pct: 10
+
+  - alias: 'Decrease brightness of lamp from dimmer'
+    initial_state: 'on'
+    trigger:
+      platform: event
+      event_type: deconz_event
+      event_data:
+        id: "tradfri_wireless_dimmer"
+        event: 3002
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.study_light
+          transition: 1
+          brightness_step_pct: -10

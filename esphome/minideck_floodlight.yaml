@@ -1,0 +1,6 @@
+substitutions:
+  device_name: minideck_floodlight
+  device_description: Mini deck floodlight
+  friendly_name: Mini deck floodlight
+
+<<: !include common/sonoff_basic_switch_common.yaml

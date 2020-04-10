@@ -92,6 +92,8 @@ http:
 
 system_health:
 
+zeroconf:
+
 stream:
 
 konnected:
@@ -358,13 +360,13 @@ panel_iframe:
     url: "http://homeauto.vpn.glasgownet.com:6052"
   unifi:
     title: "Unifi CCTV"
-    url: "http://homeauto.vpn.glasgownet.com:7080/"
+    url: "http://homeauto.vpn.glasgownet.com:7080"
   sonarr:
     title: "Sonarr TV"
-    url: "http://homeauto.vpn.glasgownet.com:8989/sonarr/"
+    url: "http://homeauto.vpn.glasgownet.com:8989/sonarr"
   radarr:
     title: "Radar Movies"
-    url: "http://homeauto.vpn.glasgownet.com:7878/radarr/"
+    url: "http://homeauto.vpn.glasgownet.com:7878/radarr"
   lazylibrarian:
     title: "LazyLibrarian Books"
     url: "http://homeauto.vpn.glasgownet.com:5299"
@@ -374,5 +376,5 @@ panel_iframe:
     url: "http://homeauto.vpn.glasgownet.com:4040/index"
   nzbget:
     title: "NZBGet Downloader"
-    url: "http://homeauto.vpn.glasgownet.com:6789/"
+    url: "http://homeauto.vpn.glasgownet.com:6789"
 
