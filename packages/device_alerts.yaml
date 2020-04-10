@@ -2,6 +2,7 @@
 binary_sensor:
   - platform: template
     sensors:
+<<<<<<< HEAD
       device_critical:
         friendly_name: 'Device Critical'
         value_template: >-
@@ -23,6 +24,29 @@ binary_sensor:
                             or is_state('light.hall_bedrooms', 'unavailable')
                             or is_state('light.hall_entrance', 'unavailable')
                             or is_state('light.uplighter', 'unavailable')   }}
+=======
+        device_critical:
+          friendly_name: 'Device Critical'
+          value_template: >-
+            {{ is_state('binary_sensor.hallway_sensor_status', 'unavailable')
+            or is_state('sensor.kitchen_temperature', 'unavailable')
+            or is_state('binary_sensor.utility_room_sensor_status', 'unavailable')
+            or is_state('binary_sensor.study_sensor_status', 'unavailable')
+            or is_state('sensor.garage_temperature', 'unavailable')
+            or is_state('switch.guest_bedroom_lightswitch_relay', 'unavailable')
+            or is_state('switch.master_bedroom_lightswitch_relay', 'unavailable')
+            or is_state('light.driveway_floodlights', 'unavailable')
+            or is_state('light.front_door_floodlights', 'unavailable')
+            or is_state('light.back_floodlights', 'unavailable')
+            or is_state('light.garage_lights', 'unavailable')
+            or is_state('light.study_light', 'unavailable')
+            or is_state('light.guest_bedroom', 'unavailable')
+            or is_state('light.master_bedroom', 'unavailable')
+            or is_state('light.craft_room', 'unavailable')
+            or is_state('light.hall_bedrooms', 'unavailable')
+            or is_state('light.hall_entrance', 'unavailable')
+            or is_state('light.uplighter', 'unavailable')   }}
+>>>>>>> 45febc9... Fix pointless sensor anyway
 
 
 automation:
