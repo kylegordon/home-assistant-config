@@ -15,4 +15,5 @@ action:
     entity_id: light.driveway_floodlights
   - service: light.turn_off
     entity_id: light.back_floodlights
-
+  - service: light.turn_off
+    entity_id: light.mini_deck_floodlight
