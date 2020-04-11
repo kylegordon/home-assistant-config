@@ -1,0 +1,120 @@
+
+binary_sensor:
+  - platform: template
+    sensors:
+<<<<<<< HEAD
+      device_critical:
+        friendly_name: 'Device Critical'
+        value_template: >-
+                            {{ is_state('binary_sensor.hallway_sensor_status', 'unavailable')
+                            or is_state('sensor.kitchen_temperature', 'unavailable')
+                            or is_state('binary_sensor.utility_room_sensor_status', 'unavailable')
+                            or is_state('binary_sensor.study_sensor_status', 'unavailable')
+                            or is_state('sensor.garage_temperature', 'unavailable')
+                            or is_state('switch.guest_bedroom_lightswitch_relay', 'unavailable')
+                            or is_state('switch.master_bedroom_lightswitch_relay', 'unavailable')
+                            or is_state('light.driveway_floodlights', 'unavailable')
+                            or is_state('light.front_door_floodlights', 'unavailable')
+                            or is_state('light.back_floodlights', 'unavailable')
+                            or is_state('light.garage_lights', 'unavailable')
+                            or is_state('light.study_light', 'unavailable')
+                            or is_state('light.guest_bedroom', 'unavailable')
+                            or is_state('light.master_bedroom', 'unavailable')
+                            or is_state('light.craft_room', 'unavailable')
+                            or is_state('light.hall_bedrooms', 'unavailable')
+                            or is_state('light.hall_entrance', 'unavailable')
+                            or is_state('light.uplighter', 'unavailable')   }}
+=======
+        device_critical:
+          friendly_name: 'Device Critical'
+          value_template: >-
+            {{ is_state('binary_sensor.hallway_sensor_status', 'unavailable')
+            or is_state('sensor.kitchen_temperature', 'unavailable')
+            or is_state('binary_sensor.utility_room_sensor_status', 'unavailable')
+            or is_state('binary_sensor.study_sensor_status', 'unavailable')
+            or is_state('sensor.garage_temperature', 'unavailable')
+            or is_state('switch.guest_bedroom_lightswitch_relay', 'unavailable')
+            or is_state('switch.master_bedroom_lightswitch_relay', 'unavailable')
+            or is_state('light.driveway_floodlights', 'unavailable')
+            or is_state('light.front_door_floodlights', 'unavailable')
+            or is_state('light.back_floodlights', 'unavailable')
+            or is_state('light.garage_lights', 'unavailable')
+            or is_state('light.study_light', 'unavailable')
+            or is_state('light.guest_bedroom', 'unavailable')
+            or is_state('light.master_bedroom', 'unavailable')
+            or is_state('light.craft_room', 'unavailable')
+            or is_state('light.hall_bedrooms', 'unavailable')
+            or is_state('light.hall_entrance', 'unavailable')
+            or is_state('light.uplighter', 'unavailable')   }}
+>>>>>>> 45febc9... Fix pointless sensor anyway
+
+
+automation:
+  - alias: Alert when a critical device goes offline
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.hallway_sensor_status
+          - sensor.kitchen_temperature
+          - binary_sensor.utility_room_sensor_status
+          - binary_sensor.study_sensor_status
+          - sensor.garage_temperature
+          - binary_sensor.hall_door_motion
+          - binary_sensor.hall_rooms_motion
+          - binary_sensor.ensuite_motion
+          - binary_sensor.living_room_motion
+          - binary_sensor.kitchen_motion
+          - binary_sensor.utility_room_motion
+          - binary_sensor.outside_utility_room_motion
+          - binary_sensor.washing_machine_power_plug_status
+          - binary_sensor.dishwasher_power_plug_status
+          - binary_sensor.shower_pump_power_plug_status
+          - binary_sensor.tv_power_plug_status
+          - binary_sensor.craft_room_window
+          - binary_sensor.ensuite_window
+          - binary_sensor.guest_bedroom_window
+          - binary_sensor.master_bedroom_window
+          - binary_sensor.study_window
+          - binary_sensor.garden_door
+          - binary_sensor.bathroom_window
+          - binary_sensor.dining_table_window
+          - binary_sensor.kitchen_window
+          - binary_sensor.patio_door
+          - light.ensuite_entrance
+          - light.ensuite_towels
+          - light.ensuite_shower
+          - light.ensuite_space
+          - light.ensuite_toilet
+          - light.ensuite_sink
+          - switch.guest_bedroom_lightswitch_relay
+          - switch.master_bedroom_lightswitch_relay
+          - switch.study_lightswitch_relay
+          - switch.craft_room_lightswitch_relay
+          - light.driveway_floodlights
+          - light.front_door_floodlights
+          - light.garage_lights
+          - light.study_light
+          - light.guest_bedroom
+          - light.master_bedroom
+          - light.craft_room
+          - light.hall_bedrooms
+          - light.hall_entrance
+        to: 'unavailable'
+        for:
+          minutes: 2
+    condition:
+      condition: and
+      conditions:
+        - condition: template
+          value_template: >
+            {% if states.automation.alert_when_a_critical_device_goes_offline.last_triggered is not none %}
+              {% if as_timestamp(now()) | int   -  as_timestamp(states.automation.alert_when_a_critical_device_goes_offline.attributes.last_triggered) | int > 3600 %} true {% else %} false
+              {% endif %}
+            {% else %}
+            false
+            {% endif %}
+    action:
+      - service: notify.email_kyle
+        data_template:
+          message: '{{trigger.to_state.attributes.friendly_name}} has gone offline. Please check the status of this device as some features may stop functioning.'
+          title: Device Alert
