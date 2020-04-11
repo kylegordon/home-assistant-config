@@ -293,7 +293,7 @@ camera: !include cameras.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
-image_processing: !include image_processings.yaml
+image_processing: !include image_processing.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
