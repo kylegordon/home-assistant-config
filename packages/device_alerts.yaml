@@ -2,7 +2,7 @@
 binary_sensor:
   - platform: template
     sensors:
-        device_critical:
+      device_critical:
         friendly_name: 'Device Critical'
         value_template: >-
                             {{ is_state('binary_sensor.hallway_sensor_status', 'unavailable')
