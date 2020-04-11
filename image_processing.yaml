@@ -3,3 +3,10 @@
   confidence: 80.0
   source: 
     - entity_id: camera.driveway
+
+- platform: facebox
+  ip_address: 172.24.32.13
+  port: 8080
+  source:
+    - entity_id: camera.driveway
+    - entity_id: camera.backdoor
