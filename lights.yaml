@@ -52,7 +52,7 @@
   entity_id: switch.mini_deck_floodlight_relay
 
 - platform: group
-    name: Decking Lights
-    entities:
-      - light.decking_rgbww_flood_east
-      - light.decking_rgbww_flood_west
+  name: Decking Lights
+  entities:
+    - light.decking_rgbww_flood_east
+    - light.decking_rgbww_flood_west
