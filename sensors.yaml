@@ -121,33 +121,6 @@
       friendly_name: 'Charlotte'
       entity_id: input_select.charlotte_status_dropdown
 
-- platform: darksky
-  api_key: !secret darksky_api_key
-  scan_interval: 300
-  monitored_conditions:
-    - summary
-    - precip_type
-    - precip_intensity
-    - precip_probability
-    - temperature
-    - temperature_high
-    - temperature_low
-    - apparent_temperature
-    - apparent_temperature_high
-    - apparent_temperature_low
-    - dew_point
-    - wind_speed
-    - wind_bearing
-    - cloud_cover
-    - humidity
-    - pressure
-    - visibility
-    - ozone
-    - minutely_summary
-    - hourly_summary
-    - daily_summary
-    - precip_intensity_max
-
 ## RFXcom ##
 
 - platform: rfxtrx
@@ -241,28 +214,30 @@
     - sensor.living_room_humidity
     - sensor.master_bedroom_humidity
 
-- platform: template
-  sensors:
-    sunlight_pct:
-      entity_id:
-        - sun.sun
-        - sensor.dark_sky_cloud_coverage
-      value_template: >-
-        {%- set elevation = state_attr('sun.sun','elevation') | float %}
-        {%- set cloud_coverage = states('sensor.dark_sky_cloud_coverage') | float %}
-        {%- set cloud_factor = (1 - (0.75 * ( cloud_coverage / 100) ** 3 )) %}
-        {%- set min_elevation = -6 %}
-        {%- set max_elevation = 90 %}
-        {%- set adjusted_elevation = elevation - min_elevation %}
-        {%- set adjusted_elevation = [adjusted_elevation,0] | max %}
-        {%- set adjusted_elevation = [adjusted_elevation,max_elevation - min_elevation] | min %}
-        {%- set adjusted_elevation = adjusted_elevation / (max_elevation - min_elevation) %}
-        {%- set adjusted_elevation = adjusted_elevation %}
-        {%- set adjusted_elevation = adjusted_elevation * 100 %}
-        {%- set brightness = adjusted_elevation * cloud_factor %}
-        {{ brightness | round }}
-      unit_of_measurement: '%'
-      device_class: 'illuminance'
+### FIXME ###
+
+# - platform: template
+#   sensors:
+#     sunlight_pct:
+#       entity_id:
+#         - sun.sun
+#         - sensor.dark_sky_cloud_coverage
+#       value_template: >-
+#         {%- set elevation = state_attr('sun.sun','elevation') | float %}
+#         {%- set cloud_coverage = states('sensor.dark_sky_cloud_coverage') | float %}
+#         {%- set cloud_factor = (1 - (0.75 * ( cloud_coverage / 100) ** 3 )) %}
+#         {%- set min_elevation = -6 %}
+#         {%- set max_elevation = 90 %}
+#         {%- set adjusted_elevation = elevation - min_elevation %}
+#         {%- set adjusted_elevation = [adjusted_elevation,0] | max %}
+#         {%- set adjusted_elevation = [adjusted_elevation,max_elevation - min_elevation] | min %}
+#         {%- set adjusted_elevation = adjusted_elevation / (max_elevation - min_elevation) %}
+#         {%- set adjusted_elevation = adjusted_elevation %}
+#         {%- set adjusted_elevation = adjusted_elevation * 100 %}
+#         {%- set brightness = adjusted_elevation * cloud_factor %}
+#         {{ brightness | round }}
+#       unit_of_measurement: '%'
+#       device_class: 'illuminance'
 
 - platform: time_date
   display_options:
@@ -281,16 +256,17 @@
           Night
         {% endif %}
 
-    forecast_2_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[2].temperature}}"
-    forecast_4_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[4].temperature}}"
-    forecast_6_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[6].temperature}}"
-    forecast_8_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[8].temperature}}"
-    forecast_10_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[10].temperature}}"
-    forecast_12_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[12].temperature}}"
+### FIXME ###
+    # forecast_2_hours:
+    #   value_template: "{{state_attr('weather.dark_sky', 'forecast')[2].temperature}}"
+    # forecast_4_hours:
+    #   value_template: "{{state_attr('weather.dark_sky', 'forecast')[4].temperature}}"
+    # forecast_6_hours:
+    #   value_template: "{{state_attr('weather.dark_sky', 'forecast')[6].temperature}}"
+    # forecast_8_hours:
+    #   value_template: "{{state_attr('weather.dark_sky', 'forecast')[8].temperature}}"
+    # forecast_10_hours:
+    #   value_template: "{{state_attr('weather.dark_sky', 'forecast')[10].temperature}}"
+    # forecast_12_hours:
+    #   value_template: "{{state_attr('weather.dark_sky', 'forecast')[12].temperature}}"
 
