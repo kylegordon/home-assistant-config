@@ -200,6 +200,8 @@ outside_lights:
     - light.front_door_floodlights
     - light.driveway_floodlights
     - light.back_floodlights
+    - light.mini_deck_floodlight
+    - light.decking_lights
 
 climate:
   name: Climate
