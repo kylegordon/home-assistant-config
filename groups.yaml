@@ -5,8 +5,6 @@ default_view:
   entities:
     - group.people_status
     - group.modes
-    - sensor.dark_sky_temperature
-    - sensor.dark_sky_precip_probability
     - sensor.electricity_energy_usage
     - sensor.house_average_temperature
     - sensor.house_average_humidity
@@ -17,7 +15,6 @@ default_view:
     - sensor.btc
     - sensor.bitcoin_balance
     - group.environment_summary
-    - weather.dark_sky
 
 modes:
   name: Modes
@@ -30,7 +27,6 @@ environment_summary:
     - climate.house
     - climate.hot_water
     - sensor.house_average_humidity
-    - sensor.dark_sky_temperature
 
 kitchen:
   name: Kitchen
@@ -209,41 +205,12 @@ climate:
     - climate.house
     - sensor.house_average_temperature
     - sensor.house_average_humidity
-    - sensor.dark_sky_temperature
-    - sensor.dark_sky_apparent_temperature
-    - sensor.dark_sky_cloud_coverage
-    - sensor.dark_sky_dew_point
-    - sensor.dark_sky_precip
-    - sensor.dark_sky_precip_intensity
-    - sensor.dark_sky_precip_probability
-    - sensor.dark_sky_pressure
-    - sensor.dark_sky_summary
-    - sensor.dark_sky_temperature
-    - sensor.dark_sky_visibility
-    - sensor.dark_sky_wind_bearing
-    - sensor.dark_sky_wind_speed
-    - sensor.dark_sky_humidity
-    - sensor.dark_sky_ozone
-    - sensor.dark_sky_minutely_summary
-    - sensor.dark_sky_hourly_summary
-    - sensor.dark_sky_daily_summary
-    - sensor.dark_sky_daily_high_temperature
-    - sensor.dark_sky_daily_low_temperature
-    - sensor.dark_sky_daily_high_apparent_temperature
-    - sensor.dark_sky_daily_low_apparent_temperature
-    - sensor.dark_sky_daily_max_precip_intensity
     - sensor.weather_station_rainfall
     - sensor.weather_station_wind_direction
     - sensor.weather_station_wind_velocity
     - sensor.weather_station_wind_maximum
     - sensor.weather_station_temperature
     - sensor.weather_station_relative_humidity
-    - sensor.dark_sky_daily_low_apparent_temperature
-    - sensor.dark_sky_daily_low_temperature
-    - sensor.dark_sky_daily_max_precip_intensity
-    - sensor.dark_sky_daily_summary
-    - sensor.dark_sky_daily_high_temperature
-    - sensor.dark_sky_daily_high_apparent_temperature   
 
 garage:
   name: Garage
