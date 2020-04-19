@@ -75,6 +75,10 @@ automation:
           - light.craft_room
           - light.hall_bedrooms
           - light.hall_entrance
+          - sensor.craft_room_multi_sensor_battery_level
+          - sensor.guest_bedroom_multi_sensor_battery_level
+          - sensor.living_room_multi_sensor_battery_level
+          - sensor.master_bedroom_multi_sensor_battery_level
         to: 'unavailable'
         for:
           minutes: 2

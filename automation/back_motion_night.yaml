@@ -23,4 +23,5 @@ action:
     entity_id: light.driveway_floodlights
   - service: light.turn_on
     entity_id: light.back_floodlights
-
+  - service: light.turn_on
+    entity_id: light.mini_deck_floodlight

@@ -10,8 +10,8 @@ trigger:
     from: 'off'
 condition:
   - condition: numeric_state
-    entity_id: sensor.sunlight_pct
-    below: 20
+    entity_id: sensor.outside_utility_room_lightlevel
+    below: 300
 action:
   - service: light.turn_on
     entity_id: light.utility_room
