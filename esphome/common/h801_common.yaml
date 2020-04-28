@@ -21,7 +21,7 @@ ota:
 
 captive_portal:
 
-web:
+web_server:
   port: 80
 
 binary_sensor:
