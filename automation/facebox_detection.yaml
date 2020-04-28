@@ -7,5 +7,5 @@ trigger:
 action:
   - service: notify.email_kyle
     data_template:
-      message: Kyle Gordon recognised with probability {{ trigger.event.data.confidence }}
+      message: Kyle Gordon recognised on {{ trigger.event.data.entity_id }} with probability {{ trigger.event.data.confidence }}
       title: Face notification
