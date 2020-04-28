@@ -1,6 +1,6 @@
 substitutions:
-    device_name: kitchen_cabinets
-    device_description: Kitchen cabinets
-    friendly_name: Kitchen cabinets
+  device_name: kitchen_cabinets
+  device_description: Kitchen cabinets
+  friendly_name: Kitchen cabinets
 
-  <<: !include common/h801_common.yaml
+<<: !include common/h801_common.yaml
