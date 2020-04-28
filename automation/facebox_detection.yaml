@@ -11,5 +11,26 @@ action:
       filename: /tmp/{{ trigger.event.data.entity_id }}_snapshot.jpg
   - service: notify.email_kyle
     data_template:
+      title: "Face detected on camera"
       message: Kyle Gordon recognised on {{ trigger.event.data.entity_id }} with probability {{ trigger.event.data.confidence }}
-      title: Face notification
+      data:
+        images:
+          - /tmp/{{ trigger.event.data.entity_id }}_snapshot.jpg
+        html: >
+          <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+          <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+              <meta charset="UTF-8">
+              <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Cameras snapshot</title>
+              <style type="text/css">
+                h1,h2,h3,h4,h5,h6 {
+                font-family:Arial,sans-serif;
+                }
+              </style>
+            </head>
+            <body>
+              <h1>UPS Triggered</h1>
+              <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:{{trigger.event.data.entity_id}}_snapshot.jpg" />
+          </html>
