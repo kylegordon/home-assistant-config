@@ -5,6 +5,10 @@ trigger:
   event_data:
     name: 'Kyle Gordon'
 action:
+  - service: camera.snapshot
+    data:
+      entity_id: {{ trigger.event.data.entity_id }}
+      filename: /tmp/{{ trigger.event.data.entity_id }}_snapshot.jpg
   - service: notify.email_kyle
     data_template:
       message: Kyle Gordon recognised on {{ trigger.event.data.entity_id }} with probability {{ trigger.event.data.confidence }}
