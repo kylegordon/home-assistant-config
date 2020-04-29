@@ -1,8 +1,8 @@
-- platform: openalpr_local
-  region: eu
-  confidence: 80.0
-  source:
-    - entity_id: camera.driveway
+#- platform: openalpr_local
+#  region: eu
+#  confidence: 80.0
+#  source:
+#    - entity_id: camera.driveway
 
 - platform: facebox
   ip_address: 172.24.32.13
