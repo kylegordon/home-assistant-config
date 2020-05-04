@@ -20,6 +20,9 @@ api:
 
 ota:
 
+web_server:
+  port: 80
+
 text_sensor:
 - platform: version
   name: "sense_orb Firmware version"
