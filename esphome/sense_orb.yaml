@@ -72,7 +72,6 @@ light:
 #               id: blue_led_light
 #               transition_length: 250ms
 
-light:
   - platform: neopixelbus
     type: GRB
     pin: D3
