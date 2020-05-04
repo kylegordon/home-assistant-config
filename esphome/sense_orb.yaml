@@ -34,11 +34,6 @@ sensor:
 binary_sensor:
   - platform: status
     name: "sense_orb Status"
-  - platform: gpio
-    pin:
-      number: GPIO0
-      mode: INPUT_PULLUP
-      inverted: True
 
 output:
   # Register the blue LED as a dimmable output ....
@@ -74,6 +69,6 @@ light:
 
   - platform: neopixelbus
     type: GRB
-    pin: D3
+    pin: GPIO3
     num_leds: 12
     name: "NeoPixel Light"
