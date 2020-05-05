@@ -51,25 +51,6 @@ light:
     name: "Sense GlowOrb Blue LED"
     id: blue_led_light
     output: blue_led
-
-# # Blink the light if we aren't connected to WiFi.
-# interval:
-#   - interval: 500ms
-#     then:
-#     - if:
-#         condition:
-#           not:
-#             wifi.connected:
-#         then:
-#           - light.turn_on:
-#               id: blue_led_light
-#               brightness: 50%
-#               transition_length: 0s
-#           - delay: 250ms
-#           - light.turn_off:
-#               id: blue_led_light
-#               transition_length: 250ms
-
   - platform: neopixelbus
     type: GRB
     pin: GPIO3
@@ -84,4 +65,23 @@ light:
       - addressable_twinkle:
       - addressable_random_twinkle:
       - addressable_fireworks:
-      - addressable_flicker: 
+      - addressable_flicker:
+
+# Blink the light if we aren't connected to WiFi.
+interval:
+  - interval: 500ms
+    then:
+    - if:
+        condition:
+          not:
+            wifi.connected:
+        then:
+          - light.turn_on:
+              id: blue_led_light
+              brightness: 50%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: blue_led_light
+              transition_length: 250ms
+
