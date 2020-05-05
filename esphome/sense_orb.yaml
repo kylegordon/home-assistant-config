@@ -1,5 +1,5 @@
 esphome:
-  name: Sense GlowOrb
+  name: sense_gloworb
   platform: ESP8266
   board: d1_mini
 
@@ -7,7 +7,7 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
   ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
-    ssid: sense_gloworb_AP
+    ssid: Sense GlowOrb_AP
     password: !secret wifi_pass
 
 captive_portal:
