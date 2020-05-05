@@ -76,3 +76,12 @@ light:
     num_leds: 12
     name: "NeoPixel Light"
     effects:
+      - strobe:
+      - flicker:
+      - addressable_rainbow:
+      - addressable_color_wipe:
+      - addressable_scan:
+      - addressable_twinkle:
+      - addressable_random_twinkle:
+      - addressable_fireworks:
+      - addressable_flicker: 
