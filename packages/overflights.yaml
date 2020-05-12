@@ -37,7 +37,7 @@ automation:
     action:
       - service: notify.email_kyle
         data_template:
-          title: "Overflight event - Uplawmoor"
+          title: "{{ trigger.event.data.callsign }} Overflight - Uplawmoor"
           message : 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
