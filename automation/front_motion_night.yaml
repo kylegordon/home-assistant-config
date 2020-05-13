@@ -26,5 +26,8 @@ action:
       brightness_pct: 100
       white_value: 255
       color_temp: 153
+  # If this evaluates to false, the action will stop here.
+  - condition: template
+    value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
   - service: light.turn_on
     entity_id: light.front_door_floodlights

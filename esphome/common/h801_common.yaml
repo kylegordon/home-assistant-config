@@ -1,0 +1,71 @@
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
+    ssid: ${friendly_name}_AP
+    password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+captive_portal:
+
+web_server:
+  port: 80
+
+binary_sensor:
+# Reports if this device is Connected or not
+- platform: status
+  name: ${friendly_name} Status
+
+sensor:
+# Reports the WiFi signal strength
+- platform: wifi_signal
+  name: ${friendly_name} Signal
+  update_interval: 60s
+
+# Reports how long the device has been powered (in minutes)
+- platform: uptime
+  name: ${friendly_name} Uptime
+  filters:
+    - lambda: return x / 60.0;
+  unit_of_measurement: minutes
+
+text_sensor:
+# Reports the ESPHome Version with compile date
+- platform: version
+  name: ${friendly_name} ESPHome Version
+
+#RGB
+output:
+  - platform: esp8266_pwm
+    pin: 12
+    frequency: 1000 Hz
+    id: pwm_b
+  - platform: esp8266_pwm
+    pin: 13
+    frequency: 1000 Hz
+    id: pwm_g
+  - platform: esp8266_pwm
+    pin: 15
+    frequency: 1000 Hz
+    id: pwm_r
+
+# RGB, RGBW, RGBWW also available
+light:
+  - platform: rgb
+    name: "H801 Light"
+    red: pwm_r
+    green: pwm_g
+    blue: pwm_b
