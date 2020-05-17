@@ -1,5 +1,5 @@
 esphome:
-  name: sense_gloworb
+  name: ${device_name}
   platform: ESP8266
   board: d1_mini
 
@@ -7,7 +7,7 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
   ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
-    ssid: Sense GlowOrb_AP
+    ssid: ${friendly_name}_AP
     password: !secret wifi_pass
 
 captive_portal:
@@ -25,18 +25,22 @@ web_server:
 
 text_sensor:
 - platform: version
-  name: "Sense GlowOrb Firmware version"
+  name: "${friendly_name} Firmware version"
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
 
 sensor:
   - platform: wifi_signal
-    name: "Sense GlowOrb Signal Level"
+    name: "${friendly_name} Signal Level"
     update_interval: 60s
   - platform: uptime
-    name: "Sense GlowOrb uptime"
+    name: "${friendly_name} uptime"
 
 binary_sensor:
   - platform: status
-    name: "Sense GlowOrb Status"
+    name: "${friendly_name} Status"
 
 output:
   # Register the blue LED as a dimmable output ....
@@ -48,14 +52,14 @@ output:
 light:
   # ... and then make a light out of it.
   - platform: monochromatic
-    name: "Sense GlowOrb Blue LED"
+    name: "${friendly_name} Blue LED"
     id: blue_led_light
     output: blue_led
   - platform: neopixelbus
     type: GRB
     pin: GPIO3
     num_leds: 12
-    name: "Sense GlowOrb Ring"
+    name: "${friendly_name} Ring"
     effects:
       - strobe:
       - flicker:
