@@ -11,4 +11,4 @@ action:
       - "{{ trigger.payload[3:5] | int(0,16) }}"
       - "{{ trigger.payload[-2:] | int(0,16) }}"
     entity_id:
-      - light.sense_gloworb
+      - light.sense_gloworb_1_ring
