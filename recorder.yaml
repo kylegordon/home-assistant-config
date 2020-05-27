@@ -10,3 +10,9 @@ exclude:
     - script
   entities:
     - sun.sun
+    - media_player.kitchen
+    - media_player.bedroom
+    - media_player.study
+    - media_player.garage
+    - media_player.living_room
+    - sensor.time
