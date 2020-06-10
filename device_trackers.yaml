@@ -8,9 +8,9 @@
 #  track_new_devices: false
 #  new_device_defaults:
 #    track_new_devices: True
-- platform: ping
-  hosts:
-    charlotte_thea: 172.24.32.144
+#- platform: ping
+#  hosts:
+#    charlotte_thea: 172.24.32.144
 #- platform: owntracks
 #  max_gps_accuracy: 250
 
