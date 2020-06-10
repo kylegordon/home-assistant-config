@@ -7,7 +7,7 @@
 - alias: Set dishwasher active when power detected
   trigger:
     - platform: numeric_state
-      entity_id: sensor.aeotec_smart_energy_switch_power_16_8
+      entity_id: sensor.dishwasher_power_plug_power
       above: 10
   condition:
     condition: or
@@ -33,7 +33,7 @@
 - alias: Set dishwasher drying when power drops
   trigger:
     - platform: numeric_state
-      entity_id: sensor.aeotec_smart_energy_switch_power_16_8
+      entity_id: sensor.dishwasher_power_plug_power
       below: 10
   condition:
     condition: and
@@ -46,10 +46,10 @@
       data:
         entity_id: input_select.dishwasher_status
         option: Drying
- 
-# Once the dishwasher status has been 'Drying' for 30 minutes, mark the
+
+# Once the dishwasher status has been 'Drying' for 15 minutes, mark the
 # dishwasher as clean
- 
+
 - alias: Set dishwasher clean
   trigger:
     - platform: state
@@ -77,13 +77,13 @@
 - alias: Set Dishwasher dirty when power off
   trigger:
     - platform: numeric_state
-      entity_id: sensor.aeotec_smart_energy_switch_power_16_8
+      entity_id: sensor.dishwasher_power_plug_power
       below: 3
   condition:
     condition: and
     conditions:
       - condition: numeric_state
-        entity_id: sensor.aeotec_smart_energy_switch_power_16_8
+        entity_id: sensor.dishwasher_power_plug_power
         below: 1
       - condition: or
         conditions:
