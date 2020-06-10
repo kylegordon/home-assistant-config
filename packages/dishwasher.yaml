@@ -2,8 +2,6 @@
 # Dishwasher is in drying phase when power consumption is 2.1KW for up to 18 minutes
 # When idle after a job, the dishwasher uses 57W for 5 minutes
 
-
-
 - alias: Set dishwasher active when power detected
   trigger:
     - platform: numeric_state
