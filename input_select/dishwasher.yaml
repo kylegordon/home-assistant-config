@@ -1,7 +1,0 @@
-name: Dishwasher Status
-options:
- - Off
- - Standby
- - Draining
- - Washing
-initial: Off
