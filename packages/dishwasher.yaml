@@ -1,6 +1,15 @@
 # https://philhawthorne.com/making-dumb-dishwashers-and-washing-machines-smart-alerts-when-the-dishes-and-clothes-are-cleaned/
 # Dishwasher is in drying phase when power consumption is 2.1KW for up to 18 minutes
 # When idle after a job, the dishwasher uses 57W for 5 minutes
+input_select:
+  - name: Dishwasher Status
+    options:
+    - Off
+    - Standby
+    - Draining
+    - Washing
+    initial: Off
+
 automation:
   - alias: Set dishwasher active when power detected
     trigger:
