@@ -1,98 +1,98 @@
 # https://philhawthorne.com/making-dumb-dishwashers-and-washing-machines-smart-alerts-when-the-dishes-and-clothes-are-cleaned/
 # Dishwasher is in drying phase when power consumption is 2.1KW for up to 18 minutes
 # When idle after a job, the dishwasher uses 57W for 5 minutes
-
-- alias: Set dishwasher active when power detected
-  trigger:
-    - platform: numeric_state
-      entity_id: sensor.dishwasher_power_plug_power
-      above: 10
-  condition:
-    condition: or
-    conditions:
-      - condition: state
-        entity_id: input_select.dishwasher_status
-        state: Dirty
-      - condition: state
-        entity_id: input_select.dishwasher_status
-        state: Clean
-      - condition: state
-        entity_id: input_select.dishwasher_status
-        state: Drying
-  action:
-    - service: input_select.select_option
-      data:
-        entity_id: input_select.dishwasher_status
-        option: Running
-
-# When the power level drops below 10, and the Dishwasher is set to
-# the 'Running' state, mark the Dishwasher as Finished
-
-- alias: Set dishwasher drying when power drops
-  trigger:
-    - platform: numeric_state
-      entity_id: sensor.dishwasher_power_plug_power
-      below: 10
-  condition:
-    condition: and
-    conditions:
-      - condition: state
-        entity_id: input_select.dishwasher_status
-        state: Running
-  action:
-    - service: input_select.select_option
-      data:
-        entity_id: input_select.dishwasher_status
-        option: Drying
-
-# Once the dishwasher status has been 'Drying' for 15 minutes, mark the
-# dishwasher as clean
-
-- alias: Set dishwasher clean
-  trigger:
-    - platform: state
-      entity_id: input_select.dishwasher_status
-      to: Drying
-      for:
-        minutes: 15
-  condition:
-    condition: and
-    conditions:
-      - condition: state
-        entity_id: input_select.dishwasher_status
-        state: Drying
-  action:
-    - service: input_select.select_option
-      data:
-        entity_id: input_select.dishwasher_status
-        option: Clean
-
-# When the power drops and the dishwasher is Clean or Drying, someone has
-# turned the Dishwasher off and emptied it. We should do this when the state
-# of the Dishwasher is clean or Finishing, just incase someone opens the
-# Dishwasher before the 30 minute timeout has been reached.
-
-- alias: Set Dishwasher dirty when power off
-  trigger:
-    - platform: numeric_state
-      entity_id: sensor.dishwasher_power_plug_power
-      below: 3
-  condition:
-    condition: and
-    conditions:
-      - condition: numeric_state
+automation:
+  - alias: Set dishwasher active when power detected
+    trigger:
+      - platform: numeric_state
         entity_id: sensor.dishwasher_power_plug_power
-        below: 1
-      - condition: or
-        conditions:
+        above: 10
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: input_select.dishwasher_status
+          state: Dirty
         - condition: state
           entity_id: input_select.dishwasher_status
           state: Clean
         - condition: state
           entity_id: input_select.dishwasher_status
           state: Drying
-  action:
-    - service: input_select.select_option
-      data:
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.dishwasher_status
+          option: Running
+
+  # When the power level drops below 10, and the Dishwasher is set to
+  # the 'Running' state, mark the Dishwasher as Finished
+
+  - alias: Set dishwasher drying when power drops
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.dishwasher_power_plug_power
+        below: 10
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: input_select.dishwasher_status
+          state: Running
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.dishwasher_status
+          option: Drying
+
+  # Once the dishwasher status has been 'Drying' for 15 minutes, mark the
+  # dishwasher as clean
+
+  - alias: Set dishwasher clean
+    trigger:
+      - platform: state
         entity_id: input_select.dishwasher_status
-        option: Dirty
+        to: Drying
+        for:
+          minutes: 15
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: input_select.dishwasher_status
+          state: Drying
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.dishwasher_status
+          option: Clean
+
+  # When the power drops and the dishwasher is Clean or Drying, someone has
+  # turned the Dishwasher off and emptied it. We should do this when the state
+  # of the Dishwasher is clean or Finishing, just incase someone opens the
+  # Dishwasher before the 30 minute timeout has been reached.
+
+  - alias: Set Dishwasher dirty when power off
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.dishwasher_power_plug_power
+        below: 3
+    condition:
+      condition: and
+      conditions:
+        - condition: numeric_state
+          entity_id: sensor.dishwasher_power_plug_power
+          below: 1
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: input_select.dishwasher_status
+            state: Clean
+          - condition: state
+            entity_id: input_select.dishwasher_status
+            state: Drying
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.dishwasher_status
+          option: Dirty
