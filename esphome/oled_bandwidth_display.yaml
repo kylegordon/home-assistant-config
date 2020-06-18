@@ -47,8 +47,8 @@ sensor:
     internal: true
 
 i2c:
-  sda: D1
-  scl: D2
+  sda: GPIO4
+  scl: GPIO5
   scan: False
 
 display:
