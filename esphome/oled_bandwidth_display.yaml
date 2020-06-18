@@ -29,7 +29,7 @@ font:
 
   - file: 'BebasNeue-Regular.ttf'
     id: font2
-    size: 48
+    size: 20
 
   - file: 'arial.ttf'
     id: font3
@@ -53,22 +53,22 @@ i2c:
 
 display:
   - platform: ssd1306_i2c
-    model: "SH1106 64x48"
+    model: "SSD1306 64x48"
     reset_pin: D0
     address: 0x3C
     lambda: |-
-      // Print "Mitt Smarta Hus" in top center.
-      it.printf(64, 0, id(font1), TextAlign::TOP_CENTER, "Mitt Smarta Hus");
+      // Print "Viewpoint" in top center.
+      //it.printf(32, 0, id(font1), TextAlign::TOP_CENTER, "Viewpoint");
 
       // Print time in HH:MM format
-      it.strftime(0, 60, id(font2), TextAlign::BASELINE_LEFT, "%H:%M", id(esptime).now());
+      it.strftime(0, 24, id(font3), TextAlign::CENTER_LEFT, "%H:%M", id(esptime).now());
 
       // Print inside temperature (from homeassistant sensor)
       if (id(internet_speed_in).has_state()) {
-        it.printf(127, 23, id(font3), TextAlign::TOP_RIGHT , "%.1f°", id(internet_speed_in).state);
+        it.printf(0, 0, id(font2), TextAlign::TOP_LEFT , "%.2f", id(internet_speed_in).state);
       }
 
       // Print outside temperature (from homeassistant sensor)
       if (id(internet_speed_out).has_state()) {
-        it.printf(127, 60, id(font3), TextAlign::BASELINE_RIGHT , "%.1f°", id(internet_speed_out).state);
+        it.printf(0, 48, id(font2), TextAlign::BASELINE_LEFT , "%.2f", id(internet_speed_out).state);
       }
