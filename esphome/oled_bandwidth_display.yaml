@@ -61,7 +61,7 @@ display:
       //it.printf(32, 0, id(font1), TextAlign::TOP_CENTER, "Viewpoint");
 
       // Print time in HH:MM format
-      it.strftime(0, 24, id(font3), TextAlign::CENTER_LEFT, "%H:%M", id(esptime).now());
+      it.strftime(it.get_width(), 26, id(font3), TextAlign::CENTER_RIGHT, "%H:%M", id(esptime).now());
 
       // Print inside temperature (from homeassistant sensor)
       if (id(internet_speed_in).has_state()) {
