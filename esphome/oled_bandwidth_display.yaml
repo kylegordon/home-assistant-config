@@ -1,3 +1,23 @@
+esphome:
+  name: oled_bandwidth
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  # FIXME Needs AP details
+
+captive_portal:
+
+logger:
+
+api:
+
+ota:
+
+web_server:
+
 time:
   - platform: homeassistant
     id: esptime
