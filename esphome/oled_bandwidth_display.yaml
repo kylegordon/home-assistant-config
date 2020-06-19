@@ -21,6 +21,7 @@ web_server:
 time:
   - platform: homeassistant
     id: esptime
+    timezone: Europe/London
 
 font:
   - file: 'slkscr.ttf'
