@@ -19,10 +19,6 @@ automation:
       - platform: state
         entity_id: binary_sensor.ensuite_motion
         to: 'on'
-    condition:
-      - condition: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        below: 750
     action:
       - service: light.turn_on
         data_template:
