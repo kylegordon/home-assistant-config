@@ -8,9 +8,6 @@ automation:
       - platform: state
         entity_id: binary_sensor.hall_rooms_motion
         to: 'on'
-      - platform: state
-        entity_id: binary_sensor.garden_hall_motion
-        to: 'on'
     condition:
       - condition: numeric_state
         entity_id: sensor.outside_utility_room_lightlevel
@@ -61,5 +58,3 @@ automation:
     action:
     - service: light.turn_off
       entity_id: group.hall
-    - service: light.turn_off
-      entity_id: light.twig_lights
