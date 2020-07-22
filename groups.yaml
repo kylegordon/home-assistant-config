@@ -155,9 +155,8 @@ craft_room_lighting:
 hall:
   name: Hall lights
   entities:
-    - light.front_door
+    - light.hall_bathroom
     - light.hall_bedrooms
-    - light.hall_entrance
 
 hall_view:
   name: Hall
