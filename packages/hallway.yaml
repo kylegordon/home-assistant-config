@@ -1,4 +1,24 @@
 automation:
+  - alias: Hallway light toggle
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.ensuite_switch_touch_pad
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.hall_2_gang_touchpad_1
+        to: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id:
+          - switch.hall_single_switch_relay
+          - switch.hall_2_gang_relay_1
+      - service: light.toggle
+        entity_id: light.hall
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling hallway light"
+
   - alias: Hallway light motion
     initial_state: true
     trigger:
