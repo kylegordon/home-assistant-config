@@ -2,7 +2,7 @@ automation:
   - alias: Hallway light toggle
     trigger:
       - platform: state
-        entity_id: binary_sensor.ensuite_switch_touch_pad
+        entity_id: binary_sensor.hall_single_switch_touch_pad
         to: 'on'
       - platform: state
         entity_id: binary_sensor.hall_2_gang_touchpad_1
