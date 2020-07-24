@@ -198,13 +198,13 @@ rfxtrx:
       # name: Twig lights
     ### Switches ###
     0710080041010000:
-      name: Cordless phone
+      # name: Cordless phone
     ### Binary Sensors ###
     0b1100d800b8196e0a010f70:
-      name: Outside Driveway Motion
+      # name: Outside Driveway Motion
       device_class: motion
     0b11000000b82b560a000060:
-      name: Outside Front Motion
+      # name: Outside Front Motion
       device_class: motion
     #0a1400002c22a70a010060:
     #  name: Utility Room Door
@@ -213,7 +213,7 @@ rfxtrx:
     ## RFXcom ##
     # Old 115a0100e452000000046600006462cb3e79:
     115a0102e20200000003e500000000d02979:
-      name: Electricity
+      # name: Electricity
 
 #hue:
 #  bridges:
