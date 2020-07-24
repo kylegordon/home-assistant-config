@@ -196,6 +196,9 @@ rfxtrx:
       # name: Arc Lamp
     0a14005ff0dd3c05010060:
       # name: Twig lights
+    ### Switches ###
+    0710080041010000:
+      name: Cordless phone
 
 #hue:
 #  bridges:
