@@ -22,6 +22,10 @@
   name: "Edison Lamp"
   entity_id: switch.edison_lamp
 
+- platform: switch
+  name: "Star Burst"
+  entity_id: switch.star_burst
+
 - platform: group
   name: Decking Lights
   entities:
