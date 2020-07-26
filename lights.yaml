@@ -26,6 +26,10 @@
   name: "Star Burst"
   entity_id: switch.star_burst
 
+- platform: switch
+  name: "Twig Lights"
+  entity_id: switch.twig_lights
+
 - platform: group
   name: Decking Lights
   entities:
