@@ -18,6 +18,10 @@
   name: "Mini Deck Floodlight"
   entity_id: switch.mini_deck_floodlight_relay
 
+- platform: switch
+  name: "Edison Lamp"
+  entity_id: switch.edison_lamp
+
 - platform: group
   name: Decking Lights
   entities:
