@@ -34,6 +34,10 @@
   name: "Craft Room Fairy Lights"
   entity_id: switch.lightwaverf_siemens_f0dd3c_10
 
+- platform: switch
+  name: "Lava Lamp"
+  entity_id: switch.lightwaverf_siemens_f0dd3c_15
+
 - platform: group
   name: Decking Lights
   entities:
