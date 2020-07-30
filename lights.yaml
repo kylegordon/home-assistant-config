@@ -30,6 +30,10 @@
   name: "Twig Lights"
   entity_id: switch.twig_lights
 
+- platform: switch
+  name: "Craft Room Fairy Lights"
+  entity_id: switch.lightwaverf_siemens_f0dd3c_10
+
 - platform: group
   name: Decking Lights
   entities:
