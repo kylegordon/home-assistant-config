@@ -14,6 +14,30 @@ automation:
           - switch.hall_2_gang_relay_1
       - service: light.toggle
         entity_id: light.hall
+        brightness_pct: >
+          {% if states('sensor.time_of_day') == "Morning" %}
+          100
+          {% elif states('sensor.time_of_day') == "Day" %}
+          100
+          {% elif states('sensor.time_of_day') == "Night" %}
+          30
+          {% endif %}
+        transition: >
+          {% if states('sensor.time_of_day') == "Morning" %}
+          10
+          {% elif states('sensor.time_of_day') == "Day" %}
+          2
+          {% elif states('sensor.time_of_day') == "Night" %}
+          5
+          {% endif %}
+        color_temp: >
+          {% if states('sensor.time_of_day') == "Morning" %}
+          200
+          {% elif states('sensor.time_of_day') == "Day" %}
+          300
+          {% elif states('sensor.time_of_day') == "Night" %}
+          375
+          {% endif %}
       - service: logbook.log
         data_template:
           name: EVENT
