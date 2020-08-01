@@ -19,8 +19,8 @@ automation:
     initial_state: true
     trigger:
     - platform: state
-        entity_id: binary_sensor.garden_hall_motion
-        to: 'on'
+      entity_id: binary_sensor.garden_hall_motion
+      to: 'on'
     # Sensor attached to wrong door at the moment...
     #   - platform: state
     #     entity_id: binary_sensor.garden_hall_door
