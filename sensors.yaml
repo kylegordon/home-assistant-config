@@ -121,15 +121,6 @@
       friendly_name: 'Charlotte'
       entity_id: input_select.charlotte_status_dropdown
 
-## RFXcom ##
-
-- platform: rfxtrx
-  automatic_add: True
-  devices:
-    # Old 115a0100e452000000046600006462cb3e79:
-    115a0102e20200000003e500000000d02979:
-      name: Electricity
-
 - platform: integration
   source: sensor.electricity_energy_usage
   name: energy_spent
