@@ -25,13 +25,19 @@ automation:
     trigger:
       - platform: state
         entity_id: input_boolean.night_view
-        state:
-          from: 'off'
-          to: 'on'
+        from: 'off'
+        to: 'on'
     action:
       - service: logbook.log
         data_template:
           name: EVENT
+          message: "Enabling night view mode"
+      - service: notify.alexa_media
+        data_template:
+          target: '{{ states.sensor.last_alexa.state }}'
+          data:
+            type: announce
+            #method: all
           message: "Enabling night view mode"
       - service: automation.trigger
         entity_id: automation.goodnight_process
