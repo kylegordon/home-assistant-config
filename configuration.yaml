@@ -243,6 +243,9 @@ logbook:
     domains:
       - sensor
       - media_player
+      - switch
+      - light
+      - event
 
 logger: !include logger.yaml
 
@@ -289,8 +292,6 @@ emulated_hue:
       hidden: false
     light.craft_room_bookcase:
       hidden: false
-    light.craft_room_fairy_lights:
-      hidden: false
     light.craft_room_desk_level:
       hidden: false
     light.master_bedroom:
@@ -320,6 +321,8 @@ emulated_hue:
     input_boolean.classic_fm:
       hidden: false
     input_boolean.goodnight_process:
+      hidden: false
+    input_boolean.night_view:
       hidden: false
 
 ############
