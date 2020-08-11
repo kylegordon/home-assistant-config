@@ -1,0 +1,21 @@
+input_boolean:
+  name: Night View
+  icon: mdi:account-alert
+  initial: off
+
+automation:
+  - alias: Night view reset
+    trigger:
+      - platform: time
+        at: '04:00:00'
+    condition:
+      - platform: state
+        entity_id: input_boolean.night_view
+        state: 'on'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Resetting night view mode"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.night_view
