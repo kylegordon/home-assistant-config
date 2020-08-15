@@ -23,7 +23,7 @@ automation:
       to: 'on'
     # Sensor attached to wrong door at the moment...
     #   - platform: state
-    #     entity_id: binary_sensor.garden_hall_door
+    #     entity_id: binary_sensor.boot_room_door
     #     to: 'on'
     condition:
       - condition: numeric_state
