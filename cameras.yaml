@@ -15,14 +15,16 @@
 #
 
 - platform: mjpeg
-  - name: BackDoor
-    still_image_url: http://viewpoint.house:8765/picture/1/current/
-    mjpeg_url: http://viewpoint.house:8181/mjpeg
+  name: BackDoor
+  still_image_url: http://viewpoint.house:8765/picture/1/current/
+  mjpeg_url: http://viewpoint.house:8181/mjpeg
 
-  - name: Driveway
-    still_image_url: http://viewpoint.house:8765/picture/2/current/
-    mjpeg_url: http://viewpoint.house:8182/mjpeg
+- platform: mjpeg
+  name: Driveway
+  still_image_url: http://viewpoint.house:8765/picture/2/current/
+  mjpeg_url: http://viewpoint.house:8182/mjpeg
 
-  - name: BackDoor
-    still_image_url: http://viewpoint.house:8765/picture/3/current/
-    mjpeg_url: http://viewpoint.house:8183/mjpeg
+- platform: mjpeg
+  name: BackDoor
+  still_image_url: http://viewpoint.house:8765/picture/3/current/
+  mjpeg_url: http://viewpoint.house:8183/mjpeg
