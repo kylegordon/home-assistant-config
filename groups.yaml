@@ -165,13 +165,13 @@ hall_view:
     - binary_sensor.hall_rooms_motion
     - sensor.hall_rooms_motion
     - binary_sensor.hall_door_motion
-    - binary_sensor.garden_hall_motion
+    - binary_sensor.boot_room_motion
     - sensor.hall_door_motion
     - sensor.hallway_sensor_temperature
     - sensor.hallway_sensor_humidity
     - sensor.hallway_sensor_signal_level
     - light.twig_lights
-    - binary_sensor.garden_hall_door
+    - binary_sensor.boot_room_door
 
 outside:
   name: Outside
