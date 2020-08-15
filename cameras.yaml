@@ -14,11 +14,15 @@
 #  limit_refetch_to_url_change: true
 #
 
-- platform: uvc
-  nvr: 172.24.32.13
-  key: !secret uvc_key
-  password: !secret uvc_password
+- platform: mjpeg
+  - name: BackDoor
+    still_image_url: http://viewpoint.house:8765/picture/1/current/
+    mjpeg_url: http://viewpoint.house:8181/mjpeg
 
-- platform: ffmpeg
-  name: D-Link
-  input: rtsp://admin@172.24.32.180/play1.sdp
+  - name: Driveway
+    still_image_url: http://viewpoint.house:8765/picture/2/current/
+    mjpeg_url: http://viewpoint.house:8182/mjpeg
+
+  - name: BackDoor
+    still_image_url: http://viewpoint.house:8765/picture/3/current/
+    mjpeg_url: http://viewpoint.house:8183/mjpeg
