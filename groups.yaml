@@ -171,7 +171,7 @@ hall_view:
     - sensor.hallway_sensor_humidity
     - sensor.hallway_sensor_signal_level
     - light.twig_lights
-    - binary_sensor.garden_hall_door
+    - binary_sensor.boot_room_door
 
 outside:
   name: Outside
