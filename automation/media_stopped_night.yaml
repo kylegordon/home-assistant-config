@@ -12,9 +12,9 @@ trigger:
     from: "playing"
     to: "paused"
 condition:
-  - condition: sun
-    after: sunset
-    after_offset: "-1:30:00"
+  - condition: numeric_state
+    entity_id: sensor.outside_utility_room_lightlevel
+    below: 750
 action:
   - service: light.turn_on
     data:
