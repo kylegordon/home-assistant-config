@@ -10,10 +10,14 @@ condition:
         entity_id: light.sofa_overhead
         state: 'on'
       - condition: state
+        entity_id: light.dining_table_overhead
+        state: 'on'
+      - condition: state
         entity_id: light.uplighter
         state: 'on'
 action:
   - service: light.turn_off
     entity_id:
       - light.sofa_overhead
+      - light.dining_table_overhead
       - light.uplighter
