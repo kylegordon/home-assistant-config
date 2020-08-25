@@ -1,0 +1,11 @@
+alias: "Driving Kyle Start"
+trigger:
+  platform: state
+  entity_id: sensor.kyle_status
+  to: "driving"
+condition:
+  - condition: time
+    after: '14:00:00'
+    before: '19:00:00'
+action:
+  service: script.driving_kyle_start

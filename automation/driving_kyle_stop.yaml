@@ -1,0 +1,8 @@
+alias: "Driving Kyle Stop"
+trigger:
+  platform: state
+  entity_id: sensor.kyle_status
+  from: "driving"
+  to: "standby"
+action:
+  service: script.driving_kyle_stop

@@ -1,0 +1,27 @@
+alias: Driving trigger started
+trigger:
+  platform: mqtt
+  topic: driving/mode/kyle
+  payload: 'true'
+
+#condition: 
+#  - condition: zone
+#    entity_id: device_tracker.bagpuss_a0001
+#    zone: zone.kyle_work
+  
+action:
+  #- service: input_select.select_option
+  #  data:
+  #    entity_id: input_select.kyle_status_dropdown
+  #    option: Driving
+  #- service: input_boolean.turn_on
+  #  data:
+  #    entity_id: input_boolean.kyle_driving
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Kyle is now driving."
+  - service: notify.email_kyle
+    data:
+      message: "Kyle is now driving."
+
