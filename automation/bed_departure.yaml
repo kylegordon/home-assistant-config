@@ -1,0 +1,20 @@
+alias: Alert when someone leaves the bed
+trigger:
+  - platform: state
+    entity_id: binary_sensor.charlotte_bed_sensor
+    from: 'On'
+    to: 'Off'
+    #    for:
+    #  minutes: 2
+  - platform: state
+    entity_id: binary_sensor.kyle_bed_sensor
+    from: 'On'
+    to: 'Off'
+    #    for:
+    #  minutes: 2
+
+action:
+  - service: notify.email_kyle
+    data_template:
+      message: '{{trigger.to_state.attributes.friendly_name}} has gone off.'
+      title: Bed alert
