@@ -32,11 +32,11 @@
 
 - platform: switch
   name: "Craft Room Fairy Lights"
-  entity_id: switch.lightwaverf_siemens_f0dd3c_10
+  entity_id: switch.craft_fairy_lights
 
 - platform: switch
   name: "Lava Lamp"
-  entity_id: switch.lightwaverf_siemens_f0dd3c_15
+  entity_id: switch.lava_lamp
 
 - platform: switch
   name: "Monitor Lights"
