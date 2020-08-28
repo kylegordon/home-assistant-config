@@ -152,7 +152,13 @@ craft_room_lighting:
     - light.craft_room
     - light.craft_room_fairy_lights
 
-hall:
+study_lighting:
+  name: Study Lights
+  entities:
+    - light.study
+    - light.monitor_lights
+
+    hall:
   name: Hall lights
   entities:
     - light.hall_bathroom
