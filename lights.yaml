@@ -38,6 +38,10 @@
   name: "Lava Lamp"
   entity_id: switch.lightwaverf_siemens_f0dd3c_15
 
+- platform: switch
+  name: "Monitor Lights"
+  entity_id: switch.monitor_lights
+
 - platform: group
   name: Decking Lights
   entities:
