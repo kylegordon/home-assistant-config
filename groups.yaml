@@ -158,7 +158,7 @@ study_lighting:
     - light.study
     - light.monitor_lights
 
-    hall:
+hall:
   name: Hall lights
   entities:
     - light.hall_bathroom
