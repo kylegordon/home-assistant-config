@@ -42,7 +42,7 @@ automation:
             {% elif states('sensor.time_of_day') == "Day" %}
             100
             {% elif states('sensor.time_of_day') == "Night" %}
-            30
+            10
             {% endif %}
           transition: >
             {% if states('sensor.time_of_day') == "Morning" %}
@@ -60,8 +60,6 @@ automation:
             {% elif states('sensor.time_of_day') == "Night" %}
             375
             {% endif %}
-      - service: light.turn_on
-        entity_id: light.twig_lights
 
   - alias: Hallway motion - 10 minute timeout
     trigger:

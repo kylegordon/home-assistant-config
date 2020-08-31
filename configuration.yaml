@@ -165,6 +165,55 @@ rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
   debug: False
+  devices:
+    ### Lights ###
+    #0a140029f0dd3c0e010060:
+    #  name: Living Room
+    #0a140017f090a201010070:
+    #  # Dimmable CFL Remote Left
+    #  name: Utility Room
+    0a140001f0dd3c01010070:
+      # White Remote A1
+      # name: Christmas Star
+    0a140075f0dd3c10000060:
+      # Black Remote D4
+      # name: Edison lamp old
+    0a14000bf0dd3c0f010070:
+      # name: Lava Lamp
+    0a140031f0dd3c0d010070:
+      # name: Craft Room bookcase
+    0a140037f0dd3c0b010060:
+      # name: Christmas Tree
+    0a14003cf0dd3c0a010060:
+      # name: Craft room fairy lights
+    0710080041020000:
+      # name: Star Burst
+    0710080041030000:
+      # name: Candle Arch
+    0710080041040000:
+      # name: Edison Lamp
+    0a140041f0dd3c09010070:
+      # name: Arc Lamp
+    0a14005ff0dd3c05010060:
+      # name: Twig lights
+    ### Switches ###
+    0710080041010000:
+      # name: Cordless phone
+    ### Binary Sensors ###
+    0b1100d800b8196e0a010f70:
+      # name: Outside Driveway Motion
+      device_class: motion
+    0b11000000b82b560a000060:
+      # name: Outside Front Motion
+      device_class: motion
+    #0a1400002c22a70a010060:
+    #  name: Utility Room Door
+    #  device_class: opening
+    ### Sensors ###
+    ## RFXcom ##
+    # Old 115a0100e452000000046600006462cb3e79:
+    115a0102e20200000003e500000000d02979:
+      # name: Electricity
 
 #hue:
 #  bridges:
@@ -194,6 +243,9 @@ logbook:
     domains:
       - sensor
       - media_player
+      - switch
+      - light
+      - event
 
 logger: !include logger.yaml
 
@@ -240,8 +292,6 @@ emulated_hue:
       hidden: false
     light.craft_room_bookcase:
       hidden: false
-    light.craft_room_fairy_lights:
-      hidden: false
     light.craft_room_desk_level:
       hidden: false
     light.master_bedroom:
@@ -271,6 +321,8 @@ emulated_hue:
     input_boolean.classic_fm:
       hidden: false
     input_boolean.goodnight_process:
+      hidden: false
+    input_boolean.night_view:
       hidden: false
 
 ############
