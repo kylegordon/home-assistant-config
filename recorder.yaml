@@ -16,3 +16,5 @@ exclude:
     - media_player.garage
     - media_player.living_room
     - sensor.time
+    - sensor.snmp_wan_out
+    - sensor.snmp_wan_in
