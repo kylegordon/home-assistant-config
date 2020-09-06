@@ -12,5 +12,4 @@ action:
     data:
       entity_id: light.decking_lights
       brightness_pct: 0
-      white_value: 255
-      color_temp: 153
+      white_value: 0
