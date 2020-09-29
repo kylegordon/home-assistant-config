@@ -8,17 +8,13 @@ on:
       - master
 
 jobs:
-  fakeconfig:
-    name: Fake secrets
-    runs-on: ubuntu-latest
-    steps:
-      - name: Copy secrets
-        run: mv travis_secrets.yaml secrets.yaml; cp esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml; mv esphome/travis_secrets.yaml.txt esphome/secrets.yaml
   check:
     name: Home Assistant Config Check
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@master
+    - name: Copy secrets
+      run: mv travis_secrets.yaml secrets.yaml; cp esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml; mv esphome/travis_secrets.yaml.txt esphome/secrets.yaml
     - name: Run Config Check
       uses: ludeeus/action-ha-config-check@master
