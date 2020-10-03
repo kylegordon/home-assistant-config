@@ -17,4 +17,4 @@ jobs:
     - name: Copy secrets
       run: mv travis_secrets.yaml secrets.yaml; cp esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml; mv esphome/travis_secrets.yaml.txt esphome/secrets.yaml
     - name: Run Config Check
-      uses: docker run --rm -v "${PWD}":/config -it homeassistant/home-assistant:latest hass -c . --script check_config
+      uses: ludeeus/action-ha-config-check@master
