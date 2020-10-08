@@ -11,9 +11,13 @@ action:
     data_template:
       name: EVENT
       message: "Turning off Kodi system"
-  - service: media_player.alexa_tts
-    entity_id: media_player.living_room
-    data_template:
+  - service: notify.alexa_media
+    data:
+      target:
+        - media_player.living_room
+      data:
+        type: announce
+        #method: all
       message: "The TV has turned off. I will shortly turn off Kodi as well"
   - delay:
       seconds: 10
