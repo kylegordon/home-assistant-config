@@ -388,6 +388,8 @@ alexa_media:
 smartir:
 
 octoprint:
+  host: !secret octoprint_host
+  api_key: !secret octoprint_key
 
 mobile_app:
 
