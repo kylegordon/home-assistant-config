@@ -27,6 +27,9 @@ automation:
     condition:
       condition: and
       conditions:
+      - condition: state
+        entity_id: input_boolean.night_view
+        state: "off"
       - condition: numeric_state
         entity_id: sensor.outside_utility_room_lightlevel
         below: 750

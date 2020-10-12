@@ -36,6 +36,7 @@ kitchen:
     - binary_sensor.kitchen_motion
     - sensor.kitchen_motion
     - light.kitchen_cabinets
+    - light.kitchen
     - media_player.kitchen
 
 utility_room:
@@ -131,6 +132,7 @@ bedroom_3:
     - switch.study_volume
     - input_select.study_amplifier_input
     - light.study_light
+    - light.monitor_lights
     - sensor.study_sensor_temperature
     - sensor.study_sensor_humidity
     - sensor.study_sensor_signal_level
@@ -151,6 +153,12 @@ craft_room_lighting:
   entities:
     - light.craft_room
     - light.craft_room_fairy_lights
+
+study_lighting:
+  name: Study Lights
+  entities:
+    - light.study
+    - light.monitor_lights
 
 hall:
   name: Hall lights
