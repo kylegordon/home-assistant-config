@@ -61,6 +61,15 @@ automation:
             375
             {% endif %}
 
+  - alias: Boot Room motion - sunlight timeout
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.outside_utility_room_lightlevel
+        above: 750
+    action:
+      service: homeassistant.turn_off
+      entity_id: light.boot_room
+
   - alias: Boot room light motion - night view
     initial_state: true
     trigger:
