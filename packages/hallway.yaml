@@ -24,6 +24,7 @@ automation:
             30
             {% endif %}
           # If you use a transition here, it causes delays when turning off at the lightswitch, contrary to 'expected behaviour'
+          # Specifically, toggle 'on' to, say, 30%, and then toggle 'off' and the dimming duration always seems too long.
           #transition: >
           #  {% if states('sensor.time_of_day') == "Morning" %}
           #  10
