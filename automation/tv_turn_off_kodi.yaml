@@ -1,4 +1,4 @@
-alias: TV turn off Kodi
+alias: TV turn off Hi-Fi
 trigger:
   - platform: state
     entity_id: media_player.living_room_television
@@ -6,11 +6,14 @@ trigger:
     to: 'off'
     for:
       seconds: 30
+condition:
+  - condition: template
+    value_template: '{{ states.media_player.linn_223637.attributes.source == "Kodi" }}'
 action:
   - service: logbook.log
     data_template:
       name: EVENT
-      message: "Turning off Kodi system"
+      message: "Turning off hi-fi system"
   - service: notify.alexa_media
     data:
       target:
@@ -18,13 +21,6 @@ action:
       data:
         type: announce
         #method: all
-      message: "The TV has turned off. I will shortly turn off Kodi as well"
-  - delay:
-      seconds: 10
-  - service: media_player.turn_off
-    entity_id: media_player.living_room_kodi
-  # If this evaluates to false, the action will stop here.
-  - condition: template
-    value_template: '{{ states.media_player.linn_223637.attributes.source == "KODI" }}'
+      message: "The TV has turned off. Turning off hi-fi"
   - service: media_player.turn_off
     entity_id: media_player.linn_223637
