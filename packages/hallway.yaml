@@ -23,6 +23,7 @@ automation:
             {% elif states('sensor.time_of_day') == "Night" %}
             30
             {% endif %}
+          # If you use a transition here, it causes delays when turning off at the lightswitch, contrary to 'expected behaviour'
           #transition: >
           #  {% if states('sensor.time_of_day') == "Morning" %}
           #  10
