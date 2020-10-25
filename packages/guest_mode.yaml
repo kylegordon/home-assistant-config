@@ -16,10 +16,8 @@ automation:
         from: 'not_home'
         to: 'home'
     action:
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.guest_mode
-          option: On
+      - service: input_boolean.turn_on
+        entity_id: input_select.guest_mode
 
   - alias: Guest mode disable
     trigger:
@@ -32,7 +30,5 @@ automation:
         from: 'home'
         to: 'not_home'
     action:
-      - service: input_select.select_option
-        data:
-          entity_id: input_select.guest_mode
-          option: Off
+      - service: input_boolean.turn_off
+        entity_id: input_select.guest_mode
