@@ -1,3 +1,35 @@
-name: Guest Mode
-icon: mdi:account-alert
-initial: off
+input_boolean:
+  name: Guest Mode
+  icon: mdi:account-alert
+  initial: off
+
+automation:
+  - alias: Guest mode enable
+    trigger:
+      - platform: state
+        entity_id: person.ronnie
+        from: 'not_home'
+        to: 'home'
+      - platform: state
+        entity_id: person.eilean
+        from: 'not_home'
+        to: 'home'
+    action:
+      - service: input_select.select_option
+        entity_id: input_select.guest_mode
+        option: "on"
+
+  - alias: Guest mode disable
+    trigger:
+      - platform: state
+        entity_id: person.ronnie
+        from: 'home'
+        to: 'not_home'
+      - platform: state
+        entity_id: person.eilean
+        from: 'home'
+        to: 'not_home'
+    action:
+      - service: input_select.select_option
+        entity_id: input_select.guest_mode
+        option: "off"
