@@ -1,7 +1,8 @@
 input_boolean:
-  name: Guest Mode
-  icon: mdi:account-alert
-  initial: off
+  guest_mode:
+    name: Guest Mode
+    icon: mdi:account-alert
+    initial: off
 
 automation:
   - alias: Guest mode enable
