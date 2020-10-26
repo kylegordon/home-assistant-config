@@ -14,13 +14,5 @@ action:
     data_template:
       name: EVENT
       message: "Turning off hi-fi system"
-  - service: notify.alexa_media
-    data:
-      target:
-        - media_player.living_room
-      data:
-        type: announce
-        #method: all
-      message: "The TV has turned off. Turning off hi-fi"
   - service: media_player.turn_off
     entity_id: media_player.linn_223637

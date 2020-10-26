@@ -9,14 +9,6 @@ action:
     data_template:
       name: EVENT
       message: "Turning on Hi-Fi system"
-  - service: notify.alexa_media
-    data:
-      target:
-        - media_player.living_room
-      data:
-        type: announce
-        #method: all
-      message: "The TV has turned on. Changing hi-fi channel"
   - service: media_player.select_source
     data:
       entity_id: media_player.linn_223637
