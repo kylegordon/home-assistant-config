@@ -4,31 +4,13 @@ input_boolean:
     icon: mdi:account-alert
     initial: off
 
-automation:
-  - alias: Guest mode enable
-    trigger:
-      - platform: state
-        entity_id: person.ronnie
-        from: 'not_home'
-        to: 'home'
-      - platform: state
-        entity_id: person.eilean
-        from: 'not_home'
-        to: 'home'
-    action:
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.guest_mode
-
-  - alias: Guest mode disable
-    trigger:
-      - platform: state
-        entity_id: person.ronnie
-        from: 'home'
-        to: 'not_home'
-      - platform: state
-        entity_id: person.eilean
-        from: 'home'
-        to: 'not_home'
-    action:
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.guest_mode
+binary_sensor:
+  - platform: template
+    sensors:
+      guest_mode:
+          friendly_name: Guest Mode
+          value_template: "{{
+            is_state('input_boolean.guest_mode', 'on')
+            or is_state('person.ronnie','home')
+            or is_state('person.eilean', 'home')
+            }}"
