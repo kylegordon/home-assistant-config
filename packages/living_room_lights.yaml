@@ -62,7 +62,11 @@ automation:
             {% elif states('sensor.time_of_day') == "Day" %}
             100
             {% elif states('sensor.time_of_day') == "Night" %}
-            30
+              {% if states('binary_sensor.guest_mode') == "on" %}
+              100
+              {% elif states('binary_sensor.guest_mode') == "off" %}
+              30
+              {% endif %}
             {% endif %}
           transition: >
             {% if states('sensor.time_of_day') == "Morning" %}
