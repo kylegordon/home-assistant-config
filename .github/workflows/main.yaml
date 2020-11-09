@@ -92,3 +92,13 @@ jobs:
         uses: "docker://homeassistant/home-assistant:dev"
         with:
           args: python -m homeassistant --config ./ --script check_config --info all
+  esphome:
+    runs-on: ubuntu-latest
+    needs: [yamllint]
+    steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v1
+      - name: ESPHome Version
+        uses: "docker://esphome/esphome"
+        with:
+          args: "version"
