@@ -99,11 +99,11 @@ automation:
 
   - alias: Boot room motion - 10 minute timeout
     trigger:
-    - platform: state
-      entity_id: binary_sensor.boot_room_motion
-      to: 'off'
-      for:
-        minutes: 10
+      - platform: state
+        entity_id: binary_sensor.boot_room_motion
+        to: 'off'
+        for:
+          minutes: 10
     action:
       - service: homeassistant.turn_off
         entity_id: light.boot_room
