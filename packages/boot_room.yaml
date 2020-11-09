@@ -67,8 +67,10 @@ automation:
         entity_id: sensor.outside_utility_room_lightlevel
         above: 750
     action:
-      service: homeassistant.turn_off
-      entity_id: light.boot_room
+      - service: homeassistant.turn_off
+        entity_id: light.boot_room
+        data:
+          transition: 600
 
   - alias: Boot room light motion - night view
     initial_state: true
@@ -103,5 +105,7 @@ automation:
       for:
         minutes: 10
     action:
-    - service: light.turn_off
-      entity_id: light.boot_room
+      - service: homeassistant.turn_off
+        entity_id: light.boot_room
+        data:
+          transition: 600
