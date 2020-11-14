@@ -39,6 +39,6 @@ jobs:
                 ); do
                 set -o errexit
                 echo "Testing $file"
-                docker run --rm -v "${PWD}":/config -it esphome/esphome esphome/$file compile
+                docker run --rm -v "${PWD}":/config esphome/esphome esphome/$file compile
             done
           fi
