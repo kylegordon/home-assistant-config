@@ -32,7 +32,7 @@ text_sensor:
   - platform: version
     name: "Firmware version"
   # - platform: ble_scanner
-  #   name: "ESP32 Camera 1 BLE Devices Scanner"
+  #   name: "ESP32 Camera 2 BLE Devices Scanner"
 
 sensor:
   - platform: wifi_signal
