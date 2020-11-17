@@ -1,7 +1,7 @@
 #include "opt3001.h"
 #include "esphome.h"
 
-class MyCustomSensor : public Component, public Sensor {
+class MyCustomSensor : public PollingComponent {
  public:
   void setup() override {
     // This will be called by App.setup()
