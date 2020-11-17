@@ -1,0 +1,50 @@
+esphome:
+  name: lux_meter
+  platform: ESP8266
+  board: d1_mini
+  includes:
+    - opt3001/
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  # FIXME Needs AP details
+
+captive_portal:
+
+logger:
+
+api:
+
+ota:
+
+web_server:
+
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/London
+
+i2c:
+  sda: GPIO4
+  scl: GPIO5
+  scan: True
+
+sensor:
+  # - platform: custom
+  #   lambda: |-
+  #     auto my_sensor = new OPT3001_Sensor();
+  #     App.register_component(my_sensor);
+  #     return {my_sensor};
+
+  #   sensors:
+  #     name: "My Custom Sensor"
+
+  # - platform: custom
+  #   lambda: |-
+  #     auto my_sensor = new MyCustomSensor();
+  #     App.register_component(my_sensor);
+  #     return {my_sensor};
+
+  #   sensors:
+  #     name: "My Custom Sensor"
