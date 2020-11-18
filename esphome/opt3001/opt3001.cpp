@@ -1,10 +1,16 @@
 #include "esphome.h"
 #include "opt3001.h"
 
+// Gets pulled in from the associated lambda in lux_meter.yaml
+// Compile with docker run --rm -v "${PWD}":/config -it esphome/esphome lux_meter.yaml compile
+
 using namespace esphome;
 
-class MyCustomSensor : public PollingComponent {
+class MyCustomSensor : public PollingComponent, public Sensor {
  public:
+  // constructor
+  MyCustomSensor() : PollingComponent(15000) {}
+
   void setup() override {
     // This will be called by App.setup()
   }
