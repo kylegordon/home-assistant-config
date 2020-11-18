@@ -1,5 +1,7 @@
-#include "opt3001.h"
 #include "esphome.h"
+#include "opt3001.h"
+
+using namespace esphome;
 
 class MyCustomSensor : public PollingComponent {
  public:

@@ -1,7 +1,7 @@
+#include "esphome.h"
+
 #ifndef CLOSEDCUBE_OPT3001
 #define CLOSEDCUBE_OPT3001
-
-#include "esphome.h"
 
 typedef enum {
 	RESULT		= 0x00,
