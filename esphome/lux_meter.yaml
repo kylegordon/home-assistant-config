@@ -31,20 +31,11 @@ i2c:
   scan: True
 
 sensor:
-  # - platform: custom
-  #   lambda: |-
-  #     auto my_sensor = new OPT3001_Sensor();
-  #     App.register_component(my_sensor);
-  #     return {my_sensor};
+  - platform: custom
+    lambda: |-
+      auto my_sensor = new MyCustomSensor();
+      App.register_component(my_sensor);
+      return {my_sensor};
 
-  #   sensors:
-  #     name: "My Custom Sensor"
-
-  # - platform: custom
-  #   lambda: |-
-  #     auto my_sensor = new MyCustomSensor();
-  #     App.register_component(my_sensor);
-  #     return {my_sensor};
-
-  #   sensors:
-  #     name: "My Custom Sensor"
+    sensors:
+      name: "My Custom Sensor"
