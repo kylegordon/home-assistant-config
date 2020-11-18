@@ -3,6 +3,12 @@
 #ifndef CLOSEDCUBE_OPT3001
 #define CLOSEDCUBE_OPT3001
 
+class MyCustomSensor : public PollingComponent, public Sensor {
+ public:
+  MyCustomSensor();
+  void setup() override;
+  void loop() override;
+};
 typedef enum {
 	RESULT		= 0x00,
 	CONFIG		= 0x01,
