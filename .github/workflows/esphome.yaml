@@ -20,8 +20,8 @@ jobs:
           args: "version"
       - name: Copy stub files into configuration folder
         run: |
-          cp -R esphome/travis_secrets.yaml esphome/common/secrets.yaml
-          cp -R esphome/travis_secrets.yaml esphome/secrets.yaml
+          cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
+          cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Run esphome on all files
         # yamllint disable rule:line-length
         run: |
