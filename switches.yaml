@@ -2,9 +2,9 @@
   host: 172.24.32.40
   mac: 'b4:43:0d:f9:19:b9'
 
-- platform: broadlink
-  host: 172.24.32.41
-  mac: 'b4:43:0d:f9:19:93'
+# - platform: broadlink
+#   host: 172.24.32.41
+#   mac: 'b4:43:0d:f9:19:93'
 
 #- platform: broadlink
 #  host: 172.24.32.41
