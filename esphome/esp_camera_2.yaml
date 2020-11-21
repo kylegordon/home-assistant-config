@@ -56,7 +56,7 @@ esp32_camera:
   power_down_pin: GPIO32
 
   # Image settings
-  name: ESP32 Camera 1
+  name: ESP32 Camera 2
   resolution: 1600x1200
   # resolution: 800x600 XX
   # resolution: 640x480 XX
