@@ -164,7 +164,6 @@ discovery:
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
-  debug: False
   devices:
     ### Lights ###
     #0a140029f0dd3c0e010060:
