@@ -4,7 +4,7 @@ homeassistant:
 
   auth_providers:
     - type: trusted_networks
-      trusted_networks: 
+      trusted_networks:
         - 172.24.32.0/24
         - 172.24.34.0/24
         - 10.8.0.18/32
@@ -85,7 +85,7 @@ homeassistant:
 frontend:
 
 # Enable the config panel
-config: 
+config:
 
 recorder: !include recorder.yaml
 
