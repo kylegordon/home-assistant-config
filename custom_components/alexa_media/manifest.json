@@ -3,7 +3,8 @@
   "name": "Alexa Media Player",
   "config_flow": true,
   "documentation": "https://github.com/custom-components/alexa_media_player/wiki",
-  "dependencies": ["configurator"],
+  "issue_tracker": "https://github.com/custom-components/alexa_media_player/issues",
+  "dependencies": ["persistent_notification"],
   "codeowners": ["@keatontaylor", "@alandtse"],
-  "requirements": ["alexapy==1.6.1"]
+  "requirements": ["alexapy==1.15.2", "packaging~=20.3", "wrapt~=1.12.1"]
 }
