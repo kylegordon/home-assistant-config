@@ -38,7 +38,6 @@ jobs:
                 -printf "%f\n"
                 ); do
                 set -o errexit
-                echo "Testing $file"
-                docker run --rm -v "${PWD}":/config esphome/esphome esphome/$file compile
+                echo $file | parallel --max-args=1 docker run --rm -v '${PWD}':/config esphome/esphome esphome/{} compile
             done
           fi
