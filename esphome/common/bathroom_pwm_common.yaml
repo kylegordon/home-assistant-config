@@ -31,11 +31,11 @@ output:
     pin: D4
     inverted: True
   - platform: esp8266_pwm
-    id: chan1
+    id: warm
     pin: D2
     inverted: False
   - platform: esp8266_pwm
-    id: chan2
+    id: cold
     pin: D3
     inverted: False
 
@@ -46,15 +46,15 @@ light:
     name: "Wemos Blue LED"
     output: blue_led
   - platform: monochromatic
-    name: "Channel 1"
-    output: chan1
+    name: "Warm White"
+    output: warm
   - platform: monochromatic
-    name: "Channel 2"
-    output: chan2
+    name: "Cold White"
+    output: cold
   - platform: cwww
     name: "Combined output"
-    cold_white: chan1
-    warm_white: chan2
+    cold_white: cold
+    warm_white: warm
     cold_white_color_temperature: 6536 K
     warm_white_color_temperature: 2000 K
     constant_brightness: true
