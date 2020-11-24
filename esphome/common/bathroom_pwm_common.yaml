@@ -1,0 +1,60 @@
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
+    ssid: ${friendly_name}_AP
+    password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+captive_portal:
+
+web_server:
+  port: 80
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: True
+  - platform: esp8266_pwm
+    id: chan1
+    pin: D2
+    inverted: False
+  - platform: esp8266_pwm
+    id: chan2
+    pin: D3
+    inverted: False
+
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "Wemos Blue LED"
+    output: blue_led
+  - platform: monochromatic
+    name: "Channel 1"
+    output: chan1
+  - platform: monochromatic
+    name: "Channel 2"
+    output: chan2
+  - platform: cwww
+    name: "Combined output"
+    cold_white: chan1
+    warm_white: chan2
+    cold_white_color_temperature: 6536 K
+    warm_white_color_temperature: 2000 K
+    constant_brightness: true
