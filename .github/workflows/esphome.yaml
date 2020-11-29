@@ -25,9 +25,12 @@ jobs:
       - name: Run esphome on all files
         # yamllint disable rule:line-length
         run: |
+          # Will be 1 if no files changed
           CHANGED_FILES=$(git diff --name-status HEAD~1...HEAD . | grep -i esphome)
-          if [ -n "$CHANGED_FILES" ]
-          then
+          if [[ $? -ne 0 ]] ; then
+            echo "No changes to ESPHome files"
+            exit 0
+          else
             echo ${PWD}/esphome/
             for file in $(find \
                 ${PWD}/esphome/ \
