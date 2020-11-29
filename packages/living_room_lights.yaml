@@ -41,7 +41,7 @@ automation:
       - service: logbook.log
         data_template:
           name: EVENT
-          message: "Toggling livging room lights"
+          message: "Toggling living room lights"
 
   - alias: Living Room motion - motion timeout
     trigger:
@@ -52,7 +52,7 @@ automation:
           minutes: 60
     action:
       service: homeassistant.turn_off
-      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
+      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
 
   - alias: Living Room motion - sunlight timeout
     trigger:
@@ -61,7 +61,7 @@ automation:
         above: 750
     action:
       service: homeassistant.turn_off
-      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
+      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
 
   - alias: Living Room motion
     trigger:
@@ -96,9 +96,9 @@ automation:
         data_template:
           entity_id: >
             {% if states('sensor.time_of_day') == "Morning" %}
-            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
+            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
             {% else %}
-            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard
+            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
             {% endif %}
           brightness_pct: >
             {% if states('sensor.time_of_day') == "Morning" %}
