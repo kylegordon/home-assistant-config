@@ -6,8 +6,8 @@
       "reauth_successful": "Alexa Media Player successfully reauthenticated."
     },
     "error": {
-      "connection_error": "Error connecting; check network and retry",
-      "identifier_exists": "Email for Alexa URL already registered",
+      "connection_error": "连接错误；检查网络并重试",
+      "identifier_exists": "Alexa URL的电子邮件已注册",
       "invalid_credentials": "Invalid credentials",
       "unknown_error": "Unknown error, please report log info"
     },
@@ -18,48 +18,48 @@
       },
       "authselect": {
         "data": {
-          "authselectoption": "OTP method"
+          "authselectoption": "OTP方式"
         },
-        "description": "**{email} - alexa.{url}**  \n{message}",
-        "title": "Alexa Media Player - One Time Password"
+        "description": "**{email} - alexa.{url}**\n{message}",
+        "title": "Alexa Media Player - 一次性密码"
       },
       "captcha": {
         "data": {
-          "captcha": "Captcha",
-          "password": "Password",
+          "captcha": "验证码",
+          "password": "密码",
           "securitycode": "2FA Code (recommended to avoid login issues)"
         },
-        "description": "**{email} - alexa.{url}**  \n{message}  \n {captcha_image}",
-        "title": "Alexa Media Player - Captcha"
+        "description": "**{email} - alexa.{url}**  \n>{message}  \n{captcha_image}",
+        "title": "Alexa Media Player-验证码"
       },
       "claimspicker": {
         "data": {
-          "authselectoption": "Verification method"
+          "authselectoption": "验证方式"
         },
         "description": "**{email} - alexa.{url}**  \nPlease select verification method by number. (e.g., `0` or `1`)  \n{message}",
-        "title": "Alexa Media Player - Verification Method"
+        "title": "Alexa Media Player - 验证方法"
       },
       "twofactor": {
         "data": {
-          "securitycode": "2FA Code"
+          "securitycode": "2FA代码"
         },
-        "description": "**{email} - alexa.{url}**  \nEnter the One Time Password (OTP).  \n{message}",
+        "description": "**{email} - Alexa.{url} ** \n输入一次性密码（OTP）。 \n {message}",
         "title": "Alexa Media Player - Two Factor Authentication"
       },
       "user": {
         "data": {
-          "cookies_txt": "Cookies.txt data",
-          "debug": "Advanced debugging",
-          "email": "Email Address",
+          "cookies_txt": "config::step::user::data::cookies_txt",
+          "debug": "高级调试",
+          "email": "电子邮件地址",
           "exclude_devices": "Excluded device (comma separated)",
           "include_devices": "Included device (comma separated)",
-          "password": "Password",
+          "password": "密码",
           "scan_interval": "Seconds between scans",
           "securitycode": "2FA Code (recommended to avoid login issues)",
           "url": "Amazon region domain (e.g., amazon.co.uk)"
         },
-        "description": "Please enter your [information](https://github.com/custom-components/alexa_media_player/wiki/Configuration#integrations-page). **[Cookie import](https://github.com/custom-components/alexa_media_player/wiki/Configuration#cookie-import) may be easiest!**   \n**WARNING: Amazon incorrectly reports 'Enter a valid email or mobile number' when [2FA Code is required](https://github.com/custom-components/alexa_media_player/wiki/Configuration#enable-two-factor-authentication-for-your-amazon-account).**  \n>{message}",
-        "title": "Alexa Media Player - Configuration"
+        "description": "请输入您的信息。",
+        "title": "Alexa Media Player-配置"
       }
     }
   },
