@@ -25,7 +25,7 @@ jobs:
             echo "No changes to ESPHome files"
             exit 0
           fi
-        - name: Copy stub files into configuration folder
+      - name: Copy stub files into configuration folder
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
