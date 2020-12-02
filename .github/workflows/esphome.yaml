@@ -18,6 +18,13 @@ jobs:
         uses: "docker://esphome/esphome"
         with:
           args: "version"
+      - name: Check for esphome tests requirement
+        run: |
+          CHANGED_FILES=$(git diff --name-status HEAD~1...HEAD . | grep -i esphome || true)
+          if [ -z "$CHANGED_FILES" ] ; then
+            echo "No changes to ESPHome files"
+            exit 0
+          fi
       - name: Copy stub files into configuration folder
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
@@ -25,22 +32,14 @@ jobs:
       - name: Run esphome on all files
         # yamllint disable rule:line-length
         run: |
-          # Will be 1 if no files changed
-          CHANGED_FILES=$(git diff --name-status HEAD~1...HEAD . | grep -i esphome)
-          if [[ $? -ne 0 ]] ; then
-            echo "No changes to ESPHome files"
-            exit 0
-          else
-            echo ${PWD}/esphome/
-            for file in $(find \
-                ${PWD}/esphome/ \
-                -type f \
-                -maxdepth 1\
-                -name "*.yaml"\
-                -not -name "secrets.yaml"\
-                -printf "%f\n"
-                ); do
-                set -o errexit
-                echo $file | parallel --max-args=1 docker run --rm -v '${PWD}':/config esphome/esphome esphome/{} compile
-            done
-          fi
+          for file in $(find \
+              ${PWD}/esphome/ \
+              -type f \
+              -maxdepth 1\
+              -name "*.yaml"\
+              -not -name "secrets.yaml"\
+              -printf "%f\n"
+              ); do
+              set -o errexit
+              echo $file | parallel --max-args=1 docker run --rm -v '${PWD}':/config esphome/esphome esphome/{} compile
+          done
