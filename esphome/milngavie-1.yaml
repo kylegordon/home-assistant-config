@@ -1,0 +1,6 @@
+substitutions:
+  device_name: milngavie-1-sensor
+  device_description: Milngavie-1 Sensor
+  friendly_name: Milngavie-1 Sensor
+
+<<: !include common/esp8266_dht_sensor_common.yaml
