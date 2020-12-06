@@ -13,8 +13,6 @@ automation:
       - platform: numeric_state
         entity_id: sensor.outside_utility_room_lightlevel
         below: 100
-        for:
-          minutes: 5
     condition:
       condition: or
       conditions:
