@@ -7,6 +7,17 @@ group:
       - light.star_burst
       - light.christmas_star
 
+binary_sensor:
+  - platform: template
+    sensors:
+      christmastime:
+        friendly_name: ChristmasTime
+        value_template: >
+            '{{ "true" if now().strftime("%j") >= 336 and now().strftime("%j") <= 6 else "false" }}'
+
+        # value_template: "{{ 'Online' if is_state('device_tracker.server_pihole', 'home') else 'Offline' }}"
+
+
 automation:
   - alias: Outside decorations - on evening
     trigger:
