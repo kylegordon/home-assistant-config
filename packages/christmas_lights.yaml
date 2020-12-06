@@ -12,8 +12,13 @@ binary_sensor:
     sensors:
       christmastime:
         friendly_name: Christmas Time
+        # Use %j to get the day of the year, force from string to integer, and return true if after December 1st or before January 6th
         value_template: >
-            '{{ "true" if now().strftime("%j") | int >= 336 or now().strftime("%j") | int <= 6 else "false" }}'
+            {% if now().strftime("%j") | int >= 336 or now().strftime("%j") | int <= 6 %}
+            true
+            {% else %}
+            false
+            {% endif %}
 
 automation:
   - alias: Outside decorations - on evening
