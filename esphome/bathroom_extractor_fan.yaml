@@ -1,0 +1,6 @@
+substitutions:
+  device_name: bathroom_extractor_fan
+  device_description: Bathroom Extractor Fan
+  friendly_name: Bathroom Extractor Fan
+
+<<: !include common/sonoff_basic_switch_common.yaml
