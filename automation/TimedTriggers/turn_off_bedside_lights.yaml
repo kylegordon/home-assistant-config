@@ -1,6 +1,6 @@
 alias: "Off wakup lights"
 trigger:
-  - platform: state
+  - platform: numeric_state
     entity_id: sensor.outside_utility_room_lightlevel
     above: 500
 action:
