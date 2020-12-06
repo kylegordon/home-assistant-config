@@ -4,7 +4,7 @@ homeassistant:
 
   auth_providers:
     - type: trusted_networks
-      trusted_networks: 
+      trusted_networks:
         - 172.24.32.0/24
         - 172.24.34.0/24
         - 10.8.0.18/32
@@ -26,7 +26,10 @@ homeassistant:
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
+
+  # Includes
   packages: !include_dir_named packages
+
   customize:
     script.restart_ha:
       icon: mdi:power
@@ -82,7 +85,7 @@ homeassistant:
 frontend:
 
 # Enable the config panel
-config: 
+config:
 
 recorder: !include recorder.yaml
 
@@ -164,7 +167,6 @@ discovery:
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
-  debug: False
   devices:
     ### Lights ###
     #0a140029f0dd3c0e010060:
