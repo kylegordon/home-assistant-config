@@ -13,10 +13,7 @@ binary_sensor:
       christmastime:
         friendly_name: ChristmasTime
         value_template: >
-            '{{ "true" if now().strftime("%j") >= 336 and now().strftime("%j") <= 6 else "false" }}'
-
-        # value_template: "{{ 'Online' if is_state('device_tracker.server_pihole', 'home') else 'Offline' }}"
-
+            '{{ "true" if now().strftime("%j") | int >= 336 or now().strftime("%j") | int <= 6 else "false" }}'
 
 automation:
   - alias: Outside decorations - on evening
