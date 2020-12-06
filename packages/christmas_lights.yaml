@@ -27,16 +27,9 @@ automation:
         entity_id: sensor.outside_utility_room_lightlevel
         below: 100
     condition:
-      condition: or
-      conditions:
-        - condition: template
-          value_template: >
-            {% set n = now() %}
-            {{ n.month == 12 }}
-        - condition: template
-          value_template: >
-            {% set n = now() %}
-            {{ n.month == 1 and n.day <= 6 }}
+      - condition: state
+        entity_id: binary_sensor.christmastime
+        state: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: light.outside_decorations
@@ -58,16 +51,9 @@ automation:
       - platform: time
         at: "06:00:00"
     condition:
-      condition: or
-      conditions:
-        - condition: template
-          value_template: >
-            {% set n = now() %}
-            {{ n.month == 12 }}
-        - condition: template
-          value_template: >
-            {% set n = now() %}
-            {{ n.month == 1 and n.day <= 6 }}
+      - condition: state
+        entity_id: binary_sensor.christmastime
+        state: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: light.outside_decorations
@@ -106,10 +92,9 @@ automation:
       - platform: time
         at: "06:00:00"
     condition:
-      - condition: template
-        value_template: '{{ now().strftime("%m")|int == "12"
-                         or
-                         now().strftime("%m%d")|int <= 0106 }}'
+      - condition: state
+        entity_id: binary_sensor.christmastime
+        state: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: group.christmas_lights
@@ -124,10 +109,9 @@ automation:
       - platform: time
         at: "00:00:00"
     condition:
-      - condition: template
-        value_template: '{{ now().strftime("%m")|int == "12"
-                         or
-                         now().strftime("%m%d")|int <= 0106 }}'
+      - condition: state
+        entity_id: binary_sensor.christmastime
+        state: 'on'
     action:
       - service: homeassistant.turn_off
         entity_id: group.christmas_lights
