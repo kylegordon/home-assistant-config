@@ -11,7 +11,7 @@ binary_sensor:
   - platform: template
     sensors:
       christmastime:
-        friendly_name: ChristmasTime
+        friendly_name: Christmas Time
         value_template: >
             '{{ "true" if now().strftime("%j") | int >= 336 or now().strftime("%j") | int <= 6 else "false" }}'
 
