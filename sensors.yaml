@@ -50,16 +50,19 @@
       friendly_name: Next Bin
       #friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
       #entity_id: calendar.next_bin
+      unique_id: calendar.next_bin
 
     kyle_status:
       value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
       friendly_name: 'Kyle'
       #entity_id: input_select.kyle_status_dropdown
+      unique_id: input_select.kyle_status_dropdown
 
     charlotte_status:
       value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
       friendly_name: 'Charlotte'
       #entity_id: input_select.charlotte_status_dropdown
+      unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
   source: sensor.electricity_energy_usage
