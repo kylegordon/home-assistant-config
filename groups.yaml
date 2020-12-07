@@ -68,14 +68,24 @@ living_room_lights:
   entities:
     - light.uplighter
     - light.sofa_overhead
-    - light.dining_table_overhead
     - light.edison_lamp
     - light.lava_lamp
-    - light.sideboard
-    - light.christmas_tree
-    - light.candle_arch
     - light.star_burst
     - light.arc_lamp
+
+christmas_lights:
+  name: Christmas Decorations
+  entities:
+    - light.christmas_tree
+    - light.candle_arch
+    - light.christmas_star
+
+dining_nook_lights:
+  name: Dining Nook
+  entities:
+    - light.dining_table_overhead
+    - light.sideboard
+    - light.train_cabinets
 
 bedroom_1:
   name: Master bedroom
