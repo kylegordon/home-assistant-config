@@ -73,13 +73,6 @@ living_room_lights:
     - light.star_burst
     - light.arc_lamp
 
-christmas_lights:
-  name: Christmas Decorations
-  entities:
-    - light.christmas_tree
-    - light.candle_arch
-    - light.christmas_star
-
 dining_nook_lights:
   name: Dining Nook
   entities:
