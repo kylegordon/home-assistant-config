@@ -1,0 +1,107 @@
+automation:
+  - alias: Boot Room light toggle
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.boot_room_touch_pad
+        to: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id:
+          - switch.boot_room_switch_relay
+      - service: light.toggle
+        entity_id: light.boot_room
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling boot room light"
+
+  - alias: Boot room light motion
+    initial_state: true
+    trigger:
+    - platform: state
+      entity_id: binary_sensor.boot_room_motion
+      to: 'on'
+    # Sensor attached to wrong door at the moment...
+    #   - platform: state
+    #     entity_id: binary_sensor.boot_room_door
+    #     to: 'on'
+    condition:
+      - condition: state
+        entity_id: input_boolean.night_view
+        state: "off"
+      - condition: numeric_state
+        entity_id: sensor.outside_utility_room_lightlevel
+        below: 750
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: light.boot_room
+          brightness_pct: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            100
+            {% elif states('sensor.time_of_day') == "Day" %}
+            100
+            {% elif states('sensor.time_of_day') == "Night" %}
+            30
+            {% endif %}
+          transition: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            10
+            {% elif states('sensor.time_of_day') == "Day" %}
+            2
+            {% elif states('sensor.time_of_day') == "Night" %}
+            5
+            {% endif %}
+          color_temp: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            200
+            {% elif states('sensor.time_of_day') == "Day" %}
+            300
+            {% elif states('sensor.time_of_day') == "Night" %}
+            375
+            {% endif %}
+
+  - alias: Boot Room motion - sunlight timeout
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.outside_utility_room_lightlevel
+        above: 750
+    action:
+      service: homeassistant.turn_off
+      entity_id: light.boot_room
+
+  - alias: Boot room light motion - night view
+    initial_state: true
+    trigger:
+    - platform: state
+      entity_id: binary_sensor.boot_room_motion
+      to: 'on'
+    # Sensor attached to wrong door at the moment...
+    #   - platform: state
+    #     entity_id: binary_sensor.boot_room_door
+    #     to: 'on'
+    condition:
+      - condition: state
+        entity_id: input_boolean.night_view
+        state: "on"
+      - condition: numeric_state
+        entity_id: sensor.outside_utility_room_lightlevel
+        below: 750
+    action:
+      - service: light.turn_on
+        data_template:
+          entity_id: light.boot_room
+          brightness_pct: 30
+          transition: 10
+          rgb_color: [255,0,0]
+
+  - alias: Boot room motion - 10 minute timeout
+    trigger:
+    - platform: state
+      entity_id: binary_sensor.boot_room_motion
+      to: 'off'
+      for:
+        minutes: 10
+    action:
+    - service: light.turn_off
+      entity_id: light.boot_room

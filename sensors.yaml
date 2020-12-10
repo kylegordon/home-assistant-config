@@ -29,12 +29,6 @@
 - platform: template
   sensors:
     last_alexa:
-      entity_id:
-        - media_player.bedroom
-        - media_player.garage
-        - media_player.kitchen
-        - media_player.living_room
-        - media_player.study
       value_template: >
         {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
 
@@ -50,85 +44,25 @@
 
 - platform: template
   sensors:
-    hall_rooms_motion_sensor_battery:
-      friendly_name: "Hall rooms motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.hall_rooms_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%' 
-
-    hall_door_motion_sensor_battery:
-      friendly_name: "Hall door motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.hall_door_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    garden_hall_motion_sensor_battery:
-      friendly_name: "Garden hall motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.garden_hall_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%' 
-
-    garden_hall_door_sensor_battery:
-      friendly_name: "Garden hall door sensor battery"
-      value_template: '{{ state_attr("binary_sensor.garden_hall_door","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    ensuite_motion_sensor_battery:
-      friendly_name: "Ensuite motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.ensuite_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    kitchen_motion_sensor_battery:
-      friendly_name: "Kitchen motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.kitchen_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    living_room_motion_sensor_battery:
-      friendly_name: "Living room motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.living_room_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    utility_room_motion_sensor_battery:
-      friendly_name: "Utility room motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.utility_room_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    utility_room_door_sensor_battery:
-      friendly_name: "Utility room door sensor battery"
-      value_template: '{{ state_attr("binary_sensor.utlity_room_door","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
     next_bin:
       #value_template: "{{ states.calendar.next_bin.attributes.message }}"
       value_template: "{{ states.calendar.next_bin.attributes.message|replace(' bin','') }}"
       friendly_name: Next Bin
       #friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
-      entity_id: calendar.next_bin
+      #entity_id: calendar.next_bin
+      unique_id: calendar.next_bin
 
     kyle_status:
       value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
       friendly_name: 'Kyle'
-      entity_id: input_select.kyle_status_dropdown
+      #entity_id: input_select.kyle_status_dropdown
+      unique_id: input_select.kyle_status_dropdown
 
     charlotte_status:
       value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
       friendly_name: 'Charlotte'
-      entity_id: input_select.charlotte_status_dropdown
-
-## RFXcom ##
-
-- platform: rfxtrx
-  automatic_add: True
-  devices:
-    # Old 115a0100e452000000046600006462cb3e79:
-    115a0102e20200000003e500000000d02979:
-      name: Electricity
+      #entity_id: input_select.charlotte_status_dropdown
+      unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
   source: sensor.electricity_energy_usage
@@ -223,9 +157,9 @@
     time_of_day:
       value_template: >
         {% set current_hour = strptime(states('sensor.time'), "%H:%M").hour %}
-        {% if 6 <= current_hour < 12 %}
+        {% if 6 <= current_hour < 9 %}
           Morning
-        {% elif 12 <= current_hour < 22 %}
+        {% elif 9 <= current_hour < 22 %}
           Day
         {% else %}
           Night
