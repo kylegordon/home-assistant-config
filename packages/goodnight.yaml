@@ -25,6 +25,7 @@ automation:
         - group.utility_room
         - group.kitchen
         - group.hall
+        - light.boot_room
         - light.twig_lights
         - group.bedroom_1
         - group.bedroom_3
@@ -34,7 +35,7 @@ automation:
         # If guests are staying, don't turn off their bedroom lights
         conditions: 
           - condition: state
-            entity_id: input_boolean.guest_mode
+            entity_id: binary_sensor.guest_mode
             state: 'off'
       - service: homeassistant.turn_off
         entity_id:
