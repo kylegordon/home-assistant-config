@@ -48,10 +48,12 @@ switch:
   - platform: gpio
     name: "${friendly_name} Relay 1"
     pin: GPIO12
+    icon: "mdi:valve"
     id: relay_1
   - platform: gpio
     name: "${friendly_name} Relay 2"
     pin: GPIO5
+    icon: "mdi:valve"
     id: relay_2
 
 sensor:
