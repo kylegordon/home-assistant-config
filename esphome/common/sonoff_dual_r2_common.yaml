@@ -34,7 +34,7 @@ binary_sensor:
       inverted: True
     name: "${friendly_name} Button 1"
     on_press:
-      - switch.toggle: relay
+      - switch.toggle: relay_1
   - platform: gpio
     pin:
       number: GPIO10
@@ -42,13 +42,17 @@ binary_sensor:
       inverted: True
     name: "${friendly_name} Button 2"
     on_press:
-      - switch.toggle: relay
+      - switch.toggle: relay_2
 
 switch:
   - platform: gpio
-    name: "${friendly_name} Relay"
+    name: "${friendly_name} Relay 1"
     pin: GPIO12
-    id: relay
+    id: relay_1
+  - platform: gpio
+    name: "${friendly_name} Relay 2"
+    pin: GPIO5
+    id: relay_2
 
 sensor:
   - platform: wifi_signal
