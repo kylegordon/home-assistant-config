@@ -1,0 +1,8 @@
+substitutions:
+  device_name: boiler_valve_controls
+  device_description: Boiler Valve Controls
+  friendly_name: Boiler Valve Controls
+
+<<: !include common/sonoff_dual_r2_common.yaml
+
+
