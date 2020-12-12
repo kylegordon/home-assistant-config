@@ -1,0 +1,16 @@
+input_boolean:
+  guest_mode:
+    name: Guest Mode
+    icon: mdi:account-alert
+    initial: off
+
+binary_sensor:
+  - platform: template
+    sensors:
+      guest_mode:
+          friendly_name: Guest Mode
+          value_template: "{{
+            is_state('input_boolean.guest_mode', 'on')
+            or is_state('person.ronnie','home')
+            or is_state('person.eilean', 'home')
+            }}"

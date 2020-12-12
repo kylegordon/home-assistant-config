@@ -9,9 +9,9 @@ trigger:
     #from: "paused"
     to: "playing"
 condition:
-  - condition: sun
-    after: sunset
-    after_offset: "-1:30:00"
+  - condition: numeric_state
+    entity_id: sensor.outside_utility_room_lightlevel
+    below: 750
   - condition: state
     entity_id: binary_sensor.kitchen_motion
     state: "off"

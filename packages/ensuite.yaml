@@ -8,7 +8,39 @@ automation:
       - service: switch.turn_on
         entity_id: switch.ensuite_switch_relay
       - service: light.toggle
-        entity_id: light.ensuite
+        data_template:
+          entity_id: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            light.ensuite_facilities
+            {% elif states('sensor.time_of_day') == "Night" %}
+            light.ensuite_facilities
+            {% else %}
+            light.ensuite
+            {% endif %}
+          brightness_pct: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            100
+            {% elif states('sensor.time_of_day') == "Day" %}
+            100
+            {% elif states('sensor.time_of_day') == "Night" %}
+            20
+            {% endif %}
+          #transition: >
+          #  {% if states('sensor.time_of_day') == "Morning" %}
+          #  10
+          #  {% elif states('sensor.time_of_day') == "Day" %}
+          #  2
+          #  {% elif states('sensor.time_of_day') == "Night" %}
+          #  30
+          #  {% endif %}
+          color_temp: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            200
+            {% elif states('sensor.time_of_day') == "Day" %}
+            300
+            {% elif states('sensor.time_of_day') == "Night" %}
+            375
+            {% endif %}
       - service: logbook.log
         data_template:
           name: EVENT
@@ -19,10 +51,6 @@ automation:
       - platform: state
         entity_id: binary_sensor.ensuite_motion
         to: 'on'
-    condition:
-      - condition: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        below: 750
     action:
       - service: light.turn_on
         data_template:

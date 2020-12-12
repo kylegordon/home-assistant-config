@@ -5,6 +5,9 @@ trigger:
     to: 'on'
 condition:
   - condition: state
+    entity_id: input_boolean.night_view
+    state: "off"
+  - condition: state
     entity_id: sun.sun
     state: "below_horizon"
 action:

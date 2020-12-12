@@ -1,0 +1,6 @@
+substitutions:
+  device_name: sense_gloworb_3
+  device_description: Sense GlowOrb 3
+  friendly_name: Sense GlowOrb 3
+
+<<: !include common/sense_gloworb_common.yaml

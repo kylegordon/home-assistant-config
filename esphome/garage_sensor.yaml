@@ -33,9 +33,9 @@ sensor:
   - platform: dallas
     address: 0xE40000031D87AC28
     name: "Garage Temperature"
-  - platform: dallas
-    address: 0xE50000031DC8B828
-    name: "Carport Temperature"
+#   - platform: dallas
+#     address: 0xE50000031DC8B828
+#     name: "Carport Temperature"
 
 output:
   # Register the blue LED as a dimmable output ....

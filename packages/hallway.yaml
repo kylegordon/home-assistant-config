@@ -1,4 +1,51 @@
 automation:
+  - alias: Hallway light toggle
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.hall_single_switch_touch_pad
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.hall_2_gang_touchpad_1
+        to: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id:
+          - switch.hall_single_switch_relay
+          - switch.hall_2_gang_relay_1
+      - service: light.toggle
+        data_template:
+          entity_id: light.hall
+          brightness_pct: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            100
+            {% elif states('sensor.time_of_day') == "Day" %}
+            100
+            {% elif states('sensor.time_of_day') == "Night" %}
+            30
+            {% endif %}
+          # If you use a transition here, it causes delays when turning off at the lightswitch, contrary to 'expected behaviour'
+          # Specifically, toggle 'on' to, say, 30%, and then toggle 'off' and the dimming duration always seems too long.
+          #transition: >
+          #  {% if states('sensor.time_of_day') == "Morning" %}
+          #  10
+          #  {% elif states('sensor.time_of_day') == "Day" %}
+          #  2
+          #  {% elif states('sensor.time_of_day') == "Night" %}
+          #  5
+          #  {% endif %}
+          color_temp: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            200
+            {% elif states('sensor.time_of_day') == "Day" %}
+            300
+            {% elif states('sensor.time_of_day') == "Night" %}
+            375
+            {% endif %}
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling hallway light"
+
   - alias: Hallway light motion
     initial_state: true
     trigger:
@@ -7,9 +54,6 @@ automation:
         to: 'on'
       - platform: state
         entity_id: binary_sensor.hall_rooms_motion
-        to: 'on'
-      - platform: state
-        entity_id: binary_sensor.garden_hall_motion
         to: 'on'
     condition:
       - condition: numeric_state
@@ -25,7 +69,7 @@ automation:
             {% elif states('sensor.time_of_day') == "Day" %}
             100
             {% elif states('sensor.time_of_day') == "Night" %}
-            30
+            10
             {% endif %}
           transition: >
             {% if states('sensor.time_of_day') == "Morning" %}
@@ -43,8 +87,6 @@ automation:
             {% elif states('sensor.time_of_day') == "Night" %}
             375
             {% endif %}
-      - service: light.turn_on
-        entity_id: light.twig_lights
 
   - alias: Hallway motion - 10 minute timeout
     trigger:
@@ -61,5 +103,3 @@ automation:
     action:
     - service: light.turn_off
       entity_id: group.hall
-    - service: light.turn_off
-      entity_id: light.twig_lights

@@ -7,13 +7,14 @@ Alexa Devices Alarm Control Panel using Guard Mode.
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
 """
-import logging
 from asyncio import sleep
+import logging
 from typing import Dict, List, Text  # noqa pylint: disable=unused-import
 
+from alexapy import AlexaAPI, hide_email, hide_serial
 from homeassistant import util
-from homeassistant.components.alarm_control_panel import AlarmControlPanel
 from homeassistant.const import (
+    CONF_EMAIL,
     STATE_ALARM_ARMED_AWAY,
     STATE_ALARM_DISARMED,
     STATE_UNAVAILABLE,
@@ -21,19 +22,28 @@ from homeassistant.const import (
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.event import async_call_later
+from simplejson import JSONDecodeError
 
-from . import (
-    CONF_EMAIL,
+from .alexa_media import AlexaMedia
+from .const import (
     CONF_EXCLUDE_DEVICES,
     CONF_INCLUDE_DEVICES,
+    CONF_QUEUE_DELAY,
     DATA_ALEXAMEDIA,
+    DEFAULT_QUEUE_DELAY,
     DOMAIN as ALEXA_DOMAIN,
     MIN_TIME_BETWEEN_FORCED_SCANS,
     MIN_TIME_BETWEEN_SCANS,
-    hide_email,
-    hide_serial,
 )
-from .helpers import _catch_login_errors, add_devices, retry_async
+from .helpers import _catch_login_errors, add_devices
+
+try:
+    from homeassistant.components.alarm_control_panel import (
+        AlarmControlPanelEntity as AlarmControlPanel,
+    )
+except ImportError:
+    from homeassistant.components.alarm_control_panel import AlarmControlPanel
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -114,19 +124,16 @@ async def async_unload_entry(hass, entry) -> bool:
     return True
 
 
-class AlexaAlarmControlPanel(AlarmControlPanel):
+class AlexaAlarmControlPanel(AlarmControlPanel, AlexaMedia):
     """Implementation of Alexa Media Player alarm control panel."""
 
     def __init__(self, login, media_players=None) -> None:
         # pylint: disable=unexpected-keyword-arg
         """Initialize the Alexa device."""
-        from alexapy import AlexaAPI
-
-        # Class info
-        self._login = login
-        self.alexa_api = AlexaAPI(self, login)
-        self.alexa_api_session = login.session
-        self.account = hide_email(login.email)
+        super().__init__(None, login)
+        # AlexaAPI requires a AlexaClient object, need to clean this up
+        self._available = None
+        self._assumed_state = None
 
         # Guard info
         self._appliance_id = None
@@ -140,7 +147,6 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
     async def init(self):
         """Initialize."""
         try:
-            from simplejson import JSONDecodeError
 
             data = await self.alexa_api.get_guard_details(self._login)
             guard_dict = data["locationDetails"]["locationDetails"]["Default_Location"][
@@ -217,6 +223,10 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
             pass
         import json
 
+        if self._login.session.closed:
+            self._available = False
+            self._assumed_state = True
+            return
         _LOGGER.debug("%s: Refreshing %s", self.account, self.name)
         state = None
         state_json = await self.alexa_api.get_guard_state(
@@ -240,6 +250,8 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
                 json.dumps(state_json["errors"]) if state_json else None,
             )
         if state is None:
+            self._available = False
+            self._assumed_state = True
             return
         if state == "ARMED_AWAY":
             self._state = STATE_ALARM_ARMED_AWAY
@@ -247,8 +259,10 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
             self._state = STATE_ALARM_DISARMED
         else:
             self._state = STATE_ALARM_DISARMED
+        self._available = True
+        self._assumed_state = False
         _LOGGER.debug("%s: Alarm State: %s", self.account, self.state)
-        self.async_schedule_update_ha_state()
+        self.async_write_ha_state()
 
     @_catch_login_errors
     async def _async_alarm_set(self, command: Text = "", code=None) -> None:
@@ -268,8 +282,13 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
         )
         if available_media_players:
             _LOGGER.debug("Sending guard command to: %s", available_media_players[0])
+            available_media_players[0].check_login_changes()
             await available_media_players[0].alexa_api.set_guard_state(
-                self._appliance_id.split("_")[2], command_map[command]
+                self._appliance_id.split("_")[2],
+                command_map[command],
+                queue_delay=self.hass.data[DATA_ALEXAMEDIA]["accounts"][self.email][
+                    "options"
+                ].get(CONF_QUEUE_DELAY, DEFAULT_QUEUE_DELAY),
             )
             await sleep(2)  # delay
         else:
@@ -278,15 +297,13 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
                 self._login, self._guard_entity_id, command
             )
         await self.async_update(no_throttle=True)
-        self.async_schedule_update_ha_state()
+        self.async_write_ha_state()
 
-    @_catch_login_errors
     async def async_alarm_disarm(self, code=None) -> None:
         # pylint: disable=unexpected-keyword-arg
         """Send disarm command."""
         await self._async_alarm_set(STATE_ALARM_DISARMED)
 
-    @_catch_login_errors
     async def async_alarm_arm_away(self, code=None) -> None:
         """Send arm away command."""
         # pylint: disable=unexpected-keyword-arg
@@ -329,3 +346,13 @@ class AlexaAlarmControlPanel(AlarmControlPanel):
         except ImportError:
             return 0
         return SUPPORT_ALARM_ARM_AWAY
+
+    @property
+    def available(self):
+        """Return the availability of the device."""
+        return self._available
+
+    @property
+    def assumed_state(self):
+        """Return whether the state is an assumed_state."""
+        return self._assumed_state
