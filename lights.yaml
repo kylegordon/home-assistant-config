@@ -42,6 +42,10 @@
   name: "Monitor Lights"
   entity_id: switch.monitor_lights
 
+- platform: switch
+  name: "Christmas Tree"
+  entity_id: switch.christmas_tree
+
 - platform: group
   name: Decking Lights
   entities:

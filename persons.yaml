@@ -13,5 +13,11 @@
 - name: Ronnie
   id: Ronnie0001
   device_trackers:
-    - device_tracker.ronnie_thea
     - device_tracker.94_65_2d_dd_d3_1d
+    - device_tracker.48_88_ca_42_6f_36
+
+- name: Eilean
+  id: Eilean0001
+  device_trackers:
+    - device_tracker.84_b8_b8_b9_b7_37
+    - device_tracker.7c_50_49_74_6a_0f
