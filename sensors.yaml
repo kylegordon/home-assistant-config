@@ -128,7 +128,7 @@
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
-    - sensor.utility_room_sensor_temperature
+    #- sensor.utility_room_sensor_temperature
     - sensor.study_sensor_temperature
     - sensor.hallway_sensor_temperature
     - sensor.craft_room_temperature
