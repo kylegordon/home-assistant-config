@@ -7,4 +7,4 @@
   name: Hot Water
   heater: switch.boiler_valve_controls_relay_1
   target_sensor: sensor.hot_tank_temperature
-  max_temp: 60
+  max_temp: 80
