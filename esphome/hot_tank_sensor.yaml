@@ -31,11 +31,8 @@ sensor:
   - platform: uptime
     name: "Device uptime"
   - platform: dallas
-    address: 0xE40000031D87AC28
+    address: 0xFC00000409F3B028
     name: "Hot Tank Temperature"
-#   - platform: dallas
-#     address: 0xE50000031DC8B828
-#     name: "Carport Temperature"
 
 output:
   # Register the blue LED as a dimmable output ....
