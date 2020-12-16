@@ -27,7 +27,7 @@ automation:
         below: 300
       - condition: time
         after: '16:00:00'
-        before: '23:00:00'
+        before: '00:00:00'
     action:
       - service: light.turn_on
         data_template:
