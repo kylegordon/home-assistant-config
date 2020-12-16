@@ -17,7 +17,6 @@ automation:
           - light.sense_gloworb_2_ring
           - light.sense_gloworb_3_ring
 
-
   - alias: Cheerlights Outside
     trigger:
       platform: mqtt
