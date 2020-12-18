@@ -113,6 +113,11 @@ automation:
             {% endif %}
           color_temp: >
             200
+      # https://developers.home-assistant.io/docs/core/entity/climate/
+      - service: climate.set_preset_mode
+        data_template:
+          entity_id: climate.hot_water
+          preset_mode: 'boost'
       - service: notify.alexa_media
         data:
           target:
@@ -121,6 +126,21 @@ automation:
             type: announce
             #method: all
           message: "Hello! Enjoy your shower!"
+
+  - alias: Ensuite shower off
+    description: Return the heating boost to eco mode after the shower is finished
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.shower_pump_power_plug_power
+        below: 10
+        for:
+          minutes: 10
+    action:
+      # https://developers.home-assistant.io/docs/core/entity/climate/
+      - service: climate.set_preset_mode
+        data_template:
+          entity_id: climate.hot_water
+          preset_mode: 'eco'
 
   - alias: Ensuite motion - night timeout
     trigger:
