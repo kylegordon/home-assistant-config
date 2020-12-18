@@ -3,12 +3,17 @@ esphome:
   platform: ESP8266
   board: d1_mini
   includes:
-    - opt3001/
+    - ClosedCube_OPT3001/ClosedCube_OPT3001.h
+    - ClosedCube_OPT3001/ClosedCube_OPT3001.cpp
+    - OPT3001.h
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
-  # FIXME Needs AP details
+  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
+    # FIXME to be incorporated into a common file
+    ssid: OPT3001_AP
+    password: !secret wifi_pass
 
 captive_portal:
 
@@ -33,9 +38,11 @@ i2c:
 sensor:
   - platform: custom
     lambda: |-
-      auto my_sensor = new MyCustomSensor();
-      App.register_component(my_sensor);
-      return {my_sensor};
+      auto opt3001 = new MyOPT3001();
+      App.register_component(opt3001);
+      return {opt3001->manufacturer_id_sensor, opt3001->device_id_sensor, opt3001->high_limit_sensor, opt3001->low_limit_sensor, opt3001->lux_sensor};
 
     sensors:
-      name: "My Custom Sensor"
+    - name: "Temperature"
+      unit_of_measurement: °C
+      accuracy_decimals: 2
