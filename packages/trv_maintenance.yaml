@@ -1,0 +1,48 @@
+automation:
+  - alias: TRV maintenance - boost
+    trigger:
+      - platform: time_pattern
+        hours: 10
+        minutes: 21
+        seconds: 0
+    condition:
+      - condition: time
+        weekday:
+        - thu
+    action:
+      - service: climate.set_preset_mode
+        data_template:
+          entity_id: climate.eurotronic_eur_spiritz_wall_radiator_thermostat_heat
+          preset_mode: 'boost'
+      - service: climate.set_preset_mode
+        data_template:
+          entity_id: climate.eurotronic_eur_spiritz_wall_radiator_thermostat_heat_2
+          preset_mode: 'boost'
+      - service: climate.set_preset_mode
+        data_template:
+          entity_id: climate.eurotronic_eur_spiritz_wall_radiator_thermostat_heat_3
+          preset_mode: 'boost'
+
+  - alias: TRV maintenance - normal
+    trigger:
+      - platform: time_pattern
+        hours: 10
+        minutes: 29
+        seconds: 0
+    condition:
+      - condition: time
+        weekday:
+        - thu
+    action:
+      - service: climate.set_preset_mode
+        data_template:
+          entity_id: climate.eurotronic_eur_spiritz_wall_radiator_thermostat_heat
+          preset_mode: 'none'
+      - service: climate.set_preset_mode
+        data_template:
+          entity_id: climate.eurotronic_eur_spiritz_wall_radiator_thermostat_heat_2
+          preset_mode: 'none'
+      - service: climate.set_preset_mode
+        data_template:
+          entity_id: climate.eurotronic_eur_spiritz_wall_radiator_thermostat_heat_3
+          preset_mode: 'none'
