@@ -45,7 +45,7 @@ sensor:
     sensors:
     - name: "Manufacturer ID"
     - name: "Device ID"
-    - name: "Lux High Liimit"
+    - name: "Lux High Limit"
     - name: "Lux Low Limit"
     - name: "Lux Level"
       unit_of_measurement: lx
