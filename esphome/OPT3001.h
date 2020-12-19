@@ -18,7 +18,7 @@ class MyOPT3001 : public PollingComponent {
 
   void setup() override {
     // myself.initSHT20();    // Init SHT20 Sensor
-    myself.begin(0x45);
+    myself.begin(0x44);
     delay(100);
     // myself.checkSHT20();   // Check SHT20 Sensor
     myself.readManufacturerID();
