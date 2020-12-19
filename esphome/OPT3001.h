@@ -26,19 +26,19 @@ class MyOPT3001 : public PollingComponent {
   }
 
   void update() override {
-    float manufacturer_id = myself.readManufacturerID();
+    u_short manufacturer_id = myself.readManufacturerID();
     manufacturer_id_sensor->publish_state(manufacturer_id);
 
-    float device_id = myself.readDeviceID();
+    u_short device_id = myself.readDeviceID();
     device_id_sensor->publish_state(device_id);
 
-    float lux_level = myself.readResult().lux;
+    u_short lux_level = myself.readResult().lux;
     lux_sensor->publish_state(lux_level);
 
-    float high_limit = myself.readHighLimit().lux;
+    u_short high_limit = myself.readHighLimit().lux;
     high_limit_sensor->publish_state(high_limit);
 
-    float low_limit = myself.readLowLimit().lux;
+    u_short low_limit = myself.readLowLimit().lux;
     low_limit_sensor->publish_state(low_limit);
   }
 };
