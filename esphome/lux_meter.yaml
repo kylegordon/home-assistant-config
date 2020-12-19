@@ -43,6 +43,10 @@ sensor:
       return {opt3001->manufacturer_id_sensor, opt3001->device_id_sensor, opt3001->high_limit_sensor, opt3001->low_limit_sensor, opt3001->lux_sensor};
 
     sensors:
-    - name: "Temperature"
-      unit_of_measurement: °C
+    - name: "Manufacturer ID"
+    - name: "Device ID"
+    - name: "Lux High Liimit"
+    - name: "Lux Low Limit"
+    - name: "Lux Level"
+      unit_of_measurement: lx
       accuracy_decimals: 2
