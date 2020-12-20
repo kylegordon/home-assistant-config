@@ -5,6 +5,6 @@
 
 - platform: generic_thermostat
   name: Hot Water
-  heater: switch.hot_water
-  target_sensor: sensor.hot_water_tank
-  max_temp: 60
+  heater: switch.boiler_valve_controls_relay_1
+  target_sensor: sensor.hot_tank_temperature
+  max_temp: 80
