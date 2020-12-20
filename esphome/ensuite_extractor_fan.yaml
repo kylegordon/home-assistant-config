@@ -1,0 +1,6 @@
+substitutions:
+  device_name: ensuite_extractor_fan
+  device_description: Ensuite Extractor Fan
+  friendly_name: Ensuite Extractor Fan
+
+<<: !include common/sonoff_basic_switch_common.yaml
