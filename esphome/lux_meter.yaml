@@ -42,9 +42,10 @@ sensor:
     lambda: |-
       auto opt3001 = new MyOPT3001();
       App.register_component(opt3001);
-      return {opt3001->manufacturer_id_sensor, opt3001->device_id_sensor, opt3001->high_limit_sensor, opt3001->low_limit_sensor, opt3001->lux_sensor};
+      return {opt3001->sensor_status, opt3001->manufacturer_id_sensor, opt3001->device_id_sensor, opt3001->high_limit_sensor, opt3001->low_limit_sensor, opt3001->lux_sensor};
 
     sensors:
+    - name: "Sensor Status"
     - name: "Manufacturer ID"
     - name: "Device ID"
     - name: "Lux High Limit"
