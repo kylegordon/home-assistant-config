@@ -89,7 +89,8 @@ OPT3001 ClosedCube_OPT3001::readLowLimit() {
 
 OPT3001 ClosedCube_OPT3001::readRegister(OPT3001_Commands command) {
 	OPT3001_ErrorCode error = writeData(command);
-	if (error == NO_ERROR) {
+	
+  if (error == NO_ERROR) {
 		OPT3001 result;
 		result.lux = 0;
 		result.error = NO_ERROR;
