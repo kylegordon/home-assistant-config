@@ -85,11 +85,11 @@ class MyOPT3001 : public PollingComponent {
 
     // %i for int ?
     // %f for float ?
-    ESP_LOGD("update", "The value of manufacturer_id is: %i", manufacturer_id);
-    ESP_LOGD("update", "The value of device_id is: %i", device_id);
-    ESP_LOGD("update", "The value of lux_level is: %i", lux_level);
+    // ESP_LOGD("update", "The value of manufacturer_id is: %i", manufacturer_id);
+    // ESP_LOGD("update", "The value of device_id is: %i", device_id);
+    // ESP_LOGD("update", "The value of lux_level is: %i", lux_level);
 
-    ESP_LOGD("update", "The value of error_code is: %i", error_code);
+    // ESP_LOGD("update", "The value of error_code is: %i", error_code);
 
 
   }
