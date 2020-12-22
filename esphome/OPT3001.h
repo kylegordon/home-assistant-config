@@ -7,6 +7,7 @@ class MyOPT3001 : public PollingComponent {
  public:
 
   ClosedCube_OPT3001 myself;
+  Sensor *sensor_status = new Sensor();
   Sensor *manufacturer_id_sensor = new Sensor();
   Sensor *device_id_sensor = new Sensor();
   Sensor *lux_sensor = new Sensor();
