@@ -18,6 +18,8 @@ wifi:
 captive_portal:
 
 logger:
+  level: DEBUG
+  esp8266_store_log_strings_in_flash: False
 
 api:
 
