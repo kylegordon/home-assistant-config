@@ -39,7 +39,7 @@ class MyOPT3001 : public PollingComponent {
 
     OPT3001_ErrorCode errorConfig = myself.writeConfig(newConfig);
     if (errorConfig != NO_ERROR)
-      ESP_LOGD("update","OPT3001 configuration %i", errorConfig);
+      ESP_LOGD("error","OPT3001 configuration %i", errorConfig);
     else {
       OPT3001_Config sensorConfig = myself.readConfig();
       ESP_LOGD("config","OPT3001 Current Config:");
