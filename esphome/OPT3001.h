@@ -32,8 +32,8 @@ class MyOPT3001 : public PollingComponent {
   // I have no real idea what I'm doing.
   void configureSensor() {
     OPT3001_Config newConfig;
-    
-    newConfig.RangeNumber = B1100;	
+
+    newConfig.RangeNumber = B1100;
     newConfig.ConvertionTime = B0;
     newConfig.Latch = B1;
     newConfig.ModeOfConversionOperation = B11;
@@ -45,7 +45,6 @@ class MyOPT3001 : public PollingComponent {
       OPT3001_Config sensorConfig = myself.readConfig();
       ESP_LOGD("config","OPT3001 Current Config:");
       ESP_LOGD("config","------------------------------");
-      
       ESP_LOGD("config","Conversion ready (R): %i", sensorConfig.ConversionReady);
       ESP_LOGD("config","Conversion time (R/W): %i", sensorConfig.ConvertionTime);
       ESP_LOGD("config","Fault count field (R/W): %i", sensorConfig.FaultCount);
@@ -59,21 +58,12 @@ class MyOPT3001 : public PollingComponent {
       ESP_LOGD("config","Range number (R/W): %i", sensorConfig.RangeNumber);
       ESP_LOGD("config","------------------------------");
     }
-    
-  }
-
-  void update() override {
-
-    ESP_LOGD("update", "In start of update");
 
     u_short manufacturer_id = myself.readManufacturerID();
     manufacturer_id_sensor->publish_state(manufacturer_id);
 
     u_short device_id = myself.readDeviceID();
     device_id_sensor->publish_state(device_id);
-
-    int lux_level = myself.readResult().lux;
-    lux_sensor->publish_state(lux_level);
 
     u_short high_limit = myself.readHighLimit().lux;
     high_limit_sensor->publish_state(high_limit);
@@ -82,15 +72,11 @@ class MyOPT3001 : public PollingComponent {
     low_limit_sensor->publish_state(low_limit);
 
     u_short error_code = myself.readResult().error;
+  }
 
-    // %i for int ?
-    // %f for float ?
-    // ESP_LOGD("update", "The value of manufacturer_id is: %i", manufacturer_id);
-    // ESP_LOGD("update", "The value of device_id is: %i", device_id);
-    // ESP_LOGD("update", "The value of lux_level is: %i", lux_level);
-
-    // ESP_LOGD("update", "The value of error_code is: %i", error_code);
-
-
+  void update() override {
+    ESP_LOGD("update", "Sending update");
+    int lux_level = myself.readResult().lux;
+    lux_sensor->publish_state(lux_level);
   }
 };
