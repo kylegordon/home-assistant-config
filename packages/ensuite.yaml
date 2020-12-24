@@ -117,7 +117,7 @@ automation:
       - service: climate.set_preset_mode
         data_template:
           entity_id: climate.hot_water
-          preset_mode: 'boost'
+          preset_mode: 'heat'
       - service: notify.alexa_media
         data:
           target:
@@ -140,7 +140,7 @@ automation:
       - service: climate.set_preset_mode
         data_template:
           entity_id: climate.hot_water
-          preset_mode: 'eco'
+          preset_mode: 'none'
 
   - alias: Ensuite motion - night timeout
     trigger:
