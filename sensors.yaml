@@ -138,7 +138,7 @@
 
 - platform: min_max
   name: House Average Humidity
-  type: mean
+  type: median
   entity_ids:
     - sensor.utility_room_sensor_humidity
     - sensor.study_sensor_humidity
