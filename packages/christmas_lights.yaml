@@ -6,6 +6,7 @@ group:
       - light.candle_arch
       - light.star_burst
       - light.christmas_star
+      - switch.small_christmas_star
 
 binary_sensor:
   - platform: template
