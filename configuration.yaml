@@ -395,7 +395,10 @@ smartir:
 
 octoprint:
   host: !secret octoprint_host
+  port: 88
   api_key: !secret octoprint_key
+  bed: true
+  number_of_tools: 1
 
 mobile_app:
 

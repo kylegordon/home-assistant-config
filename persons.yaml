@@ -1,15 +1,13 @@
 - name: Kyle
   id: Kyle001
   device_trackers:
-    - device_tracker.bagpuss_a0001
-    - device_tracker.c0_ee_fb_33_95_5b
-    - device_tracker.umidigi_f2
+    - device_tracker.bagpuss_f2
+    - device_tracker.kyle_phone
 
 - name: Charlotte
   id: Charlotte001
   device_trackers:
-    - device_tracker.charlotte_thea
-    - device_tracker.e4_a7_c5_0c_96_4c
+    - device_tracker.charlotte_phone
 
 - name: Ronnie
   id: Ronnie0001
