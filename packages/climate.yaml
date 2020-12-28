@@ -99,7 +99,7 @@ automation:
         entity_id: binary_sensor.workday_tomorrow
         state: "on"
     action:
-      - service: climate.set_preset_mode
+      - service: climate.set_temperature
         data:
           entity_id: climate.heating
           temperature: 17
@@ -118,7 +118,7 @@ automation:
         entity_id: binary_sensor.workday_tomorrow
         state: "off"
     action:
-      - service: climate.set_preset_mode
+      - service: climate.set_temperature
         data:
           entity_id: climate.house
           temperature: 17
@@ -137,7 +137,7 @@ automation:
         entity_id: binary_sensor.workday_tomorrow
         state: "on"
     action:
-      - service: climate.set_preset_mode
+      - service: climate.set_temperature
         data:
           entity_id: climate.heating
           temperature: 20
