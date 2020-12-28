@@ -101,7 +101,7 @@ automation:
     action:
       - service: climate.set_temperature
         data:
-          entity_id: climate.heating
+          entity_id: climate.house
           temperature: 17
       - service: logbook.log
         data_template:
