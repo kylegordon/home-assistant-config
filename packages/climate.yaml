@@ -90,7 +90,7 @@ automation:
             Setting heating and hot water thermostat to normal mode
 
 
-  - alias: "Climate - Sleep (tomorrow weekday)"
+  - alias: "Climate - Sleep (tomorrow workday)"
     trigger:
       - platform: time
         at: "21:00:00"
@@ -109,7 +109,7 @@ automation:
           message: >
             Setting heating low for sleeping
 
-  - alias: "Climate - Sleep (tomorrow not weekday)"
+  - alias: "Climate - Sleep (tomorrow not workday)"
     trigger:
       - platform: time
         at: "23:00:00"
