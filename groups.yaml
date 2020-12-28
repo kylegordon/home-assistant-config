@@ -3,7 +3,6 @@
 default_view:
   name: Home
   entities:
-    - group.people_status
     - group.modes
     - sensor.electricity_energy_usage
     - sensor.house_average_temperature
@@ -236,19 +235,10 @@ people:
   name: People
   icon: mdi:account-multiple
   entities:
-    - camera.kyle
-    - camera.charlotte
-    - sensor.charlotte_to_home
-    - sensor.charlotte_work_travel
-    - sensor.kyle_to_home
-    - sensor.kyle_work_travel
-    - input_select.kyle_status_dropdown
-    - input_select.charlotte_status_dropdown
-    - binary_sensor.kyle_driving
-    - binary_sensor.charlotte_driving
-    - device_tracker.bagpuss_a0001
-    - device_tracker.charlotte_thea
-    - device_tracker.ronnie_thea
+    - person.kyle
+    - person.charlotte
+    - person.ronnie
+    - person.eilean
 
 ## Item groups ##
 bedside_lights:
@@ -265,18 +255,6 @@ lightswitch_relays:
     - switch.study_lightswitch_relay
     - switch.craft_room_lightswitch_relay
     - switch.ensuite_lightswitch_relay
-
-people_status:
-  name: People Status
-  entities:
-    - sensor.kyle_status
-    - sensor.charlotte_status
-
-test:
-  name: Test
-  entities:
-    - switch.tellybox
-    - media_player.living_room_panasonic_tv
 
 other:
   name: Other
