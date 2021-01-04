@@ -128,13 +128,13 @@ automation:
           message: >
             Setting heating low for sleeping
 
-  - alias: "Climate - Morning"
+  - alias: "Climate - Weekday Morning"
     trigger:
       - platform: time
-        at: "07:00:00"
+        at: "06:30:00"
     condition:
       - condition: state
-        entity_id: binary_sensor.workday_tomorrow
+        entity_id: binary_sensor.workday
         state: "on"
     action:
       - service: climate.set_temperature
@@ -145,4 +145,23 @@ automation:
         data_template:
           name: EVENT
           message: >
-            Warming the house up for the morning.
+            Warming the house up for a weekday morning.
+
+  - alias: "Climate - Lazy Morning"
+    trigger:
+      - platform: time
+        at: "07:30:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday
+        state: "off"
+    action:
+      - service: climate.set_temperature
+        data:
+          entity_id: climate.house
+          temperature: 20
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Warming the house up for a lazy morning.
