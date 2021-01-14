@@ -23,7 +23,7 @@ automation:
       topic: cheerlightsRGB
     condition:
       - condition: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
+        entity_id: sensor.average_external_light_level
         below: 300
       - condition: time
         after: '16:00:00'
