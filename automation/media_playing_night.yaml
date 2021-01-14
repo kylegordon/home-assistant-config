@@ -10,8 +10,8 @@ trigger:
     to: "playing"
 condition:
   - condition: numeric_state
-    entity_id: sensor.outside_utility_room_lightlevel
-    below: 750
+    entity_id: sensor.average_external_light_level
+    below: 1000
   - condition: state
     entity_id: binary_sensor.kitchen_motion
     state: "off"
