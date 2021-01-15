@@ -4,8 +4,8 @@
 # Do not enable BLE tracking when the camera module is enabled. Device does not boot correctly
 
 esphome:
-  name: {device_name}
-  comment: {device_description}
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP32
   board: esp32cam
 
