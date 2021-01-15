@@ -1,0 +1,102 @@
+# Use ESPHome-Flasher, as esptool.py doesn't seem to do some sort of magic with the bootloader.
+# See https://github.com/esphome/issues/issues/598
+
+# Do not enable BLE tracking when the camera module is enabled. Device does not boot correctly
+
+esphome:
+  name: {device_name}
+  comment: {device_description}
+  platform: ESP32
+  board: esp32cam
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+
+# esp32_ble_tracker:
+
+switch:
+  - platform: restart
+    name: "ESP32 Restart"
+
+text_sensor:
+  - platform: version
+    name: "Firmware version"
+  # - platform: ble_scanner
+  #   name: "ESP32 Camera 1 BLE Devices Scanner"
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal ESP-Camera-1 Sensor"
+    update_interval: 60s
+  - platform: uptime
+    name: "Device uptime"
+
+# AI-Thinker template from ESPHome docs
+esp32_camera:
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+
+  # Image settings
+  name: ESP32 Camera 1
+  resolution: 1600x1200
+  # resolution: 800x600 XX
+  # resolution: 640x480 XX
+
+output:
+  # Register the red LED as a dimmable output ....
+  - platform: ledc
+    id: red_led
+    pin: 33
+    inverted: True
+  - platform: ledc
+    id: flash_led
+    pin: 4
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "${friendly_name} Red LED"
+    id: red_led_light
+    output: red_led
+  - platform: monochromatic
+    name: "${friendly_name} Flash LED"
+    id: flash_light
+    output: flash_led
+
+# Blink the light if we aren't connected to WiFi.
+interval:
+  - interval: 500ms
+    then:
+    - if:
+        condition:
+          not:
+            wifi.connected:
+        then:
+          - light.turn_on:
+              id: red_led_light
+              brightness: 50%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: red_led_light
+              transition_length: 250ms
