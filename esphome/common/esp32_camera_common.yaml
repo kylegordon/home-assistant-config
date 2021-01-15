@@ -23,24 +23,31 @@ ota:
 
 web_server:
 
-# esp32_ble_tracker:
-
 switch:
   - platform: restart
-    name: "ESP32 Restart"
+    name: "${friendly_name} Restart"
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
 
 text_sensor:
+  # Reports the ESPHome Version with compile date
   - platform: version
-    name: "Firmware version"
-  # - platform: ble_scanner
-  #   name: "ESP32 Camera 1 BLE Devices Scanner"
+    name: ${friendly_name} ESPHome Version
 
 sensor:
+  # Reports the WiFi signal strength
   - platform: wifi_signal
-    name: "WiFi Signal ESP-Camera-1 Sensor"
+    name: ${friendly_name} Signal
     update_interval: 60s
+
+  # Reports how long the device has been powered (in minutes)
   - platform: uptime
-    name: "Device uptime"
+    name: ${friendly_name} Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: minutes
 
 # AI-Thinker template from ESPHome docs
 esp32_camera:
@@ -57,7 +64,7 @@ esp32_camera:
   power_down_pin: GPIO32
 
   # Image settings
-  name: ESP32 Camera 1
+  name: ${friendly_name} Camera
   resolution: 1600x1200
   # resolution: 800x600 XX
   # resolution: 640x480 XX
