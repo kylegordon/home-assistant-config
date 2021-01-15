@@ -3,60 +3,9 @@
 
 # Do not enable BLE tracking when the camera module is enabled. Device does not boot correctly
 
-esphome:
-  name: esp_camera_1
-  platform: ESP32
-  board: esp32cam
+substitutions:
+  device_name: esp_camera_1
+  device_description: ESP32 Camera 1
+  friendly_name: ESP32 Camera 1
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-
-# Enable logging
-logger:
-
-# Enable Home Assistant API
-api:
-
-ota:
-
-web_server:
-
-# esp32_ble_tracker:
-
-switch:
-  - platform: restart
-    name: "ESP32 Restart"
-
-text_sensor:
-  - platform: version
-    name: "Firmware version"
-  # - platform: ble_scanner
-  #   name: "ESP32 Camera 1 BLE Devices Scanner"
-
-sensor:
-  - platform: wifi_signal
-    name: "WiFi Signal ESP-Camera-1 Sensor"
-    update_interval: 60s
-  - platform: uptime
-    name: "Device uptime"
-
-# AI-Thinker template from ESPHome docs
-esp32_camera:
-  external_clock:
-    pin: GPIO0
-    frequency: 20MHz
-  i2c_pins:
-    sda: GPIO26
-    scl: GPIO27
-  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
-  vsync_pin: GPIO25
-  href_pin: GPIO23
-  pixel_clock_pin: GPIO22
-  power_down_pin: GPIO32
-
-  # Image settings
-  name: ESP32 Camera 1
-  resolution: 1600x1200
-  # resolution: 800x600 XX
-  # resolution: 640x480 XX
+<<: !include common/esp32_camera_common.yaml
