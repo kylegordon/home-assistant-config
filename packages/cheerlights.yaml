@@ -52,4 +52,6 @@ automation:
         at: "23:00:00"
     action:
       - service: homeassistant.turn_off
-        entity_id: light.decking_lights
+        entity_id:
+          - light.decking_lights
+          - light.under_bed_lights
