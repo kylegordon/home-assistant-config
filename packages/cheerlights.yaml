@@ -15,6 +15,34 @@ automation:
                 - "{{ trigger.payload[3:5] | int(0,16) }}"
                 - "{{ trigger.payload[-2:] | int(0,16) }}"
 
+  - alias: Under Bed Cheerlights Motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.under_bed_motion_sensor
+        to: 'on'
+    condition:
+      - condition: time
+        after: '23:00:00'
+        before: '07:00:00'
+    action:
+      - service: scene.turn_on
+        entity_id: scene.under_bed_cheerlights_state
+
+  - alias: Under Bed Cheerlights Motion - 2 minute timeout
+    trigger:
+    - platform: state
+      entity_id: binary_sensor.under_bed_motion_sensor
+      to: 'off'
+      for:
+        minutes: 2
+    condition:
+      - condition: time
+        after: '23:00:00'
+        before: '07:00:00'
+    action:
+    - service: light.turn_off
+      entity_id: light.under_bed_lights
+
   - alias: Cheerlights
     trigger:
       platform: mqtt
