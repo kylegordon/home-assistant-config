@@ -22,6 +22,9 @@ automation:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
+      - condition: state
+        entity_id: input_boolean.night_view
+        state: "off"
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
         below: 300
