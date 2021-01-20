@@ -10,6 +10,7 @@ automation:
           scene_id: under_bed_cheerlights_state
           entities:
             light.under_bed_lights:
+              state: "on"
               rgb_color:
                 - "{{ trigger.payload[1:3] | int(0,16) }}"
                 - "{{ trigger.payload[3:5] | int(0,16) }}"
