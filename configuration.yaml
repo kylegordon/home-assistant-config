@@ -443,4 +443,4 @@ panel_iframe:
   nzbget:
     title: "NZBGet Downloader"
     url: "http://homeauto.vpn.glasgownet.com:6789"
-    icon: cloud-download-outline
+    icon: mdi:cloud-download-outline
