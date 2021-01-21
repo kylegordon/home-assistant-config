@@ -2,7 +2,7 @@ automation:
   - alias: Boot Room light toggle
     trigger:
       - platform: state
-        entity_id: binary_sensor.boot_room_touch_pad
+        entity_id: binary_sensor.boot_room_switch_touch_pad
         to: 'on'
     action:
       - service: switch.turn_on
