@@ -12,3 +12,4 @@
   target_sensor: sensor.hot_tank_temperature
   max_temp: 80
   away_temp: 20
+  cold_tolerance: 10
