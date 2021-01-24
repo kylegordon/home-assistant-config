@@ -1,11 +1,9 @@
 alias: Utility room light on
 trigger:
   - platform: state
-    entity_id: binary_sensor.utility_room_door
-    to: 'on'
-    from: 'off'
-  - platform: state
-    entity_id: binary_sensor.utility_room_motion
+    entity_id:
+      - binary_sensor.utility_room_door
+      - binary_sensor.utility_room_motion
     to: 'on'
     from: 'off'
 condition:
