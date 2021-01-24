@@ -6,20 +6,31 @@ group:
       - light.candle_arch
       - light.star_burst
       - light.christmas_star
+      - switch.small_christmas_star
+
+binary_sensor:
+  - platform: template
+    sensors:
+      christmastime:
+        friendly_name: Christmas Time
+        # Use %j to get the day of the year, force from string to integer, and return true if after December 1st or before January 6th
+        value_template: >
+            {% if now().strftime("%j") | int >= 336 or now().strftime("%j") | int <= 6 %}
+            true
+            {% else %}
+            false
+            {% endif %}
 
 automation:
   - alias: Outside decorations - on evening
     trigger:
       - platform: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        below: 100
-        for:
-          minutes: 5
+        entity_id: sensor.average_external_light_level
+        below: 500
     condition:
-      - condition: template
-        value_template:  '{{ now().strftime("%m")|int == "12"
-                          or
-                          now().strftime("%m%d")|int <= 0106 }}'
+      - condition: state
+        entity_id: binary_sensor.christmastime
+        state: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: light.outside_decorations
@@ -41,10 +52,9 @@ automation:
       - platform: time
         at: "06:00:00"
     condition:
-      - condition: template
-        value_template: '{{ now().strftime("%m")|int == "12"
-                         or
-                         now().strftime("%m%d")|int <= 0106 }}'
+      - condition: state
+        entity_id: binary_sensor.christmastime
+        state: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: light.outside_decorations
@@ -68,8 +78,8 @@ automation:
       - platform: time
         at: "12:00:00"
       - platform: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        above: 100
+        entity_id: sensor.average_external_light_level
+        above: 500
     action:
       - service: homeassistant.turn_off
         entity_id: light.outside_decorations
@@ -83,10 +93,9 @@ automation:
       - platform: time
         at: "06:00:00"
     condition:
-      - condition: template
-        value_template: '{{ now().strftime("%m")|int == "12"
-                         or
-                         now().strftime("%m%d")|int <= 0106 }}'
+      - condition: state
+        entity_id: binary_sensor.christmastime
+        state: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: group.christmas_lights
@@ -101,10 +110,9 @@ automation:
       - platform: time
         at: "00:00:00"
     condition:
-      - condition: template
-        value_template: '{{ now().strftime("%m")|int == "12"
-                         or
-                         now().strftime("%m%d")|int <= 0106 }}'
+      - condition: state
+        entity_id: binary_sensor.christmastime
+        state: 'on'
     action:
       - service: homeassistant.turn_off
         entity_id: group.christmas_lights

@@ -1,7 +1,7 @@
 alias: "Off wakup lights"
 trigger:
-  - platform: state
-    entity_id: sensor.outside_utility_room_lightlevel
+  - platform: numeric_state
+    entity_id: sensor.average_external_light_level
     above: 500
 action:
   - service: light.turn_off
