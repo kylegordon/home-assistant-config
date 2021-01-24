@@ -1,5 +1,49 @@
 automation:
 
+  - alias: Cheerlights scene
+    trigger:
+      platform: mqtt
+      topic: cheerlightsRGB
+    action:
+      - service: scene.create
+        data_template:
+          scene_id: under_bed_cheerlights_state
+          entities:
+            light.under_bed_lights:
+              state: "on"
+              rgb_color:
+                - "{{ trigger.payload[1:3] | int(0,16) }}"
+                - "{{ trigger.payload[3:5] | int(0,16) }}"
+                - "{{ trigger.payload[-2:] | int(0,16) }}"
+
+  - alias: Under Bed Cheerlights Motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.under_bed_motion_sensor
+        to: 'on'
+    condition:
+      - condition: time
+        after: '23:00:00'
+        before: '07:00:00'
+    action:
+      - service: scene.turn_on
+        entity_id: scene.under_bed_cheerlights_state
+
+  - alias: Under Bed Cheerlights Motion - 2 minute timeout
+    trigger:
+    - platform: state
+      entity_id: binary_sensor.under_bed_motion_sensor
+      to: 'off'
+      for:
+        minutes: 2
+    condition:
+      - condition: time
+        after: '23:00:00'
+        before: '07:00:00'
+    action:
+    - service: light.turn_off
+      entity_id: light.under_bed_lights
+
   - alias: Cheerlights
     trigger:
       platform: mqtt
@@ -17,17 +61,39 @@ automation:
           - light.sense_gloworb_2_ring
           - light.sense_gloworb_3_ring
 
+  - alias: Cheerlights Bed
+    trigger:
+      platform: mqtt
+      topic: cheerlightsRGB
+    condition:
+    - condition: time
+      after: '16:00:00'
+      before: '23:00:00'
+    action:
+      service_template: light.turn_on
+      data_template:
+        brightness_pct: 100
+        rgb_color:
+          - "{{ trigger.payload[1:3] | int(0,16) }}"
+          - "{{ trigger.payload[3:5] | int(0,16) }}"
+          - "{{ trigger.payload[-2:] | int(0,16) }}"
+        entity_id:
+          - light.under_bed_lights
+
   - alias: Cheerlights Outside
     trigger:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
+      - condition: state
+        entity_id: input_boolean.night_view
+        state: "off"
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
         below: 300
       - condition: time
         after: '16:00:00'
-        before: '00:00:00'
+        before: '23:00:00'
     action:
       - service: light.turn_on
         data_template:
@@ -46,7 +112,9 @@ automation:
         from: "on"
         to: "off"
       - platform: time
-        at: "00:00:00"
+        at: "23:00:00"
     action:
       - service: homeassistant.turn_off
-        entity_id: light.decking_lights
+        entity_id:
+          - light.decking_lights
+          - light.under_bed_lights
