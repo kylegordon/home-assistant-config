@@ -50,21 +50,13 @@ homeassistant:
       icon: mdi:delete-empty
     light.kyles_bedside:
         icon: mdi:hotel
-    light.edison_lamp:
-      assumed_state: false
     light.sideboard:
       assumed_state: false
     light.lava_lamp:
       assumed_state: false
     light.christmas_tree:
       assumed_state: false
-    light.candle_arch:
-      assumed_state: false
-    light.star_burst:
-      assumed_state: false
     light.arc_lamp:
-      assumed_state: false
-    light.twig_lights:
       assumed_state: false
     light.utility_room:
       assumed_state: false
@@ -183,7 +175,6 @@ rfxtrx:
       # name: Christmas Star
     0a140075f0dd3c10000060:
       # Black Remote D4
-      # name: Edison lamp old
     0a14000bf0dd3c0f010070:
       # name: Lava Lamp
     0a140031f0dd3c0d010070:
@@ -195,13 +186,13 @@ rfxtrx:
     0710080041020000:
       # name: Star Burst
     0710080041030000:
-      # name: Candle Arch
+      # name: Energenie 4 way
     0710080041040000:
-      # name: Edison Lamp
+      # name: Energenie 4 way
     0a140041f0dd3c09010070:
       # name: Arc Lamp
     0a14005ff0dd3c05010060:
-      # name: Twig lights
+      # name: Energenie 4 way
     ### Switches ###
     0710080041010000:
       # name: Cordless phone
