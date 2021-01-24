@@ -2,11 +2,6 @@ alias: "Media playing at night"
 trigger:
   - platform: state
     entity_id: media_player.living_room_kodi
-    #from: "idle"
-    to: "playing"
-  - platform: state
-    entity_id: media_player.living_room_kodi
-    #from: "paused"
     to: "playing"
 condition:
   - condition: numeric_state
