@@ -124,11 +124,19 @@
     - battery.voltage
 
 - platform: min_max
+  name: Average External Light Level
+  type: median
+  entity_ids:
+    - sensor.lux_meter_1_level
+    - sensor.lux_meter_2_level
+    - sensor.lux_meter_3_level
+
+- platform: min_max
   name: House Average Temperature
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
-    - sensor.utility_room_sensor_temperature
+    #- sensor.utility_room_sensor_temperature
     - sensor.study_sensor_temperature
     - sensor.hallway_sensor_temperature
     - sensor.craft_room_temperature
@@ -138,7 +146,7 @@
 
 - platform: min_max
   name: House Average Humidity
-  type: mean
+  type: median
   entity_ids:
     - sensor.utility_room_sensor_humidity
     - sensor.study_sensor_humidity

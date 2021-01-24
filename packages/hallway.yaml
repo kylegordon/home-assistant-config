@@ -57,8 +57,8 @@ automation:
         to: 'on'
     condition:
       - condition: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        below: 750
+        entity_id: sensor.average_external_light_level
+        below: 1000
     action:
       - service: light.turn_on
         data_template:
