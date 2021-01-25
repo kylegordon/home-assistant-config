@@ -127,7 +127,7 @@ automation:
       - service: climate.set_temperature
         data:
           entity_id: climate.hot_water
-          temperature: "{{ (states('climate.hot_water.temperature') | float ) + 10 }}"
+          temperature: "{{ (states.climate.hot_water.attributes.temperature | float) +10 }}"
       - service: notify.alexa_media
         data:
           target:
