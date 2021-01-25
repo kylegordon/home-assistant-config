@@ -123,7 +123,7 @@ automation:
         data_template:
           scene_id: hot_water_state
           snapshot_entities:
-            climate.hot_water:
+            - climate.hot_water
       - service: climate.set_temperature
         data:
           entity_id: climate.hot_water
