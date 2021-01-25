@@ -37,6 +37,10 @@ i2c:
   scl: GPIO5
   scan: True
 
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
 binary_sensor:
   - platform: status
     name: "${friendly_name} Status"
