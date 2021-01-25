@@ -94,8 +94,8 @@ automation:
         above: 10
     condition:
       - condition: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        below: 750
+        entity_id: sensor.average_external_light_level
+        below: 1000
     action:
       - service: light.turn_on
         data_template:
@@ -113,6 +113,21 @@ automation:
             {% endif %}
           color_temp: >
             200
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Saving state of hot water temperature and increasing by 20 to trigger the boiler early.
+      # https://developers.home-assistant.io/docs/core/entity/climate/
+      - service: scene.create
+        data_template:
+          scene_id: hot_water_state
+          snapshot_entities:
+            - climate.hot_water
+      - service: climate.set_temperature
+        data:
+          entity_id: climate.hot_water
+          temperature: "{{ (states.climate.hot_water.attributes.temperature | float) +10 }}"
       - service: notify.alexa_media
         data:
           target:
@@ -121,6 +136,25 @@ automation:
             type: announce
             #method: all
           message: "Hello! Enjoy your shower!"
+
+  - alias: Ensuite shower off
+    description: Return the hot water to previous state after the shower is finished
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.shower_pump_power_plug_power
+        below: 10
+        for:
+          minutes: 10
+    action:
+      # https://developers.home-assistant.io/docs/core/entity/climate/
+      - service: scene.turn_on
+        data:
+          entity_id: scene.hot_water_state
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Restoring state of hot water temperature.
 
   - alias: Ensuite motion - night timeout
     trigger:
