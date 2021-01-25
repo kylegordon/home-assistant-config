@@ -26,6 +26,7 @@ automation:
         - group.utility_room
         - group.kitchen
         - group.hall
+        - group.dining_nook_lights
         - light.boot_room
         - light.twig_lights
         - group.bedroom_1

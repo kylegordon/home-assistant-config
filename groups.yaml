@@ -76,7 +76,7 @@ living_room_lights:
 dining_nook_lights:
   name: Dining Nook
   entities:
-    - light.dining_table_overhead
+    - light.dining_nook
     - light.sideboard
     - light.train_cabinets
 

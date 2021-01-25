@@ -6,6 +6,7 @@ group:
       - light.candle_arch
       - light.star_burst
       - light.christmas_star
+      - switch.small_christmas_star
 
 binary_sensor:
   - platform: template
@@ -24,8 +25,8 @@ automation:
   - alias: Outside decorations - on evening
     trigger:
       - platform: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        below: 100
+        entity_id: sensor.average_external_light_level
+        below: 500
     condition:
       - condition: state
         entity_id: binary_sensor.christmastime
@@ -77,8 +78,8 @@ automation:
       - platform: time
         at: "12:00:00"
       - platform: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        above: 100
+        entity_id: sensor.average_external_light_level
+        above: 500
     action:
       - service: homeassistant.turn_off
         entity_id: light.outside_decorations

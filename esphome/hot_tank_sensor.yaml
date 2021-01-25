@@ -1,0 +1,48 @@
+esphome:
+  name: hot_tank_sensor
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+web_server:
+
+text_sensor:
+- platform: version
+  name: "Firmware version"
+
+dallas:
+  - pin: GPIO2
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Hot Tank Sensor"
+    update_interval: 60s
+  - platform: uptime
+    name: "Device uptime"
+  - platform: dallas
+    address: 0xFC00000409F3B028
+    name: "Hot Tank Temperature"
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: True
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "Wemos Blue LED"
+    output: blue_led
