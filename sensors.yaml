@@ -124,6 +124,14 @@
     - battery.voltage
 
 - platform: min_max
+  name: Average External Light Level
+  type: median
+  entity_ids:
+    - sensor.lux_meter_1_level
+    - sensor.lux_meter_2_level
+    - sensor.lux_meter_3_level
+
+- platform: min_max
   name: House Average Temperature
   type: mean
   entity_ids:
