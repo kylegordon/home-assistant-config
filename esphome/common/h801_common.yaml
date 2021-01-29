@@ -69,3 +69,27 @@ light:
     red: pwm_r
     green: pwm_g
     blue: pwm_b
+    id: thelight
+    effects:
+      - random:
+      - strobe:
+      - flicker:
+          alpha: 50% #The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
+          intensity: 50% #The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
+      - lambda:
+          name: Throb
+          update_interval: 1s
+          lambda: |-
+            static int state = 0;
+            auto call = id(thelight).turn_on();
+            // Transtion of 1000ms = 1s
+            call.set_transition_length(1000);
+            if (state == 0) {
+              call.set_brightness(1.0);
+            } else {
+              call.set_brightness(0.01);
+            }
+            call.perform();
+            state += 1;
+            if (state == 2)
+              state = 0;
