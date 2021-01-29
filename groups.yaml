@@ -5,8 +5,6 @@ default_view:
   entities:
     - group.people_status
     - group.modes
-    - sensor.dark_sky_temperature
-    - sensor.dark_sky_precip_probability
     - sensor.electricity_energy_usage
     - sensor.house_average_temperature
     - sensor.house_average_humidity
@@ -17,7 +15,6 @@ default_view:
     - sensor.btc
     - sensor.bitcoin_balance
     - group.environment_summary
-    - weather.dark_sky
 
 modes:
   name: Modes
@@ -30,7 +27,6 @@ environment_summary:
     - climate.house
     - climate.hot_water
     - sensor.house_average_humidity
-    - sensor.dark_sky_temperature
 
 kitchen:
   name: Kitchen
@@ -40,6 +36,7 @@ kitchen:
     - binary_sensor.kitchen_motion
     - sensor.kitchen_motion
     - light.kitchen_cabinets
+    - light.kitchen
     - media_player.kitchen
 
 utility_room:
@@ -71,14 +68,18 @@ living_room_lights:
   entities:
     - light.uplighter
     - light.sofa_overhead
-    - light.dining_table_overhead
     - light.edison_lamp
     - light.lava_lamp
-    - light.sideboard
-    - light.christmas_tree
-    - light.candle_arch
     - light.star_burst
     - light.arc_lamp
+
+dining_nook_lights:
+  name: Dining Nook
+  entities:
+    - light.dining_nook
+    - light.dining_table_overhead
+    - light.sideboard
+    - light.train_cabinets
 
 bedroom_1:
   name: Master bedroom
@@ -135,6 +136,7 @@ bedroom_3:
     - switch.study_volume
     - input_select.study_amplifier_input
     - light.study_light
+    - light.monitor_lights
     - sensor.study_sensor_temperature
     - sensor.study_sensor_humidity
     - sensor.study_sensor_signal_level
@@ -156,12 +158,17 @@ craft_room_lighting:
     - light.craft_room
     - light.craft_room_fairy_lights
 
+study_lighting:
+  name: Study Lights
+  entities:
+    - light.study
+    - light.monitor_lights
+
 hall:
   name: Hall lights
   entities:
-    - light.front_door
+    - light.hall_bathroom
     - light.hall_bedrooms
-    - light.hall_entrance
 
 hall_view:
   name: Hall
@@ -170,13 +177,13 @@ hall_view:
     - binary_sensor.hall_rooms_motion
     - sensor.hall_rooms_motion
     - binary_sensor.hall_door_motion
-    - binary_sensor.garden_hall_motion
+    - binary_sensor.boot_room_motion
     - sensor.hall_door_motion
     - sensor.hallway_sensor_temperature
     - sensor.hallway_sensor_humidity
     - sensor.hallway_sensor_signal_level
     - light.twig_lights
-    - binary_sensor.garden_hall_door
+    - binary_sensor.boot_room_door
 
 outside:
   name: Outside
@@ -191,8 +198,9 @@ outside:
     - sensor.front_door_floodlights_signal_level
     - sensor.back_floodlights_signal_level
     - camera.iss
-    - camera.drivewaycam
-    - camera.d_link
+    - camera.driveway
+    - camera.backdoor
+    - camera.garage
 
 outside_lights:
   name: Outside Lights
@@ -200,6 +208,8 @@ outside_lights:
     - light.front_door_floodlights
     - light.driveway_floodlights
     - light.back_floodlights
+    - light.mini_deck_floodlight
+    - light.decking_lights
 
 climate:
   name: Climate
@@ -207,41 +217,12 @@ climate:
     - climate.house
     - sensor.house_average_temperature
     - sensor.house_average_humidity
-    - sensor.dark_sky_temperature
-    - sensor.dark_sky_apparent_temperature
-    - sensor.dark_sky_cloud_coverage
-    - sensor.dark_sky_dew_point
-    - sensor.dark_sky_precip
-    - sensor.dark_sky_precip_intensity
-    - sensor.dark_sky_precip_probability
-    - sensor.dark_sky_pressure
-    - sensor.dark_sky_summary
-    - sensor.dark_sky_temperature
-    - sensor.dark_sky_visibility
-    - sensor.dark_sky_wind_bearing
-    - sensor.dark_sky_wind_speed
-    - sensor.dark_sky_humidity
-    - sensor.dark_sky_ozone
-    - sensor.dark_sky_minutely_summary
-    - sensor.dark_sky_hourly_summary
-    - sensor.dark_sky_daily_summary
-    - sensor.dark_sky_daily_high_temperature
-    - sensor.dark_sky_daily_low_temperature
-    - sensor.dark_sky_daily_high_apparent_temperature
-    - sensor.dark_sky_daily_low_apparent_temperature
-    - sensor.dark_sky_daily_max_precip_intensity
     - sensor.weather_station_rainfall
     - sensor.weather_station_wind_direction
     - sensor.weather_station_wind_velocity
     - sensor.weather_station_wind_maximum
     - sensor.weather_station_temperature
     - sensor.weather_station_relative_humidity
-    - sensor.dark_sky_daily_low_apparent_temperature
-    - sensor.dark_sky_daily_low_temperature
-    - sensor.dark_sky_daily_max_precip_intensity
-    - sensor.dark_sky_daily_summary
-    - sensor.dark_sky_daily_high_temperature
-    - sensor.dark_sky_daily_high_apparent_temperature   
 
 garage:
   name: Garage

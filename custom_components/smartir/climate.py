@@ -5,7 +5,7 @@ import os.path
 
 import voluptuous as vol
 
-from homeassistant.components.climate import ClimateDevice, PLATFORM_SCHEMA
+from homeassistant.components.climate import ClimateEntity, PLATFORM_SCHEMA
 from homeassistant.components.climate.const import (
     HVAC_MODE_OFF, HVAC_MODE_HEAT, HVAC_MODE_COOL,
     HVAC_MODE_DRY, HVAC_MODE_FAN_ONLY, HVAC_MODE_AUTO,
@@ -19,7 +19,7 @@ from homeassistant.helpers.event import async_track_state_change
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.restore_state import RestoreEntity
 from . import COMPONENT_ABS_DIR, Helper
-from .controller import Controller
+from .controller import get_controller
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,6 +31,7 @@ CONF_CONTROLLER_DATA = "controller_data"
 CONF_TEMPERATURE_SENSOR = 'temperature_sensor'
 CONF_HUMIDITY_SENSOR = 'humidity_sensor'
 CONF_POWER_SENSOR = 'power_sensor'
+CONF_POWER_SENSOR_RESTORE_STATE = 'power_sensor_restore_state'
 
 SUPPORT_FLAGS = (
     SUPPORT_TARGET_TEMPERATURE | 
@@ -44,7 +45,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_CONTROLLER_DATA): cv.string,
     vol.Optional(CONF_TEMPERATURE_SENSOR): cv.entity_id,
     vol.Optional(CONF_HUMIDITY_SENSOR): cv.entity_id,
-    vol.Optional(CONF_POWER_SENSOR): cv.entity_id
+    vol.Optional(CONF_POWER_SENSOR): cv.entity_id,
+    vol.Optional(CONF_POWER_SENSOR_RESTORE_STATE, default=False): cv.boolean
 })
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -68,8 +70,8 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
                             "smartHomeHub/SmartIR/master/"
                             "codes/climate/{}.json")
 
-            Helper.downloader(codes_source.format(device_code), device_json_path)
-        except:
+            await Helper.downloader(codes_source.format(device_code), device_json_path)
+        except Exception:
             _LOGGER.error("There was an error while downloading the device Json file. " \
                           "Please check your internet connection or if the device code " \
                           "exists on GitHub. If the problem still exists please " \
@@ -79,7 +81,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     with open(device_json_path) as j:
         try:
             device_data = json.load(j)
-        except:
+        except Exception:
             _LOGGER.error("The device Json file is invalid")
             return
 
@@ -87,7 +89,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
         hass, config, device_data
     )])
 
-class SmartIRClimate(ClimateDevice, RestoreEntity):
+class SmartIRClimate(ClimateEntity, RestoreEntity):
     def __init__(self, hass, config, device_data):
         self.hass = hass
         self._unique_id = config.get(CONF_UNIQUE_ID)
@@ -97,6 +99,7 @@ class SmartIRClimate(ClimateDevice, RestoreEntity):
         self._temperature_sensor = config.get(CONF_TEMPERATURE_SENSOR)
         self._humidity_sensor = config.get(CONF_HUMIDITY_SENSOR)
         self._power_sensor = config.get(CONF_POWER_SENSOR)
+        self._power_sensor_restore_state = config.get(CONF_POWER_SENSOR_RESTORE_STATE)
 
         self._manufacturer = device_data['manufacturer']
         self._supported_models = device_data['supportedModels']
@@ -127,7 +130,7 @@ class SmartIRClimate(ClimateDevice, RestoreEntity):
         self._on_by_remote = False
 
         #Init the IR/RF controller
-        self._controller = Controller(
+        self._controller = get_controller(
             self.hass,
             self._supported_controller, 
             self._commands_encoding,
@@ -180,8 +183,6 @@ class SmartIRClimate(ClimateDevice, RestoreEntity):
     @property
     def state(self):
         """Return the current state."""
-        if self._on_by_remote:
-            return STATE_ON
         if self.hvac_mode != HVAC_MODE_OFF:
             return self.hvac_mode
         return HVAC_MODE_OFF
@@ -320,18 +321,23 @@ class SmartIRClimate(ClimateDevice, RestoreEntity):
 
     async def send_command(self):
         async with self._temp_lock:
-            self._on_by_remote = False
-            operation_mode = self._hvac_mode
-            fan_mode = self._current_fan_mode
-            target_temperature = '{0:g}'.format(self._target_temperature)
-
-            if operation_mode.lower() == HVAC_MODE_OFF:
-                command = self._commands['off']
-            else:
-                command = self._commands[operation_mode][fan_mode][target_temperature]
-
             try:
-                await self._controller.send(command)
+                self._on_by_remote = False
+                operation_mode = self._hvac_mode
+                fan_mode = self._current_fan_mode
+                target_temperature = '{0:g}'.format(self._target_temperature)
+
+                if operation_mode.lower() == HVAC_MODE_OFF:
+                    await self._controller.send(self._commands['off'])
+                    return
+
+                if 'on' in self._commands:
+                    await self._controller.send(self._commands['on'])
+                    await asyncio.sleep(0.5)
+
+                await self._controller.send(
+                    self._commands[operation_mode][fan_mode][target_temperature])
+
             except Exception as e:
                 _LOGGER.exception(e)
             
@@ -358,6 +364,11 @@ class SmartIRClimate(ClimateDevice, RestoreEntity):
 
         if new_state.state == STATE_ON and self._hvac_mode == HVAC_MODE_OFF:
             self._on_by_remote = True
+            if self._power_sensor_restore_state == True and self._last_on_operation is not None:
+                self._hvac_mode = self._last_on_operation
+            else:
+                self._hvac_mode = STATE_ON
+
             await self.async_update_ha_state()
 
         if new_state.state == HVAC_MODE_OFF:

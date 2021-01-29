@@ -4,11 +4,11 @@
   "documentation": "https://github.com/smartHomeHub/SmartIR",
   "dependencies": [],
   "codeowners": ["@smartHomeHub"],
-  "requirements": [],
-  "homeassistant": "0.96.0",
+  "requirements": ["aiofiles==0.5.0"],
+  "homeassistant": "0.115.0",
   "updater": {
-    "version": "1.7.4",
-    "releaseNotes": "-- Fix Alexa volume set",
+    "version": "1.14.0",
+    "releaseNotes": "-- Adds power_sensor_restore_state",
     "files": [
       "__init__.py",
       "climate.py",

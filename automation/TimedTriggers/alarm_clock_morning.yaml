@@ -38,11 +38,5 @@ action:
     entity_id: light.master_bedroom, light.bedside_charlotte, light.bedside_kyle
     data:
       brightness_pct: 100
-      color_temp: 260
+      #color_temp: 260
       transition: 1200
-#  - wait_template: >-
-#     {{ is_state('binary_sensor.kitchen_motion', 'on') }}
-#  - service: light.turn_off
-#    data:
-#      entity_id: light.master_bedroom
-

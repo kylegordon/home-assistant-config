@@ -1,26 +1,183 @@
-automation:
-  - alias: "Set home temperature"
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.home_occupied
-        from: "off"
-        to: "on"
-    action:
-      - service: climate.set_temperature
-        data:
-          entity_id: climate.house
-          temperature: 19.5
+# Inspired by https://github.com/downthedeck/hassio-config/blob/master/packages/klimaat.yaml
+# Not all modes are supported, as above uses Toon integration
+# https://www.home-assistant.io/integrations/generic_thermostat/
+# Generic thermostat currently only supports 'heat', 'cool' and 'off'
 
-  - alias: "Set away temperature"
+sensor:
+  - platform: season
+    type: astronomical
+
+binary_sensor:
+  - platform: workday
+    name: Workday
+    country: GB
+  - platform: workday
+    name: Workday tomorrow
+    country: GB
+    days_offset: 1
+
+automation:
+  - alias: "Climate - Away"
     trigger:
       - platform: state
-        entity_id: binary_sensor.home_occupied
-        from: "on"
-        to: "off"
+        entity_id: group.people
+        to: "not_home"
         for:
-          minutes: 5
+          minutes: 15
+    action:
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.house
+          preset_mode: "away"
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.hot_water
+          preset_mode: "away"
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Setting heating and hot water thermostat to away mode
+
+  - alias: "Climate - Comfort"
+    trigger:
+      - platform: time
+        at: "19:00:00"
+    condition:
+      - condition: state
+        entity_id: group.people
+        state: "home"
+      - condition: template
+        value_template: '{{ states("sensor.season") != "summer" }}'
+    action:
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.house
+          preset_mode: "none"
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.hot_water
+          preset_mode: "none"
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Setting heating and hot water thermostat to normal mode
+
+  - alias: "Climate - home"
+    trigger:
+      - platform: state
+        entity_id: group.people
+        to: "home"
+    condition:
+      - condition: template
+        value_template: '{{ states("sensor.season") != "summer" }}'
+      - condition: time
+        after: "14:00:00"
+    action:
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.house
+          preset_mode: "none"
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.hot_water
+          preset_mode: "none"
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Setting heating and hot water thermostat to normal mode
+
+
+  - alias: "Climate - Sleep (tomorrow workday)"
+    trigger:
+      - platform: time
+        at: "21:00:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday_tomorrow
+        state: "on"
     action:
       - service: climate.set_temperature
         data:
           entity_id: climate.house
-          temperature: 12
+          temperature: 17
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.hot_water
+          preset_mode: "Away"
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Setting heating low for sleeping
+
+  - alias: "Climate - Sleep (tomorrow not workday)"
+    trigger:
+      - platform: time
+        at: "23:00:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday_tomorrow
+        state: "off"
+    action:
+      - service: climate.set_temperature
+        data:
+          entity_id: climate.house
+          temperature: 17
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.hot_water
+          preset_mode: "Away"
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Setting heating low for sleeping
+
+  - alias: "Climate - Weekday Morning"
+    trigger:
+      - platform: time
+        at: "06:30:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday
+        state: "on"
+    action:
+      - service: climate.set_temperature
+        data:
+          entity_id: climate.house
+          temperature: 20
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.hot_water
+          preset_mode: "none"
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Warming the house up for a weekday morning.
+
+  - alias: "Climate - Lazy Morning"
+    trigger:
+      - platform: time
+        at: "07:30:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday
+        state: "off"
+    action:
+      - service: climate.set_temperature
+        data:
+          entity_id: climate.house
+          temperature: 20
+      - service: climate.set_preset_mode
+        data:
+          entity_id: climate.hot_water
+          preset_mode: "none"
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Warming the house up for a lazy morning.

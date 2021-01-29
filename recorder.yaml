@@ -1,5 +1,4 @@
 db_url: !secret db_url
-purge_interval: 1
 purge_keep_days: 5
 exclude:
   domains:
@@ -11,3 +10,11 @@ exclude:
     - script
   entities:
     - sun.sun
+    - media_player.kitchen
+    - media_player.bedroom
+    - media_player.study
+    - media_player.garage
+    - media_player.living_room
+    - sensor.time
+    - sensor.snmp_wan_out
+    - sensor.snmp_wan_in

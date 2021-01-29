@@ -1,0 +1,6 @@
+substitutions:
+  device_name: hall_single_switch
+  device_description: Hall Single Lightswitch
+  friendly_name: Hall Single Switch
+
+<<: !include common/sonoff_touch_switch_common.yaml

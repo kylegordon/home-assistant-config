@@ -1,0 +1,6 @@
+substitutions:
+  device_name: lux_meter_3
+  device_description: Lux Meter 3
+  friendly_name: Lux Meter 3
+
+<<: !include common/opt3001_lux_meter_common.yaml
