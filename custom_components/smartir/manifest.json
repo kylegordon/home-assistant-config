@@ -5,10 +5,10 @@
   "dependencies": [],
   "codeowners": ["@smartHomeHub"],
   "requirements": ["aiofiles==0.5.0"],
-  "homeassistant": "0.110.0b0",
+  "homeassistant": "0.115.0",
   "updater": {
-    "version": "1.12.0",
-    "releaseNotes": "-- Adds support for ESPHome",
+    "version": "1.14.0",
+    "releaseNotes": "-- Adds power_sensor_restore_state",
     "files": [
       "__init__.py",
       "climate.py",

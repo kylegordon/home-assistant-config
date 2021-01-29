@@ -29,12 +29,6 @@
 - platform: template
   sensors:
     last_alexa:
-      entity_id:
-        - media_player.bedroom
-        - media_player.garage
-        - media_player.kitchen
-        - media_player.living_room
-        - media_player.study
       value_template: >
         {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
 
@@ -55,17 +49,20 @@
       value_template: "{{ states.calendar.next_bin.attributes.message|replace(' bin','') }}"
       friendly_name: Next Bin
       #friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
-      entity_id: calendar.next_bin
+      #entity_id: calendar.next_bin
+      unique_id: calendar.next_bin
 
     kyle_status:
       value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
       friendly_name: 'Kyle'
-      entity_id: input_select.kyle_status_dropdown
+      #entity_id: input_select.kyle_status_dropdown
+      unique_id: input_select.kyle_status_dropdown
 
     charlotte_status:
       value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
       friendly_name: 'Charlotte'
-      entity_id: input_select.charlotte_status_dropdown
+      #entity_id: input_select.charlotte_status_dropdown
+      unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
   source: sensor.electricity_energy_usage
@@ -127,11 +124,19 @@
     - battery.voltage
 
 - platform: min_max
+  name: Average External Light Level
+  type: median
+  entity_ids:
+    - sensor.lux_meter_1_level
+    - sensor.lux_meter_2_level
+    - sensor.lux_meter_3_level
+
+- platform: min_max
   name: House Average Temperature
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
-    - sensor.utility_room_sensor_temperature
+    #- sensor.utility_room_sensor_temperature
     - sensor.study_sensor_temperature
     - sensor.hallway_sensor_temperature
     - sensor.craft_room_temperature
@@ -141,7 +146,7 @@
 
 - platform: min_max
   name: House Average Humidity
-  type: mean
+  type: median
   entity_ids:
     - sensor.utility_room_sensor_humidity
     - sensor.study_sensor_humidity

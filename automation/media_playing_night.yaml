@@ -2,16 +2,11 @@ alias: "Media playing at night"
 trigger:
   - platform: state
     entity_id: media_player.living_room_kodi
-    #from: "idle"
-    to: "playing"
-  - platform: state
-    entity_id: media_player.living_room_kodi
-    #from: "paused"
     to: "playing"
 condition:
   - condition: numeric_state
-    entity_id: sensor.outside_utility_room_lightlevel
-    below: 750
+    entity_id: sensor.average_external_light_level
+    below: 1000
   - condition: state
     entity_id: binary_sensor.kitchen_motion
     state: "off"

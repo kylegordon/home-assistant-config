@@ -1,10 +1,9 @@
 alias: Back outdoor lights on
 trigger:
   - platform: state
-    entity_id: binary_sensor.outside_driveway_motion
-    to: 'on'
-  - platform: state
-    entity_id: binary_sensor.outside_utility_room_motion
+    entity_id: 
+      - binary_sensor.outside_driveway_motion
+      - binary_sensor.outside_utility_room_motion
     to: 'on'
 condition:
   - condition: state
@@ -23,8 +22,4 @@ action:
         "Did you hear that? I can't see a thing. Turning on the outside lights"
          ] | random + " https://amzn.to/2CR5mbQ" }}
   - service: light.turn_on
-    entity_id: light.driveway_floodlights
-  - service: light.turn_on
-    entity_id: light.back_floodlights
-  - service: light.turn_on
-    entity_id: light.mini_deck_floodlight
+    entity_id: light.driveway_floodlights, light.back_floodlights, light.mini_deck_floodlight

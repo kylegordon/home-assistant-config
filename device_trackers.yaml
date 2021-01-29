@@ -3,20 +3,24 @@
 # but Owntracks will not have reported a location.
 #- platform: nmap_tracker
 #  hosts:
-#    # - 172.24.32.148
+#    - 172.24.32.135
 #    - 172.24.32.144
 #  track_new_devices: false
 #  new_device_defaults:
 #    track_new_devices: True
-#- platform: ping
-#  hosts:
-#    charlotte_thea: 172.24.32.144
+- platform: ping
+  hosts:
+    charlotte_phone: 172.24.32.144
+    kyle_phone: 172.24.32.135
 #- platform: owntracks
 #  max_gps_accuracy: 250
+
+
 
 # Monitor access point clients
 # Remember OpenWRT SNMP only returns ARP table data
 # Populate it with a periodic fping -g 172.24.32.0/24 on each device
+
 - platform: snmp
   host: 172.24.32.14
   community: !secret snmp_community

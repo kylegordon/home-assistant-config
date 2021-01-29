@@ -21,10 +21,13 @@ automation:
         entity_id:
         - group.living_room
         - group.living_room_lights
+        - group.dining_nook
         - group.outside_lights
         - group.utility_room
         - group.kitchen
         - group.hall
+        - group.dining_nook_lights
+        - light.boot_room
         - light.twig_lights
         - group.bedroom_1
         - group.bedroom_3
@@ -32,9 +35,9 @@ automation:
         - input_boolean.goodnight_process
       - condition: or
         # If guests are staying, don't turn off their bedroom lights
-        conditions: 
+        conditions:
           - condition: state
-            entity_id: input_boolean.guest_mode
+            entity_id: binary_sensor.guest_mode
             state: 'off'
       - service: homeassistant.turn_off
         entity_id:
