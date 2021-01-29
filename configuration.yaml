@@ -4,7 +4,7 @@ homeassistant:
 
   auth_providers:
     - type: trusted_networks
-      trusted_networks: 
+      trusted_networks:
         - 172.24.32.0/24
         - 172.24.34.0/24
         - 10.8.0.18/32
@@ -26,7 +26,10 @@ homeassistant:
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
+
+  # Includes
   packages: !include_dir_named packages
+
   customize:
     script.restart_ha:
       icon: mdi:power
@@ -47,21 +50,13 @@ homeassistant:
       icon: mdi:delete-empty
     light.kyles_bedside:
         icon: mdi:hotel
-    light.edison_lamp:
-      assumed_state: false
     light.sideboard:
       assumed_state: false
     light.lava_lamp:
       assumed_state: false
     light.christmas_tree:
       assumed_state: false
-    light.candle_arch:
-      assumed_state: false
-    light.star_burst:
-      assumed_state: false
     light.arc_lamp:
-      assumed_state: false
-    light.twig_lights:
       assumed_state: false
     light.utility_room:
       assumed_state: false
@@ -82,7 +77,7 @@ homeassistant:
 frontend:
 
 # Enable the config panel
-config: 
+config:
 
 recorder: !include recorder.yaml
 
@@ -161,10 +156,13 @@ influxdb:
 # Discover some devices automatically
 discovery:
 
+spotify:
+  client_id: !secret spotify_client_id
+  client_secret: !secret spotify_client_secret
+
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
-  debug: False
   devices:
     ### Lights ###
     #0a140029f0dd3c0e010060:
@@ -177,7 +175,6 @@ rfxtrx:
       # name: Christmas Star
     0a140075f0dd3c10000060:
       # Black Remote D4
-      # name: Edison lamp old
     0a14000bf0dd3c0f010070:
       # name: Lava Lamp
     0a140031f0dd3c0d010070:
@@ -189,13 +186,13 @@ rfxtrx:
     0710080041020000:
       # name: Star Burst
     0710080041030000:
-      # name: Candle Arch
+      # name: Energenie 4 way
     0710080041040000:
-      # name: Edison Lamp
+      # name: Energenie 4 way
     0a140041f0dd3c09010070:
       # name: Arc Lamp
     0a14005ff0dd3c05010060:
-      # name: Twig lights
+      # name: Energenie 4 way
     ### Switches ###
     0710080041010000:
       # name: Cordless phone
@@ -387,6 +384,13 @@ alexa_media:
 
 smartir:
 
+octoprint:
+  host: !secret octoprint_host
+  port: 88
+  api_key: !secret octoprint_key
+  bed: true
+  number_of_tools: 1
+
 mobile_app:
 
 speedtestdotnet:
@@ -406,23 +410,28 @@ panel_iframe:
   esphome:
     title: "ESPHome"
     url: "http://homeauto.vpn.glasgownet.com:6052"
+    icon: mdi:car-esp
   unifi:
     title: "Unifi CCTV"
     url: "http://homeauto.vpn.glasgownet.com:7080"
+    icon: mdi:cctv
   sonarr:
     title: "Sonarr TV"
     url: "http://homeauto.vpn.glasgownet.com:8989/sonarr"
+    icon: mdi:television-classic
   radarr:
     title: "Radar Movies"
     url: "http://homeauto.vpn.glasgownet.com:7878/radarr"
+    icon: mdi:movie-open
   lazylibrarian:
     title: "LazyLibrarian Books"
     url: "http://homeauto.vpn.glasgownet.com:5299"
-    icon: "https://assets.gitlab-static.net/uploads/-/system/project/avatar/9317860/ll.png"
+    icon: mdi:book-open-page-variant
   airsonic:
     title: "AirSonic Music"
     url: "http://homeauto.vpn.glasgownet.com:4040/index"
+    icon: mdi:music-circle-outline
   nzbget:
     title: "NZBGet Downloader"
     url: "http://homeauto.vpn.glasgownet.com:6789"
-
+    icon: mdi:cloud-download-outline
