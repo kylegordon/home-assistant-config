@@ -7,7 +7,9 @@ trigger:
       seconds: 600
 action:
   - service: light.turn_off
-    entity_id: light.front_door_floodlights
-  - service: light.turn_off
-    entity_id: light.driveway_floodlights
-
+    entity_id: light.driveway_floodlights, light.mini_deck_floodlight, light.front_door_floodlights
+  - service: light.turn_on
+    data:
+      entity_id: light.decking_lights
+      brightness_pct: 0
+      white_value: 0

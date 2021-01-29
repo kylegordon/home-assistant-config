@@ -2,21 +2,6 @@
 
 #- platform: aurora
 
-## RFXcom ##
-
-- platform: rfxtrx
-  automatic_add: True
-  devices:
-    0b1100d800b8196e0a010f70:
-      name: Outside Driveway Motion
-      device_class: motion
-    0b11000000b82b560a000060:
-      name: Outside Front Motion
-      device_class: motion
-    #0a1400002c22a70a010060:
-    #  name: Utility Room Door
-    #  device_class: opening
-
 #- platform: template
 #  sensors:
 #    Kyles_Bed:
@@ -40,7 +25,7 @@
     living_room_tv_power:
       friendly_name: Living Room TV Power
       device_class: power
-      value_template: "{{ states('sensor.tv_power_plug_power') | float > 20 }}"
+      value_template: "{{ states('sensor.tv_power_plug_power') | float > 100 }}"
     home_occupied:
       friendly_name: Home Occupied
       device_class: occupancy

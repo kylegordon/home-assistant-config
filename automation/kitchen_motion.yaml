@@ -5,8 +5,8 @@ trigger:
   to: 'on'
 condition:
   - condition: numeric_state
-    entity_id: sensor.outside_utility_room_lightlevel
-    below: 300
+    entity_id: sensor.average_external_light_level
+    below: 1000
 action:
   - service: homeassistant.turn_on
     data_template:
@@ -29,12 +29,12 @@ action:
         {% elif states('sensor.time_of_day') == "Night" %}
         5
         {% endif %}
-#      color_temp: >
-#        {% if states('sensor.time_of_day') == "Morning" %}
-#        200
-#        {% elif states('sensor.time_of_day') == "Day" %}
-#        300
-#        {% elif states('sensor.time_of_day') == "Night" %}
-#        375
-#        {% endif %}
-      rgb_color: [255,255,255]
+      color_temp: >
+        {% if states('sensor.time_of_day') == "Morning" %}
+        200
+        {% elif states('sensor.time_of_day') == "Day" %}
+        300
+        {% elif states('sensor.time_of_day') == "Night" %}
+        375
+        {% endif %}
+      # rgb_color: [255,255,255]

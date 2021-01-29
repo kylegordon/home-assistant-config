@@ -12,14 +12,14 @@ trigger:
     from: "playing"
     to: "paused"
 condition:
-  - condition: sun
-    after: sunset
-    after_offset: "-1:30:00"
+  - condition: numeric_state
+    entity_id: sensor.average_external_light_level
+    below: 1000
 action:
   - service: light.turn_on
     data:
-      entity_id: 
+      entity_id:
         - light.kitchen_cabinets
-      brightness: 255 
+      brightness: 255
       rgb_color: [255,255,255]
       transition: 5

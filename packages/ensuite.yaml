@@ -8,7 +8,39 @@ automation:
       - service: switch.turn_on
         entity_id: switch.ensuite_switch_relay
       - service: light.toggle
-        entity_id: light.ensuite
+        data_template:
+          entity_id: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            light.ensuite_facilities
+            {% elif states('sensor.time_of_day') == "Night" %}
+            light.ensuite_facilities
+            {% else %}
+            light.ensuite
+            {% endif %}
+          brightness_pct: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            100
+            {% elif states('sensor.time_of_day') == "Day" %}
+            100
+            {% elif states('sensor.time_of_day') == "Night" %}
+            20
+            {% endif %}
+          #transition: >
+          #  {% if states('sensor.time_of_day') == "Morning" %}
+          #  10
+          #  {% elif states('sensor.time_of_day') == "Day" %}
+          #  2
+          #  {% elif states('sensor.time_of_day') == "Night" %}
+          #  30
+          #  {% endif %}
+          color_temp: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            200
+            {% elif states('sensor.time_of_day') == "Day" %}
+            300
+            {% elif states('sensor.time_of_day') == "Night" %}
+            375
+            {% endif %}
       - service: logbook.log
         data_template:
           name: EVENT
@@ -19,10 +51,6 @@ automation:
       - platform: state
         entity_id: binary_sensor.ensuite_motion
         to: 'on'
-    condition:
-      - condition: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        below: 600
     action:
       - service: light.turn_on
         data_template:
@@ -48,7 +76,7 @@ automation:
             {% elif states('sensor.time_of_day') == "Day" %}
             2
             {% elif states('sensor.time_of_day') == "Night" %}
-            10
+            30
             {% endif %}
           color_temp: >
             {% if states('sensor.time_of_day') == "Morning" %}
@@ -66,8 +94,8 @@ automation:
         above: 10
     condition:
       - condition: numeric_state
-        entity_id: sensor.outside_utility_room_lightlevel
-        below: 600
+        entity_id: sensor.average_external_light_level
+        below: 1000
     action:
       - service: light.turn_on
         data_template:
@@ -85,6 +113,21 @@ automation:
             {% endif %}
           color_temp: >
             200
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Saving state of hot water temperature and increasing by 20 to trigger the boiler early.
+      # https://developers.home-assistant.io/docs/core/entity/climate/
+      - service: scene.create
+        data_template:
+          scene_id: hot_water_state
+          snapshot_entities:
+            - climate.hot_water
+      - service: climate.set_temperature
+        data:
+          entity_id: climate.hot_water
+          temperature: "{{ (states.climate.hot_water.attributes.temperature | float) +10 }}"
       - service: notify.alexa_media
         data:
           target:
@@ -93,6 +136,25 @@ automation:
             type: announce
             #method: all
           message: "Hello! Enjoy your shower!"
+
+  - alias: Ensuite shower off
+    description: Return the hot water to previous state after the shower is finished
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.shower_pump_power_plug_power
+        below: 10
+        for:
+          minutes: 10
+    action:
+      # https://developers.home-assistant.io/docs/core/entity/climate/
+      - service: scene.turn_on
+        data:
+          entity_id: scene.hot_water_state
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: >
+            Restoring state of hot water temperature.
 
   - alias: Ensuite motion - night timeout
     trigger:

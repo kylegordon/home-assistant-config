@@ -29,12 +29,6 @@
 - platform: template
   sensors:
     last_alexa:
-      entity_id:
-        - media_player.bedroom
-        - media_player.garage
-        - media_player.kitchen
-        - media_player.living_room
-        - media_player.study
       value_template: >
         {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
 
@@ -50,112 +44,25 @@
 
 - platform: template
   sensors:
-    hall_rooms_motion_sensor_battery:
-      friendly_name: "Hall rooms motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.hall_rooms_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%' 
-
-    hall_door_motion_sensor_battery:
-      friendly_name: "Hall door motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.hall_door_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    garden_hall_motion_sensor_battery:
-      friendly_name: "Garden hall motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.garden_hall_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%' 
-
-    garden_hall_door_sensor_battery:
-      friendly_name: "Garden hall door sensor battery"
-      value_template: '{{ state_attr("binary_sensor.garden_hall_door","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    ensuite_motion_sensor_battery:
-      friendly_name: "Ensuite motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.ensuite_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    kitchen_motion_sensor_battery:
-      friendly_name: "Kitchen motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.kitchen_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    living_room_motion_sensor_battery:
-      friendly_name: "Living room motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.living_room_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    utility_room_motion_sensor_battery:
-      friendly_name: "Utility room motion sensor battery"
-      value_template: '{{ state_attr("binary_sensor.utility_room_motion","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
-    utility_room_door_sensor_battery:
-      friendly_name: "Utility room door sensor battery"
-      value_template: '{{ state_attr("binary_sensor.utlity_room_door","battery_level") }}'
-      icon_template: mdi:battery
-      unit_of_measurement: '%'
-
     next_bin:
       #value_template: "{{ states.calendar.next_bin.attributes.message }}"
       value_template: "{{ states.calendar.next_bin.attributes.message|replace(' bin','') }}"
       friendly_name: Next Bin
       #friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
-      entity_id: calendar.next_bin
+      #entity_id: calendar.next_bin
+      unique_id: calendar.next_bin
 
     kyle_status:
       value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
       friendly_name: 'Kyle'
-      entity_id: input_select.kyle_status_dropdown
+      #entity_id: input_select.kyle_status_dropdown
+      unique_id: input_select.kyle_status_dropdown
 
     charlotte_status:
       value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
       friendly_name: 'Charlotte'
-      entity_id: input_select.charlotte_status_dropdown
-
-- platform: darksky
-  api_key: !secret darksky_api_key
-  scan_interval: 300
-  monitored_conditions:
-    - summary
-    - precip_type
-    - precip_intensity
-    - precip_probability
-    - temperature
-    - temperature_high
-    - temperature_low
-    - apparent_temperature
-    - apparent_temperature_high
-    - apparent_temperature_low
-    - dew_point
-    - wind_speed
-    - wind_bearing
-    - cloud_cover
-    - humidity
-    - pressure
-    - visibility
-    - ozone
-    - minutely_summary
-    - hourly_summary
-    - daily_summary
-    - precip_intensity_max
-
-## RFXcom ##
-
-- platform: rfxtrx
-  automatic_add: True
-  devices:
-    # Old 115a0100e452000000046600006462cb3e79:
-    115a0102e20200000003e500000000d02979:
-      name: Electricity
+      #entity_id: input_select.charlotte_status_dropdown
+      unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
   source: sensor.electricity_energy_usage
@@ -217,11 +124,19 @@
     - battery.voltage
 
 - platform: min_max
+  name: Average External Light Level
+  type: median
+  entity_ids:
+    - sensor.lux_meter_1_level
+    - sensor.lux_meter_2_level
+    - sensor.lux_meter_3_level
+
+- platform: min_max
   name: House Average Temperature
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
-    - sensor.utility_room_sensor_temperature
+    #- sensor.utility_room_sensor_temperature
     - sensor.study_sensor_temperature
     - sensor.hallway_sensor_temperature
     - sensor.craft_room_temperature
@@ -231,7 +146,7 @@
 
 - platform: min_max
   name: House Average Humidity
-  type: mean
+  type: median
   entity_ids:
     - sensor.utility_room_sensor_humidity
     - sensor.study_sensor_humidity
@@ -240,29 +155,6 @@
     - sensor.guest_room_humidity
     - sensor.living_room_humidity
     - sensor.master_bedroom_humidity
-
-- platform: template
-  sensors:
-    sunlight_pct:
-      entity_id:
-        - sun.sun
-        - sensor.dark_sky_cloud_coverage
-      value_template: >-
-        {%- set elevation = state_attr('sun.sun','elevation') | float %}
-        {%- set cloud_coverage = states('sensor.dark_sky_cloud_coverage') | float %}
-        {%- set cloud_factor = (1 - (0.75 * ( cloud_coverage / 100) ** 3 )) %}
-        {%- set min_elevation = -6 %}
-        {%- set max_elevation = 90 %}
-        {%- set adjusted_elevation = elevation - min_elevation %}
-        {%- set adjusted_elevation = [adjusted_elevation,0] | max %}
-        {%- set adjusted_elevation = [adjusted_elevation,max_elevation - min_elevation] | min %}
-        {%- set adjusted_elevation = adjusted_elevation / (max_elevation - min_elevation) %}
-        {%- set adjusted_elevation = adjusted_elevation %}
-        {%- set adjusted_elevation = adjusted_elevation * 100 %}
-        {%- set brightness = adjusted_elevation * cloud_factor %}
-        {{ brightness | round }}
-      unit_of_measurement: '%'
-      device_class: 'illuminance'
 
 - platform: time_date
   display_options:
@@ -273,24 +165,23 @@
     time_of_day:
       value_template: >
         {% set current_hour = strptime(states('sensor.time'), "%H:%M").hour %}
-        {% if 6 <= current_hour < 12 %}
+        {% if 6 <= current_hour < 9 %}
           Morning
-        {% elif 12 <= current_hour < 22 %}
+        {% elif 9 <= current_hour < 22 %}
           Day
         {% else %}
           Night
         {% endif %}
 
     forecast_2_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[2].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[2].temperature}}"
     forecast_4_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[4].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[4].temperature}}"
     forecast_6_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[6].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[6].temperature}}"
     forecast_8_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[8].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[8].temperature}}"
     forecast_10_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[10].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[10].temperature}}"
     forecast_12_hours:
-      value_template: "{{state_attr('weather.dark_sky', 'forecast')[12].temperature}}"
-
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[12].temperature}}"
