@@ -69,6 +69,7 @@ light:
     red: pwm_r
     green: pwm_g
     blue: pwm_b
+    id: thelight
     effects:
       - random:
       - strobe:
