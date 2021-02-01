@@ -28,6 +28,7 @@ automation:
     action:
       - service: scene.turn_on
         entity_id: scene.under_bed_cheerlights_state
+        transition: 2
 
   - alias: Under Bed Cheerlights Motion - 2 minute timeout
     trigger:
@@ -43,6 +44,7 @@ automation:
     action:
     - service: light.turn_off
       entity_id: light.under_bed_lights
+      transition: 30
 
   - alias: Cheerlights
     trigger:
