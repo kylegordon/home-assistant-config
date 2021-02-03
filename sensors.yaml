@@ -185,3 +185,6 @@
       value_template: "{{state_attr('weather.openweathermap', 'forecast')[10].temperature}}"
     forecast_12_hours:
       value_template: "{{state_attr('weather.openweathermap', 'forecast')[12].temperature}}"
+
+    house_target_temperature:
+      value_template: "{{state_attr('climate.house', 'temperature')}}"
