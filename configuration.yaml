@@ -3,6 +3,7 @@
 homeassistant:
 
   auth_providers:
+    - type: homeassistant
     - type: trusted_networks
       trusted_networks:
         - 172.24.32.0/24
