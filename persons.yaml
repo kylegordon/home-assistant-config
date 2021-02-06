@@ -1,7 +1,6 @@
 - name: Kyle
   id: Kyle001
   device_trackers:
-    - device_tracker.bagpuss_f2
     - device_tracker.kyle_phone
 
 - name: Charlotte
