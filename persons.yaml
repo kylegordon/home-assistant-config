@@ -1,14 +1,12 @@
 - name: Kyle
   id: Kyle001
   device_trackers:
-    - device_tracker.bagpuss_a0001
-    - device_tracker.c0_ee_fb_33_95_5b
+    - device_tracker.kyle_phone
 
 - name: Charlotte
   id: Charlotte001
   device_trackers:
-    - device_tracker.charlotte_thea
-    - device_tracker.e4_a7_c5_0c_96_4c
+    - device_tracker.charlotte_phone
 
 - name: Ronnie
   id: Ronnie0001
@@ -21,3 +19,13 @@
   device_trackers:
     - device_tracker.84_b8_b8_b9_b7_37
     - device_tracker.7c_50_49_74_6a_0f
+
+- name: Skye
+  id: Skye0001
+  device_trackers:
+    - device_tracker.skye_phone
+
+- name: Iris
+  id: Iris0001
+  device_trackers:
+    - device_tracker.iris_phone

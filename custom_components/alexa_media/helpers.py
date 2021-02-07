@@ -9,13 +9,20 @@ https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers
 """
 
 import logging
-from typing import Any, Callable, List, Text
+import hashlib
+from typing import Any, Callable, List, Optional, Text
 
-from alexapy import AlexapyLoginError, hide_email
+from alexapy import AlexapyLoginCloseRequested, AlexapyLoginError, hide_email
+from alexapy.alexalogin import AlexaLogin
+from homeassistant.const import (
+    CONF_EMAIL,
+    CONF_URL,
+)
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_component import EntityComponent
+import wrapt
 
-from . import DATA_ALEXAMEDIA
+from .const import DATA_ALEXAMEDIA, EXCEPTION_TEMPLATE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,8 +31,8 @@ async def add_devices(
     account: Text,
     devices: List[EntityComponent],
     add_devices_callback: Callable,
-    include_filter: List[Text] = None,
-    exclude_filter: List[Text] = None,
+    include_filter: Optional[List[Text]] = None,
+    exclude_filter: Optional[List[Text]] = None,
 ) -> bool:
     """Add devices using add_devices_callback."""
     include_filter = [] or include_filter
@@ -55,10 +62,12 @@ async def add_devices(
                 _LOGGER.debug(
                     "%s: Unable to add devices: %s : %s", account, devices, message
                 )
-        except BaseException as ex:
-            template = "An exception of type {0} occurred." " Arguments:\n{1!r}"
-            message = template.format(type(ex).__name__, ex.args)
-            _LOGGER.debug("%s: Unable to add devices: %s", account, message)
+        except BaseException as ex:  # pylint: disable=broad-except
+            _LOGGER.debug(
+                "%s: Unable to add devices: %s",
+                account,
+                EXCEPTION_TEMPLATE.format(type(ex).__name__, ex.args),
+            )
     else:
         return True
     return False
@@ -114,13 +123,11 @@ def retry_async(
                 except Exception as ex:  # pylint: disable=broad-except
                     if not catch_exceptions:
                         raise
-                    template = "An exception of type {0} occurred." " Arguments:\n{1!r}"
-                    message = template.format(type(ex).__name__, ex.args)
                     _LOGGER.debug(
                         "%s.%s: failure caught due to exception: %s",
                         func.__module__[func.__module__.find(".") + 1 :],
                         func.__name__,
-                        message,
+                        EXCEPTION_TEMPLATE.format(type(ex).__name__, ex.args),
                     )
                 _LOGGER.debug(
                     "%s.%s: Try: %s/%s after waiting %s seconds result: %s",
@@ -138,54 +145,86 @@ def retry_async(
     return wrap
 
 
-def _catch_login_errors(func) -> Callable:
+@wrapt.decorator
+async def _catch_login_errors(func, instance, args, kwargs) -> Any:
     """Detect AlexapyLoginError and attempt relogin."""
-    import functools
 
-    @functools.wraps(func)
-    async def wrapper(*args, **kwargs) -> Any:
-        try:
-            result = await func(*args, **kwargs)
-        except AlexapyLoginError as ex:  # pylint: disable=broad-except
-            template = "An exception of type {0} occurred." " Arguments:\n{1!r}"
-            message = template.format(type(ex).__name__, ex.args)
-            _LOGGER.debug(
-                "%s.%s: detected bad login: %s",
-                func.__module__[func.__module__.find(".") + 1 :],
-                func.__name__,
-                message,
-            )
-            instance = args[0]
+    result = None
+    if instance is None and args:
+        instance = args[0]
+    if hasattr(instance, "check_login_changes"):
+        # _LOGGER.debug(
+        #     "%s checking for login changes", instance,
+        # )
+        instance.check_login_changes()
+    try:
+        result = await func(*args, **kwargs)
+    except AlexapyLoginCloseRequested:
+        _LOGGER.debug(
+            "%s.%s: Ignoring attempt to access Alexa after HA shutdown",
+            func.__module__[func.__module__.find(".") + 1 :],
+            func.__name__,
+        )
+        return None
+    except AlexapyLoginError as ex:
+        login = None
+        email = None
+        all_args = list(args) + list(kwargs.values())
+        # _LOGGER.debug("Func %s instance %s %s %s", func, instance, args, kwargs)
+        if instance:
             if hasattr(instance, "_login"):
                 login = instance._login
-                email = login.email
-                hass = instance.hass if instance.hass else None
-                if hass and (
-                    "configurator"
-                    not in (hass.data[DATA_ALEXAMEDIA]["accounts"][email])
-                    or not (
-                        hass.data[DATA_ALEXAMEDIA]["accounts"][email]["configurator"]
-                    )
-                ):
-                    config_entry = hass.data[DATA_ALEXAMEDIA]["accounts"][email][
-                        "config_entry"
-                    ]
-                    setup_alexa = hass.data[DATA_ALEXAMEDIA]["accounts"][email][
-                        "setup_alexa"
-                    ]
-                    test_login_status = hass.data[DATA_ALEXAMEDIA]["accounts"][email][
-                        "test_login_status"
-                    ]
-                    _LOGGER.debug(
-                        "%s: Alexa API disconnected; attempting to relogin",
-                        hide_email(email),
-                    )
-                    await login.login_with_cookie()
-                    await test_login_status(hass, config_entry, login, setup_alexa)
-            return None
-        return result
+                hass = instance.hass
+        else:
+            for arg in all_args:
+                _LOGGER.debug("Checking %s", arg)
 
-    return wrapper
+                if isinstance(arg, AlexaLogin):
+                    login = arg
+                    break
+                if hasattr(arg, "_login"):
+                    login = instance._login
+                    hass = instance.hass
+                    break
+
+        if login:
+            email = login.email
+            _LOGGER.debug(
+                "%s.%s: detected bad login for %s: %s",
+                func.__module__[func.__module__.find(".") + 1 :],
+                func.__name__,
+                hide_email(email),
+                EXCEPTION_TEMPLATE.format(type(ex).__name__, ex.args),
+            )
+        try:
+            hass
+        except NameError:
+            hass = None
+        report_relogin_required(hass, login, email)
+        return None
+    return result
+
+
+def report_relogin_required(hass, login, email) -> bool:
+    """Send message for relogin required."""
+    if hass and login and email:
+        if login.status:
+            _LOGGER.debug(
+                "Reporting need to relogin to %s with %s stats: %s",
+                login.url,
+                hide_email(email),
+                login.stats,
+            )
+            hass.bus.async_fire(
+                "alexa_media_relogin_required",
+                event_data={
+                    "email": hide_email(email),
+                    "url": login.url,
+                    "stats": login.stats,
+                },
+            )
+            return True
+    return False
 
 
 def _existing_serials(hass, login_obj) -> List:
@@ -214,3 +253,37 @@ def _existing_serials(hass, login_obj) -> List:
             #               existing_serials, apps)
             existing_serials = existing_serials + apps
     return existing_serials
+
+
+async def calculate_uuid(hass, email: Text, url: Text) -> dict:
+    """Return uuid and index of email/url.
+
+    Args
+        hass (bool): Hass entity
+        url (Text): url for account
+        email (Text): email for account
+
+    Returns
+        dict: dictionary with uuid and index
+
+    """
+    result = {}
+    return_index = 0
+    if hass.config_entries.async_entries(DATA_ALEXAMEDIA):
+        for index, entry in enumerate(
+            hass.config_entries.async_entries(DATA_ALEXAMEDIA)
+        ):
+            if entry.data.get(CONF_EMAIL) == email and entry.data.get(CONF_URL) == url:
+                return_index = index
+                break
+    uuid = await hass.helpers.instance_id.async_get()
+    result["uuid"] = hex(
+        int(uuid, 16)
+        # increment uuid for second accounts
+        + return_index
+        # hash email/url in case HA uuid duplicated
+        + int(hashlib.md5((email.lower() + url.lower()).encode()).hexdigest(), 16)
+    )[-32:]
+    result["index"] = return_index
+    _LOGGER.debug("%s: Returning uuid %s", hide_email(email), result)
+    return result
