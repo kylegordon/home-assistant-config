@@ -1,4 +1,4 @@
-- dist_home_kyle:
+dist_home_kyle:
     zone: home
     ignored_zones:
       - home
@@ -7,7 +7,7 @@
     unit_of_measurement: m
     tolerance: 50
 
-- dist_home_charlotte:
+dist_home_charlotte:
     zone: home
     ignored_zones:
       - home
