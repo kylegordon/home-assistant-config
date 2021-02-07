@@ -1,0 +1,6 @@
+substitutions:
+  device_name: bootroom_switch
+  device_description: Boot Room Lightswitch
+  friendly_name: Boot Room Switch
+
+<<: !include common/sonoff_touch_switch_common.yaml

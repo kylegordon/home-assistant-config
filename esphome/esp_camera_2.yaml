@@ -1,0 +1,11 @@
+# Use ESPHome-Flasher, as esptool.py doesn't seem to do some sort of magic with the bootloader.
+# See https://github.com/esphome/issues/issues/598
+
+# Do not enable BLE tracking when the camera module is enabled. Device does not boot correctly
+
+substitutions:
+  device_name: esp_camera_2
+  device_description: ESP32 Camera 2
+  friendly_name: ESP32 Camera 2
+
+<<: !include common/esp32_camera_common.yaml

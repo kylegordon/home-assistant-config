@@ -68,14 +68,18 @@ living_room_lights:
   entities:
     - light.uplighter
     - light.sofa_overhead
-    - light.dining_table_overhead
     - light.edison_lamp
     - light.lava_lamp
-    - light.sideboard
-    - light.christmas_tree
-    - light.candle_arch
     - light.star_burst
     - light.arc_lamp
+
+dining_nook_lights:
+  name: Dining Nook
+  entities:
+    - light.dining_nook
+    - light.dining_table_overhead
+    - light.sideboard
+    - light.train_cabinets
 
 bedroom_1:
   name: Master bedroom
@@ -233,19 +237,11 @@ people:
   name: People
   icon: mdi:account-multiple
   entities:
-    - camera.kyle
-    - camera.charlotte
-    - sensor.charlotte_to_home
-    - sensor.charlotte_work_travel
-    - sensor.kyle_to_home
-    - sensor.kyle_work_travel
-    - input_select.kyle_status_dropdown
-    - input_select.charlotte_status_dropdown
-    - binary_sensor.kyle_driving
-    - binary_sensor.charlotte_driving
-    - device_tracker.bagpuss_a0001
-    - device_tracker.charlotte_thea
-    - device_tracker.ronnie_thea
+    - person.kyle
+    - person.charlotte
+    - person.ronnie
+    - person.skye
+    - person.iris
 
 ## Item groups ##
 bedside_lights:
