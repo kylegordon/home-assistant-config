@@ -1,0 +1,17 @@
+- dist_home_kyle:
+    zone: home
+    ignored_zones:
+      - home
+    devices:
+      - device_tracker.kyle_phone
+    unit_of_measurement: m
+    tolerance: 50
+
+- dist_home_charlotte:
+    zone: home
+    ignored_zones:
+      - home
+    devices:
+      - device_tracker.charlotte_phone
+    unit_of_measurement: m
+    tolerance: 50
