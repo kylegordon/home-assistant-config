@@ -1,0 +1,26 @@
+automation:
+  - id: 'proximity_kyle'
+    initial_state: true
+    alias: Notification - Kyle Approaching Home
+    trigger:
+    - below: '750'
+      entity_id: proximity.kyle
+      platform: numeric_state
+    condition:
+    - condition: and
+      conditions:
+      - condition: template
+        value_template: '{{ states.proximity.kyle.attributes.dir_of_travel  == "towards" }}'
+      - condition: state
+        entity_id: device_tracker.kyle_phone
+        state: moving
+    action:
+    - service: notify.mobile_app_f2
+      data:
+        data:
+          push:
+            category: ARRIVING_HOME
+        message: Kyle Approaching Home
+    - service: notify.email_kyle
+      data:
+        message: "Kyle approaching home"
