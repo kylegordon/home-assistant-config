@@ -86,6 +86,7 @@ recorder: !include recorder.yaml
 http:
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
+    - http://viewpoint.house
 
 stream:
 
@@ -399,29 +400,29 @@ nzbget:
 panel_iframe:
   esphome:
     title: "ESPHome"
-    url: "http://homeauto.vpn.glasgownet.com:6052"
+    url: "http://viewpoint.house:6052"
     icon: mdi:car-esp
   unifi:
     title: "Unifi CCTV"
-    url: "http://homeauto.vpn.glasgownet.com:7080"
+    url: "http://viewpoint.house:7080"
     icon: mdi:cctv
   sonarr:
     title: "Sonarr TV"
-    url: "http://homeauto.vpn.glasgownet.com:8989/sonarr"
+    url: "http://viewpoint.house:8989/sonarr"
     icon: mdi:television-classic
   radarr:
     title: "Radar Movies"
-    url: "http://homeauto.vpn.glasgownet.com:7878/radarr"
+    url: "http://viewpoint.house:7878/radarr"
     icon: mdi:movie-open
   lazylibrarian:
     title: "LazyLibrarian Books"
-    url: "http://homeauto.vpn.glasgownet.com:5299"
+    url: "http://viewpoint.house:5299"
     icon: mdi:book-open-page-variant
   airsonic:
     title: "AirSonic Music"
-    url: "http://homeauto.vpn.glasgownet.com:4040/index"
+    url: "http://viewpoint.house:4040/index"
     icon: mdi:music-circle-outline
   nzbget:
     title: "NZBGet Downloader"
-    url: "http://homeauto.vpn.glasgownet.com:6789"
+    url: "http://viewpoint.house:6789"
     icon: mdi:cloud-download-outline
