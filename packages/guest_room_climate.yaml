@@ -14,5 +14,4 @@ automation:
     - service: climate.set_temperature
       data:
         entity_id: climate.guest_bedroom
-        preset_mode: "auto"
         temperature: "{{ trigger.to_state.state | int }}"
