@@ -1,17 +1,30 @@
-input_number:
-  guest_room_target_temp:
-    name: Temperature
-    initial: 20
-    min: 10
-    max: 35
-    step: 0.5
+# input_number:
+#   guest_room_target_temp:
+#     name: Temperature
+#     initial: 20
+#     min: 10
+#     max: 35
+#     step: 0.5
 
-automation:
-  trigger:
-    platform: state
-    entity_id: input_number.guest_room_target_temp
-  action:
-    - service: climate.set_temperature
-      data:
-        entity_id: climate.guest_bedroom
-        temperature: "{{ trigger.to_state.state | int }}"
+# automation:
+#   trigger:
+#     platform: state
+#     entity_id: input_number.guest_room_target_temp
+#   action:
+#     - service: climate.set_temperature
+#       data:
+#         entity_id: climate.guest_bedroom
+#         temperature: "{{ trigger.to_state.state | int }}"
+
+climate:
+  - platform: programmable_thermostat
+    name: guest_room
+    heater:
+      - switch.call_for_heat
+    actual_temp_sensor: sensor.guest_room_temperature
+    min_temp: 10
+    max_temp: 30
+    target_temp_sensor: sensor.guest_room_target_temp
+    # target_temp_sensor: sensor.program_temperature
+    hvac_options: 7
+    auto_mode: all
