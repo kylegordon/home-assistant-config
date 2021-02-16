@@ -72,8 +72,6 @@ automation:
     condition:
       - condition: template
         value_template: '{{ states("sensor.season") != "summer" }}'
-      - condition: time
-        after: "14:00:00"
     action:
       - service: climate.set_preset_mode
         data:
