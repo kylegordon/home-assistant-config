@@ -20,7 +20,7 @@ climate:
   - platform: programmable_thermostat
     name: guest_room
     heater:
-      - switch.call_for_heat
+      - switch.call_for_rad_heat
     actual_temp_sensor: sensor.guest_room_temperature
     min_temp: 10
     max_temp: 30
