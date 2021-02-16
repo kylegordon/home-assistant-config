@@ -24,7 +24,8 @@ climate:
     actual_temp_sensor: sensor.guest_room_temperature
     min_temp: 10
     max_temp: 30
-    target_temp_sensor: input_number.guest_room_target_temp
+    # target_temp_sensor: input_number.guest_room_target_temp
     # target_temp_sensor: sensor.program_temperature
+    target_temp_sensor: climate.guest_bedroom_trv
     hvac_options: 7
     auto_mode: all
