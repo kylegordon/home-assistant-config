@@ -59,21 +59,23 @@ i2c:
 display:
   - platform: ssd1306_i2c
     model: "SSD1306 64x48"
+    rotation: 180
     reset_pin: D0
     address: 0x3C
     lambda: |-
-      // Print "Viewpoint" in top center.
-      //it.printf(32, 0, id(font1), TextAlign::TOP_CENTER, "Viewpoint");
+      // Print time in HH:MM:%S format. Dividing lines make the screen look too busy though
+      //it.line(0, 19, it.get_width(), 19);
+      it.strftime(it.get_width(), 26, id(font3), TextAlign::CENTER_RIGHT, "%H:%M:%S", id(esptime).now());
+      //it.line(0, 32, it.get_width(), 32);
 
-      // Print time in HH:MM format
-      it.strftime(it.get_width(), 26, id(font3), TextAlign::CENTER_RIGHT, "%H:%M", id(esptime).now());
-
-      // Print inside temperature (from homeassistant sensor)
+      // Print current download rate (from homeassistant sensor)
       if (id(internet_speed_in).has_state()) {
-        it.printf(0, 0, id(font2), TextAlign::TOP_LEFT , "%.2f", id(internet_speed_in).state);
+        it.printf(0, 0, id(font2), TextAlign::TOP_LEFT , "In:");
+        it.printf(it.get_width(), 0, id(font2), TextAlign::TOP_RIGHT , "%.2f", id(internet_speed_in).state);
       }
 
-      // Print outside temperature (from homeassistant sensor)
+      // Print current upload rate (from homeassistant sensor)
       if (id(internet_speed_out).has_state()) {
-        it.printf(0, 48, id(font2), TextAlign::BASELINE_LEFT , "%.2f", id(internet_speed_out).state);
+        it.printf(0, 48, id(font2), TextAlign::BASELINE_LEFT , "Out:");
+        it.printf(it.get_width(), 48, id(font2), TextAlign::BASELINE_RIGHT , "%.2f", id(internet_speed_out).state);
       }
