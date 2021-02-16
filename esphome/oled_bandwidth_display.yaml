@@ -59,10 +59,7 @@ display:
     reset_pin: D0
     address: 0x3C
     lambda: |-
-      // Print "Viewpoint" in top center.
-      //it.printf(32, 0, id(font1), TextAlign::TOP_CENTER, "Viewpoint");
-
-      // Print time in HH:MM format
+      // Print time in HH:MM:%S format
       it.strftime(it.get_width(), 26, id(font3), TextAlign::CENTER_RIGHT, "%H:%M:%S", id(esptime).now());
 
       // Print inside temperature (from homeassistant sensor)
