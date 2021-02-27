@@ -10,7 +10,7 @@ sensor:
   - platform: template
     sensors:
       guest_bedroom_trv_temperature:
-        friendly_name: "Guest Bedroom TRV Temperature"
+        friendly_name: "Guest Bedroom TRV Current Temperature"
         value_template: "{{ state_attr('climate.guest_bedroom_trv', 'current_temperature') }}"
         unit_of_measurement: '°C'
         device_class: temperature
@@ -24,6 +24,9 @@ sensor:
         value_template: '{{ (states.sensor.guest_bedroom_trv_temperature.state | float) + (states.sensor.guest_room_trv_offset.state | float)   }}'
         unit_of_measurement: '°C'
         device_class: temperature
+      guest_room_target_temperature:
+        friendly_name: Guest Room Target
+        value_template: "{{ state_attr('climate.guest_room', 'temperature') }}"
 
 climate:
   - platform: generic_thermostat
@@ -34,15 +37,15 @@ climate:
     max_temp: 25
     away_temp: 15
 
-# automation:
-#   trigger:
-#     platform: state
-#     entity_id: sensor.guest_room_fake_temperature
-#   action:
-#     - service: climate.set_temperature
-#       data:
-#         entity_id: climate.guest_bedroom_trv
-#         temperature: "{{ trigger.to_state.state | int }}"
+automation:
+   trigger:
+     platform: state
+     entity_id: sensor.guest_room_target_temperature
+   action:
+     - service: climate.set_temperature
+       data:
+         entity_id: climate.guest_bedroom_trv
+         temperature: "{{ trigger.to_state.state | float }}"
 
 # climate:
 #   - platform: programmable_thermostat
