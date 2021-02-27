@@ -1,31 +1,59 @@
-input_number:
-  guest_room_target_temp:
-    name: Temperature
-    initial: 20
-    min: 10
-    max: 35
-    step: 0.5
+# input_number:
+#   guest_room_target_temp:
+#     name: Temperature
+#     initial: 20
+#     min: 10
+#     max: 35
+#     step: 0.5
+
+sensor:
+  - platform: template
+    sensors:
+      guest_bedroom_trv_temperature:
+        friendly_name: "Guest Bedroom TRV Temperature"
+        value_template: "{{ state_attr('climate.guest_bedroom_trv', 'current_temperature') }}"
+        unit_of_measurement: '°C'
+        device_class: temperature
+      guest_room_trv_offset:
+        friendly_name: Guest Room TRV Offset
+        value_template: '{{ ((states.sensor.guest_room_temperature.state | float) - (states.sensor.guest_bedroom_trv_temperature.state | float)) }}'
+        unit_of_measurement: '°C'
+        device_class: temperature
+      guest_room_fake_temperature:
+        friendly_name: Guest Room Fake TRV Temperature
+        value_template: '{{ (states.sensor.guest_bedroom_trv_temperature.state | float) + (states.sensor.guest_room_trv_offset.state | float)   }}'
+        unit_of_measurement: '°C'
+        device_class: temperature
+
+climate:
+  - platform: generic_thermostat
+    name: Guest Room
+    heater: switch.call_for_rad_heat
+    target_sensor: sensor.guest_room_fake_temperature
+    min_temp: 10
+    max_temp: 25
+    away_temp: 15
 
 # automation:
 #   trigger:
 #     platform: state
-#     entity_id: input_number.guest_room_target_temp
+#     entity_id: sensor.guest_room_fake_temperature
 #   action:
 #     - service: climate.set_temperature
 #       data:
-#         entity_id: climate.guest_bedroom
+#         entity_id: climate.guest_bedroom_trv
 #         temperature: "{{ trigger.to_state.state | int }}"
 
-climate:
-  - platform: programmable_thermostat
-    name: guest_room
-    heater:
-      - switch.call_for_rad_heat
-    actual_temp_sensor: sensor.guest_room_temperature
-    min_temp: 10
-    max_temp: 30
-    # target_temp_sensor: input_number.guest_room_target_temp
-    # target_temp_sensor: sensor.program_temperature
-    target_temp_sensor: climate.guest_bedroom_trv
-    hvac_options: 7
-    auto_mode: all
+# climate:
+#   - platform: programmable_thermostat
+#     name: guest_room
+#     heater:
+#       - switch.call_for_rad_heat
+#     actual_temp_sensor: sensor.guest_room_temperature
+#     min_temp: 10
+#     max_temp: 30
+#     # target_temp_sensor: input_number.guest_room_target_temp
+#     # target_temp_sensor: sensor.program_temperature
+#     target_temp_sensor: climate.guest_bedroom_trv
+#     hvac_options: 7
+#     auto_mode: all
