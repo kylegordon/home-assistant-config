@@ -26,7 +26,7 @@ sensor:
         device_class: temperature
       guest_room_target_temperature:
         friendly_name: Guest Room Target
-        value_template: "{{ state_attr('climate.guest_room', 'temperature') }}"
+        value_template: "{{ ( state_attr('climate.guest_room', 'temperature') | float) - (states.sensor.guest_room_trv_offset.state | float) }}"
 
 climate:
   - platform: generic_thermostat
