@@ -1,6 +1,6 @@
-group:
-  master_bathroom:
-    name: Master Bathroom Lights
+light:
+  - platform: group
+    name: Master Bathroom
     entities:
       - light.bathroom_1_combined_output
       - light.bathroom_2_combined_output
@@ -18,7 +18,7 @@ automation:
           - switch.hall_2_gang_relay_2
       - service: light.toggle
         data_template:
-          entity_id: group.master_bathroom
+          entity_id: light.master_bathroom
           brightness_pct: >
             {% if states('sensor.time_of_day') == "Morning" %}
             100
