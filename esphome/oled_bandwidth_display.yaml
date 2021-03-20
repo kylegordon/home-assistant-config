@@ -35,6 +35,15 @@ sensor:
 - platform: wifi_signal
   name: ${friendly_name} Signal
   update_interval: 60s
+- platform: homeassistant
+  id: internet_speed_in
+  entity_id: sensor.internet_speed_in
+  internal: true
+
+- platform: homeassistant
+  id: internet_speed_out
+  entity_id: sensor.internet_speed_out
+  internal: true
 
 # Reports how long the device has been powered (in minutes)
 - platform: uptime
@@ -69,17 +78,6 @@ font:
   - file: 'arial.ttf'
     id: font3
     size: 14
-
-sensor:
-  - platform: homeassistant
-    id: internet_speed_in
-    entity_id: sensor.internet_speed_in
-    internal: true
-
-  - platform: homeassistant
-    id: internet_speed_out
-    entity_id: sensor.internet_speed_out
-    internal: true
 
 i2c:
   sda: GPIO4
