@@ -64,7 +64,6 @@ switch:
 syslog:
   ip_address: 172.24.32.13
   port: 514
-  tag: foo
 
 time:
   - platform: homeassistant
