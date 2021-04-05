@@ -148,6 +148,12 @@ google:
 
 influxdb:
   host: 172.24.32.13
+  port: 8086
+  ssl: false
+  api_version: 2
+  organization: !secret influxdb_organization
+  bucket: !secret influxdb_bucket
+  token: !secret influxdb_token
 
 # Discover some devices automatically
 discovery:
