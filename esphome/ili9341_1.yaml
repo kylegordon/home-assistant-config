@@ -127,7 +127,7 @@ display:
         lambda: |-
           if (id(next_bin).has_state()) {
             // it.printf(0, 200, id(fontlarge), TextAlign::BASELINE_LEFT , id(next_bin).state);
-            // it.printf(0, 220, id(fontlarge), "Hello World!");
+            // it.printf(0, 220, id(fontlarge), "Hello World 2!");
             it.printf(0, 220, id(fontlarge), TextAlign::BASELINE_LEFT, "Bin: %s", id(next_bin).state.c_str());
           }
 
