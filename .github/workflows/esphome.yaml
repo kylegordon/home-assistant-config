@@ -19,6 +19,7 @@ jobs:
         with:
           args: "version"
       - name: Check for esphome tests requirement
+        id: esphome-test-required
         run: |
           CHANGED_FILES=$(git diff --name-status HEAD~1...HEAD . | grep -i esphome || true)
           if [ -z "$CHANGED_FILES" ] ; then
@@ -26,10 +27,12 @@ jobs:
             exit 0
           fi
       - name: Copy stub files into configuration folder
+        if: steps.esphome-test-required.conclusion == 'failure'
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Run esphome on all files
+        if: steps.esphome-test-required.conclusion == 'failure'
         # yamllint disable rule:line-length
         run: |
           for file in $(find \
