@@ -96,6 +96,9 @@ automation:
       - condition: state
         entity_id: binary_sensor.workday_tomorrow
         state: "on"
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: climate.set_temperature
         data:
@@ -119,6 +122,9 @@ automation:
       - condition: state
         entity_id: binary_sensor.workday_tomorrow
         state: "off"
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: climate.set_temperature
         data:
@@ -141,6 +147,9 @@ automation:
     condition:
       - condition: state
         entity_id: binary_sensor.workday
+        state: "on"
+      - condition: state
+        entity_id: binary_sensor.home_occupied
         state: "on"
     action:
       - service: climate.set_temperature
@@ -165,6 +174,9 @@ automation:
       - condition: state
         entity_id: binary_sensor.workday
         state: "off"
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: climate.set_temperature
         data:
