@@ -13,7 +13,7 @@ automation:
         below: 1000
       - condition: state
         entity_id: binary_sensor.home_occupied
-        state: "on
+        state: "on"
     action:
       - service: homeassistant.turn_on
         data_template:
