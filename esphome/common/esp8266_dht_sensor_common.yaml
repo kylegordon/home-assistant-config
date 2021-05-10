@@ -22,6 +22,10 @@ ota:
 
 web_server:
 
+deep_sleep:
+  run_duration: 10s
+  sleep_duration: 10min
+
 text_sensor:
 - platform: version
   name: "${friendly_name} Firmware version"
