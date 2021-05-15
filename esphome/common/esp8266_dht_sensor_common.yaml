@@ -35,10 +35,30 @@ i2c:
   scl: D1
   scan: True
 
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
 binary_sensor:
   # Report if connected or not
   - platform: status
     name: "${friendly_name} Status"
+  - platform: homeassistant
+    name: "Home-Assistant OTA Enable"
+    entity_id: input_boolean.esphome_ota_enable
+    id: esphome_ota_enable
+    internal: True
+    on_state:
+      then:
+        - if:
+            condition:
+              binary_sensor.is_on: esphome_ota_enable
+            then:
+              - logger.log: "Preventing deep sleep, Home Assistant activated"
+              - deep_sleep.prevent: deep_sleep_1
+            else:
+              - logger.log: "Allowing deep sleep, Home Assistant activated"
+              - deep_sleep.enter: deep_sleep_1
 
 sensor:
   - platform: wifi_signal
