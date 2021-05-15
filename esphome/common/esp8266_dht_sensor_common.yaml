@@ -3,6 +3,22 @@ esphome:
   platform: ESP8266
   board: d1_mini
 
+  on_boot:
+    priority: -200
+    then:
+      - wait_until:
+          api.connected:
+      - delay: 2s
+      - logger.log: "Checking if deep sleep allowed"
+      - lambda: |-
+          if(id(esphome_ota_enable).state) {
+            ESP_LOGD("main", "Home-Assistant in OTA mode");
+            id(deep_sleep_1).prevent_deep_sleep();
+          } else {
+            ESP_LOGD("main", "Home-Assistant not in OTA mode");
+          }
+      - logger.log: "Sleep checked"
+
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
