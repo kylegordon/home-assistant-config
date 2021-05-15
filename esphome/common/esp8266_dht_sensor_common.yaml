@@ -39,8 +39,9 @@ ota:
 web_server:
 
 deep_sleep:
-  run_duration: 10s
-  sleep_duration: 10min
+  id: deep_sleep_1
+  run_duration: 60s
+  sleep_duration: 300s
 
 text_sensor:
 - platform: version
@@ -79,7 +80,7 @@ binary_sensor:
 sensor:
   - platform: wifi_signal
     name: "${friendly_name} Signal Level"
-    update_interval: 60s
+    update_interval: 30s
   - platform: uptime
     name: "${friendly_name} uptime"
   - platform: sht3xd
@@ -88,7 +89,7 @@ sensor:
       name: "${friendly_name} Temperature"
     humidity:
       name: "${friendly_name} Humidity"
-    update_interval: 60s
+    update_interval: 30s
 
 output:
   # Register the blue LED as a dimmable output ....
