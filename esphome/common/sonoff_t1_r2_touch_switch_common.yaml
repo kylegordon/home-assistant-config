@@ -41,7 +41,7 @@ binary_sensor:
       number: GPIO0
       mode: INPUT_PULLUP
       inverted: True
-    name: "${friendly_name} Touchpad 1"
+    name: "${friendly_name} Touch Pad"
     on_press:
       if:
         condition:
@@ -64,7 +64,7 @@ binary_sensor:
 switch:
   - platform: gpio
     id: relay_1
-    name: "${friendly_name} Relay 1"
+    name: "${friendly_name} Relay"
     pin: GPIO12
 
 output:
