@@ -60,6 +60,10 @@ automation:
     trigger:
       platform: mqtt
       topic: cheerlightsRGB
+    condition:
+    - condition: time
+      after: '06:00:00'
+      before: '01:00:00'
     action:
       service_template: light.turn_on
       data_template:
@@ -117,7 +121,7 @@ automation:
             - "{{ trigger.payload[3:5] | int(0,16) }}"
             - "{{ trigger.payload[-2:] | int(0,16) }}"
 
-  - alias: Cheerlights Outside - off
+  - alias: Cheerlights - off
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
@@ -130,3 +134,6 @@ automation:
         entity_id:
           - light.decking_lights
           - light.under_bed_lights
+          - light.glow_orbs
+        data:
+          transition: 10
