@@ -132,11 +132,6 @@ konnected:
 alarm_control_panel:
     - platform: manual
 
-weather:
-  - platform: openweathermap
-    mode: daily
-    api_key: !secret openweathermap_api_key
-
 deconz:
   host: 172.24.32.13
   port: 8100
