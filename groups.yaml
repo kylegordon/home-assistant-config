@@ -16,11 +16,6 @@ default_view:
     - sensor.bitcoin_balance
     - group.environment_summary
 
-modes:
-  name: Modes
-  entities:
-    - input_boolean.guest_mode
-
 environment_summary:
   name: Environment Summary
   entities:
