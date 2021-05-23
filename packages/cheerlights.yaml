@@ -1,4 +1,4 @@
-lights:
+light:
   - platform: group
     name: Glow Orbs
     entities:
