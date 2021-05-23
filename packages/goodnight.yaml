@@ -29,6 +29,7 @@ automation:
         - group.dining_nook_lights
         - light.boot_room
         - light.twig_lights
+        - light.glow_orbs
         - group.bedroom_1
         - group.bedroom_3
         - group.bedroom_4

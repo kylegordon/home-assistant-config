@@ -1,3 +1,11 @@
+lights:
+  - platform: group
+    name: Glow Orbs
+    entities:
+        - light.sense_gloworb_1_ring
+        - light.sense_gloworb_2_ring
+        - light.sense_gloworb_3_ring
+
 automation:
 
   - alias: Cheerlights scene
