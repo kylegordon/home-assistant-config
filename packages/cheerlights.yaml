@@ -129,6 +129,31 @@ automation:
         to: "off"
       - platform: time
         at: "23:00:00"
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.guest_mode
+        state: 'off'
+    action:
+      - service: homeassistant.turn_off
+        entity_id:
+          - light.decking_lights
+          - light.under_bed_lights
+          - light.glow_orbs
+        data:
+          transition: 10
+
+  - alias: Cheerlights (Guest mode) - off
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.home_occupied
+        from: "on"
+        to: "off"
+      - platform: time
+        at: "01:00:00"
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.guest_mode
+        state: 'on'
     action:
       - service: homeassistant.turn_off
         entity_id:
