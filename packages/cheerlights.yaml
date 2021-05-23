@@ -15,7 +15,7 @@ automation:
     action:
       - service: scene.create
         data_template:
-          scene_id: under_bed_cheerlights_state
+          scene_id: cheerlights_state
           entities:
             light.under_bed_lights:
               state: "on"
@@ -35,7 +35,7 @@ automation:
         before: '07:00:00'
     action:
       - service: scene.turn_on
-        entity_id: scene.under_bed_cheerlights_state
+        entity_id: scene.cheerlights_state
         data:
           transition: 2
 
