@@ -26,6 +26,8 @@
 #  origin: device_tracker.charlotte_thea
 #  destination: zone.home
 
+- platform: season
+
 - platform: template
   sensors:
     last_alexa:
