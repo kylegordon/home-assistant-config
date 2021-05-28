@@ -140,7 +140,6 @@ bedroom_4:
   name: Craft room
   entities:
     - light.craft_room
-    - light.craft_room_bookcase
     - light.craft_room_fairy_lights
     - light.craft_room_desk_level
     - sensor.craft_room_temperature
