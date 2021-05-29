@@ -3,7 +3,7 @@ binary_sensor:
       friendly_name: Bathroom Window
       device_class: window
       icon_template: >-
-        {% if is_state('binary_sensor.window_occupied','on') %}
+        {% if is_state('binary_sensor.bathroom_window','on') %}
           mdi:window-open
         {% else %}
           mdi:window-closed
