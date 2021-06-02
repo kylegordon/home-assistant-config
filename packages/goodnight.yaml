@@ -29,10 +29,11 @@ automation:
         - group.dining_nook_lights
         - light.boot_room
         - light.twig_lights
+        - light.glow_orbs
+        - light.under_bed_lights
         - group.bedroom_1
         - group.bedroom_3
         - group.bedroom_4
-        - input_boolean.goodnight_process
       - condition: or
         # If guests are staying, don't turn off their bedroom lights
         conditions:
@@ -42,3 +43,15 @@ automation:
       - service: homeassistant.turn_off
         entity_id:
         - group.bedroom_2
+
+  - alias: Goodnight process reset
+    trigger:
+      - platform: time
+        at: '04:00:00'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Resetting goodnight mode"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.goodnight_process

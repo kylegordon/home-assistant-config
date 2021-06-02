@@ -1,3 +1,17 @@
+binary_sensor:
+  - platform: template
+    sensors:
+      bathroom_window:
+        friendly_name: Bathroom Window
+        device_class: window
+        icon_template: >-
+          {% if is_state('binary_sensor.bathroom_window','on') %}
+            mdi:window-open
+          {% else %}
+            mdi:window-closed
+          {% endif %}
+        value_template: "{{ is_state('binary_sensor.bathroom_window_opening_sensor','on') or is_state('binary_sensor.bathroom_window_vibration','on') }}"
+
 light:
   - platform: group
     name: Master Bathroom
@@ -15,7 +29,7 @@ automation:
     action:
       - service: switch.turn_on
         entity_id:
-          - switch.hall_dual_switch_relay_1
+          - switch.hall_dual_switch_relay_2
       - service: light.toggle
         data_template:
           entity_id: light.master_bathroom

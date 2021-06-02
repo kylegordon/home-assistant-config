@@ -16,11 +16,6 @@ default_view:
     - sensor.bitcoin_balance
     - group.environment_summary
 
-modes:
-  name: Modes
-  entities:
-    - input_boolean.guest_mode
-
 environment_summary:
   name: Environment Summary
   entities:
@@ -137,15 +132,14 @@ bedroom_3:
     - input_select.study_amplifier_input
     - light.study_light
     - light.monitor_lights
-    - sensor.study_sensor_temperature
-    - sensor.study_sensor_humidity
-    - sensor.study_sensor_signal_level
+    - sensor.study_temperature
+    - sensor.study_humidity
+    - sensor.study_pressure
 
 bedroom_4:
   name: Craft room
   entities:
     - light.craft_room
-    - light.craft_room_bookcase
     - light.craft_room_fairy_lights
     - light.craft_room_desk_level
     - sensor.craft_room_temperature
@@ -179,10 +173,9 @@ hall_view:
     - binary_sensor.hall_door_motion
     - binary_sensor.boot_room_motion
     - sensor.hall_door_motion
-    - sensor.hallway_sensor_temperature
-    - sensor.hallway_sensor_humidity
-    - sensor.hallway_sensor_signal_level
-    - light.twig_lights
+    - sensor.hall_temperature
+    - sensor.hall_humidity
+    - sensor.hall_pressure
     - binary_sensor.boot_room_door
 
 outside:

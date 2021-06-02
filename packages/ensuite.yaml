@@ -148,7 +148,7 @@ automation:
         entity_id: binary_sensor.ensuite_motion
         to: 'off'
         for:
-          minutes: 4
+          minutes: 2
     condition:
       - condition: state
         entity_id: sensor.time_of_day
