@@ -60,6 +60,7 @@ automation:
           - sensor.study_multi_sensor_battery_level
           - sensor.hall_multi_sensor_battery_level
           - sensor.dining_nook_multi_sensor_battery_level
+          - sensor.bathroom_multi_sensor_battery_level
         to: 'unavailable'
         for:
           minutes: 2
