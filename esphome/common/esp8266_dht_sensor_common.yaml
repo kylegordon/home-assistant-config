@@ -38,6 +38,10 @@ ota:
 
 web_server:
 
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
 deep_sleep:
   id: deep_sleep_1
   run_duration: 60s
