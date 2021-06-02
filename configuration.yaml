@@ -132,11 +132,6 @@ konnected:
 alarm_control_panel:
     - platform: manual
 
-weather:
-  - platform: openweathermap
-    mode: daily
-    api_key: !secret openweathermap_api_key
-
 deconz:
   host: 172.24.32.13
   port: 8100
@@ -179,8 +174,6 @@ rfxtrx:
       # Black Remote D4
     0a14000bf0dd3c0f010070:
       # name: Lava Lamp
-    0a140031f0dd3c0d010070:
-      # name: Craft Room bookcase
     0a140037f0dd3c0b010060:
       # name: Christmas Tree
     0a14003cf0dd3c0a010060:
@@ -285,8 +278,6 @@ emulated_hue:
     light.garage_lights:
       hidden: false
     light.craft_room:
-      hidden: false
-    light.craft_room_bookcase:
       hidden: false
     light.craft_room_desk_level:
       hidden: false
