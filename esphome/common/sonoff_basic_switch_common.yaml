@@ -20,6 +20,10 @@ api:
 
 ota:
 
+# syslog:
+#   ip_address: 172.24.32.13
+#   port: 515
+
 text_sensor:
 - platform: version
   name: "${friendly_name} Firmware version"
