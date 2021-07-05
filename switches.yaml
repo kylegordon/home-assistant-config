@@ -5,3 +5,18 @@
 # - platform: broadlink
 #   host: 172.24.32.41
 #   mac: 'b4:43:0d:f9:19:93'
+
+- platform: mqtt
+  name: Octoprint Lighting
+  unique_id: octoprint_relay_1
+  command_topic: "octoprint/usb_relay_1/set"
+  payload_on: 'true'
+  payload_off: 'false'
+
+- platform: mqtt
+  name: Octoprint Relay 2
+  unique_id: octoprint_relay_2
+  command_topic: "octoprint/usb_relay_2/set"
+  payload_on: 'true'
+  payload_off: 'false'
+
