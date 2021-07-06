@@ -7,7 +7,7 @@
 #   mac: 'b4:43:0d:f9:19:93'
 
 - platform: mqtt
-  name: Octoprint Lighting
+  name: Octoprint Relay 1
   unique_id: octoprint_relay_1
   command_topic: "octoprint/usb_relay_1/set"
   payload_on: 'true'
