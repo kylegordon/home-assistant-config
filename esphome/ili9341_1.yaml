@@ -93,9 +93,9 @@ display:
   - id: my_display
     platform: ili9341
     model: "TFT 2.4"
-    cs_pin: 5
-    dc_pin: 27
-    reset_pin: 33
+    cs_pin: GPIO5
+    dc_pin: GPIO27
+    reset_pin: GPIO33
     rotation: 270
     pages:
       - id: viewpoint
