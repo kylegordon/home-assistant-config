@@ -74,9 +74,9 @@ text_sensor:
     internal: true
 
 spi:
-  clk_pin: 18
-  mosi_pin: 23
-  miso_pin: 19
+  clk_pin: GPIO18
+  mosi_pin: GPIO23
+  miso_pin: GPIO19
 
 color:
   - id: my_red
