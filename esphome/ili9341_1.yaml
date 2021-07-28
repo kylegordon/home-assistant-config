@@ -74,6 +74,7 @@ text_sensor:
     internal: true
 
 spi:
+  id: display_spi
   clk_pin: GPIO18
   mosi_pin: GPIO23
   miso_pin: GPIO19
@@ -88,6 +89,28 @@ image:
   - id: bin
     file: "delete-empty.png"
     type: RGB24
+
+# spi:
+  # id: touch_spi
+  # clk_pin: GPIO25
+  # mosi_pin: GPIO4
+  # miso_pin: GPIO15
+
+xpt2046:
+  id: touchscreen
+  cs_pin: GPIO12
+  # irq_pin: 16
+  dimension_x: 240
+  dimension_y: 320
+  on_state:
+    - lambda: |-
+        if (touched)
+          ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
+              id(touchscreen).x,
+              id(touchscreen).y,
+              id(touchscreen).x_raw,
+              id(touchscreen).y_raw
+              );
 
 display:
   - id: my_display
