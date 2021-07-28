@@ -144,7 +144,7 @@ interval:
 # Define a PWM output on the ESP32
 output:
   - platform: ledc
-    pin: 32
+    pin: GPIO32
     id: gpio_32_backlight_pwm
 
 # Define a monochromatic, dimmable light for the backlight
