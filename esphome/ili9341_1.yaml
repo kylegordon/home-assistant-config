@@ -10,8 +10,8 @@ esphome:
 wifi:
   # ssid: !secret wifi_ssid
   # password: !secret wifi_pass
-  ssid: ***REMOVED***
-  password: ***REMOVED***
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
   # FIXME Needs AP details
 
 captive_portal:
