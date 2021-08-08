@@ -19,7 +19,7 @@ automation:
         brightness_pct: XXX
         entity_id: light.bandwidthometer_display
 
-  - id: scale_backlight
+  - id: scale_backlight_up
     alias: Bandwidthometer Backlight
     trigger:
       platform: numeric_state
@@ -31,5 +31,17 @@ automation:
         brightness_pct: 100
         transition: 10
         rgb_color: [255,0,0]
+        entity_id:
+          - light.bandwidthometer_light
+
+  - id: scale_backlight_down
+    alias: Bandwidthometer Backlight
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.bandwidth_in_as_percentage
+      above: 80
+    action:
+      service_template: light.turn_off
+      data_template:
         entity_id:
           - light.bandwidthometer_light
