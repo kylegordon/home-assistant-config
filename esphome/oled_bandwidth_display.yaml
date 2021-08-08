@@ -11,7 +11,9 @@ esphome:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
-  # FIXME Needs AP details
+  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
+    ssid: ${friendly_name}_AP
+    password: !secret wifi_pass
 
 captive_portal:
 
