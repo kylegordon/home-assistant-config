@@ -87,6 +87,6 @@ light:
   - platform: fastled_clockless
     chipset: WS2811
     pin: D1
-    num_leds: 60
-    rgb_order: BRG
+    num_leds: 4
+    rgb_order: GRB
     name: "${friendly_name} Light"
