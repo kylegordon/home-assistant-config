@@ -2,8 +2,9 @@ sensor:
   - platform: template
     sensors:
         bandwidth_in_as_percentage:
+          id: bandwidth_in_as_percentage
           friendly_name: 'Bandwidth in as percentage'
-          # value_template: '{{ ((states.input_number.internet_traffic_delta_out.state | float ) / 1000000 ) | round(2) }}'
+          # We have a, nominally, 100Meg connection.
           value_template: '{{ (((states.sensor.internet_speed_in.state | float ) / 100 ) * 100 ) | round(0) }}'
           unit_of_measurement: '\%'
 
@@ -16,7 +17,7 @@ automation:
     action:
       service_template: light.turn_on
       data_template:
-        brightness_pct: XXX
+        brightness_pct: sensor.bandwidth_as_a_percentage
         entity_id: light.bandwidthometer_display
 
   - id: scale_backlight_up
