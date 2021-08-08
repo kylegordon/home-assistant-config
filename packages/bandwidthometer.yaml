@@ -39,7 +39,7 @@ automation:
     trigger:
       platform: numeric_state
       entity_id: sensor.bandwidth_in_as_percentage
-      above: 80
+      below: 80
     action:
       service_template: light.turn_off
       data_template:
