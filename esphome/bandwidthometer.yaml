@@ -90,3 +90,13 @@ light:
     num_leds: 4
     rgb_order: GRB
     name: "${friendly_name} Light"
+    effects:
+      - strobe:
+      - flicker:
+      - addressable_rainbow:
+      - addressable_color_wipe:
+      - addressable_scan:
+      - addressable_twinkle:
+      - addressable_random_twinkle:
+      - addressable_fireworks:
+      - addressable_flicker:
