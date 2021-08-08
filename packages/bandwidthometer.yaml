@@ -2,7 +2,6 @@ sensor:
   - platform: template
     sensors:
         bandwidth_in_as_percentage:
-          id: bandwidth_in_as_percentage
           friendly_name: 'Bandwidth in as percentage'
           # We have a, nominally, 100Meg connection.
           value_template: '{{ (((states.sensor.internet_speed_in.state | float ) / 100 ) * 100 ) | round(0) }}'
