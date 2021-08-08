@@ -20,7 +20,7 @@ automation:
         entity_id: light.bandwidthometer_display
 
   - id: scale_backlight_up
-    alias: Bandwidthometer Backlight
+    alias: Bandwidthometer Backlight On
     trigger:
       platform: numeric_state
       entity_id: sensor.bandwidth_in_as_percentage
@@ -35,7 +35,7 @@ automation:
           - light.bandwidthometer_light
 
   - id: scale_backlight_down
-    alias: Bandwidthometer Backlight
+    alias: Bandwidthometer Backlight Off
     trigger:
       platform: numeric_state
       entity_id: sensor.bandwidth_in_as_percentage
