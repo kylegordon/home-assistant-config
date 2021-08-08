@@ -85,6 +85,7 @@ light:
     output: pwm_output
     name: "${friendly_name} Display"
   - platform: fastled_clockless
+    id: ws2811_backlight
     chipset: WS2811
     pin: D1
     num_leds: 4
@@ -100,3 +101,20 @@ light:
       - addressable_random_twinkle:
       - addressable_fireworks:
       - addressable_flicker:
+
+interval:
+  - interval: 500ms
+    then:
+    - if:
+        condition:
+          not:
+            wifi.connected:
+        then:
+          - light.turn_on:
+              id: ws2811_backlight
+              brightness: 50%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: ws2811_backlight
+              transition_length: 250ms
