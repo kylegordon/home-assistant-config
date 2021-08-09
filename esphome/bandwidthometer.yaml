@@ -83,6 +83,7 @@ output:
 light:
   - platform: monochromatic
     output: pwm_output
+    gamma_correct: 0
     name: "${friendly_name} Display"
   - platform: fastled_clockless
     id: ws2811_backlight
