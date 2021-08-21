@@ -19,14 +19,6 @@
     password: !secret gmail_password
     sender: homeassistant@glasgownet.com
     recipient: kyle@glasgownet.com
-  - platform: kodi
-    name: kodi_living_room_info
-    host: oxcart.vpn.glasgownet.com
-  - platform: kodi
-    name: kodi_living_room_warning
-    host: oxcart.vpn.glasgownet.com
-    data:
-        icon: "warning"
   - platform: alexa_media
     name: alexa_media
   - platform: syslog
