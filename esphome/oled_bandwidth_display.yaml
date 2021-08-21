@@ -1,3 +1,6 @@
+packages:
+  common: !include common/common.yaml
+
 substitutions:
   device_name: oled_bandwidth
   device_description: OLED Bandwidth Display
