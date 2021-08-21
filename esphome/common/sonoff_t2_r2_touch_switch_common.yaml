@@ -34,7 +34,7 @@ sensor:
   - platform: wifi_signal
     name: "${friendly_name} Signal Level"
     update_interval: 60s
-# Reports how long the device has been powered (in minutes)
+  # Reports how long the device has been powered (in minutes)
   - platform: uptime
     name: ${friendly_name} Uptime
     filters:
