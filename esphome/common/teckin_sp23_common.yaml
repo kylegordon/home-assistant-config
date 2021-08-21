@@ -51,7 +51,7 @@ text_sensor:
 
 sensor:
   - platform: wifi_signal
-    name: "${friendly_name} Signal Level"
+    name: "${friendly_name} Signal Strength"
     update_interval: 60s
   - platform: uptime
     name: ${friendly_name} Uptime

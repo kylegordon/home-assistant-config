@@ -36,7 +36,7 @@ binary_sensor:
 sensor:
   # Reports the WiFi signal strength
   - platform: wifi_signal
-    name: ${friendly_name} Signal
+    name: ${friendly_name} Signal Strength
     update_interval: 60s
   # Reports how long the device has been powered (in minutes)
   - platform: uptime
