@@ -1,3 +1,7 @@
+api:
+
+ota:
+
 sensor:
   # Reports the WiFi signal strength
   - platform: wifi_signal
