@@ -5,7 +5,7 @@
 # TV manual and specs at https://www.manualslib.com/manual/650244/Panasonic-Viera-Th-D42ps81ea.html?page=51#manual
 
 packages:
-  common: !include common/common.yaml
+  common: !include common.yaml
 
 esphome:
   name: ${device_name}

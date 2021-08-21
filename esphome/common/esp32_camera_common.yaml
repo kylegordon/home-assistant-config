@@ -4,7 +4,7 @@
 # Do not enable BLE tracking when the camera module is enabled. Device does not boot correctly
 
 packages:
-  common: !include common/common.yaml
+  common: !include common.yaml
 
 esphome:
   name: ${device_name}
