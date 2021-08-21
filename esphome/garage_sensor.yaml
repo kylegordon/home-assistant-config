@@ -17,9 +17,19 @@ ota:
 
 web_server:
 
+binary_sensor:
+  # Reports if this device is Connected or not
+  - platform: status
+    name: ${friendly_name} Status
+
 text_sensor:
-- platform: version
-  name: "Firmware version"
+  # Reports the ESPHome Version with compile date
+  - platform: version
+    name: ${friendly_name} ESPHome Version
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
 
 dallas:
   - pin: GPIO2
@@ -28,8 +38,12 @@ sensor:
   - platform: wifi_signal
     name: "WiFi Signal Garage Sensor"
     update_interval: 60s
+  # Reports how long the device has been powered (in minutes)
   - platform: uptime
-    name: "Device uptime"
+    name: ${friendly_name} Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: minutes
   - platform: dallas
     address: 0xE40000031D87AC28
     name: "Garage Temperature"
