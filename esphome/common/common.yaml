@@ -1,0 +1,25 @@
+sensor:
+  # Reports the WiFi signal strength
+  - platform: wifi_signal
+    name: ${friendly_name} Signal Strength
+    update_interval: 60s
+  # Reports how long the device has been powered (in minutes)
+  - platform: uptime
+    name: ${friendly_name} Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: minutes
+
+binary_sensor:
+  # Reports if this device is Connected or not
+  - platform: status
+    name: ${friendly_name} Status
+
+text_sensor:
+  # Reports the ESPHome Version with compile date
+  - platform: version
+    name: ${friendly_name} ESPHome Version
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
