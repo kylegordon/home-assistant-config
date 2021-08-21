@@ -5,6 +5,7 @@ substitutions:
 
 esphome:
   name: oled_bandwidth
+  comment: ${device_description}
   platform: ESP8266
   board: d1_mini
 
