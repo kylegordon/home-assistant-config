@@ -1,11 +1,20 @@
+substitutions:
+  device_name: hot_tank_sensor
+  device_description: Hot Water Tank Sensor
+  friendly_name: Hot Water Tank Sensor 
+
 esphome:
-  name: hot_tank_sensor
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP8266
   board: d1_mini
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_pass
+  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
+    ssid: ${friendly_name}_AP
+    password: !secret wifi_pass
 
 # Enable logging
 logger:
@@ -36,7 +45,7 @@ dallas:
 
 sensor:
   - platform: wifi_signal
-    name: "WiFi Signal Hot Tank Sensor"
+    name: ${friendly_name} Signal
     update_interval: 60s
   # Reports how long the device has been powered (in minutes)
   - platform: uptime
