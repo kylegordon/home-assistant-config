@@ -38,7 +38,7 @@ switch:
 
 sensor:
   - platform: wifi_signal
-    name: "${friendly_name} Signal Level"
+    name: "${friendly_name} Signal Strength"
     update_interval: 60s
   # Reports how long the device has been powered (in minutes)
   - platform: uptime
