@@ -28,6 +28,32 @@ syslog:
   ip_address: 172.24.32.13
   port: 515
 
+binary_sensor:
+  # Reports if this device is Connected or not
+  - platform: status
+    name: ${friendly_name} Status
+
+sensor:
+  # Reports the WiFi signal strength
+  - platform: wifi_signal
+    name: ${friendly_name} Signal
+    update_interval: 60s
+  # Reports how long the device has been powered (in minutes)
+  - platform: uptime
+    name: ${friendly_name} Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: minutes
+
+text_sensor:
+  # Reports the ESPHome Version with compile date
+  - platform: version
+    name: ${friendly_name} ESPHome Version
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
 output:
   # Register the blue LED as a dimmable output ....
   - platform: esp8266_pwm
@@ -45,7 +71,6 @@ output:
 
 
 light:
-  # ... and then make a light out of it.
   - platform: monochromatic
     name: "Wemos Blue LED"
     output: blue_led
