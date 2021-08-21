@@ -1,5 +1,11 @@
+substitutions:
+  device_name: garage_sensor
+  device_description: Garage Temperature Sensor
+  friendly_name: Garage Temperature Sensor
+
 esphome:
-  name: garage_sensor
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP8266
   board: d1_mini
 
@@ -36,7 +42,7 @@ dallas:
 
 sensor:
   - platform: wifi_signal
-    name: "WiFi Signal Garage Sensor"
+    name: "${friendly_name} Signal Level"
     update_interval: 60s
   # Reports how long the device has been powered (in minutes)
   - platform: uptime

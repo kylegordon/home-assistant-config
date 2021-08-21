@@ -45,7 +45,7 @@ dallas:
 
 sensor:
   - platform: wifi_signal
-    name: ${friendly_name} Signal
+    name: ${friendly_name} Signal Level
     update_interval: 60s
   # Reports how long the device has been powered (in minutes)
   - platform: uptime
