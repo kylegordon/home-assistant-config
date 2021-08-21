@@ -62,6 +62,10 @@ text_sensor:
 - platform: version
   name: ${friendly_name} ESPHome Version
 
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
 output:
 - platform: esp8266_pwm
   id: red
