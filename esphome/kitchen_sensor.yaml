@@ -1,35 +1,26 @@
+packages:
+  common: !include common/common.yaml
+
+substitutions:
+  device_name: kitchen_sensor
+  device_description: Kitchen Sensor
+  friendly_name: Kitchen Sensor
+
 esphome:
-  name: kitchen_sensor
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP8266
   board: d1_mini
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
 
 # Enable logging
 logger:
 
-# Enable Home Assistant API
-api:
-
-ota:
-
 web_server:
-
-text_sensor:
-- platform: version
-  name: "Firmware version"
 
 dallas:
   - pin: GPIO2
 
 sensor:
-  - platform: wifi_signal
-    name: "WiFi Signal Kitchen Sensor"
-    update_interval: 60s
-  - platform: uptime
-    name: "Device uptime"
   - platform: dallas
     address: 0x490000031D4F3C28
     name: "Kitchen Temperature"

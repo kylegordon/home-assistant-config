@@ -293,8 +293,6 @@ emulated_hue:
       hidden: false
     light.star_burst:
       hidden: false
-    light.arc_lamp:
-      hidden: false
     light.lava_lamp:
       hidden: false
     media_player.living_room_television:
@@ -388,11 +386,6 @@ speedtestdotnet:
     - ping
     - download
     - upload
-
-nzbget:
-  host: 172.24.32.13
-  username: !secret nzbget_username
-  password: !secret nzbget_password
 
 panel_iframe:
   esphome:

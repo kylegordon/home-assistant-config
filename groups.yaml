@@ -50,7 +50,7 @@ living_room:
   entities:
     - group.living_room_lights
     - media_player.living_room_kodi
-    - media_player.linn_223637
+    - media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
     - switch.tellybox
     - binary_sensor.living_room_motion
     - sensor.living_room_motion

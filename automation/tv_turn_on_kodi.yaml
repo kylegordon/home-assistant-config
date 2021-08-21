@@ -11,5 +11,5 @@ action:
       message: "Turning on Hi-Fi system"
   - service: media_player.select_source
     data:
-      entity_id: media_player.linn_223637
+      entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
       source: Kodi

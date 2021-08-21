@@ -1,25 +1,16 @@
+packages:
+  common: !include common.yaml
+
 esphome:
   name: ${device_name}
   comment: ${device_description}
   platform: ESP8266
   board: d1_mini
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
-    ssid: ${friendly_name}_AP
-    password: !secret wifi_pass
-
 captive_portal:
 
 # Enable logging
 logger:
-
-# Enable Home Assistant API
-api:
-
-ota:
 
 web_server:
   port: 80
@@ -27,25 +18,6 @@ web_server:
 syslog:
   ip_address: 172.24.32.13
   port: 515
-
-text_sensor:
-- platform: version
-  name: "${friendly_name} Firmware version"
-
-switch:
-  - platform: restart
-    name: "${friendly_name} Restart"
-
-sensor:
-  - platform: wifi_signal
-    name: "${friendly_name} Signal Level"
-    update_interval: 60s
-  - platform: uptime
-    name: "${friendly_name} uptime"
-
-binary_sensor:
-  - platform: status
-    name: "${friendly_name} Status"
 
 output:
   # Register the blue LED as a dimmable output ....
