@@ -1,37 +1,26 @@
+packages:
+  common: !include common/common.yaml
+
+substitutions:
+  device_name: under_bed_pir
+  device_description: Under Bed PIR
+  friendly_name: Under Bed PIR
+
 esphome:
-  name: under_bed_pir
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP8266
   board: d1_mini
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
 
 # Enable logging
 logger:
 
-# Enable Home Assistant API
-api:
-
-ota:
-
 web_server:
-
-text_sensor:
-- platform: version
-  name: "Firmware version"
-
-sensor:
-  - platform: wifi_signal
-    name: "WiFi Signal Test PIR"
-    update_interval: 60s
-  - platform: uptime
-    name: "Device uptime"
 
 binary_sensor:
   - platform: gpio
     name: "Motion Sensor"
-    pin: 
+    pin:
       number: D1
     device_class: motion
 

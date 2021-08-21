@@ -25,6 +25,6 @@
   mjpeg_url: http://viewpoint.house:8182/mjpeg
 
 - platform: mjpeg
-  name: BackDoor
+  name: FrontDoor
   still_image_url: http://viewpoint.house:8765/picture/3/current/
   mjpeg_url: http://viewpoint.house:8183/mjpeg
