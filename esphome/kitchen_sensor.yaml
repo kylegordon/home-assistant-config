@@ -12,26 +12,10 @@ esphome:
   platform: ESP8266
   board: d1_mini
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
-    ssid: ${friendly_name}_AP
-    password: !secret wifi_pass
-
 # Enable logging
 logger:
 
-# Enable Home Assistant API
-api:
-
-ota:
-
 web_server:
-
-text_sensor:
-- platform: version
-  name: "Firmware version"
 
 dallas:
   - pin: GPIO2
