@@ -42,9 +42,6 @@ sensor:
       - lambda: return x / 60.0;
     unit_of_measurement: minutes
 
-switch:
-  - platform: restart
-    name: "${friendly_name} Restart"
 
 binary_sensor:
   - platform: status
@@ -99,6 +96,8 @@ binary_sensor:
           - switch.turn_on: hall_2_gang_relay_2
 
 switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
   - platform: gpio
     id: hall_2_gang_relay_1
     name: "${friendly_name} Relay 1"
