@@ -49,6 +49,8 @@ binary_sensor:
       - switch.toggle: relay_2
 
 switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
   - platform: gpio
     name: "${friendly_name} Relay 1"
     pin: GPIO12
