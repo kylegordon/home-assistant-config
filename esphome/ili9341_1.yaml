@@ -86,16 +86,10 @@ image:
     file: "delete-empty.png"
     type: RGB24
 
-# spi:
-  # id: touch_spi
-  # clk_pin: GPIO25
-  # mosi_pin: GPIO4
-  # miso_pin: GPIO15
-
 xpt2046:
   id: touchscreen
   cs_pin: GPIO12
-  # irq_pin: 16
+  irq_pin: GPIO16
   dimension_x: 240
   dimension_y: 320
   on_state:
