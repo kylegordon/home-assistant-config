@@ -1,7 +1,7 @@
 substitutions:
   device_name: hot_tank_sensor
   device_description: Hot Water Tank Sensor
-  friendly_name: Hot Water Tank Sensor 
+  friendly_name: Hot Water Tank Sensor
 
 esphome:
   name: ${device_name}
