@@ -30,17 +30,16 @@ text_sensor:
 - platform: version
   name: "${friendly_name} Firmware version"
 
-# Reports how long the device has been powered (in minutes)
-- platform: uptime
-  name: ${friendly_name} Uptime
-  filters:
-    - lambda: return x / 60.0;
-  unit_of_measurement: minutes
-
 sensor:
   - platform: wifi_signal
     name: "${friendly_name} Signal Level"
     update_interval: 60s
+# Reports how long the device has been powered (in minutes)
+  - platform: uptime
+    name: ${friendly_name} Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: minutes
 
 switch:
   - platform: restart
