@@ -7,7 +7,7 @@
 #https://blakadder.github.io/templates/novostella_20W_flood.html
 
 packages:
-  common: !include common/common.yaml
+  common: !include common.yaml
 
 esphome:
   name: ${device_name}
