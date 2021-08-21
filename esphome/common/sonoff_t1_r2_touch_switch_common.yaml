@@ -30,8 +30,16 @@ sensor:
   - platform: wifi_signal
     name: "${friendly_name} Signal Level"
     update_interval: 60s
+  # Reports how long the device has been powered (in minutes)
   - platform: uptime
-    name: "${friendly_name} uptime"
+    name: ${friendly_name} Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: minutes
+
+switch:
+  - platform: restart
+    name: "${friendly_name} Restart"
 
 binary_sensor:
   - platform: status
