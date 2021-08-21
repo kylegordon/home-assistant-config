@@ -33,6 +33,7 @@ i2c:
   scl: GPIO5
   scan: True
 
+sensor:
   - platform: custom
     lambda: |-
       auto opt3001 = new MyOPT3001();
