@@ -16,12 +16,15 @@
 
 - platform: generic
   name: BackDoor
+  still_image_url: http://viewpoint.house:4999/api/back_door/latest.jpg?h=400&motion=1
   stream_source: rtmp://viewpoint.house/live/back_door
 
 - platform: generic
   name: Driveway
-  stream_source: http://viewpoint.house:8182/mjpeg
+  still_image_url: http://viewpoint.house:4999/api/driveway/latest.jpg?h=400&motion=1
+  stream_source: http://viewpoint.house/live/driveway
 
 - platform: generic
   name: FrontDoor
-  stream_source: http://viewpoint.house:8183/mjpeg
+  still_image_url: http://viewpoint.house:4999/api/front_door/latest.jpg?h=400&motion=1
+  stream_source: http://viewpoint.house/live/front_door
