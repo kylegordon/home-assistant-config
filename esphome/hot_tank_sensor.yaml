@@ -1,3 +1,6 @@
+packages:
+  common: !include common/common.yaml
+
 substitutions:
   device_name: hot_tank_sensor
   device_description: Hot Water Tank Sensor
@@ -9,50 +12,15 @@ esphome:
   platform: ESP8266
   board: d1_mini
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
-    ssid: ${friendly_name}_AP
-    password: !secret wifi_pass
-
 # Enable logging
 logger:
 
-# Enable Home Assistant API
-api:
-
-ota:
-
 web_server:
-
-binary_sensor:
-  # Reports if this device is Connected or not
-  - platform: status
-    name: ${friendly_name} Status
-
-text_sensor:
-  # Reports the ESPHome Version with compile date
-  - platform: version
-    name: ${friendly_name} ESPHome Version
-
-switch:
-  - platform: restart
-    name: "${friendly_name} Restart"
 
 dallas:
   - pin: GPIO2
 
 sensor:
-  - platform: wifi_signal
-    name: ${friendly_name} Signal Level
-    update_interval: 60s
-  # Reports how long the device has been powered (in minutes)
-  - platform: uptime
-    name: ${friendly_name} Uptime
-    filters:
-      - lambda: return x / 60.0;
-    unit_of_measurement: minutes
   - platform: dallas
     address: 0xFC00000409F3B028
     name: "Hot Tank Temperature"
