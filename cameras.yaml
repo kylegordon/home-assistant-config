@@ -16,12 +16,10 @@
 
 - platform: mjpeg
   name: BackDoor
-  still_image_url: http://viewpoint.house:8765/picture/1/current/
-  mjpeg_url: http://viewpoint.house:8181/mjpeg
+  mjpeg_url: rtmp://viewpoint.house/live/back_door
 
 - platform: mjpeg
   name: Driveway
-  still_image_url: http://viewpoint.house:8765/picture/2/current/
   mjpeg_url: http://viewpoint.house:8182/mjpeg
 
 - platform: mjpeg
