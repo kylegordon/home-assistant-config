@@ -14,14 +14,14 @@
 #  limit_refetch_to_url_change: true
 #
 
-- platform: mjpeg
+- platform: generic
   name: BackDoor
   stream_source: rtmp://viewpoint.house/live/back_door
 
-- platform: mjpeg
+- platform: generic
   name: Driveway
   stream_source: http://viewpoint.house:8182/mjpeg
 
-- platform: mjpeg
+- platform: generic
   name: FrontDoor
   stream_source: http://viewpoint.house:8183/mjpeg
