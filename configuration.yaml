@@ -293,8 +293,6 @@ emulated_hue:
       hidden: false
     light.star_burst:
       hidden: false
-    light.arc_lamp:
-      hidden: false
     light.lava_lamp:
       hidden: false
     media_player.living_room_television:
