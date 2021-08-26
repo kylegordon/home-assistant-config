@@ -1,26 +1,22 @@
 packages:
+  common: !include common/common.yaml
   colors: !include common/colours.yaml
 
 
+substitutions:
+  device_name: ili9341
+  device_description: ILI9341 Display
+  friendly_name: ILI9341 Display
+
 esphome:
-  name: ili9341
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP32
   board: nodemcu-32s
-
-wifi:
-  # ssid: !secret wifi_ssid
-  # password: !secret wifi_pass
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-  # FIXME Needs AP details
 
 captive_portal:
 
 logger:
-
-api:
-
-ota:
 
 web_server:
 
@@ -90,16 +86,10 @@ image:
     file: "delete-empty.png"
     type: RGB24
 
-# spi:
-  # id: touch_spi
-  # clk_pin: GPIO25
-  # mosi_pin: GPIO4
-  # miso_pin: GPIO15
-
 xpt2046:
   id: touchscreen
   cs_pin: GPIO12
-  # irq_pin: 16
+  irq_pin: GPIO16
   dimension_x: 240
   dimension_y: 320
   on_state:
