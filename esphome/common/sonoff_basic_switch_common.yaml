@@ -32,7 +32,7 @@ switch:
     pin: GPIO12
     id: relay
 
-status_led:
-  pin:
-    number: GPIO13
-    inverted: yes
+light:
+  - platform: status_led
+    name: "Status LED"
+    pin: GPIO13
