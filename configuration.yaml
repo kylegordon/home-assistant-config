@@ -382,14 +382,6 @@ octoprint:
   bed: true
   number_of_tools: 1
 
-speedtestdotnet:
-  scan_interval:
-    minutes: 5
-  monitored_conditions:
-    - ping
-    - download
-    - upload
-
 panel_iframe:
   esphome:
     title: "ESPHome"
