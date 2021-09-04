@@ -1,5 +1,5 @@
 esphome:
-  name: ili9341
+  name: lcd_gpio
   platform: ESP32
   board: nodemcu-32s
 
