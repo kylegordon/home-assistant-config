@@ -12,7 +12,7 @@ automation:
     - platform: event
       event_type: deconz_event
       event_data:
-        device_id: tradfri_open_close_switch
+        id: tradfri_open_close_switch
 
     action:
     - variables:
