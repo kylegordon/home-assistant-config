@@ -23,19 +23,23 @@ automation:
         - "{{ event == 1002 }}"
         sequence:
         - service: cover.open_cover
-          target: cover.patio_blinds
+          target:
+            entity_id: cover.patio_blinds
       - conditions:
         - "{{ event == 2002 }}"
         sequence:
         - service: cover.close_cover
-          target: cover.patio_blinds
+          target:
+            entity_id: cover.patio_blinds
       - conditions:
         - "{{ event == 1003 }}"
         sequence:
         - service: cover.stop_cover
-          target: cover.patio_blinds
+          target:
+            entity_id: cover.patio_blinds
       - conditions:
         - "{{ event == 2003 }}"
         sequence:
         - service: cover.stop_cover
-          target: cover.patio_blinds
+          target:
+            entity_id: cover.patio_blinds
