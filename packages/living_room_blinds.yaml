@@ -1,0 +1,41 @@
+cover:
+  - platform: group
+    name: Patio Blinds
+    entities:
+      - cover.patio_blinds_left
+      - cover.patio_blinds_center
+      - cover.patio_blinds_right
+
+automation:
+  - alias: Control Blinds
+    trigger:
+    - platform: event
+      event_type: deconz_event
+      event_data:
+        device_id: tradfri_open_close_switch
+
+    action:
+    - variables:
+        event: "{{ trigger.event.data.event }}"
+
+    - choose:
+      - conditions:
+        - "{{ event == 1002 }}"
+        sequence:
+        - service: cover.open_cover
+          target: cover.patio_blinds
+      - conditions:
+        - "{{ event == 2002 }}"
+        sequence:
+        - service: cover.close_cover
+          target: cover.patio_blinds
+      - conditions:
+        - "{{ event == 1003 }}"
+        sequence:
+        - service: cover.stop_cover
+          target: cover.patio_blinds
+      - conditions:
+        - "{{ event == 2003 }}"
+        sequence:
+        - service: cover.stop_cover
+          target: cover.patio_blinds
