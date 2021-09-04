@@ -1,0 +1,57 @@
+esphome:
+  name: ili9341
+  platform: ESP32
+  board: nodemcu-32s
+
+wifi:
+  # ssid: !secret wifi_ssid
+  # password: !secret wifi_pass
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  # FIXME Needs AP details
+
+captive_portal:
+
+logger:
+
+api:
+
+ota:
+
+web_server:
+
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/London
+
+# https://www.winstar.com.tw/products/character-lcd-display-module/wh2004a.html
+
+display:
+  - platform: lcd_gpio
+    dimensions: 20x4
+    data_pins:
+      - D0
+      - D1
+      - D2
+      - D3
+    enable_pin: D4
+    rs_pin: D5
+    lambda: |-
+      // Print 0 at the top left
+      it.print("0");
+
+      // Print 1 at the second row and second column.
+      it.print(1, 1, "1");
+
+      // Let's write a sensor value (let's assume it's 42.1)
+      it.printf("%.1f", id(my_sensor).state);
+      // Result: "42.1" (the dot will appear on the "2" segment)
+
+      // Print a right-padded sensor value with 0 digits after the decimal
+      it.printf("Sensor value: %8.0f", id(my_sensor).state);
+      // Result: "Sensor value:       42"
+
+      // Print the current time
+      it.strftime("It is %H:%M on %d.%m.%Y", id(esptime).now());
+      // Result for 10:06 on august 21st 2018 -> "It is 10:06 on 21.08.2018"
