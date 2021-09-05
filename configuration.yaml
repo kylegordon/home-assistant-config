@@ -31,6 +31,9 @@ homeassistant:
   # Includes
   packages: !include_dir_named packages
 
+  # media_dirs:
+  #   cctv_clips: /media/frigate/clips
+
   customize:
     script.restart_ha:
       icon: mdi:power
