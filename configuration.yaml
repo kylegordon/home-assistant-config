@@ -367,12 +367,6 @@ utility_meter:
     source: sensor.energy_spent
     cycle: monthly
 
-alexa_media:
-  accounts:
-    email: !secret alexa_email
-    password: !secret alexa_password
-    url: "amazon.co.uk"
-
 smartir:
 
 octoprint:
