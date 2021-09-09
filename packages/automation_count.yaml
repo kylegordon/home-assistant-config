@@ -1,0 +1,7 @@
+sensor:
+  - platform: template
+    sensors:
+      states_automations_currently_running:
+        value_template: >-
+          {{ states.automation | selectattr("attributes.current", "defined") | map(attribute="attributes.current") | sum }}
+        unit_of_measurement: "Automations"
