@@ -14,10 +14,6 @@ jobs:
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v1
-      - name: ESPHome Version
-        uses: "docker://esphome/esphome"
-        with:
-          args: "version"
       - name: Check for esphome tests requirement
         id: esphome-test-required
         run: |
@@ -27,6 +23,10 @@ jobs:
             echo ::set-output name=ESPHOME_CHANGES::false
             exit 0
           fi
+      - name: ESPHome Version
+        uses: "docker://esphome/esphome"
+        with:
+          args: "version"
       - name: Copy stub files into configuration folder
         if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
         run: |
