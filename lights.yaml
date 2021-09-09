@@ -51,3 +51,7 @@
   entities:
     - light.decking_rgbww_flood_east
     - light.decking_rgbww_flood_west
+
+- platform: switch
+  name: Octoprint Lighting
+  entity_id: switch.octoprint_relay_1

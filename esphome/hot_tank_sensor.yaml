@@ -1,35 +1,26 @@
+packages:
+  common: !include common/common.yaml
+
+substitutions:
+  device_name: hot_tank_sensor
+  device_description: Hot Water Tank Sensor
+  friendly_name: Hot Water Tank Sensor
+
 esphome:
-  name: hot_tank_sensor
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP8266
   board: d1_mini
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
 
 # Enable logging
 logger:
 
-# Enable Home Assistant API
-api:
-
-ota:
-
 web_server:
-
-text_sensor:
-- platform: version
-  name: "Firmware version"
 
 dallas:
   - pin: GPIO2
 
 sensor:
-  - platform: wifi_signal
-    name: "WiFi Signal Hot Tank Sensor"
-    update_interval: 60s
-  - platform: uptime
-    name: "Device uptime"
   - platform: dallas
     address: 0xFC00000409F3B028
     name: "Hot Tank Temperature"

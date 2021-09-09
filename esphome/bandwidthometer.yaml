@@ -1,0 +1,94 @@
+substitutions:
+  device_name: bandwidthometer
+  device_description: Bandwidthometer Display
+  friendly_name: Bandwidthometer
+
+packages:
+  common: !include common/common.yaml
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: d1_mini
+
+captive_portal:
+
+logger:
+
+
+# Enable web server
+web_server:
+  port: 80
+
+sensor:
+  # Reports the WiFi signal strength
+  - platform: wifi_signal
+    name: ${friendly_name} Signal Strength
+    update_interval: 60s
+  - platform: homeassistant
+    id: internet_speed_in
+    entity_id: sensor.internet_speed_in
+    internal: true
+
+  - platform: homeassistant
+    id: internet_speed_out
+    entity_id: sensor.internet_speed_out
+    internal: true
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/London
+
+# Example configuration entry
+output:
+  - platform: esp8266_pwm
+    pin: D4
+    frequency: 1000 Hz
+    id: pwm_output
+
+# Example usage in a light
+light:
+  - platform: monochromatic
+    output: pwm_output
+    gamma_correct: 0
+    name: "${friendly_name} Display"
+  - platform: fastled_clockless
+    id: ws2811_backlight
+    chipset: WS2811
+    pin: D1
+    num_leds: 4
+    rgb_order: GRB
+    name: "${friendly_name} Light"
+    effects:
+      - strobe:
+      - flicker:
+      - addressable_rainbow:
+      - addressable_color_wipe:
+      - addressable_scan:
+      - addressable_twinkle:
+      - addressable_random_twinkle:
+      - addressable_fireworks:
+      - addressable_flicker:
+
+interval:
+  - interval: 500ms
+    then:
+    - if:
+        condition:
+          not:
+            wifi.connected:
+        then:
+          - light.turn_on:
+              id: ws2811_backlight
+              brightness: 50%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: ws2811_backlight
+              transition_length: 250ms
