@@ -24,15 +24,16 @@ jobs:
           CHANGED_FILES=$(git diff --name-status HEAD~1...HEAD . | grep -i esphome || true)
           if [ -z "$CHANGED_FILES" ] ; then
             echo "No changes to ESPHome files"
+            echo ::set-output name=ESPHOME_CHANGES::false
             exit 0
           fi
       - name: Copy stub files into configuration folder
-        if: steps.esphome-test-required.conclusion == 'failure'
+        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Run esphome on all files
-        if: steps.esphome-test-required.conclusion == 'failure'
+        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
         # yamllint disable rule:line-length
         run: |
           for file in $(find \
