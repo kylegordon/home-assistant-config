@@ -31,6 +31,9 @@ homeassistant:
   # Includes
   packages: !include_dir_named packages
 
+  # media_dirs:
+  #   cctv_clips: /media/frigate/clips
+
   customize:
     script.restart_ha:
       icon: mdi:power
@@ -132,11 +135,6 @@ konnected:
 alarm_control_panel:
     - platform: manual
 
-weather:
-  - platform: openweathermap
-    mode: daily
-    api_key: !secret openweathermap_api_key
-
 deconz:
   host: 172.24.32.13
   port: 8100
@@ -179,8 +177,6 @@ rfxtrx:
       # Black Remote D4
     0a14000bf0dd3c0f010070:
       # name: Lava Lamp
-    0a140031f0dd3c0d010070:
-      # name: Craft Room bookcase
     0a140037f0dd3c0b010060:
       # name: Christmas Tree
     0a14003cf0dd3c0a010060:
@@ -286,8 +282,6 @@ emulated_hue:
       hidden: false
     light.craft_room:
       hidden: false
-    light.craft_room_bookcase:
-      hidden: false
     light.craft_room_desk_level:
       hidden: false
     light.master_bedroom:
@@ -301,8 +295,6 @@ emulated_hue:
     light.dining_table_overhead:
       hidden: false
     light.star_burst:
-      hidden: false
-    light.arc_lamp:
       hidden: false
     light.lava_lamp:
       hidden: false
@@ -375,12 +367,6 @@ utility_meter:
     source: sensor.energy_spent
     cycle: monthly
 
-alexa_media:
-  accounts:
-    email: !secret alexa_email
-    password: !secret alexa_password
-    url: "amazon.co.uk"
-
 smartir:
 
 octoprint:
@@ -389,19 +375,6 @@ octoprint:
   api_key: !secret octoprint_key
   bed: true
   number_of_tools: 1
-
-speedtestdotnet:
-  scan_interval:
-    minutes: 5
-  monitored_conditions:
-    - ping
-    - download
-    - upload
-
-nzbget:
-  host: 172.24.32.13
-  username: !secret nzbget_username
-  password: !secret nzbget_password
 
 panel_iframe:
   esphome:

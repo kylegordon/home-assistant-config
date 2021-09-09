@@ -1,22 +1,39 @@
+packages:
+  common: !include common/common.yaml
+
+substitutions:
+  device_name: oled_bandwidth
+  device_description: OLED Bandwidth Display
+  friendly_name: OLED Bandwidth
+
 esphome:
-  name: oled_bandwidth
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP8266
   board: d1_mini
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-  # FIXME Needs AP details
 
 captive_portal:
 
 logger:
 
-api:
-
-ota:
-
+# Enable web server
 web_server:
+  port: 80
+
+sensor:
+- platform: homeassistant
+  id: internet_speed_in
+  entity_id: sensor.internet_speed_in
+  internal: true
+
+- platform: homeassistant
+  id: internet_speed_out
+  entity_id: sensor.internet_speed_out
+  internal: true
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
 
 time:
   - platform: homeassistant
@@ -35,17 +52,6 @@ font:
   - file: 'arial.ttf'
     id: font3
     size: 14
-
-sensor:
-  - platform: homeassistant
-    id: internet_speed_in
-    entity_id: sensor.internet_speed_in
-    internal: true
-
-  - platform: homeassistant
-    id: internet_speed_out
-    entity_id: sensor.internet_speed_out
-    internal: true
 
 i2c:
   sda: GPIO4
