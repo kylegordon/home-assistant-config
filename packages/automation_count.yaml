@@ -2,6 +2,7 @@ sensor:
   - platform: template
     sensors:
       states_automations_currently_running:
+        friendly_name: Number of running automations
         unique_id: automations_currently_running
         value_template: >-
           {{ states.automation | selectattr("attributes.current", "defined") | map(attribute="attributes.current") | sum }}
