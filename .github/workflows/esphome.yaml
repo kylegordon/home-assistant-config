@@ -21,7 +21,7 @@ jobs:
       - name: Check for esphome tests requirement
         id: esphome-test-required
         run: |
-          CHANGED_FILES=$(git diff --name-status HEAD~1...HEAD . | grep -i esphome || true)
+          CHANGED_FILES=$(git diff --name-only . | grep -i esphome || true)
           if [ -z "$CHANGED_FILES" ] ; then
             echo "No changes to ESPHome files"
             echo ::set-output name=ESPHOME_CHANGES::false
