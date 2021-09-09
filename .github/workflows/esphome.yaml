@@ -55,3 +55,33 @@ jobs:
               echo $file | parallel --max-args=1 docker run --rm -v '${PWD}':/config esphome/esphome:latest compile esphome/{}
           done
 
+  esphome_beta:
+    runs-on: ubuntu-latest
+    needs: esphome-test
+    steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v1
+      - name: ESPHome Version
+        uses: "docker://esphome/esphome:beta"
+        with:
+          args: "version"
+      - name: Copy stub files into configuration folder
+        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
+        run: |
+          cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
+          cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
+      - name: Run esphome on all files
+        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
+        # yamllint disable rule:line-length
+        run: |
+          for file in $(find \
+              ${PWD}/esphome/ \
+              -type f \
+              -maxdepth 1\
+              -name "*.yaml"\
+              -not -name "secrets.yaml"\
+              -printf "%f\n"
+              ); do
+              set -o errexit
+              echo $file | parallel --max-args=1 docker run --rm -v '${PWD}':/config esphome/esphome:beta compile esphome/{}
+          done
