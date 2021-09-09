@@ -9,7 +9,7 @@ on:
     - cron: 0 12 * * *
 
 jobs:
-  esphome:
+  esphome-test:
     runs-on: ubuntu-latest
     steps:
       - name: Getting your configuration from GitHub
@@ -23,6 +23,13 @@ jobs:
             echo ::set-output name=ESPHOME_CHANGES::false
             exit 0
           fi
+
+  esphome:
+    runs-on: ubuntu-latest
+    needs: esphome-test
+    steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v1
       - name: ESPHome Version
         uses: "docker://esphome/esphome"
         with:
