@@ -5,7 +5,7 @@
 
 sensor:
   - platform: season
-    type: astronomical
+    type: meteorological
 
 binary_sensor:
   - platform: workday

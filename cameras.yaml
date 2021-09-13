@@ -14,17 +14,30 @@
 #  limit_refetch_to_url_change: true
 #
 
-- platform: mjpeg
+- platform: generic
   name: BackDoor
-  still_image_url: http://viewpoint.house:8765/picture/1/current/
-  mjpeg_url: http://viewpoint.house:8181/mjpeg
+  still_image_url: http://viewpoint.house:4999/api/back_door/latest.jpg?h=400&motion=1
+  stream_source: rtmp://viewpoint.house/live/back_door
 
-- platform: mjpeg
+- platform: generic
   name: Driveway
-  still_image_url: http://viewpoint.house:8765/picture/2/current/
-  mjpeg_url: http://viewpoint.house:8182/mjpeg
+  still_image_url: http://viewpoint.house:4999/api/driveway/latest.jpg?h=400&motion=1
+  stream_source: rtmp://viewpoint.house/live/driveway
 
-- platform: mjpeg
+- platform: generic
   name: FrontDoor
-  still_image_url: http://viewpoint.house:8765/picture/3/current/
-  mjpeg_url: http://viewpoint.house:8183/mjpeg
+  still_image_url: http://viewpoint.house:4999/api/front_door/latest.jpg?h=400&motion=1
+  stream_source: rtmp://viewpoint.house/live/front_door
+
+- name: Back Door Last Person
+  platform: mqtt
+  topic: frigate/back_door/person/snapshot
+- name: Front Door Last Person
+  platform: mqtt
+  topic: frigate/front_door/person/snapshot
+- name: Driveway Last Person
+  platform: mqtt
+  topic: frigate/driveway/person/snapshot
+- name: Driveway Last Car
+  platform: mqtt
+  topic: frigate/driveway/car/snapshot

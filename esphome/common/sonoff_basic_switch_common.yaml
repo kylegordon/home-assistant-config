@@ -5,7 +5,7 @@ esphome:
   name: ${device_name}
   comment: ${device_description}
   platform: ESP8266
-  board: esp01_1m
+  board: esp8285
 
 captive_portal:
 
@@ -32,7 +32,7 @@ switch:
     pin: GPIO12
     id: relay
 
-status_led:
-  pin:
-    number: GPIO13
-    inverted: yes
+light:
+  - platform: status_led
+    name: "Status LED"
+    pin: GPIO13
