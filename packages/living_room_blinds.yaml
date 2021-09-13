@@ -13,11 +13,9 @@ automation:
       event_type: deconz_event
       event_data:
         id: tradfri_open_close_switch
-
     action:
     - variables:
         event: "{{ trigger.event.data.event }}"
-
     - choose:
       - conditions:
         - "{{ event == 1002 }}"
