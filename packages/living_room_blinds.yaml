@@ -53,3 +53,14 @@ automation:
     action:
       service: cover.close_cover
       entity_id: cover.patio_blinds
+
+  - alias: Open blinds when dark
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        above: 800
+        for:
+          minutes: 10
+    action:
+      service: cover.open_cover
+      entity_id: cover.patio_blinds
