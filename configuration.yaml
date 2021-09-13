@@ -31,6 +31,9 @@ homeassistant:
   # Includes
   packages: !include_dir_named packages
 
+  # media_dirs:
+  #   cctv_clips: /media/frigate/clips
+
   customize:
     script.restart_ha:
       icon: mdi:power
@@ -364,12 +367,6 @@ utility_meter:
     source: sensor.energy_spent
     cycle: monthly
 
-alexa_media:
-  accounts:
-    email: !secret alexa_email
-    password: !secret alexa_password
-    url: "amazon.co.uk"
-
 smartir:
 
 octoprint:
@@ -378,14 +375,6 @@ octoprint:
   api_key: !secret octoprint_key
   bed: true
   number_of_tools: 1
-
-speedtestdotnet:
-  scan_interval:
-    minutes: 5
-  monitored_conditions:
-    - ping
-    - download
-    - upload
 
 panel_iframe:
   esphome:
