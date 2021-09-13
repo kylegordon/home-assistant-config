@@ -1,7 +1,6 @@
 cover:
   - platform: group
     name: Patio Blinds
-    device_class: shade
     entities:
       - cover.patio_blinds_left
       - cover.patio_blinds_center
