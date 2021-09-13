@@ -54,7 +54,7 @@ automation:
       service: cover.close_cover
       entity_id: cover.patio_blinds
 
-  - alias: Open blinds when dark
+  - alias: Open blinds when bright
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
