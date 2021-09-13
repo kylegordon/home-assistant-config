@@ -1,6 +1,7 @@
 name: ESPHome Parallel
 
 on:
+  pull_request:
   push:
     branches: [main]
 
