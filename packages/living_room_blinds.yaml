@@ -13,11 +13,9 @@ automation:
       event_type: deconz_event
       event_data:
         id: tradfri_open_close_switch
-
     action:
     - variables:
         event: "{{ trigger.event.data.event }}"
-
     - choose:
       - conditions:
         - "{{ event == 1002 }}"
@@ -43,3 +41,25 @@ automation:
         - service: cover.stop_cover
           target:
             entity_id: cover.patio_blinds
+
+  - alias: Close blinds when dark
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        below: 800
+        for:
+          minutes: 10
+    action:
+      service: cover.close_cover
+      entity_id: cover.patio_blinds
+
+  - alias: Open blinds when bright
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        above: 800
+        for:
+          minutes: 10
+    action:
+      service: cover.open_cover
+      entity_id: cover.patio_blinds
