@@ -11,8 +11,10 @@ jobs:
     outputs:
       file: ${{ steps.set-files.outputs.file }} # generate output name file by using inner step output
     steps:
-      - uses: actions/checkout@v2
-      - id: set-files # Give it an id to handle to get step outputs in the outputs key above
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v2
+      - name: Get list of files
+        id: set-files # Give it an id to handle to get step outputs in the outputs key above
         run: echo "::set-output name=file::$(ls esphome/*.yaml | jq -R -s -c 'split("\n")[:-1]')"
         # Define step output named file base on ls command transformed to JSON thanks to jq
   loop:
@@ -22,6 +24,8 @@ jobs:
       matrix:
         file: ${{fromJson(needs.files.outputs.file)}} # List matrix strategy from files dynamically
     steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v2
       - run: echo ${{matrix.file}}
       - run: ls -l
       - run: echo "${PWD}"
