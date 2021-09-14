@@ -23,4 +23,6 @@ jobs:
         file: ${{fromJson(needs.files.outputs.file)}} # List matrix strategy from files dynamically
     steps:
       - run: echo ${{matrix.file}}
+      - run: ls -l
+      - run: echo "${PWD}"
       - run: docker run --rm -v "${PWD}":/config esphome/esphome:latest compile ${{matrix.file}}
