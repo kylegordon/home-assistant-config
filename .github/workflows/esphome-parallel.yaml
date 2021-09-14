@@ -26,7 +26,14 @@ jobs:
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v2
-      - run: echo ${{matrix.file}}
-      - run: ls -l
-      - run: echo "${PWD}"
+      - name: ESPHome Version
+        uses: "docker://esphome/esphome:latest"
+        with:
+          args: "version"
+      - name: Copy stub files into configuration folder
+        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
+        run: |
+          cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
+          cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
+      - run: echo Compiling ${{matrix.file}}
       - run: docker run --rm -v "${PWD}":/config esphome/esphome:latest compile ${{matrix.file}}
