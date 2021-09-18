@@ -32,11 +32,6 @@
       value_template: >
         {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
 
-- platform: sonarr
-  api_key: f9808f9afd094ac4998b06dd543d1aad
-  host: homeauto.vpn.glasgownet.com
-  port: 8989
-
 - platform: radarr
   api_key: ba4d5fad0a5a433c82be11d22f23b263
   host: homeauto.vpn.glasgownet.com
@@ -110,19 +105,6 @@
   unit_of_measurement: "%"
   value_template: "{{ value_json.batt }}"
 
-- platform: nut
-  name: Loft UPS
-  host: 172.24.32.5
-  alias: APC1000
-  resources:
-    - ups.load
-    - ups.temperature
-    - ups.status
-    - ups.test.result
-    - input.voltage
-    - battery.runtime
-    - battery.voltage
-
 - platform: min_max
   name: Average External Light Level
   type: median
@@ -136,25 +118,28 @@
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
-    #- sensor.utility_room_sensor_temperature
-    - sensor.study_sensor_temperature
-    - sensor.hallway_sensor_temperature
     - sensor.craft_room_temperature
     - sensor.guest_room_temperature
     - sensor.living_room_temperature
     - sensor.master_bedroom_temperature
+    - sensor.nook_temperature
+    - sensor.hall_temperature
+    - sensor.study_temperature
+    - sensor.bathroom_temperature
 
 - platform: min_max
   name: House Average Humidity
   type: median
   entity_ids:
     - sensor.utility_room_sensor_humidity
-    - sensor.study_sensor_humidity
-    - sensor.hallway_sensor_humidity
     - sensor.craft_room_humidity
     - sensor.guest_room_humidity
     - sensor.living_room_humidity
     - sensor.master_bedroom_humidity
+    - sensor.nook_humidity
+    - sensor.hall_humidity
+    - sensor.study_humidity
+    - sensor.bathroom_humidity
 
 - platform: time_date
   display_options:

@@ -1,0 +1,169 @@
+packages:
+  common: !include common/common.yaml
+  colors: !include common/colours.yaml
+
+
+substitutions:
+  device_name: ili9341
+  device_description: ILI9341 Display
+  friendly_name: ILI9341 Display
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP32
+  board: nodemcu-32s
+
+captive_portal:
+
+logger:
+
+web_server:
+
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/London
+
+font:
+  - file: 'slkscr.ttf'
+    id: font1
+    size: 8
+
+  - file: 'BebasNeue-Regular.ttf'
+    id: font2
+    size: 20
+
+  - file: 'arial.ttf'
+    id: font3
+    size: 14
+
+  - file: 'BebasNeue-Regular.ttf'
+    id: fontlarge
+    size: 64
+
+sensor:
+  - platform: homeassistant
+    id: internet_speed_in
+    entity_id: sensor.internet_speed_in
+    internal: true
+
+  - platform: homeassistant
+    id: internet_speed_out
+    entity_id: sensor.internet_speed_out
+    internal: true
+
+  - platform: homeassistant
+    id: house_average_temperature
+    entity_id: sensor.house_average_temperature
+    internal: true
+
+  - platform: homeassistant
+    id: house_target_temperature
+    entity_id: sensor.house_target_temperature
+    internal: true
+
+text_sensor:
+  - platform: homeassistant
+    id: next_bin
+    entity_id: sensor.next_bin
+    internal: true
+
+spi:
+  id: display_spi
+  clk_pin: GPIO18
+  mosi_pin: GPIO23
+  miso_pin: GPIO19
+
+color:
+  - id: my_red
+    red: 100%
+    green: 3%
+    blue: 5%
+
+image:
+  - id: bin
+    file: "delete-empty.png"
+    type: RGB24
+
+xpt2046:
+  id: touchscreen
+  cs_pin: GPIO12
+  irq_pin: GPIO16
+  dimension_x: 240
+  dimension_y: 320
+  on_state:
+    - lambda: |-
+        if (touched)
+          ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
+              id(touchscreen).x,
+              id(touchscreen).y,
+              id(touchscreen).x_raw,
+              id(touchscreen).y_raw
+              );
+
+display:
+  - id: my_display
+    platform: ili9341
+    model: "TFT 2.4"
+    cs_pin: GPIO5
+    dc_pin: GPIO27
+    reset_pin: GPIO33
+    rotation: 270
+    pages:
+      - id: viewpoint
+        lambda: |-
+          // Print "Viewpoint" in top center.
+          it.printf(32, 0, id(font1), TextAlign::TOP_CENTER, "Viewpoint");
+
+          // Print time in HH:MM format
+          it.strftime(it.get_width(), 26, id(fontlarge), TextAlign::CENTER_RIGHT, "%H:%M:%S", id(esptime).now());
+
+          // it.rectangle(0,0,318,238,COLOR_CSS_WHITE);
+          // it.rectangle(1,1,316,236,COLOR_CSS_WHITE);
+          // it.horizontal_line(2,50,316,COLOR_CSS_BLUE);
+          // it.horizontal_line(2,51,316,COLOR_CSS_BLUE);
+
+      - id: temperatures
+        lambda: |-
+          it.printf(0, 0, id(fontlarge), TextAlign::BASELINE_LEFT , "Climate");
+          // %.1f substitutes to 1 decimal place
+          if (id(house_target_temperature).has_state()) {
+            it.printf(0, 128, id(fontlarge), TextAlign::BASELINE_LEFT , "Target: %.1f°C", id(house_target_temperature).state);
+          }
+
+          if (id(house_average_temperature).has_state()) {
+            it.printf(0, 192, id(fontlarge), TextAlign::BASELINE_LEFT , "Actual: %.1f°C", id(house_average_temperature).state);
+          }
+
+      - id: nextbin
+        lambda: |-
+          if (id(next_bin).has_state()) {
+            // it.printf(0, 200, id(fontlarge), TextAlign::BASELINE_LEFT , id(next_bin).state);
+            // it.printf(0, 220, id(fontlarge), "Hello World Again!");
+            it.printf(0, 220, id(fontlarge), TextAlign::BASELINE_LEFT, "Bin: %s", id(next_bin).state.c_str());
+          }
+
+      - id: circle
+        lambda: |-
+          it.filled_circle(it.get_width() / 2, it.get_height() / 3, 30, COLOR_CSS_RED);
+
+interval:
+  - interval: 3s
+    then:
+      - display.page.show_next: my_display
+      - component.update: my_display
+
+# Define a PWM output on the ESP32
+output:
+  - platform: ledc
+    pin: GPIO32
+    id: gpio_32_backlight_pwm
+
+# Define a monochromatic, dimmable light for the backlight
+light:
+  - platform: monochromatic
+    output: gpio_32_backlight_pwm
+    name: "ILI9341 Display Backlight"
+    id: back_light
+    restore_mode: ALWAYS_ON
