@@ -16,6 +16,17 @@ automation:
               - binary_sensor.kitchen_window
               - binary_sensor.utility_room_window
     action:
+      - service: media_player.volume_set
+        entity_id: media_player.kitchen
+        data:
+          volume_level: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            5
+            {% elif states('sensor.time_of_day') == "Day" %}
+            5
+            {% elif states('sensor.time_of_day') == "Night" %}
+            2
+            {% endif %}
       - service: notify.alexa_media
         data_template:
           target:

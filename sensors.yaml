@@ -173,3 +173,42 @@
 
     house_target_temperature:
       value_template: "{{state_attr('climate.house', 'temperature')}}"
+
+- platform: thermal_comfort
+  sensors:
+    living_room:
+      friendly_name: Living Room
+      temperature_sensor: sensor.living_room_temperature
+      humidity_sensor: sensor.living_room_humidity
+    dining_nook:
+      friendly_name: Dining Nook
+      temperature_sensor: sensor.nook_temperature
+      humidity_sensor: sensor.nook_humidity
+    hall:
+      friendly_name: Hall
+      temperature_sensor: sensor.hall_temperature
+      humidity_sensor: sensor.hall_humidity
+    bathroom:
+      friendly_name: Bathroom
+      temperature_sensor: sensor.bathroom_temperature
+      humidity_sensor: sensor.bathroom_humidity
+    utility_room:
+      friendly_name: Utility Room
+      temperature_sensor: sensor.utility_room_sensor_temperature
+      humidity_sensor: sensor.utility_room_sensor_humidity
+    craft_room:
+      friendly_name: Craft Room
+      temperature_sensor: sensor.craft_room_temperature
+      humidity_sensor: sensor.craft_room_humidity
+    study:
+      friendly_name: Study
+      temperature_sensor: sensor.study_temperature
+      humidity_sensor: sensor.study_humidity
+    guest_room:
+      friendly_name: Guest Room
+      temperature_sensor: sensor.guest_room_temperature
+      humidity_sensor: sensor.guest_room_humidity
+    master_bedroom:
+      friendly_name: Master Bedroom
+      temperature_sensor: sensor.master_bedroom_temperature
+      humidity_sensor: sensor.master_bedroom_humidity

@@ -52,8 +52,8 @@ jobs:
               -printf "%f\n"
               ); do
               set -o errexit
-              echo $file | parallel --max-args=1 docker run --rm -v '${PWD}':/config esphome/esphome:latest compile esphome/{}
-          done
+              echo $file
+          done | parallel --max-args=1 docker run --rm -v '${PWD}':/config esphome/esphome:latest compile esphome/{}
 
   esphome_beta:
     runs-on: ubuntu-latest
