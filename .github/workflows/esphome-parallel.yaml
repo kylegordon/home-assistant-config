@@ -45,3 +45,6 @@ jobs:
     name: Final check
     runs-on: ubuntu-latest
     needs: [loop]
+    steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v2
