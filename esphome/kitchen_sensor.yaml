@@ -22,7 +22,7 @@ dallas:
 
 sensor:
   - platform: dallas
-    addddress: 0x490000031D4F3C28
+    address: 0x490000031D4F3C28
     name: "Kitchen Temperature"
   - platform: dallas
     address: 0xF10000031DBFDD28
