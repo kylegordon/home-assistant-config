@@ -176,7 +176,7 @@
 
 - platform: thermal_comfort
   sensors:
-    livingroom:
+    living_room:
       friendly_name: Living Room
       temperature_sensor: sensor.living_room_temperature
       humidity_sensor: sensor.living_room_humidity
