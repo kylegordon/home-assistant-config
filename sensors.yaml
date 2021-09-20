@@ -173,3 +173,10 @@
 
     house_target_temperature:
       value_template: "{{state_attr('climate.house', 'temperature')}}"
+
+- platform: thermal_comfort
+  sensors:
+    livingroom:
+      friendly_name: Living Room
+      temperature_sensor: sensor.living_room_temperature
+      humidity_sensor: sensor.living_room_humidity
