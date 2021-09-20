@@ -41,7 +41,7 @@ jobs:
       - run: echo Compiling ${{matrix.file}}
       - run: docker run --rm -v "${PWD}":/config esphome/esphome:latest compile ${{matrix.file}}
 
-    final:
-      name: Final check
-      runs-on: ubuntu-latest
-      needs: [loop]
+  final:
+    name: Final check
+    runs-on: ubuntu-latest
+    needs: [loop]
