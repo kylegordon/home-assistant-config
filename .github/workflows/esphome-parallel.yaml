@@ -42,7 +42,7 @@ jobs:
       - run: docker run --rm -v "${PWD}":/config esphome/esphome:latest compile ${{matrix.file}}
 
   final:
-    name: Final check
+    name: Final ESPHome check
     runs-on: ubuntu-latest
     needs: [loop]
     steps:
