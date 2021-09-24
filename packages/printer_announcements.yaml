@@ -1,3 +1,29 @@
+binary_sensor:
+  - platform: trend
+    sensors:
+      octoprint_bed_cooling:
+        entity_id: sensor.octoprint_bed_temperature
+        sample_duration: 10
+        device_class: cold
+
+      octoprint_bed_heating:
+        entity_id: sensor.octoprint_bed_temperature
+        sample_duration: 10
+        device_class: heat
+
+      # Also sensor.octoprint_bed_target and sensor.octoprint_tool_0_target
+
+      octoprint_bed_cooling:
+        entity_id: sensor.octoprint_tool_0_temperature
+        sample_duration: 10
+        device_class: cold
+
+      octoprint_bed_heating:
+        entity_id: sensor.octoprint_tool_0_temperature
+        sample_duration: 10
+        device_class: heat
+
+
 automation:
   - alias: Printer state change notification
     trigger:
