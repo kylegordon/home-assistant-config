@@ -1,24 +1,40 @@
+sensor:
+  - platform: filter
+    name: octoprint_tool_0_temperature_smoothed
+    entity_id: sensor.octoprint_tool_0_temperature
+    filters:
+      - filter: time_simple_moving_average
+        window_size: "00:00:15"
+        precision: 2
+
+  - platform: filter
+    name: octoprint_bed_heating_smoothed
+    entity_id: sensor.octoprint_bed_temperature
+    filters:
+      - filter: time_simple_moving_average
+        window_size: "00:00:15"
+        precision: 2
+
 binary_sensor:
   - platform: trend
     sensors:
       # Also consider sensor.octoprint_bed_target and sensor.octoprint_tool_0_target
       octoprint_bed_cooling:
-        entity_id: sensor.octoprint_bed_temperature
+        entity_id: sensor.octoprint_bed_temperature_smoothed
         sample_duration: 10
         device_class: cold
       octoprint_bed_heating:
-        entity_id: sensor.octoprint_bed_temperature
+        entity_id: sensor.octoprint_bed_temperature_smoothed
         sample_duration: 10
         device_class: heat
       octoprint_tool_cooling:
-        entity_id: sensor.octoprint_tool_0_temperature
+        entity_id: sensor.octoprint_tool_0_temperature_smoothed
         sample_duration: 10
         device_class: cold
       octoprint_tool_heating:
-        entity_id: sensor.octoprint_tool_0_temperature
+        entity_id: sensor.octoprint_tool_0_temperature_smoothed
         sample_duration: 10
         device_class: heat
-
 
 automation:
   - alias: Printer state change notification
