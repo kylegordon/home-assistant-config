@@ -51,7 +51,8 @@ automation:
   - alias: 3D printer bed warming up
     trigger:
       - platform: state
-        entity_id: sensor.octoprint_bed_heating
+        entity_id: binary_sensor.octoprint_bed_heating
+        to: "on"
     condition:
       - condition: not
         conditions:
@@ -66,12 +67,13 @@ automation:
           data:
             type: announce
             #method: all
-          message: Octoprint has begun warming the print bed
+          message: Warming the print bed
 
   - alias: 3D printer hot end warming up
     trigger:
       - platform: state
-        entity_id: sensor.octoprint_tool_heating
+        entity_id: binary_sensor.octoprint_tool_heating
+        to: "on"
     condition:
       - condition: not
         conditions:
@@ -86,4 +88,4 @@ automation:
           data:
             type: announce
             #method: all
-          message: Octoprint has begun warming the hot end
+          message: Warming the hot end
