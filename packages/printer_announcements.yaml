@@ -41,3 +41,31 @@ automation:
             {% else %}
               {{ trigger.to_state.attributes.friendly_name }} has stopped printing
             {% endif %}
+
+  - alias: 3D printer bed warming up
+    trigger:
+      - platform: state
+        entity_id: sensor.octoprint_bed_heating
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.study
+          data:
+            type: announce
+            #method: all
+          message: Octoprint has begun warming the print bed
+
+  - alias: 3D printer hot end warming up
+    trigger:
+      - platform: state
+        entity_id: sensor.octoprint_tool_heating
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.study
+          data:
+            type: announce
+            #method: all
+          message: Octoprint has begun warming the hot end
