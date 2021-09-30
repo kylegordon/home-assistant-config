@@ -5,15 +5,15 @@ sensor:
     filters:
       - filter: time_simple_moving_average
         window_size: "00:00:15"
-        precision: 2
+        precision: 0
 
   - platform: filter
-    name: octoprint_bed_heating_smoothed
+    name: octoprint_bed_temperature_smoothed
     entity_id: sensor.octoprint_bed_temperature
     filters:
       - filter: time_simple_moving_average
         window_size: "00:00:15"
-        precision: 2
+        precision: 0
 
 binary_sensor:
   - platform: trend
