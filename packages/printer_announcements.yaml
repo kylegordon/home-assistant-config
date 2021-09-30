@@ -27,6 +27,12 @@ automation:
         entity_id: sensor.octoprint_print_status
         from: "Operational"
         to: "Printing"
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
     action:
       - service: notify.alexa_media
         data_template:
@@ -46,6 +52,12 @@ automation:
     trigger:
       - platform: state
         entity_id: sensor.octoprint_bed_heating
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
     action:
       - service: notify.alexa_media
         data_template:
@@ -60,6 +72,12 @@ automation:
     trigger:
       - platform: state
         entity_id: sensor.octoprint_tool_heating
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
     action:
       - service: notify.alexa_media
         data_template:
