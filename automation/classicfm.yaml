@@ -6,10 +6,9 @@ trigger:
   to: 'on'
 action:
   - service: media_player.play_media
-    data_template:
-      entity_id:
-        - media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
+    data:
+      entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
       media_content_id: "http://media-ice.musicradio.com:80/ClassicFMMP3"
-      media_content_type: audio/mp4
+      media_content_type: music
   - service: homeassistant.turn_off
     entity_id: input_boolean.classic_fm
