@@ -3,9 +3,10 @@ automation:
     initial_state: true
     alias: Notification - Kyle Approaching Home
     trigger:
-    - below: '750'
+    - platform: numeric_state
       entity_id: proximity.kyle
-      platform: numeric_state
+      below: '2000'
+      above: '500'
     condition:
     - condition: and
       conditions:
