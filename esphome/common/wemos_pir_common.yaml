@@ -10,6 +10,10 @@ esphome:
 # Enable logging
 logger:
 
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
 web_server:
 
 binary_sensor:
