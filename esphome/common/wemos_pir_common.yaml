@@ -18,7 +18,7 @@ web_server:
 
 binary_sensor:
   - platform: gpio
-    name: "Motion Sensor"
+    name: "${friendly_name} Motion Sensor"
     pin:
       number: D1
     device_class: motion
@@ -33,5 +33,6 @@ output:
 light:
   # ... and then make a light out of it.
   - platform: monochromatic
-    name: "Wemos Blue LED"
+    name: "${friendly_name} Blue LED"
+    id: blue_led_light
     output: blue_led
