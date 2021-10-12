@@ -1,7 +1,7 @@
 alias: Back outdoor lights on
 trigger:
   - platform: state
-    entity_id: 
+    entity_id:
       - binary_sensor.outside_driveway_motion
       - binary_sensor.outside_utility_room_motion
     to: 'on'
