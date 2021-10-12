@@ -46,7 +46,7 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        below: 150
+        below: 100
         for:
           minutes: 10
     action:
@@ -57,7 +57,7 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        above: 150
+        above: 100
         for:
           minutes: 10
     action:
