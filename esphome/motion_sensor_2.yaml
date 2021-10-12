@@ -1,0 +1,6 @@
+substitutions:
+  device_name: motion_sensor_2
+  device_description: Motion Sensor 2
+  friendly_name: Motion Sensor 2
+
+<<: !include common/wemos_pir_common.yaml
