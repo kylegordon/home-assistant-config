@@ -15,7 +15,7 @@ condition:
         before: '07:00'
         weekday:
           - mon
-    
+
 action:
 - service: persistent_notification.create
   data:

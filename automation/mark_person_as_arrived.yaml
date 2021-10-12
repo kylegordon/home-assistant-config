@@ -36,4 +36,3 @@ action:
   - service: notify.twitter_thegordonhome
     data:
       message: "A resident has just arrived!"
-

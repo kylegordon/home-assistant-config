@@ -39,12 +39,12 @@ automation:
           entity_id:
             - light.boot_room
           brightness: 128
-          rgb_color: [255,0,0]
+          rgb_color: [255, 0, 0]
           transition: 5
       - service: notify.alexa_media
         data_template:
           target: '{{ states.sensor.last_alexa.state }}'
           data:
             type: announce
-            #method: all
+            # method: all
           message: "Night view mode has been enabled"
