@@ -50,13 +50,13 @@
     kyle_status:
       value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
       friendly_name: 'Kyle'
-      #entity_id: input_select.kyle_status_dropdown
+      # entity_id: input_select.kyle_status_dropdown
       unique_id: input_select.kyle_status_dropdown
 
     charlotte_status:
       value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
       friendly_name: 'Charlotte'
-      #entity_id: input_select.charlotte_status_dropdown
+      # entity_id: input_select.charlotte_status_dropdown
       unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
