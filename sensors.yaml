@@ -2,29 +2,29 @@
 
 # Improve with https://github.com/bah2830/Home-Assistant-Configs/blob/master/includes/automation/notifications.yaml
 
-#- platform: google_travel_time
-#  name: Kyle Work Travel
-#  api_key: !secret google_api
-#  origin: device_tracker.bagpuss_a0001
-#  destination: zone.kyle_work
+# - platform: google_travel_time
+#   name: Kyle Work Travel
+#   api_key: !secret google_api
+#   origin: device_tracker.bagpuss_a0001
+#   destination: zone.kyle_work
 
-#- platform: google_travel_time
-#  name: Charlotte Work Travel
-#  api_key: !secret google_api
-#  origin: zone.home
-#  destination: zone.charlotte_work
+# - platform: google_travel_time
+#   name: Charlotte Work Travel
+#   api_key: !secret google_api
+#   origin: zone.home
+#   destination: zone.charlotte_work
 
-#- platform: google_travel_time
-#  name: Kyle To Home
-#  api_key: !secret google_api
-#  origin: device_tracker.bagpuss_a0001
-#  destination: zone.home
+# - platform: google_travel_time
+#   name: Kyle To Home
+#   api_key: !secret google_api
+#   origin: device_tracker.bagpuss_a0001
+#   destination: zone.home
 
-#- platform: google_travel_time
-#  name: Charlotte To Home
-#  api_key: !secret google_api
-#  origin: device_tracker.charlotte_thea
-#  destination: zone.home
+# - platform: google_travel_time
+#   name: Charlotte To Home
+#   api_key: !secret google_api
+#   origin: device_tracker.charlotte_thea
+#   destination: zone.home
 
 - platform: template
   sensors:
@@ -40,11 +40,11 @@
 - platform: template
   sensors:
     next_bin:
-      #value_template: "{{ states.calendar.next_bin.attributes.message }}"
+      # value_template: "{{ states.calendar.next_bin.attributes.message }}"
       value_template: "{{ states.calendar.next_bin.attributes.message|replace(' bin','') }}"
       friendly_name: Next Bin
-      #friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
-      #entity_id: calendar.next_bin
+      # friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
+      # entity_id: calendar.next_bin
       unique_id: calendar.next_bin
 
     kyle_status:
@@ -65,7 +65,7 @@
   unit_prefix: k
   round: 2
 
-## MQTT ## 
+## MQTT ##
 
 # Weather #
 - platform: mqtt
