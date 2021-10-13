@@ -2,7 +2,7 @@ input_boolean:
   night_view:
     name: Night View
     icon: mdi:account-alert
-    initial: off
+    initial: false
 
 automation:
   - alias: Night view reset

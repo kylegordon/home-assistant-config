@@ -10,7 +10,7 @@ input_boolean:
   bin_reminder:
     name: Bin reminder
     icon: mdi:delete-empty
-    initial: on
+    initial: true
 
 automation:
   - alias: Bin Reminder TTS

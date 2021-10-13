@@ -96,7 +96,7 @@ automation:
           entity_id: light.boot_room
           brightness_pct: 30
           transition: 10
-          rgb_color: [255,0,0]
+          rgb_color: [255, 0, 0]
 
   - alias: Boot room motion - 10 minute timeout
     trigger:
