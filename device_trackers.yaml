@@ -15,8 +15,6 @@
 # - platform: owntracks
 #   max_gps_accuracy: 250
 
-
-
 # Monitor access point clients
 # Remember OpenWRT SNMP only returns ARP table data
 # Populate it with a periodic fping -g 172.24.32.0/24 on each device
