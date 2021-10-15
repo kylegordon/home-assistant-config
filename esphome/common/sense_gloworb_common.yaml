@@ -26,6 +26,11 @@ output:
     pin: D4
     inverted: True
 
+e131:
+  method: multicast # default: register E1.31 to Multicast group
+
+wled:
+
 light:
   # ... and then make a light out of it.
   - platform: monochromatic
@@ -38,6 +43,10 @@ light:
     num_leds: 12
     name: "${friendly_name} Ring"
     effects:
+      - e131:
+          universe: 1
+          channels: RGB
+      - wled:
       - strobe:
       - flicker:
       - pulse:
