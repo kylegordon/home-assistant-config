@@ -24,16 +24,15 @@ output:
   - platform: esp8266_pwm
     id: blue_led
     pin: D4
-    inverted: True
+    inverted: true
   - platform: esp8266_pwm
     id: warm
     pin: D2
-    inverted: False
+    inverted: false
   - platform: esp8266_pwm
     id: cold
     pin: D3
-    inverted: False
-
+    inverted: false
 
 light:
   - platform: monochromatic
