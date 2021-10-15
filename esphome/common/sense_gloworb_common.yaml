@@ -40,6 +40,15 @@ light:
     effects:
       - strobe:
       - flicker:
+      - pulse:
+      - pulse:
+          name: "Fast Pulse"
+          transition_length: 0.5s
+          update_interval: 0.5s
+      - pulse:
+          name: "Slow Pulse"
+          # transition_length: 1s      # defaults to 1s
+          update_interval: 2s
       - addressable_rainbow:
       - addressable_color_wipe:
       - addressable_scan:
