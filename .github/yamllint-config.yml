@@ -18,4 +18,4 @@ ignore: |
   .git
   .github/workflows/yaml-lint.yaml
   themes/
-  esphome/
+  esphome/common/colours.yaml

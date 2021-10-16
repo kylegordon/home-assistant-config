@@ -4,5 +4,3 @@ substitutions:
   friendly_name: Boiler Valve Controls
 
 <<: !include common/sonoff_dual_r2_common.yaml
-
-
