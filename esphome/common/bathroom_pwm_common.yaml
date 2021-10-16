@@ -65,8 +65,8 @@ light:
           # transition_length: 1s      # defaults to 1s
           update_interval: 2s
       - flicker:
-          alpha: 50% #The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
-          intensity: 50% #The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
+          alpha: 50%  # The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
+          intensity: 50%  # The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
       - lambda:
           name: Throb
           update_interval: 1s
