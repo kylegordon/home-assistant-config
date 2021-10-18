@@ -48,14 +48,14 @@ climate:
     away_temp: 15
 
 automation:
-   trigger:
-     platform: state
-     entity_id: sensor.guest_room_target_temperature
-     for:
-       seconds: 10
-   action:
-     - service: climate.set_temperature
-       data:
-         entity_id: climate.guest_bedroom_trv
-         temperature: "{{ trigger.to_state.state | float }}"
+  trigger:
+    platform: state
+    entity_id: sensor.guest_room_target_temperature
+    for:
+      seconds: 10
+  action:
+    - service: climate.set_temperature
+      data:
+        entity_id: climate.guest_bedroom_trv
+        temperature: "{{ trigger.to_state.state | float }}"
 
