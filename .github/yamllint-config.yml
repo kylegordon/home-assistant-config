@@ -15,6 +15,7 @@ rules:
 ignore: |
   lovelace-ui.yaml
   custom_components/
+  www/lovelace-auto-entities/
   .git
   .github/workflows/yaml-lint.yaml
   themes/
