@@ -34,7 +34,7 @@ automation:
       data_template:
         brightness_pct: 100
         transition: 10
-        rgb_color: [255,0,0]
+        rgb_color: [255, 0, 0]
         entity_id:
           - light.bandwidthometer_light
 

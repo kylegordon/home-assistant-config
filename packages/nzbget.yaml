@@ -73,5 +73,5 @@ automation:
             - media_player.living_room
           data:
             type: announce
-            #method: all
+            # method: all
           message: "Hello! You have a new show to watch. Westworld has finished downloading!"
