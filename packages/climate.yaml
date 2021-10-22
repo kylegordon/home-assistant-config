@@ -13,7 +13,7 @@ group:
     # Add zones here
     name: Call For Heat
     entities:
-      - switch.call_for_rad_heat
+      - input_boolean.call_for_rad_heat
 
 switch:
   - platform: template
