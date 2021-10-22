@@ -1,6 +1,6 @@
 - platform: generic_thermostat
   name: House
-  heater: switch.boiler_valve_controls_relay_2
+  heater: input_boolean.call_for_rad_heat
   target_sensor: sensor.house_average_temperature
   min_temp: 10
   max_temp: 25
