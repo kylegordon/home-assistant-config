@@ -40,4 +40,3 @@ automation:
       data:
         entity_id: climate.guest_bedroom_trv
         temperature: "{{ trigger.to_state.state | float }}"
-
