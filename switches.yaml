@@ -1,6 +1,6 @@
-#- platform: broadlink
-#  # host: 172.24.32.40
-#  mac: 'b4:43:0d:f9:19:b9'
+# - platform: broadlink
+#   # host: 172.24.32.40
+#   mac: 'b4:43:0d:f9:19:b9'
 
 # - platform: broadlink
 #   host: 172.24.32.41
@@ -19,4 +19,3 @@
   command_topic: "octoprint/usb_relay_2/set"
   payload_on: 'true'
   payload_off: 'false'
-

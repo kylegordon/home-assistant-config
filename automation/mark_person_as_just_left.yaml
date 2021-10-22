@@ -15,7 +15,7 @@ trigger:
   - platform: state
     entity_id: person.charlotte
     from: 'home'
-    to: 'Charlotte Work' 
+    to: 'Charlotte Work'
 action:
   - service: input_select.select_option
     data_template:
@@ -32,4 +32,3 @@ action:
       name: EVENT
       message: >
         {{ trigger.to_state.attributes.friendly_name }} has just left the house.
-

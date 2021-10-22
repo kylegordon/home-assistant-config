@@ -1,24 +1,24 @@
-#- platform: iss
+# - platform: iss
 
-#- platform: aurora
+# - platform: aurora
 
-#- platform: template
-#  sensors:
-#    Kyles_Bed:
-#      friendly_name: Kyles Bed
-#      device_class: occupancy
-#      delay_on: 
-#        minutes: 5
-#      value_template: "{{ is_state('binary_sensor.kyle_bed_sensor', 'on') }}"
+# - platform: template
+#   sensors:
+#     Kyles_Bed:
+#       friendly_name: Kyles Bed
+#       device_class: occupancy
+#       delay_on:
+#         minutes: 5
+#       value_template: "{{ is_state('binary_sensor.kyle_bed_sensor', 'on') }}"
 
-#- platform: template
-#  sensors:
-#    Charlottes_Bed:
-#      friendly_name: Charlottes Bed
-#      delay_on:
-#        minutes: 5
-#      device_class: occupancy
-#      value_template: "{{ is_state('binary_sensor.charlotte_bed_sensor'), 'on' }}"
+# - platform: template
+#   sensors:
+#     Charlottes_Bed:
+#       friendly_name: Charlottes Bed
+#       delay_on:
+#         minutes: 5
+#       device_class: occupancy
+#       value_template: "{{ is_state('binary_sensor.charlotte_bed_sensor'), 'on' }}"
 
 - platform: template
   sensors:
@@ -50,7 +50,6 @@
   state_topic: "devices/5ccf7fd8d915/Contact2/state"
   payload_on: "1"
   payload_off: "0"
-
 
 - platform: mqtt
   name: "Kyle Driving"
