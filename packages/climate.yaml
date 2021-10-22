@@ -1,7 +1,33 @@
+---
 # Inspired by https://github.com/downthedeck/hassio-config/blob/master/packages/klimaat.yaml
 # Not all modes are supported, as above uses Toon integration
 # https://www.home-assistant.io/integrations/generic_thermostat/
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
+
+# If guest room call for heat, or study call for heat, or living room call for heat, or generic call for heat
+# then turn on boiler valve relay
+# else turn off boiler valve relay
+
+group:
+  call_for_heat:
+    # Add zones here
+    name: Call For Heat
+    entities:
+      - switch.call_for_rad_heat
+
+switch:
+  - platform: template
+    switches:
+      boiler:
+        value_template: "{{ is_state('group.call_for_heat', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          target:
+            entity_id: switch.boiler_valve_controls_relay_2
+        turn_off:
+          service: switch.turn_off
+          target:
+            entity_id: switch.boiler_valve_controls_relay_2
 
 sensor:
   - platform: season
