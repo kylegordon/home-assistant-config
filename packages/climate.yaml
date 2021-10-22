@@ -24,19 +24,19 @@ input_boolean:
     name: Call for guest heat
     icon: mdi:radiator
 
-switch:
-  - platform: template
-    switches:
-      boiler:
-        value_template: "{{ is_state('group.call_for_heat', 'on') }}"
-        turn_on:
-          service: switch.turn_on
-          target:
-            entity_id: switch.boiler_valve_controls_relay_2
-        turn_off:
-          service: switch.turn_off
-          target:
-            entity_id: switch.boiler_valve_controls_relay_2
+# switch:
+#   - platform: template
+#     switches:
+#       boiler:
+#         value_template: "{{ is_state('group.call_for_heat', 'on') }}"
+#         turn_on:
+#           service: switch.turn_on
+#           target:
+#             entity_id: switch.boiler_valve_controls_relay_2
+#         turn_off:
+#           service: switch.turn_off
+#           target:
+#             entity_id: switch.boiler_valve_controls_relay_2
 
 sensor:
   - platform: season
@@ -52,6 +52,25 @@ binary_sensor:
     days_offset: 1
 
 automation:
+  - alias: "Call for heat - demand"
+    trigger:
+      - platform: state
+        entity_id: group.call_for_heat
+        to: 'on'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: switch.boiler_valve_controls_relay_2
+
+  - alias: "Call for heat - no demand"
+    trigger:
+      - platform: state
+        entity_id: group.call_for_heat
+        to: 'off'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: switch.boiler_valve_controls_relay_2
+
+
   - alias: "Climate - Away"
     trigger:
       - platform: state
