@@ -11,32 +11,18 @@
 group:
   call_for_heat:
     # Add zones here
-    name: Call For Heat
+    name: Call For Heat - Group
     entities:
       - input_boolean.call_for_rad_heat
       - input_boolean.call_for_guest_heat
 
 input_boolean:
   call_for_rad_heat:
-    name: Call for rad heat
+    name: Call for heat - General
     icon: mdi:radiator
   call_for_guest_heat:
-    name: Call for guest heat
+    name: Call for heat - Guest Room
     icon: mdi:radiator
-
-# switch:
-#   - platform: template
-#     switches:
-#       boiler:
-#         value_template: "{{ is_state('group.call_for_heat', 'on') }}"
-#         turn_on:
-#           service: switch.turn_on
-#           target:
-#             entity_id: switch.boiler_valve_controls_relay_2
-#         turn_off:
-#           service: switch.turn_off
-#           target:
-#             entity_id: switch.boiler_valve_controls_relay_2
 
 sensor:
   - platform: season
@@ -69,7 +55,6 @@ automation:
     action:
       - service: homeassistant.turn_off
         entity_id: switch.boiler_valve_controls_relay_2
-
 
   - alias: "Climate - Away"
     trigger:
