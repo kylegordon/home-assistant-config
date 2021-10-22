@@ -14,10 +14,14 @@ group:
     name: Call For Heat
     entities:
       - input_boolean.call_for_rad_heat
+      - input_boolean.call_for_guest_heat
 
 input_boolean:
   call_for_rad_heat:
     name: Call for rad heat
+    icon: mdi:radiator
+  call_for_guest_heat:
+    name: Call for guest heat
     icon: mdi:radiator
 
 switch:
