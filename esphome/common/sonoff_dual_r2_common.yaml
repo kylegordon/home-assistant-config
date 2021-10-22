@@ -21,7 +21,7 @@ binary_sensor:
     pin:
       number: GPIO9
       mode: INPUT_PULLUP
-      inverted: True
+      inverted: true
     name: "${friendly_name} Button 1"
     on_press:
       - switch.toggle: relay_1
@@ -29,7 +29,7 @@ binary_sensor:
     pin:
       number: GPIO10
       mode: INPUT_PULLUP
-      inverted: True
+      inverted: true
     name: "${friendly_name} Button 2"
     on_press:
       - switch.toggle: relay_2
@@ -49,4 +49,4 @@ switch:
 status_led:
   pin:
     number: GPIO13
-    inverted: yes
+    inverted: true

@@ -15,7 +15,7 @@ captive_portal:
 
 logger:
   level: DEBUG
-  esp8266_store_log_strings_in_flash: False
+  esp8266_store_log_strings_in_flash: false
 
 web_server:
 
@@ -31,7 +31,7 @@ time:
 i2c:
   sda: GPIO4
   scl: GPIO5
-  scan: True
+  scan: true
 
 sensor:
   - platform: custom
@@ -50,13 +50,12 @@ sensor:
     - name: "Lux Level"
       unit_of_measurement: lx
 
-
 output:
   # Register the blue LED as a dimmable output ....
   - platform: esp8266_pwm
     id: blue_led
     pin: D4
-    inverted: True
+    inverted: true
 
 light:
   # ... and then make a light out of it.

@@ -42,14 +42,14 @@ deep_sleep:
 i2c:
   sda: D2
   scl: D1
-  scan: True
+  scan: true
 
 binary_sensor:
   - platform: homeassistant
     name: "Home-Assistant OTA Enable"
     entity_id: input_boolean.esphome_ota_enable
     id: esphome_ota_enable
-    internal: True
+    internal: true
     on_state:
       then:
         - if:
@@ -76,7 +76,7 @@ output:
   - platform: esp8266_pwm
     id: blue_led
     pin: D4
-    inverted: True
+    inverted: true
 
 light:
   # ... and then make a light out of it.

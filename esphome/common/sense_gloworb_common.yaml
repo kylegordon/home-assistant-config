@@ -24,7 +24,7 @@ output:
   - platform: esp8266_pwm
     id: blue_led
     pin: D4
-    inverted: True
+    inverted: true
 
 light:
   # ... and then make a light out of it.
@@ -65,4 +65,3 @@ interval:
           - light.turn_off:
               id: blue_led_light
               transition_length: 250ms
-

@@ -23,7 +23,7 @@ binary_sensor:
     pin:
       number: GPIO0
       mode: INPUT_PULLUP
-      inverted: True
+      inverted: true
     name: "${friendly_name} Touchpad 1"
     on_press:
       if:
@@ -38,7 +38,7 @@ binary_sensor:
     pin:
       number: GPIO9
       mode: INPUT_PULLUP
-      inverted: True
+      inverted: true
     name: "${friendly_name} Touchpad 2"
     on_press:
       if:
@@ -83,7 +83,7 @@ output:
   - platform: esp8266_pwm
     id: blue_led
     pin: GPIO13
-    inverted: True
+    inverted: true
 
 light:
   # ... and then make a light out of it.

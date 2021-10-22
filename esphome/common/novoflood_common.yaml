@@ -2,9 +2,9 @@
 
 # Credit to https://esphome-configs.io/devices/novostella-20w/
 
-#Novostella 20W Flood Light, https://smile.amazon.com/gp/product/B07VH1VHYL
-#https://fccid.io/2AI5T-SFGD-002
-#https://blakadder.github.io/templates/novostella_20W_flood.html
+# Novostella 20W Flood Light, https://smile.amazon.com/gp/product/B07VH1VHYL
+# https://fccid.io/2AI5T-SFGD-002
+# https://blakadder.github.io/templates/novostella_20W_flood.html
 
 packages:
   common: !include common.yaml
@@ -19,7 +19,7 @@ captive_portal:
 
 # Enable logging
 logger:
-  baud_rate: 0 #disable UART logging since we aren't connected to GPIO1 TX
+  baud_rate: 0  # disable UART logging since we aren't connected to GPIO1 TX
 
 
 # Enable web server
@@ -34,23 +34,23 @@ output:
   - platform: esp8266_pwm
     id: red
     pin: GPIO4
-    inverted: False
+    inverted: false
   - platform: esp8266_pwm
     id: green
     pin: GPIO12
-    inverted: False
+    inverted: false
   - platform: esp8266_pwm
     id: blue
     pin: GPIO14
-    inverted: False
+    inverted: false
   - platform: esp8266_pwm
     id: cold_white
     pin: GPIO5
-    inverted: False
+    inverted: false
   - platform: esp8266_pwm
     id: warm_white
     pin: GPIO13
-    inverted: False
+    inverted: false
 
 light:
   - platform: rgbww
@@ -67,8 +67,8 @@ light:
       - random:
       - strobe:
       - flicker:
-          alpha: 50% #The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
-          intensity: 50% #The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
+          alpha: 50%  # The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
+          intensity: 50%  # The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
       - lambda:
           name: Throb
           update_interval: 1s

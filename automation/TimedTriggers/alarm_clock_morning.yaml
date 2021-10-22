@@ -38,5 +38,5 @@ action:
     entity_id: light.master_bedroom, light.bedside_charlotte, light.bedside_kyle
     data:
       brightness_pct: 100
-      #color_temp: 260
+      # color_temp: 260
       transition: 1200
