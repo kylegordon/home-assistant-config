@@ -41,7 +41,6 @@ sensor:
     i2c_id: bus_a
     illuminance:
       name: "Lux Level"
-    unit_of_measurement: lx
     address: 0x45
     update_interval: 5s
 
