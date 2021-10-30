@@ -29,26 +29,26 @@ time:
     timezone: Europe/London
 
 i2c:
-  sda: GPIO4
-  scl: GPIO5
-  scan: true
+  - id: bus_a
+    sda: GPIO4
+    scl: GPIO5
+    scan: true
+
+external_components:
+  # equivalent shorthand for GitHub
+  - source: github://OstertagM/ESPhome-user-component/esphome@main
+    components: [OPT3001]
+    refresh: 0s
 
 sensor:
-  - platform: custom
-    lambda: |-
-      auto opt3001 = new MyOPT3001();
-      App.register_component(opt3001);
-      return {opt3001->sensor_status, opt3001->manufacturer_id_sensor, opt3001->device_id_sensor, opt3001->high_limit_sensor, opt3001->low_limit_sensor, opt3001->lux_sensor};
-    sensors:
-    - name: "Sensor Status"
-    - name: "Manufacturer ID"
-    - name: "Device ID"
-    - name: "Lux High Limit"
-      unit_of_measurement: lx
-    - name: "Lux Low Limit"
-      unit_of_measurement: lx
-    - name: "Lux Level"
-      unit_of_measurement: lx
+  - platform: OPT3001
+    i2c_id: bus_a
+    illuminance:
+      name: "Lux Level"
+    unit_of_measurement: lx
+    address: 0x45
+    update_interval: 5s
+
 
 output:
   # Register the blue LED as a dimmable output ....
