@@ -6,10 +6,6 @@ esphome:
   comment: ${device_description}
   platform: ESP8266
   board: d1_mini
-  includes:
-    - ClosedCube_OPT3001/ClosedCube_OPT3001.h
-    - ClosedCube_OPT3001/ClosedCube_OPT3001.cpp
-    - OPT3001.h
 
 captive_portal:
 
