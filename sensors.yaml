@@ -119,7 +119,6 @@
   entity_ids:
     - sensor.kitchen_temperature
     - sensor.craft_room_temperature
-    - sensor.guest_room_temperature
     - sensor.living_room_temperature
     - sensor.master_bedroom_temperature
     - sensor.nook_temperature
