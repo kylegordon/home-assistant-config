@@ -1,0 +1,45 @@
+---
+# Inspired by https://www.reddit.com/r/homeautomation/comments/qiywpf/monitoring_a_car_battery_from_charged_over_first/
+packages:
+  common: !include common/common.yaml
+
+substitutions:
+  device_name: Land Rover Battery Monitor
+  device_description: Land Rover Battery Monitor
+  friendly_name: Land Rover Battery Monitor
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: d1_mini
+
+# Enable logging
+logger:
+
+web_server:
+
+deep_sleep:
+  run_duration: 20s
+  sleep_duration: 10min
+
+sensor:
+  - platform: adc
+    pin: A0
+    name: "Landrover Voltage"
+    update_interval: 60s
+    filters:
+      - multiply: 24.8
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: true
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "Wemos Blue LED"
+    output: blue_led
