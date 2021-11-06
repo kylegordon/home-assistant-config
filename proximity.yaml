@@ -3,7 +3,7 @@ kyle:
     ignored_zones:
       - home
     devices:
-      - device_tracker.kyle_phone
+      - person.kyle
     unit_of_measurement: m
     tolerance: 50
 
@@ -12,6 +12,6 @@ charlotte:
     ignored_zones:
       - home
     devices:
-      - device_tracker.charlotte_phone
+      - person.charlotte
     unit_of_measurement: m
     tolerance: 50
