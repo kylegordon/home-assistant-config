@@ -107,7 +107,6 @@
 
 - platform: min_max
   name: Average External Light Level
-  icon: mdi:sun-wireless-outline
   type: median
   entity_ids:
     - sensor.lux_meter_1_level
