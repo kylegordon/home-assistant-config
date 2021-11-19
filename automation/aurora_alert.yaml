@@ -8,7 +8,7 @@ trigger:
 action:
   - service: notify.alexa_media_everywhere
     data:
-    message: "Alert! The Aurora Borealis might be visible right now!"
+      message: "Alert! The Aurora Borealis might be visible right now!"
       data:
         type: announce
         # method: all
