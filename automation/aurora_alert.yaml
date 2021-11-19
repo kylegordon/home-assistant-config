@@ -6,10 +6,8 @@ trigger:
   from: "off"
   to: "on"
 action:
-  - service: notify.alexa_media
+  - service: notify.alexa_media_everywhere
     data:
-      target:
-        - media_player.everywhere
       data:
         type: announce
         # method: all
