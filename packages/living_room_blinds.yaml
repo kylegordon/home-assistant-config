@@ -1,4 +1,20 @@
 ---
+input_number:
+  blinds_morning:
+    name: Morning Blinds
+    icon: mdi:blinds
+    min: 0
+    max: 500
+    initial: 100
+    step: 1
+  blinds_evening:
+    name: Evening Blinds
+    icon: mdi:blinds
+    min: 0
+    max: 500
+    initial: 100
+    step: 1
+
 cover:
   - platform: group
     name: Patio Blinds
