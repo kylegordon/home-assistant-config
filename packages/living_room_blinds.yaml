@@ -63,7 +63,7 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        below: 100
+        below: "{{ states('input_number.blinds_evening')|int }}"
         for:
           minutes: 10
     action:
@@ -74,7 +74,7 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        above: 100
+        above: "{{ states('input_number.blinds_morning')|int }}"
         for:
           minutes: 10
     action:
