@@ -2,7 +2,8 @@
 input_number:
   blinds_morning:
     name: Morning Blinds
-    icon: mdi:blinds
+    icon: mdi:blinds_open
+    unit_of_measurement: lx
     min: 0
     max: 500
     initial: 100
@@ -10,6 +11,7 @@ input_number:
   blinds_evening:
     name: Evening Blinds
     icon: mdi:blinds
+    unit_of_measurement: lx
     min: 0
     max: 500
     initial: 100
