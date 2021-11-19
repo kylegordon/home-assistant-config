@@ -107,6 +107,7 @@
 
 - platform: min_max
   name: Average External Light Level
+  unique_id: average_external_light_level
   icon: mdi:sun-wireless-outline
   type: median
   entity_ids:
