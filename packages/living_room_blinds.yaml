@@ -1,3 +1,4 @@
+---
 cover:
   - platform: group
     name: Patio Blinds
@@ -9,38 +10,38 @@ cover:
 automation:
   - alias: Control Blinds
     trigger:
-    - platform: event
-      event_type: deconz_event
-      event_data:
-        id: tradfri_open_close_switch
+      - platform: event
+        event_type: deconz_event
+        event_data:
+          id: tradfri_open_close_switch
     action:
-    - variables:
-        event: "{{ trigger.event.data.event }}"
-    - choose:
-      - conditions:
-        - "{{ event == 1002 }}"
-        sequence:
-        - service: cover.open_cover
-          target:
-            entity_id: cover.patio_blinds
-      - conditions:
-        - "{{ event == 2002 }}"
-        sequence:
-        - service: cover.close_cover
-          target:
-            entity_id: cover.patio_blinds
-      - conditions:
-        - "{{ event == 1003 }}"
-        sequence:
-        - service: cover.stop_cover
-          target:
-            entity_id: cover.patio_blinds
-      - conditions:
-        - "{{ event == 2003 }}"
-        sequence:
-        - service: cover.stop_cover
-          target:
-            entity_id: cover.patio_blinds
+      - variables:
+          event: "{{ trigger.event.data.event }}"
+      - choose:
+          - conditions:
+              - "{{ event == 1002 }}"
+            sequence:
+              - service: cover.open_cover
+                target:
+                  entity_id: cover.patio_blinds
+          - conditions:
+              - "{{ event == 2002 }}"
+            sequence:
+              - service: cover.close_cover
+                target:
+                  entity_id: cover.patio_blinds
+          - conditions:
+              - "{{ event == 1003 }}"
+            sequence:
+              - service: cover.stop_cover
+                target:
+                  entity_id: cover.patio_blinds
+          - conditions:
+              - "{{ event == 2003 }}"
+            sequence:
+              - service: cover.stop_cover
+                target:
+                  entity_id: cover.patio_blinds
 
   - alias: Close blinds when dark
     trigger:
