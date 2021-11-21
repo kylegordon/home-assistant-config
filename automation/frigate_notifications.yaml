@@ -1,6 +1,6 @@
 ---
 automation:
-  - alias: Notify of events, by email
+  - alias: Frigate detection email
     trigger:
       platform: mqtt
       topic: frigate/events
