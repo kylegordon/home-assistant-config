@@ -1,14 +1,13 @@
 ---
-automation:
-  - alias: Frigate detection email
-    trigger:
-      platform: mqtt
-      topic: frigate/events
-    action:
-      - service: notify.email_kyle
-        data_template:
-          message: 'A {{trigger.payload_json["after"]["label"]}} was detected.'
-          data:
-            image: 'http://viewpoint.house:8123/api/frigate/notifications/{{trigger.payload_json["after"]["id"]}}/thumbnail.jpg?format=android'
-            tag: '{{trigger.payload_json["after"]["id"]}}'
-            when: '{{trigger.payload_json["after"]["start_time"]|int}}'
+- alias: Frigate detection email
+  trigger:
+    platform: mqtt
+    topic: frigate/events
+  action:
+    - service: notify.email_kyle
+      data_template:
+        message: 'A {{trigger.payload_json["after"]["label"]}} was detected.'
+        data:
+          image: 'http://viewpoint.house:8123/api/frigate/notifications/{{trigger.payload_json["after"]["id"]}}/thumbnail.jpg?format=android'
+          tag: '{{trigger.payload_json["after"]["id"]}}'
+          when: '{{trigger.payload_json["after"]["start_time"]|int}}'
