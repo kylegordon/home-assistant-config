@@ -6,7 +6,10 @@ trigger:
 action:
   - service: notify.email_kyle
     data_template:
-      message: 'A {{trigger.payload_json["after"]["label"]}} was detected.'
+      title: "{{trigger.payload_json["after"]["label"]}} detected on camera"
+      message: 'A {{trigger.payload_json["after"]["label"]}} was detected.
+      --------------------------------------------------------------------------------
+      {{trigger.payload_json}}'
       data:
         image: 'http://viewpoint.house:8123/api/frigate/notifications/{{trigger.payload_json["after"]["id"]}}/thumbnail.jpg?format=android'
         tag: '{{trigger.payload_json["after"]["id"]}}'
