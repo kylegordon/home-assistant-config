@@ -1,3 +1,11 @@
+light:
+  - platform: group
+    name: Glow Orbs
+    entities:
+        - light.sense_gloworb_1_ring
+        - light.sense_gloworb_2_ring
+        - light.sense_gloworb_3_ring
+
 automation:
 
   - alias: Cheerlights scene
@@ -7,7 +15,7 @@ automation:
     action:
       - service: scene.create
         data_template:
-          scene_id: under_bed_cheerlights_state
+          scene_id: cheerlights_state
           entities:
             light.under_bed_lights:
               state: "on"
@@ -27,7 +35,9 @@ automation:
         before: '07:00:00'
     action:
       - service: scene.turn_on
-        entity_id: scene.under_bed_cheerlights_state
+        entity_id: scene.cheerlights_state
+        data:
+          transition: 2
 
   - alias: Under Bed Cheerlights Motion - 2 minute timeout
     trigger:
@@ -43,11 +53,17 @@ automation:
     action:
     - service: light.turn_off
       entity_id: light.under_bed_lights
+      data:
+        transition: 30
 
   - alias: Cheerlights
     trigger:
       platform: mqtt
       topic: cheerlightsRGB
+    condition:
+    - condition: time
+      after: '06:00:00'
+      before: '01:00:00'
     action:
       service_template: light.turn_on
       data_template:
@@ -69,6 +85,9 @@ automation:
     - condition: time
       after: '16:00:00'
       before: '23:00:00'
+    - condition: state
+      entity_id: input_boolean.goodnight_process
+      state: "off"
     action:
       service_template: light.turn_on
       data_template:
@@ -105,7 +124,7 @@ automation:
             - "{{ trigger.payload[3:5] | int(0,16) }}"
             - "{{ trigger.payload[-2:] | int(0,16) }}"
 
-  - alias: Cheerlights Outside - off
+  - alias: Cheerlights - off
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
@@ -118,3 +137,6 @@ automation:
         entity_id:
           - light.decking_lights
           - light.under_bed_lights
+          - light.glow_orbs
+        data:
+          transition: 10

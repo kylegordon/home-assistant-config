@@ -4,13 +4,13 @@ automation:
       - platform: state
         entity_id:
           - binary_sensor.hall_single_switch_touch_pad
-          - binary_sensor.hall_2_gang_touchpad_1
+          - binary_sensor.hall_dual_switch_touchpad_1
         to: 'on'
     action:
       - service: switch.turn_on
         entity_id:
           - switch.hall_single_switch_relay
-          - switch.hall_2_gang_relay_1
+          - switch.hall_dual_switch_relay_1
       - service: light.toggle
         data_template:
           entity_id: light.hall
@@ -24,14 +24,14 @@ automation:
             {% endif %}
           # If you use a transition here, it causes delays when turning off at the lightswitch, contrary to 'expected behaviour'
           # Specifically, toggle 'on' to, say, 30%, and then toggle 'off' and the dimming duration always seems too long.
-          #transition: >
-          #  {% if states('sensor.time_of_day') == "Morning" %}
-          #  10
-          #  {% elif states('sensor.time_of_day') == "Day" %}
-          #  2
-          #  {% elif states('sensor.time_of_day') == "Night" %}
-          #  5
-          #  {% endif %}
+          # transition: >
+          #   {% if states('sensor.time_of_day') == "Morning" %}
+          #   10
+          #   {% elif states('sensor.time_of_day') == "Day" %}
+          #   2
+          #   {% elif states('sensor.time_of_day') == "Night" %}
+          #   5
+          #   {% endif %}
           color_temp: >
             {% if states('sensor.time_of_day') == "Morning" %}
             200
@@ -57,6 +57,9 @@ automation:
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
         below: 1000
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: light.turn_on
         data_template:
