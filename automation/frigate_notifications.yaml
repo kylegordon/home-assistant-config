@@ -4,6 +4,15 @@ trigger:
   platform: mqtt
   topic: frigate/events
 action:
+  # https://github.com/stmrocket/Home-Assistant-Config/blob/9cc4001397ca81f39e76157d5054a0a88916a66a/automation/cctv.yaml
+  - service: camera.snapshot
+    data:
+      entity_id: camera.driveway
+      filename: /config/www/cctv/driveway_full.jpg
+  - service: camera.snapshot
+    data:
+      entity_id: camera.front_door
+      filename: /config/www/cctv/front_door_full.jpg
   - service: notify.email_kyle
     data_template:
       title: '{{trigger.payload_json["after"]["label"]}} detected on camera'
@@ -14,3 +23,7 @@ action:
         image: 'http://viewpoint.house:8123/api/frigate/notifications/{{trigger.payload_json["after"]["id"]}}/thumbnail.jpg?format=android'
         tag: '{{trigger.payload_json["after"]["id"]}}'
         when: '{{trigger.payload_json["after"]["start_time"]|int}}'
+        data:
+          images:
+            - /config/www/cctv/driveway_full.jpg
+            - /config/www/cctv/front_door_full.jpg
