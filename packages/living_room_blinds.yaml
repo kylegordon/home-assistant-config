@@ -6,7 +6,6 @@ input_number:
     unit_of_measurement: lx
     min: 0
     max: 500
-    initial: 100
     step: 1
   blinds_evening:
     name: Evening Blinds
@@ -14,7 +13,6 @@ input_number:
     unit_of_measurement: lx
     min: 0
     max: 500
-    initial: 100
     step: 1
 
 cover:
