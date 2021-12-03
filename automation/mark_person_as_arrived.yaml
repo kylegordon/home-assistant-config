@@ -28,7 +28,7 @@ action:
   - service: script.tweet_engine
     data_template:
       tweet: >
-        {{ [ 
+        {{ [
         "Yay! Company!",
         "A resident has just arrived!"
          ] | random + " http://amzn.to/2D3J8jW" }}
@@ -36,4 +36,3 @@ action:
   - service: notify.twitter_thegordonhome
     data:
       message: "A resident has just arrived!"
-

@@ -16,11 +16,6 @@ default_view:
     - sensor.bitcoin_balance
     - group.environment_summary
 
-modes:
-  name: Modes
-  entities:
-    - input_boolean.guest_mode
-
 environment_summary:
   name: Environment Summary
   entities:
@@ -55,7 +50,7 @@ living_room:
   entities:
     - group.living_room_lights
     - media_player.living_room_kodi
-    - media_player.linn_223637
+    - media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
     - switch.tellybox
     - binary_sensor.living_room_motion
     - sensor.living_room_motion
@@ -137,15 +132,14 @@ bedroom_3:
     - input_select.study_amplifier_input
     - light.study_light
     - light.monitor_lights
-    - sensor.study_sensor_temperature
-    - sensor.study_sensor_humidity
-    - sensor.study_sensor_signal_level
+    - sensor.study_temperature
+    - sensor.study_humidity
+    - sensor.study_pressure
 
 bedroom_4:
   name: Craft room
   entities:
     - light.craft_room
-    - light.craft_room_bookcase
     - light.craft_room_fairy_lights
     - light.craft_room_desk_level
     - sensor.craft_room_temperature
@@ -179,10 +173,9 @@ hall_view:
     - binary_sensor.hall_door_motion
     - binary_sensor.boot_room_motion
     - sensor.hall_door_motion
-    - sensor.hallway_sensor_temperature
-    - sensor.hallway_sensor_humidity
-    - sensor.hallway_sensor_signal_level
-    - light.twig_lights
+    - sensor.hall_temperature
+    - sensor.hall_humidity
+    - sensor.hall_pressure
     - binary_sensor.boot_room_door
 
 outside:
@@ -237,19 +230,11 @@ people:
   name: People
   icon: mdi:account-multiple
   entities:
-    - camera.kyle
-    - camera.charlotte
-    - sensor.charlotte_to_home
-    - sensor.charlotte_work_travel
-    - sensor.kyle_to_home
-    - sensor.kyle_work_travel
-    - input_select.kyle_status_dropdown
-    - input_select.charlotte_status_dropdown
-    - binary_sensor.kyle_driving
-    - binary_sensor.charlotte_driving
-    - device_tracker.bagpuss_a0001
-    - device_tracker.charlotte_thea
-    - device_tracker.ronnie_thea
+    - person.kyle
+    - person.charlotte
+    - person.ronnie
+    - person.skye
+    - person.iris
 
 ## Item groups ##
 bedside_lights:

@@ -32,6 +32,9 @@ automation:
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
         below: 1000
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: light.turn_on
         data_template:
@@ -93,7 +96,7 @@ automation:
           entity_id: light.boot_room
           brightness_pct: 30
           transition: 10
-          rgb_color: [255,0,0]
+          rgb_color: [255, 0, 0]
 
   - alias: Boot room motion - 10 minute timeout
     trigger:

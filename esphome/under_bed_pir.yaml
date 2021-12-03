@@ -1,0 +1,6 @@
+substitutions:
+  device_name: under_bed_pir
+  device_description: Under Bed PIR
+  friendly_name: Under Bed PIR
+
+<<: !include common/wemos_pir_common.yaml

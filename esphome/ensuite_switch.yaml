@@ -3,4 +3,4 @@ substitutions:
   device_description: Ensuite Lightswitch
   friendly_name: Ensuite Switch
 
-<<: !include common/sonoff_touch_switch_common.yaml
+<<: !include common/sonoff_t1_r2_touch_switch_common.yaml

@@ -22,14 +22,14 @@ automation:
             {% endif %}
           # If you use a transition here, it causes delays when turning off at the lightswitch, contrary to 'expected behaviour'
           # Specifically, toggle 'on' to, say, 30%, and then toggle 'off' and the dimming duration always seems too long.
-          #transition: >
-          #  {% if states('sensor.time_of_day') == "Morning" %}
-          #  10
-          #  {% elif states('sensor.time_of_day') == "Day" %}
-          #  2
-          #  {% elif states('sensor.time_of_day') == "Night" %}
-          #  5
-          #  {% endif %}
+          # transition: >
+          #   {% if states('sensor.time_of_day') == "Morning" %}
+          #   10
+          #   {% elif states('sensor.time_of_day') == "Day" %}
+          #   2
+          #   {% elif states('sensor.time_of_day') == "Night" %}
+          #   5
+          #   {% endif %}
           color_temp: >
             {% if states('sensor.time_of_day') == "Morning" %}
             200
@@ -77,6 +77,9 @@ automation:
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
         below: 1000
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
       - condition: or
         conditions:
           - condition: state

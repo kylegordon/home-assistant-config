@@ -3,10 +3,8 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.hallway_sensor_status
           - sensor.kitchen_temperature
           - binary_sensor.utility_room_sensor_status
-          - binary_sensor.study_sensor_status
           - sensor.garage_temperature
           - binary_sensor.hall_door_motion
           - binary_sensor.hall_rooms_motion
@@ -59,6 +57,10 @@ automation:
           - sensor.guest_bedroom_multi_sensor_battery_level
           - sensor.living_room_multi_sensor_battery_level
           - sensor.master_bedroom_multi_sensor_battery_level
+          - sensor.study_multi_sensor_battery_level
+          - sensor.hall_multi_sensor_battery_level
+          - sensor.dining_nook_multi_sensor_battery_level
+          - sensor.bathroom_multi_sensor_battery_level
         to: 'unavailable'
         for:
           minutes: 2

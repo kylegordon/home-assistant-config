@@ -25,14 +25,14 @@ automation:
             {% elif states('sensor.time_of_day') == "Night" %}
             20
             {% endif %}
-          #transition: >
-          #  {% if states('sensor.time_of_day') == "Morning" %}
-          #  10
-          #  {% elif states('sensor.time_of_day') == "Day" %}
-          #  2
-          #  {% elif states('sensor.time_of_day') == "Night" %}
-          #  30
-          #  {% endif %}
+          # transition: >
+          #   {% if states('sensor.time_of_day') == "Morning" %}
+          #   10
+          #   {% elif states('sensor.time_of_day') == "Day" %}
+          #   2
+          #   {% elif states('sensor.time_of_day') == "Night" %}
+          #   30
+          #   {% endif %}
           color_temp: >
             {% if states('sensor.time_of_day') == "Morning" %}
             200
@@ -113,32 +113,22 @@ automation:
             {% endif %}
           color_temp: >
             200
-      - service: logbook.log
-        data_template:
-          name: EVENT
-          message: >
-            Saving state of hot water temperature and increasing by 20 to trigger the boiler early.
       # https://developers.home-assistant.io/docs/core/entity/climate/
-      - service: scene.create
+      - service: climate.set_preset_mode
         data_template:
-          scene_id: hot_water_state
-          snapshot_entities:
-            - climate.hot_water
-      - service: climate.set_temperature
-        data:
           entity_id: climate.hot_water
-          temperature: "{{ (states.climate.hot_water.attributes.temperature | float) +10 }}"
+          preset_mode: 'boost'
       - service: notify.alexa_media
         data:
           target:
             - media_player.bedroom
           data:
             type: announce
-            #method: all
+            # method: all
           message: "Hello! Enjoy your shower!"
 
   - alias: Ensuite shower off
-    description: Return the hot water to previous state after the shower is finished
+    description: Return the heating boost to eco mode after the shower is finished
     trigger:
       - platform: numeric_state
         entity_id: sensor.shower_pump_power_plug_power
@@ -147,14 +137,10 @@ automation:
           minutes: 10
     action:
       # https://developers.home-assistant.io/docs/core/entity/climate/
-      - service: scene.turn_on
-        data:
-          entity_id: scene.hot_water_state
-      - service: logbook.log
+      - service: climate.set_preset_mode
         data_template:
-          name: EVENT
-          message: >
-            Restoring state of hot water temperature.
+          entity_id: climate.hot_water
+          preset_mode: 'eco'
 
   - alias: Ensuite motion - night timeout
     trigger:
@@ -162,7 +148,7 @@ automation:
         entity_id: binary_sensor.ensuite_motion
         to: 'off'
         for:
-          minutes: 4
+          minutes: 2
     condition:
       - condition: state
         entity_id: sensor.time_of_day
