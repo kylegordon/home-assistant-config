@@ -40,7 +40,7 @@
 
 - platform: switch
   name: "Monitor Lights"
-  entity_id: switch.monitor_lights
+  entity_id: switch.monitor_lights_power_plug_switch
 
 - platform: switch
   name: "Christmas Tree"
