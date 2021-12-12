@@ -1,6 +1,6 @@
 substitutions:
-  device_name: washing_machine
-  device_description: Washing Machine Power Plug
-  friendly_name: Washing Machine Power Plug
+  device_name: monitor_lights
+  device_description: Monitor Lights Power Plug
+  friendly_name: Monitor Lights Power Plug
 
 <<: !include common/teckin_sp23_common.yaml
