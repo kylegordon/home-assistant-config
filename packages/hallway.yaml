@@ -66,9 +66,9 @@ automation:
           entity_id: group.hall
           brightness_pct: >
             {% if states('sensor.time_of_day') == "Morning" %}
-            100
+            50
             {% elif states('sensor.time_of_day') == "Day" %}
-            100
+            80
             {% elif states('sensor.time_of_day') == "Night" %}
             10
             {% endif %}
