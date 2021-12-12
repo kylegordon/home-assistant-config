@@ -1,6 +1,0 @@
-substitutions:
-  device_name: washing_machine
-  device_description: Washing Machine Power Plug
-  friendly_name: Washing Machine Power Plug
-
-<<: !include common/teckin_sp23_common.yaml
