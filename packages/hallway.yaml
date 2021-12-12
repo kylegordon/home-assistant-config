@@ -14,32 +14,6 @@ automation:
       - service: light.toggle
         data_template:
           entity_id: light.hall
-          brightness_pct: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            100
-            {% elif states('sensor.time_of_day') == "Day" %}
-            100
-            {% elif states('sensor.time_of_day') == "Night" %}
-            30
-            {% endif %}
-          # If you use a transition here, it causes delays when turning off at the lightswitch, contrary to 'expected behaviour'
-          # Specifically, toggle 'on' to, say, 30%, and then toggle 'off' and the dimming duration always seems too long.
-          # transition: >
-          #   {% if states('sensor.time_of_day') == "Morning" %}
-          #   10
-          #   {% elif states('sensor.time_of_day') == "Day" %}
-          #   2
-          #   {% elif states('sensor.time_of_day') == "Night" %}
-          #   5
-          #   {% endif %}
-          color_temp: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            200
-            {% elif states('sensor.time_of_day') == "Day" %}
-            300
-            {% elif states('sensor.time_of_day') == "Night" %}
-            375
-            {% endif %}
       - service: logbook.log
         data_template:
           name: EVENT
@@ -64,30 +38,6 @@ automation:
       - service: light.turn_on
         data_template:
           entity_id: group.hall
-          brightness_pct: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            100
-            {% elif states('sensor.time_of_day') == "Day" %}
-            100
-            {% elif states('sensor.time_of_day') == "Night" %}
-            10
-            {% endif %}
-          transition: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            10
-            {% elif states('sensor.time_of_day') == "Day" %}
-            2
-            {% elif states('sensor.time_of_day') == "Night" %}
-            5
-            {% endif %}
-          color_temp: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            200
-            {% elif states('sensor.time_of_day') == "Day" %}
-            300
-            {% elif states('sensor.time_of_day') == "Night" %}
-            375
-            {% endif %}
 
   - alias: Hallway motion - 10 minute timeout
     trigger:
