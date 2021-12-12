@@ -2,6 +2,10 @@ group:
   christmas_lights:
     name: Christmas Lights
     entities:
+      - switch.energenie_1
+      - switch.energenie_2
+      - switch.energenie_3
+      - switch.energenie_4
       - light.christmas_tree
       - light.candle_arch
       - light.star_burst
