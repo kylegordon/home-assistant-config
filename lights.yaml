@@ -46,6 +46,10 @@
   name: "Christmas Tree"
   entity_id: switch.christmas_tree
 
+- platform: switch
+  name: "Candle Arch"
+  entity_id: switch.candle_arch
+
 - platform: group
   name: Decking Lights
   entities:
