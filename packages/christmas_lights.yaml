@@ -31,7 +31,7 @@ automation:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
         below: 500
-        for: 
+        for:
           minutes: 10
     condition:
       - condition: state
