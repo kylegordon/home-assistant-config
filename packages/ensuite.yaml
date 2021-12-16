@@ -153,8 +153,8 @@ automation:
       - condition: state
         entity_id: sensor.time_of_day
         state: "Night"
-      - condition: state
-        entity_id: binary_sensor.shower_pump_power_plug_power
+      - condition: numeric_state
+        entity_id: sensor.shower_pump_power_plug_power
         below: 10
     action:
       service: light.turn_off
