@@ -26,6 +26,11 @@
 #   origin: device_tracker.charlotte_thea
 #   destination: zone.home
 
+- platform: bulb_energy
+  postcode: "G78 3AX"
+  payplan: "monthly" # or legacyPrepay or smartPayg
+  eco7: false
+
 - platform: template
   sensors:
     last_alexa:
