@@ -2,7 +2,7 @@
 switch:
   - platform: flux
     lights:
-      - group.hall
+      - light.hall
     name: Hallway Flux
     start_time: "7:00"
     stop_time: "23:00"
