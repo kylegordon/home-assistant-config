@@ -1,4 +1,10 @@
 ---
+
+## See also https://uk.banggood.com/Waveshare-7_5-Inch-E-ink-Screen-Module-800480-e-Paper-Display-SPI-Interface-7_5inch-e-Paper-HAT-(B)-For-Raspberry-Pi-p-1365284.html
+## https://community.home-assistant.io/t/weatherstation-compass-needle/359176/16
+## https://github.com/ofilis/esp32display/blob/main/esp32display.yaml
+### Source glyph codes from https://pictogrammers.github.io/@mdi/font/5.3.45/
+
 packages:
   common: !include common/common.yaml
   colors: !include common/colours.yaml
@@ -297,7 +303,7 @@ display:
           it.filled_circle(it.get_width() / 2, it.get_height() / 3, 30, COLOR_CSS_RED);
 
 interval:
-  - interval: 3s
+  - interval: 5s
     then:
       - display.page.show_next: my_display
       - component.update: my_display
