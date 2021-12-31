@@ -20,19 +20,19 @@ time:
     timezone: Europe/London
 
 font:
-  - file: 'slkscr.ttf'
+  - file: 'common/fonts/slkscr.ttf'
     id: font1
     size: 8
 
-  - file: 'BebasNeue-Regular.ttf'
+  - file: 'common/fonts/BebasNeue-Regular.ttf'
     id: font2
     size: 20
 
-  - file: 'arial.ttf'
+  - file: 'common/fonts/arial.ttf'
     id: font3
     size: 14
 
-  - file: 'BebasNeue-Regular.ttf'
+  - file: 'common/fonts/BebasNeue-Regular.ttf'
     id: fontlarge
     size: 64
 
