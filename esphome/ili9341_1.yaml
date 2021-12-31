@@ -2,9 +2,25 @@ packages:
   common: !include common/common.yaml
   colors: !include common/colours.yaml
 
+substitutions: #substitute your own values in this section
+  device_name: ili9341
+  device_description: "Render text on an ILI9341 TFT display"
+  static_ip: 192.168.1.254
+  gateway: 192.168.1.1
+  subnet: 255.255.255.0
+  internal_temp_sensor: sensor.air_quality_meter_temperature #entity from Home Assistant
+  outside_temp_sensor: sensor.outside_temperature #entity from Home Assistant
+  weather_entity: weather.smhi_home #entity from Home Assistant
+  todays_forecast_high_entity: sensor.todays_forecast_high #entity from Home Assistant
+  todays_forecast_low_entity: sensor.todays_forecast_low #entity from Home Assistant
+  todays_forecast_condition_entity: sensor.todays_forecast_condition
+  tomorrows_forecast_high_entity: sensor.tomorrows_forecast_high
+  tomorrows_forecast_low_entity: sensor.tomorrows_forecast_low
+  tomorrows_forecast_condition_entity: sensor.tomorrows_forecast_condition
 
 esphome:
-  name: ili9341
+  name: ${device_name}
+  comment: ${device_description}
   platform: ESP32
   board: nodemcu-32s
 
@@ -36,6 +52,39 @@ font:
     id: fontlarge
     size: 64
 
+  - file: 'SourceSansPro-Light.ttf'
+    id: font1
+    size: 14
+  - file: 'SourceSansPro-SemiBold.ttf'
+    id: font2
+    size: 26
+  - file: 'materialdesignicons-webfont.ttf'
+    id: font3
+    size: 35
+    glyphs:
+      - "\U000F0F55" #mdi:home-thermometer-outline
+  - file: 'materialdesignicons-webfont.ttf'
+    id: font4
+    size: 70
+    glyphs:
+      - "\U000F0594"  # "clear-night"
+      - "\U000F0590"  # "cloudy"
+      - "\U000F0591"  # "fog"
+      - "\U000F0592"  # "hail"
+      - "\U000F0593"  # "lightning"
+      - "\U000F067E"  # "lightning-rainy"
+      - "\U000F0595"  # "partlycloudy"
+      - "\U000F0596"  # "pouring"
+      - "\U000F0597"  # "rainy"
+      - "\U000F0598"  # "snowy"
+      - "\U000F067F"  # "snowy-rainy"
+      - "\U000F0599"  # "sunny"
+      - "\U000F059D"  # "windy"
+      - "\U000F059E"  # "windy-variant"
+  - file: 'SourceSansPro-Bold.ttf'
+    id: font5
+    size: 60
+
 sensor:
   - platform: homeassistant
     id: internet_speed_in
@@ -57,10 +106,56 @@ sensor:
     entity_id: sensor.house_target_temperature
     internal: true
 
+  - platform: homeassistant
+    id: inside_temperature
+    entity_id: $internal_temp_sensor
+    internal: true
+
+  - platform: homeassistant
+    id: outside_temperature
+    entity_id: $outside_temp_sensor
+    internal: true
+
+  - platform: homeassistant
+    id: todays_forecast_high
+    entity_id: $todays_forecast_high_entity
+    internal: true
+
+  - platform: homeassistant
+    id: todays_forecast_low
+    entity_id: $todays_forecast_low_entity
+    internal: true
+
+  - platform: homeassistant
+    id: tomorrows_forecast_high
+    entity_id: $tomorrows_forecast_high_entity
+    internal: true
+
+  - platform: homeassistant
+    id: tomorrows_forecast_low
+    entity_id: $tomorrows_forecast_low_entity
+    internal: true
+
 text_sensor:
   - platform: homeassistant
     id: next_bin
     entity_id: sensor.next_bin
+    internal: true
+
+  - platform: homeassistant
+    id: weather_state
+    name: "Current Weather Icon"
+    entity_id: $weather_entity
+    internal: true
+
+  - platform: homeassistant
+    id: tomorrows_forecast_condition
+    entity_id: $tomorrows_forecast_condition_entity
+    internal: true
+
+  - platform: homeassistant
+    id: todays_forecast_condition
+    entity_id: $todays_forecast_condition_entity
     internal: true
 
 spi:
