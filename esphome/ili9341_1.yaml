@@ -1,8 +1,10 @@
 ---
+# yamllint disable rule:line-length
 
 ## See also https://uk.banggood.com/Waveshare-7_5-Inch-E-ink-Screen-Module-800480-e-Paper-Display-SPI-Interface-7_5inch-e-Paper-HAT-(B)-For-Raspberry-Pi-p-1365284.html
 ## https://community.home-assistant.io/t/weatherstation-compass-needle/359176/16
 ## https://github.com/ofilis/esp32display/blob/main/esp32display.yaml
+## https://github.com/tejasitraj/esphome-tiny-display/blob/main/display-trial.yaml
 ### Source glyph codes from https://pictogrammers.github.io/@mdi/font/5.3.45/
 
 packages:
@@ -13,18 +15,15 @@ substitutions:  # substitute your own values in this section
   device_name: ili9341
   friendly_name: ili9341
   device_description: "Render text on an ILI9341 TFT display"
-  static_ip: 192.168.1.254
-  gateway: 192.168.1.1
-  subnet: 255.255.255.0
-  internal_temp_sensor: sensor.air_quality_meter_temperature #entity from Home Assistant
-  outside_temp_sensor: sensor.outside_temperature #entity from Home Assistant
-  weather_entity: weather.smhi_home #entity from Home Assistant
-  todays_forecast_high_entity: sensor.todays_forecast_high #entity from Home Assistant
-  todays_forecast_low_entity: sensor.todays_forecast_low #entity from Home Assistant
-  todays_forecast_condition_entity: sensor.todays_forecast_condition
+  internal_temp_sensor: sensor.house_average_temperature  # entity from Home Assistant
+  outside_temp_sensor: sensor.openweathermap_temperature  # entity from Home Assistant
+  weather_entity: weather.openweathermap  # entity from Home Assistant
+  todays_forecast_high_entity: sensor.todays_forecast_high  # entity from Home Assistant
+  todays_forecast_low_entity: sensor.todays_forecast_low  # entity from Home Assistant
+  todays_forecast_condition_entity: sensor.openweathermap_forecast_condition
   tomorrows_forecast_high_entity: sensor.tomorrows_forecast_high
   tomorrows_forecast_low_entity: sensor.tomorrows_forecast_low
-  tomorrows_forecast_condition_entity: sensor.tomorrows_forecast_condition
+  tomorrows_forecast_condition_entity: sensor.openweathermap_forecast_condition
 
 esphome:
   name: ${device_name}
@@ -67,12 +66,19 @@ font:
     id: font2
     size: 26
   - file: 'common/fonts/materialdesignicons-webfont.ttf'
-    id: font3
+    id: mdiwebfont35
     size: 35
     glyphs:
-      - "\U000F0F55" #mdi:home-thermometer-outline
+      - "\U000F0F55"  # mdi:home-thermometer-outline
+      - "\U000F0A7A"  # "trash-can-outline"
   - file: 'common/fonts/materialdesignicons-webfont.ttf'
-    id: font4
+    id: mdiwebfont60
+    size: 60
+    glyphs:
+      - "\U000F0F55"  # mdi:home-thermometer-outline
+      - "\U000F0A7A"  # "trash-can-outline"
+  - file: 'common/fonts/materialdesignicons-webfont.ttf'
+    id: mdiwebfont70
     size: 70
     glyphs:
       - "\U000F0594"  # "clear-night"
@@ -89,6 +95,7 @@ font:
       - "\U000F0599"  # "sunny"
       - "\U000F059D"  # "windy"
       - "\U000F059E"  # "windy-variant"
+      - "\U000F0A7A"  # "trash-can-outline"
   - file: 'common/fonts/SourceSansPro-Bold.ttf'
     id: font5
     size: 60
@@ -210,7 +217,7 @@ display:
           it.strftime(10, 10, id(font2), id(my_white), TextAlign::TOP_LEFT, "%A %d %b", id(esptime).now());
           // Print time in HH:MM format
           it.strftime(10, 40, id(font5), id(my_white), TextAlign::TOP_LEFT, "%H:%M", id(esptime).now());
-          
+
           std::map<std::string, std::string> weather_icon_map
             {
               {"clear-night", "\U000F0594"},
@@ -230,7 +237,7 @@ display:
             };
 
           if (id(weather_state).has_state()) {
-            it.printf(220, 15, id(font4), id(my_golden), TextAlign::TOP_LEFT, weather_icon_map[id(weather_state).state.c_str()].c_str());
+            it.printf(220, 15, id(mdiwebfont70), id(my_golden), TextAlign::TOP_LEFT, weather_icon_map[id(weather_state).state.c_str()].c_str());
           }
           if (id(outside_temperature).has_state()) {
             it.printf(215, 80, id(font2), id(my_golden), TextAlign::TOP_LEFT, "%7.1f°", id(outside_temperature).state);
@@ -240,7 +247,7 @@ display:
           if (time.hour > 16) {
             it.printf(175, 135, id(font1), id(my_white), TextAlign::TOP_LEFT, "Tomorrows Forecast:");
             if (id(tomorrows_forecast_condition).has_state()) {
-              it.printf(175, 155, id(font4), id(my_white), TextAlign::TOP_LEFT, weather_icon_map[id(tomorrows_forecast_condition).state.c_str()].c_str());
+              it.printf(175, 155, id(mdiwebfont70), id(my_white), TextAlign::TOP_LEFT, weather_icon_map[id(tomorrows_forecast_condition).state.c_str()].c_str());
             }
             if (id(tomorrows_forecast_high).has_state()) {
               it.printf(230, 160, id(font2), id(my_white), TextAlign::TOP_LEFT, "%7.1f°", id(tomorrows_forecast_high).state);
@@ -251,7 +258,7 @@ display:
           } else {
             it.printf(175, 135, id(font1), id(my_white), TextAlign::TOP_LEFT, "Todays Forecast:");
             if (id(todays_forecast_condition).has_state()) {
-              it.printf(175, 155, id(font4), id(my_white), TextAlign::TOP_LEFT, weather_icon_map[id(todays_forecast_condition).state.c_str()].c_str());
+              it.printf(175, 155, id(mdiwebfont70), id(my_white), TextAlign::TOP_LEFT, weather_icon_map[id(todays_forecast_condition).state.c_str()].c_str());
             }
             if (id(todays_forecast_high).has_state()) {
               it.printf(230, 160, id(font2), id(my_white), TextAlign::TOP_LEFT, "%7.1f°", id(todays_forecast_high).state);
@@ -260,37 +267,46 @@ display:
               it.printf(230, 190, id(font2), id(my_white), TextAlign::TOP_LEFT, "%7.1f°", id(todays_forecast_low).state);
             }
           }
-          it.printf(65, 135, id(font3), id(my_golden), TextAlign::TOP_LEFT, "\U000F0F55");
+          it.printf(65, 135, id(mdiwebfont35), id(my_golden), TextAlign::TOP_LEFT, "\U000F0F55");
           if (id(inside_temperature).has_state()) {
             it.printf(40, 165, id(font2), id(my_golden), TextAlign::TOP_LEFT, "%7.1f°", id(inside_temperature).state);
           }
-
-      - id: temperatures
-        lambda: |-
-          it.printf(0, 0, id(fontlarge), TextAlign::BASELINE_LEFT , "Climate");
-          // %.1f substitutes to 1 decimal place
+          it.line(50, 197, 115, 197, id(my_golden));
           if (id(house_target_temperature).has_state()) {
-            it.printf(0, 128, id(fontlarge), TextAlign::BASELINE_LEFT , "Target: %.1f°C", id(house_target_temperature).state);
+            it.printf(40, 195, id(font2), id(my_golden), TextAlign::TOP_LEFT , "%7.1f°", id(house_target_temperature).state);
           }
 
-          if (id(house_average_temperature).has_state()) {
-            it.printf(0, 192, id(fontlarge), TextAlign::BASELINE_LEFT , "Actual: %.1f°C", id(house_average_temperature).state);
-          }
+      # - id: temperatures
+      #   lambda: |-
+      #     it.printf(0, 0, id(fontlarge), TextAlign::BASELINE_LEFT , "Climate");
+      #     // %.1f substitutes to 1 decimal place
+      #     if (id(house_target_temperature).has_state()) {
+      #       it.printf(0, 128, id(fontlarge), TextAlign::BASELINE_LEFT , "Target: %.1f°C", id(house_target_temperature).state);
+      #     }
+      #     if (id(house_average_temperature).has_state()) {
+      #       it.printf(0, 192, id(fontlarge), TextAlign::BASELINE_LEFT , "Actual: %.1f°C", id(house_average_temperature).state);
+      #     }
 
       - id: nextbin
         lambda: |-
+          std::map<std::string, std::string> bin_icon_map
+            {
+              {"green", "\U000F0A7A"},
+            };
           if (id(next_bin).has_state()) {
-            // it.printf(0, 200, id(fontlarge), TextAlign::BASELINE_LEFT , id(next_bin).state);
-            // it.printf(0, 220, id(fontlarge), "Hello World!");
-            it.printf(0, 220, id(fontlarge), TextAlign::BASELINE_LEFT, "Bin: %s", id(next_bin).state.c_str());
+            // Original it.printf(0, 100, id(fontlarge), id(my_white), TextAlign::BASELINE_LEFT, bin_icon_map[id(next_bin).state.c_str()].c_str());
+            // it.printf(0, 100, id(mdiwebfont70), TextAlign::BASELINE_LEFT, bin_icon_map[id(next_bin).state.c_str()].c_str());
+            // it.printf(0, 100, id(mdiwebfont70), TextAlign::BASELINE_LEFT, "\U000F0F55" );
+            it.printf(0, 100, id(mdiwebfont70), id(my_golden), TextAlign::BASELINE_LEFT, "\U000F0A7A");
+            it.printf(0, 220, id(fontlarge), id(my_golden), TextAlign::BASELINE_LEFT, "Bin: %s", id(next_bin).state.c_str());
           }
 
-      - id: circle
-        lambda: |-
-          it.filled_circle(it.get_width() / 2, it.get_height() / 3, 30, COLOR_CSS_RED);
+      # - id: circle
+      #   lambda: |-
+      #     it.filled_circle(it.get_width() / 2, it.get_height() / 3, 30, COLOR_CSS_RED);
 
 interval:
-  - interval: 5s
+  - interval: 10s
     then:
       - display.page.show_next: my_display
       - component.update: my_display
