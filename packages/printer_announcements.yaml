@@ -1,3 +1,4 @@
+---
 sensor:
   - platform: filter
     name: octoprint_tool_0_temperature_smoothed
@@ -18,7 +19,8 @@ sensor:
 binary_sensor:
   - platform: trend
     sensors:
-      # Also consider sensor.octoprint_bed_target and sensor.octoprint_tool_0_target
+      # Also consider sensor.octoprint_bed_target
+      # and sensor.octoprint_tool_0_target
       octoprint_bed_cooling:
         entity_id: sensor.octoprint_bed_temperature_smoothed
         sample_duration: 10
@@ -99,7 +101,6 @@ automation:
             - media_player.study
           data:
             type: announce
-            #method: all
           message: Warming the print bed
 
   - alias: 3D printer hot end warming up
@@ -120,5 +121,4 @@ automation:
             - media_player.study
           data:
             type: announce
-            #method: all
           message: Warming the hot end
