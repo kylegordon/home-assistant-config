@@ -61,12 +61,12 @@ automation:
             # method: all
           message: "3D printer has started printing."
 
-  - alias: 3D printer stopped printing
+  - alias: 3D printer finishing printing
     trigger:
       - platform: state
         entity_id: sensor.octoprint_print_status
         from: "Printing"
-        to: "Operational"
+        to: "Finishing"
     condition:
       - condition: not
         conditions:
@@ -81,7 +81,7 @@ automation:
           data:
             type: announce
             # method: all
-          message: "3D printer has stopped printing."
+          message: "3D printer has finished printing."
 
   - alias: 3D printer bed warming up
     trigger:
