@@ -79,7 +79,7 @@ automation:
         data_template:
           entity_id: input_number.internet_traffic_delta_in
           value: '{{ ((trigger.to_state.state | int - trigger.from_state.state | int) * 8 ) / ( as_timestamp(trigger.to_state.last_updated) - as_timestamp(trigger.from_state.last_updated) ) }}'
-  
+
   - id: snmp_monitor_traffic_out
     alias: Monitor Traffic Out
     trigger:

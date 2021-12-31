@@ -1,3 +1,20 @@
+---
+input_number:
+  blinds_morning:
+    name: Morning Blinds
+    icon: mdi:blinds-open
+    unit_of_measurement: lx
+    min: 0
+    max: 500
+    step: 1
+  blinds_evening:
+    name: Evening Blinds
+    icon: mdi:blinds
+    unit_of_measurement: lx
+    min: 0
+    max: 500
+    step: 1
+
 cover:
   - platform: group
     name: Patio Blinds
@@ -9,44 +26,44 @@ cover:
 automation:
   - alias: Control Blinds
     trigger:
-    - platform: event
-      event_type: deconz_event
-      event_data:
-        id: tradfri_open_close_switch
+      - platform: event
+        event_type: deconz_event
+        event_data:
+          id: tradfri_open_close_switch
     action:
-    - variables:
-        event: "{{ trigger.event.data.event }}"
-    - choose:
-      - conditions:
-        - "{{ event == 1002 }}"
-        sequence:
-        - service: cover.open_cover
-          target:
-            entity_id: cover.patio_blinds
-      - conditions:
-        - "{{ event == 2002 }}"
-        sequence:
-        - service: cover.close_cover
-          target:
-            entity_id: cover.patio_blinds
-      - conditions:
-        - "{{ event == 1003 }}"
-        sequence:
-        - service: cover.stop_cover
-          target:
-            entity_id: cover.patio_blinds
-      - conditions:
-        - "{{ event == 2003 }}"
-        sequence:
-        - service: cover.stop_cover
-          target:
-            entity_id: cover.patio_blinds
+      - variables:
+          event: "{{ trigger.event.data.event }}"
+      - choose:
+          - conditions:
+              - "{{ event == 1002 }}"
+            sequence:
+              - service: cover.open_cover
+                target:
+                  entity_id: cover.patio_blinds
+          - conditions:
+              - "{{ event == 2002 }}"
+            sequence:
+              - service: cover.close_cover
+                target:
+                  entity_id: cover.patio_blinds
+          - conditions:
+              - "{{ event == 1003 }}"
+            sequence:
+              - service: cover.stop_cover
+                target:
+                  entity_id: cover.patio_blinds
+          - conditions:
+              - "{{ event == 2003 }}"
+            sequence:
+              - service: cover.stop_cover
+                target:
+                  entity_id: cover.patio_blinds
 
   - alias: Close blinds when dark
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        below: 150
+        below: input_number.blinds_evening
         for:
           minutes: 10
     action:
@@ -57,7 +74,7 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        above: 150
+        above: input_number.blinds_morning
         for:
           minutes: 10
     action:

@@ -8,7 +8,7 @@ input_boolean:
   goodnight_process:
     name: Goodnight process
     icon: mdi:sleep
-    initial: off
+    initial: false
 
 automation:
   - alias: Goodnight process
