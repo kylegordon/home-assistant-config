@@ -24,7 +24,7 @@ output:
   - platform: esp8266_pwm
     id: blue_led
     pin: D4
-    inverted: True
+    inverted: true
 
 e131:
   method: multicast # default: register E1.31 to Multicast group
@@ -38,6 +38,7 @@ light:
     id: blue_led_light
     output: blue_led
   - platform: neopixelbus
+    variant: 800KBPS
     type: GRB
     pin: GPIO3
     num_leds: 12
@@ -83,4 +84,3 @@ interval:
           - light.turn_off:
               id: blue_led_light
               transition_length: 250ms
-

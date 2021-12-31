@@ -19,7 +19,7 @@ binary_sensor:
     pin:
       number: GPIO0
       mode: INPUT_PULLUP
-      inverted: True
+      inverted: true
     name: "${friendly_name} Touch Pad"
     on_press:
       if:
@@ -51,7 +51,7 @@ output:
   - platform: esp8266_pwm
     id: blue_led
     pin: GPIO13
-    inverted: True
+    inverted: true
 
 light:
   # ... and then make a light out of it.

@@ -33,7 +33,7 @@ automation:
             - media_player.kitchen
           data:
             type: announce
-            #method: all
+            # method: all
           message: >-
             {% if trigger.to_state.state == 'on' %}
               {{ trigger.to_state.attributes.friendly_name }} has opened

@@ -56,7 +56,7 @@ font:
 i2c:
   sda: GPIO4
   scl: GPIO5
-  scan: False
+  scan: false
 
 display:
   - platform: ssd1306_i2c

@@ -41,12 +41,12 @@ output:
   # Register the red LED as a dimmable output ....
   - platform: ledc
     id: red_led
-    channel: 2 # Don't stomp on the cameras use of timer channel 1
+    channel: 2  # Don't stomp on the cameras use of timer channel 1
     pin: GPIO33
-    inverted: True
+    inverted: true
   - platform: ledc
     id: flash_led
-    channel: 3 # Don't stomp on the cameras use of timer channel 1
+    channel: 3  # Don't stomp on the cameras use of timer channel 1
     pin: GPIO4
 
 light:
