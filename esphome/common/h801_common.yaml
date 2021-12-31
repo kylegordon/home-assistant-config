@@ -19,7 +19,7 @@ syslog:
   ip_address: 172.24.32.13
   port: 515
 
-#RGB
+# RGB
 output:
   - platform: esp8266_pwm
     pin: 12
@@ -46,8 +46,8 @@ light:
       - random:
       - strobe:
       - flicker:
-          alpha: 50% #The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
-          intensity: 50% #The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
+          alpha: 50%  # The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
+          intensity: 50%  # The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
       - lambda:
           name: Throb
           update_interval: 1s
