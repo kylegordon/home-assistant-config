@@ -37,7 +37,7 @@ binary_sensor:
         device_class: heat
 
 automation:
-  - alias: Printer state change notification
+  - alias: 3D printer started printing
     trigger:
       - platform: state
         entity_id: sensor.octoprint_print_status
@@ -56,13 +56,30 @@ automation:
             - media_player.study
           data:
             type: announce
-            #method: all
-          message: >-
-            {% if trigger.to_state.state == 'Printing' %}
-              {{ trigger.to_state.attributes.friendly_name }} has begun printing
-            {% else %}
-              {{ trigger.to_state.attributes.friendly_name }} has stopped printing
-            {% endif %}
+            # method: all
+          message: "3D printer has started printing."
+
+  - alias: 3D printer stopped printing
+    trigger:
+      - platform: state
+        entity_id: sensor.octoprint_print_status
+        from: "Printing"
+        to: "Operational"
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.study
+          data:
+            type: announce
+            # method: all
+          message: "3D printer has stopped printing."
 
   - alias: 3D printer bed warming up
     trigger:
