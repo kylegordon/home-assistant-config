@@ -265,19 +265,6 @@ display:
             it.printf(40, 165, id(font2), id(my_golden), TextAlign::TOP_LEFT, "%7.1f°", id(inside_temperature).state);
           }
 
-      - id: viewpoint
-        lambda: |-
-          // Print "Viewpoint" in top center.
-          it.printf(32, 0, id(slkscr8), TextAlign::TOP_CENTER, "Viewpoint");
-
-          // Print time in HH:MM format
-          it.strftime(it.get_width(), 26, id(fontlarge), TextAlign::CENTER_RIGHT, "%H:%M:%S", id(esptime).now());
-
-          // it.rectangle(0,0,318,238,COLOR_CSS_WHITE);
-          // it.rectangle(1,1,316,236,COLOR_CSS_WHITE);
-          // it.horizontal_line(2,50,316,COLOR_CSS_BLUE);
-          // it.horizontal_line(2,51,316,COLOR_CSS_BLUE);
-
       - id: temperatures
         lambda: |-
           it.printf(0, 0, id(fontlarge), TextAlign::BASELINE_LEFT , "Climate");
