@@ -1,4 +1,5 @@
 packages:
+  common: !include common/common.yaml
   colors: !include common/colours.yaml
 
 
@@ -7,20 +8,9 @@ esphome:
   platform: ESP32
   board: nodemcu-32s
 
-wifi:
-  # ssid: !secret wifi_ssid
-  # password: !secret wifi_pass
-  ssid: ***REMOVED***
-  password: ***REMOVED***
-  # FIXME Needs AP details
-
 captive_portal:
 
 logger:
-
-api:
-
-ota:
 
 web_server:
 
