@@ -40,3 +40,6 @@
 - name: Driveway Last Car
   platform: mqtt
   topic: frigate/driveway/car/snapshot
+- name: octoPrint camera
+  platform: mqtt
+  topic: octoPrint/camera
