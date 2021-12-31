@@ -1,4 +1,4 @@
-all_off:  
+all_off:
   sequence:
 
   - service: logbook.log
@@ -62,8 +62,6 @@ all_off:
     data:
       entity_id: group.garage
 
-
-
   ## Turn off living room switches and lights
   - service: switch.turn_off
     data:
@@ -79,4 +77,3 @@ all_off:
     data_template:
       name: EVENT
       message: "Nobody is home. Everything is now off."
-

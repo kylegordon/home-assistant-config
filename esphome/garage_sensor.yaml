@@ -33,7 +33,7 @@ text_sensor:
   - platform: version
     name: ${friendly_name} ESPHome Version
 
-switch:
+button:
   - platform: restart
     name: "${friendly_name} Restart"
 
@@ -62,7 +62,7 @@ output:
   - platform: esp8266_pwm
     id: blue_led
     pin: D4
-    inverted: True
+    inverted: true
 
 light:
   # ... and then make a light out of it.

@@ -24,16 +24,15 @@ output:
   - platform: esp8266_pwm
     id: blue_led
     pin: D4
-    inverted: True
+    inverted: true
   - platform: esp8266_pwm
     id: warm
     pin: D2
-    inverted: False
+    inverted: false
   - platform: esp8266_pwm
     id: cold
     pin: D3
-    inverted: False
-
+    inverted: false
 
 light:
   - platform: monochromatic
@@ -47,12 +46,12 @@ light:
     output: cold
   - platform: cwww
     name: "Combined output"
+    id: combinedlight
     cold_white: cold
     warm_white: warm
     cold_white_color_temperature: 6536 K
     warm_white_color_temperature: 2000 K
     constant_brightness: true
-    id: combinedlight
     effects:
       - random:
       - strobe:
@@ -66,8 +65,8 @@ light:
           # transition_length: 1s      # defaults to 1s
           update_interval: 2s
       - flicker:
-          alpha: 50% #The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
-          intensity: 50% #The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
+          alpha: 50%  # The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
+          intensity: 50%  # The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
       - lambda:
           name: Throb
           update_interval: 1s
@@ -85,4 +84,3 @@ light:
             state += 1;
             if (state == 2)
               state = 0;
-

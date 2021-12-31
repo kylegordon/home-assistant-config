@@ -10,7 +10,7 @@ input_boolean:
   bin_reminder:
     name: Bin reminder
     icon: mdi:delete-empty
-    initial: on
+    initial: true
 
 automation:
   - alias: Bin Reminder TTS
@@ -43,9 +43,8 @@ automation:
             - media_player.kitchen
           data:
             type: announce
-            #method: all
+            # method: all
           message: "Hello! It's {{ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][now().weekday()] }}. Don't forget to take the {{ states.calendar.next_bin.attributes.message }} out. If you wish to disable this message, just ask me to 'turn off bin reminder'"
-
 
   - alias: Bin reminder reset
     condition:
@@ -59,4 +58,3 @@ automation:
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.bin_reminder
-

@@ -77,7 +77,7 @@ homeassistant:
     sensor.monthly_energy:
       friendly_name: Monthly energy usage
 
-# The default_config meta-component provides a host of other configs options, some listed at 
+# The default_config meta-component provides a host of other configs options, some listed at
 # https://www.home-assistant.io/integrations/default_config/
 default_config:
 
@@ -142,7 +142,7 @@ deconz:
 google:
   client_id: !secret google_oauth_client_id
   client_secret: !secret google_oauth_client_secret
-  track_new_calendar: False
+  track_new_calendar: false
 
 influxdb:
   host: 172.24.32.13
@@ -165,11 +165,11 @@ rfxtrx:
   device: /dev/ttyUSB0
   devices:
     ### Lights ###
-    #0a140029f0dd3c0e010060:
-    #  name: Living Room
-    #0a140017f090a201010070:
-    #  # Dimmable CFL Remote Left
-    #  name: Utility Room
+    # 0a140029f0dd3c0e010060:
+    #   name: Living Room
+    # 0a140017f090a201010070:
+    #   # Dimmable CFL Remote Left
+    #   name: Utility Room
     0a140001f0dd3c01010070:
       # White Remote A1
       # name: Christmas Star
@@ -201,24 +201,18 @@ rfxtrx:
     0b11000000b82b560a000060:
       # name: Outside Front Motion
       device_class: motion
-    #0a1400002c22a70a010060:
-    #  name: Utility Room Door
-    #  device_class: opening
+    # 0a1400002c22a70a010060:
+    #   name: Utility Room Door
+    #   device_class: opening
     ### Sensors ###
     ## RFXcom ##
     # Old 115a0100e452000000046600006462cb3e79:
     115a0102e20200000003e500000000d02979:
       # name: Electricity
 
-#hue:
-#  bridges:
-#    #- host: hue1.vpn.glasgownet.com
-#    - host: 172.24.32.12
-#      filename: phue-00178817a562.conf
-
-#zwave:
-#  usb_path: /dev/zwave
-#  debug: false
+# zwave:
+#   usb_path: /dev/zwave
+#   debug: false
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -318,7 +312,7 @@ emulated_hue:
 # Includes #
 ############
 # automation: !include automation.yaml
-#script: !include scripts.yaml
+# script: !include scripts.yaml
 sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
@@ -330,7 +324,7 @@ camera: !include cameras.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
-#image_processing: !include openalpr.yaml
+# image_processing: !include openalpr.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
@@ -369,13 +363,6 @@ utility_meter:
     cycle: monthly
 
 smartir:
-
-octoprint:
-  host: !secret octoprint_host
-  port: 88
-  api_key: !secret octoprint_key
-  bed: true
-  number_of_tools: 1
 
 panel_iframe:
   esphome:

@@ -279,7 +279,7 @@ class SmartIRClimate(ClimateEntity, RestoreEntity):
         return self._support_flags
 
     @property
-    def device_state_attributes(self) -> dict:
+    def extra_state_attributes(self):
         """Platform specific attributes."""
         return {
             'last_on_operation': self._last_on_operation,
@@ -401,7 +401,7 @@ class SmartIRClimate(ClimateEntity, RestoreEntity):
         if new_state is None:
             return
 
-        if new_state.state == old_state.state:
+        if old_state is not None and new_state.state == old_state.state:
             return
 
         if new_state.state == STATE_ON and self._hvac_mode == HVAC_MODE_OFF:
