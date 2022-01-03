@@ -28,6 +28,7 @@ binary_sensor:
       octoprint_bed_heating:
         entity_id: sensor.octoprint_bed_temperature_smoothed
         sample_duration: 10
+        min_gradient: 2
         device_class: heat
       octoprint_tool_cooling:
         entity_id: sensor.octoprint_tool_0_temperature_smoothed
@@ -36,6 +37,7 @@ binary_sensor:
       octoprint_tool_heating:
         entity_id: sensor.octoprint_tool_0_temperature_smoothed
         sample_duration: 10
+        min_gradient: 2
         device_class: heat
 
 automation:
