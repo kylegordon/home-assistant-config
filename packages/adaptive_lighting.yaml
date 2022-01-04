@@ -5,7 +5,7 @@ adaptive_lighting:
   - name: "Hallway adaptive lighting"
     lights:
       - light.hall
-      - light.bootroom
+      - light.boot_room
     prefer_rgb_color: false
     transition: 5  # seconds
     initial_transition: 5  # seconds
