@@ -5,6 +5,7 @@ adaptive_lighting:
   - name: "Hallway adaptive lighting"
     lights:
       - light.hall
+      - light.bootroom
     prefer_rgb_color: false
     transition: 5  # seconds
     initial_transition: 5  # seconds
@@ -21,3 +22,4 @@ adaptive_lighting:
     sunset_offset: '00:00:00'  # in seconds or '00:15:00'
     take_over_control: true
     only_once: false
+  
