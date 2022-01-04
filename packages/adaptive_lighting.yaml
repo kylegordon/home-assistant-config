@@ -22,7 +22,7 @@ adaptive_lighting:
     sunset_offset: '00:00:00'  # in seconds or '00:15:00'
     take_over_control: true
     only_once: false
-  
+
   - name: "Bedroom adaptive lighting"
     lights:
       - light.ensuite
@@ -43,4 +43,3 @@ adaptive_lighting:
     sunset_offset: '00:00:00'  # in seconds or '00:15:00'
     take_over_control: true
     only_once: false
-  
