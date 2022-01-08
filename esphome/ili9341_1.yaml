@@ -42,6 +42,34 @@ time:
     id: esptime
     timezone: Europe/London
 
+xpt2046:
+  id: touchscreen
+  cs_pin: GPIO12
+  irq_pin: GPIO16
+  dimension_x: 240
+  dimension_y: 320
+  on_state:
+    - lambda: |-
+        if (touched)
+          ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
+              id(touchscreen).x,
+              id(touchscreen).y,
+              id(touchscreen).x_raw,
+              id(touchscreen).y_raw
+              );
+
+binary_sensor:
+  - platform: xpt2046
+    # This will be a binary sensor that is true when the touchscreen is touched
+    xpt2046_id: touchscreen
+    id: touch_key0
+    x_min: 80
+    x_max: 160
+    y_min: 106
+    y_max: 212
+    on_state:
+      - lambda: 'ESP_LOGI("main", "key0: %s", (x ? "touch" : "release"));'
+
 font:
   - file: 'common/fonts/slkscr.ttf'
     id: slkscr8
