@@ -43,6 +43,8 @@ automation:
     trigger:
       - platform: template
         value_template: "{{ states.climate.house.attributes.current_temperature > states.climate.house.attributes.temperature + 0.5 }}"
+        for:
+          minutes: 5
     action:
       - service: homeassistant.turn_off
         entity_id: switch.boiler_valve_controls_relay_2
