@@ -10,9 +10,9 @@ adaptive_lighting:
     initial_transition: 5  # seconds
     interval: 90  # seconds
     min_brightness: 15  # percentage
-    max_brightness: 100  # percentage
+    max_brightness: 80  # percentage
     min_color_temp: 2000
-    max_color_temp: 5500
+    max_color_temp: 8500
     sleep_brightness: 1
     sleep_color_temp: 1500
     # sunrise_time: "08:00:00"  # override the sunrise time
