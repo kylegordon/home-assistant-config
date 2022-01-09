@@ -41,7 +41,7 @@ automation:
     # Could be wrapped into Call for heat - no demand
     description: "Ensure system turns off if HA is powered down whilst valves are open"
     trigger:
-      - platform: numeric_state
+      - platform: template
         value_template: "{{ states.climate.house.attributes.current_temperature > states.climate.house.attributes.temperature + 0.5 }}"
     action:
       - service: homeassistant.turn_off
