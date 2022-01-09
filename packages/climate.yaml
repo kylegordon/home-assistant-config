@@ -35,6 +35,18 @@ binary_sensor:
     days_offset: 1
 
 automation:
+
+  - alias: "Stop climate overrun"
+    # If system is off whilst heating is on, the climate event is not triggered.
+    # Could be wrapped into Call for heat - no demand
+    description: "Ensure system turns off if HA is powered down whilst valves are open"
+    trigger:
+      - platform: numeric_state
+        value_template: "{{ states.climate.house.attributes.current_temperature > states.climate.house.attributes.temperature + 0.5 }}"
+    action:
+      - service: homeassistant.turn_off
+        entity_id: switch.boiler_valve_controls_relay_2
+
   - alias: "Call for heat - demand"
     description: Turn on boiler relay if there's a call for heat
     trigger:
