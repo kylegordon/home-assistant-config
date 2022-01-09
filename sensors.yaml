@@ -28,7 +28,7 @@
 
 - platform: bulb_energy
   postcode: "G78 3AX"
-  payplan: "monthly" # or legacyPrepay or smartPayg
+  payplan: "monthly"  # or legacyPrepay or smartPayg
   eco7: false
 
 - platform: template
