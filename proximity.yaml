@@ -1,0 +1,17 @@
+kyle:
+    zone: home
+    ignored_zones:
+      - home
+    devices:
+      - person.kyle
+    unit_of_measurement: m
+    tolerance: 50
+
+charlotte:
+    zone: home
+    ignored_zones:
+      - home
+    devices:
+      - person.charlotte
+    unit_of_measurement: m
+    tolerance: 50

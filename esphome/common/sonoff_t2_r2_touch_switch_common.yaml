@@ -1,0 +1,111 @@
+packages:
+  common: !include common.yaml
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: esp01_1m
+
+captive_portal:
+
+# Enable logging
+logger:
+
+web_server:
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "${friendly_name} Touchpad 1"
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - lambda: |-
+              id(failover_control_1).publish_state(true);
+              id(failover_control_1).publish_state(false);
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "${friendly_name} Touchpad 2"
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - lambda: |-
+              id(failover_control_2).publish_state(true);
+              id(failover_control_2).publish_state(false);
+  - platform: template
+    id: failover_control_1
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - switch.turn_on: hall_2_gang_relay_1
+  - platform: template
+    id: failover_control_2
+    on_press:
+      if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - switch.turn_on: hall_2_gang_relay_2
+
+switch:
+  - platform: gpio
+    id: hall_2_gang_relay_1
+    name: "${friendly_name} Relay 1"
+    pin: GPIO12
+  - platform: gpio
+    id: hall_2_gang_relay_2
+    name: "${friendly_name} Relay 2"
+    pin: GPIO5
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: GPIO13
+    inverted: true
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "${friendly_name} Blue LED"
+    id: blue_led_light
+    output: blue_led
+
+# Blink the light if we aren't connected to WiFi.
+interval:
+  - interval: 500ms
+    then:
+    - if:
+        condition:
+          not:
+            wifi.connected:
+        then:
+          - light.turn_on:
+              id: blue_led_light
+              brightness: 50%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: blue_led_light
+              transition_length: 250ms

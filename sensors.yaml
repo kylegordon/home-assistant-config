@@ -2,40 +2,40 @@
 
 # Improve with https://github.com/bah2830/Home-Assistant-Configs/blob/master/includes/automation/notifications.yaml
 
-#- platform: google_travel_time
-#  name: Kyle Work Travel
-#  api_key: !secret google_api
-#  origin: device_tracker.bagpuss_a0001
-#  destination: zone.kyle_work
+# - platform: google_travel_time
+#   name: Kyle Work Travel
+#   api_key: !secret google_api
+#   origin: device_tracker.bagpuss_a0001
+#   destination: zone.kyle_work
 
-#- platform: google_travel_time
-#  name: Charlotte Work Travel
-#  api_key: !secret google_api
-#  origin: zone.home
-#  destination: zone.charlotte_work
+# - platform: google_travel_time
+#   name: Charlotte Work Travel
+#   api_key: !secret google_api
+#   origin: zone.home
+#   destination: zone.charlotte_work
 
-#- platform: google_travel_time
-#  name: Kyle To Home
-#  api_key: !secret google_api
-#  origin: device_tracker.bagpuss_a0001
-#  destination: zone.home
+# - platform: google_travel_time
+#   name: Kyle To Home
+#   api_key: !secret google_api
+#   origin: device_tracker.bagpuss_a0001
+#   destination: zone.home
 
-#- platform: google_travel_time
-#  name: Charlotte To Home
-#  api_key: !secret google_api
-#  origin: device_tracker.charlotte_thea
-#  destination: zone.home
+# - platform: google_travel_time
+#   name: Charlotte To Home
+#   api_key: !secret google_api
+#   origin: device_tracker.charlotte_thea
+#   destination: zone.home
+
+- platform: bulb_energy
+  postcode: "G78 3AX"
+  payplan: "monthly" # or legacyPrepay or smartPayg
+  eco7: false
 
 - platform: template
   sensors:
     last_alexa:
       value_template: >
         {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
-
-- platform: sonarr
-  api_key: f9808f9afd094ac4998b06dd543d1aad
-  host: homeauto.vpn.glasgownet.com
-  port: 8989
 
 - platform: radarr
   api_key: ba4d5fad0a5a433c82be11d22f23b263
@@ -45,23 +45,23 @@
 - platform: template
   sensors:
     next_bin:
-      #value_template: "{{ states.calendar.next_bin.attributes.message }}"
+      # value_template: "{{ states.calendar.next_bin.attributes.message }}"
       value_template: "{{ states.calendar.next_bin.attributes.message|replace(' bin','') }}"
       friendly_name: Next Bin
-      #friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
-      #entity_id: calendar.next_bin
+      # friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
+      # entity_id: calendar.next_bin
       unique_id: calendar.next_bin
 
     kyle_status:
       value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
       friendly_name: 'Kyle'
-      #entity_id: input_select.kyle_status_dropdown
+      # entity_id: input_select.kyle_status_dropdown
       unique_id: input_select.kyle_status_dropdown
 
     charlotte_status:
       value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
       friendly_name: 'Charlotte'
-      #entity_id: input_select.charlotte_status_dropdown
+      # entity_id: input_select.charlotte_status_dropdown
       unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
@@ -70,7 +70,7 @@
   unit_prefix: k
   round: 2
 
-## MQTT ## 
+## MQTT ##
 
 # Weather #
 - platform: mqtt
@@ -110,19 +110,6 @@
   unit_of_measurement: "%"
   value_template: "{{ value_json.batt }}"
 
-- platform: nut
-  name: Loft UPS
-  host: 172.24.32.5
-  alias: APC1000
-  resources:
-    - ups.load
-    - ups.temperature
-    - ups.status
-    - ups.test.result
-    - input.voltage
-    - battery.runtime
-    - battery.voltage
-
 - platform: min_max
   name: Average External Light Level
   type: median
@@ -136,25 +123,28 @@
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
-    #- sensor.utility_room_sensor_temperature
-    - sensor.study_sensor_temperature
-    - sensor.hallway_sensor_temperature
     - sensor.craft_room_temperature
     - sensor.guest_room_temperature
     - sensor.living_room_temperature
     - sensor.master_bedroom_temperature
+    - sensor.nook_temperature
+    - sensor.hall_temperature
+    - sensor.study_temperature
+    - sensor.bathroom_temperature
 
 - platform: min_max
   name: House Average Humidity
   type: median
   entity_ids:
     - sensor.utility_room_sensor_humidity
-    - sensor.study_sensor_humidity
-    - sensor.hallway_sensor_humidity
     - sensor.craft_room_humidity
     - sensor.guest_room_humidity
     - sensor.living_room_humidity
     - sensor.master_bedroom_humidity
+    - sensor.nook_humidity
+    - sensor.hall_humidity
+    - sensor.study_humidity
+    - sensor.bathroom_humidity
 
 - platform: time_date
   display_options:
@@ -163,6 +153,7 @@
 - platform: template
   sensors:
     time_of_day:
+      unique_id: time_of_day
       value_template: >
         {% set current_hour = strptime(states('sensor.time'), "%H:%M").hour %}
         {% if 6 <= current_hour < 9 %}
@@ -188,3 +179,42 @@
 
     house_target_temperature:
       value_template: "{{state_attr('climate.house', 'temperature')}}"
+
+- platform: thermal_comfort
+  sensors:
+    living_room:
+      friendly_name: Living Room
+      temperature_sensor: sensor.living_room_temperature
+      humidity_sensor: sensor.living_room_humidity
+    dining_nook:
+      friendly_name: Dining Nook
+      temperature_sensor: sensor.nook_temperature
+      humidity_sensor: sensor.nook_humidity
+    hall:
+      friendly_name: Hall
+      temperature_sensor: sensor.hall_temperature
+      humidity_sensor: sensor.hall_humidity
+    bathroom:
+      friendly_name: Bathroom
+      temperature_sensor: sensor.bathroom_temperature
+      humidity_sensor: sensor.bathroom_humidity
+    utility_room:
+      friendly_name: Utility Room
+      temperature_sensor: sensor.utility_room_sensor_temperature
+      humidity_sensor: sensor.utility_room_sensor_humidity
+    craft_room:
+      friendly_name: Craft Room
+      temperature_sensor: sensor.craft_room_temperature
+      humidity_sensor: sensor.craft_room_humidity
+    study:
+      friendly_name: Study
+      temperature_sensor: sensor.study_temperature
+      humidity_sensor: sensor.study_humidity
+    guest_room:
+      friendly_name: Guest Room
+      temperature_sensor: sensor.guest_room_temperature
+      humidity_sensor: sensor.guest_room_humidity
+    master_bedroom:
+      friendly_name: Master Bedroom
+      temperature_sensor: sensor.master_bedroom_temperature
+      humidity_sensor: sensor.master_bedroom_humidity

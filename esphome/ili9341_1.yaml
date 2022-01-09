@@ -25,6 +25,11 @@ substitutions:  # substitute your own values in this section
   tomorrows_forecast_low_entity: sensor.tomorrows_forecast_low
   tomorrows_forecast_condition_entity: sensor.openweathermap_forecast_condition
 
+substitutions:
+  device_name: ili9341
+  device_description: ILI9341 Display
+  friendly_name: ILI9341 Display
+
 esphome:
   name: ${device_name}
   comment: ${device_description}
@@ -202,9 +207,10 @@ text_sensor:
     internal: true
 
 spi:
-  clk_pin: 18
-  mosi_pin: 23
-  miso_pin: 19
+  id: display_spi
+  clk_pin: GPIO18
+  mosi_pin: GPIO23
+  miso_pin: GPIO19
 
 color:
   - id: my_red
@@ -229,13 +235,29 @@ image:
     file: "delete-empty.png"
     type: RGB24
 
+xpt2046:
+  id: touchscreen
+  cs_pin: GPIO12
+  irq_pin: GPIO16
+  dimension_x: 240
+  dimension_y: 320
+  on_state:
+    - lambda: |-
+        if (touched)
+          ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
+              id(touchscreen).x,
+              id(touchscreen).y,
+              id(touchscreen).x_raw,
+              id(touchscreen).y_raw
+              );
+
 display:
   - id: my_display
     platform: ili9341
     model: "TFT 2.4"
-    cs_pin: 5
-    dc_pin: 27
-    reset_pin: 33
+    cs_pin: GPIO5
+    dc_pin: GPIO27
+    reset_pin: GPIO33
     rotation: 270
     pages:
 
@@ -322,11 +344,17 @@ display:
               {"green", "\U000F0A7A"},
             };
           if (id(next_bin).has_state()) {
+<<<<<<< HEAD
             // Original it.printf(0, 100, id(fontlarge), id(my_white), TextAlign::BASELINE_LEFT, bin_icon_map[id(next_bin).state.c_str()].c_str());
             // it.printf(0, 100, id(mdiwebfont70), TextAlign::BASELINE_LEFT, bin_icon_map[id(next_bin).state.c_str()].c_str());
             // it.printf(0, 100, id(mdiwebfont70), TextAlign::BASELINE_LEFT, "\U000F0F55" );
             it.printf(0, 100, id(mdiwebfont70), id(my_golden), TextAlign::BASELINE_LEFT, "\U000F0A7A");
             it.printf(0, 220, id(fontlarge), id(my_golden), TextAlign::BASELINE_LEFT, "Bin: %s", id(next_bin).state.c_str());
+=======
+            // it.printf(0, 200, id(fontlarge), TextAlign::BASELINE_LEFT , id(next_bin).state);
+            // it.printf(0, 220, id(fontlarge), "Hello World Again!");
+            it.printf(0, 220, id(fontlarge), TextAlign::BASELINE_LEFT, "Bin: %s", id(next_bin).state.c_str());
+>>>>>>> master
           }
 
       # - id: circle
@@ -342,7 +370,7 @@ interval:
 # Define a PWM output on the ESP32
 output:
   - platform: ledc
-    pin: 32
+    pin: GPIO32
     id: gpio_32_backlight_pwm
 
 # Define a monochromatic, dimmable light for the backlight

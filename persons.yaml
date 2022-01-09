@@ -2,6 +2,7 @@
   id: Kyle001
   device_trackers:
     - device_tracker.kyle_phone
+    - device_tracker.umidigi_f2
 
 - name: Charlotte
   id: Charlotte001

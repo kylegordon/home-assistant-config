@@ -1,8 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#  SPDX-License-Identifier: Apache-2.0
 """
 Alexa Devices notification service.
+
+SPDX-License-Identifier: Apache-2.0
 
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
@@ -150,7 +149,7 @@ class AlexaNotificationService(BaseNotificationService):
             for _, entity in account_dict["entities"]["media_player"].items():
                 entity_name = (entity.entity_id).split(".")[1]
                 devices[entity_name] = entity.unique_id
-                if self.last_called and entity.device_state_attributes.get(
+                if self.last_called and entity.extra_state_attributes.get(
                     "last_called"
                 ):
                     entity_name_last_called = (

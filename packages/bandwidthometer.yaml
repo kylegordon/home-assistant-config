@@ -1,0 +1,51 @@
+sensor:
+  - platform: template
+    sensors:
+        bandwidth_in_as_percentage:
+          friendly_name: 'Bandwidth in as percentage'
+          # We have a, nominally, 100Meg connection.
+          # value_template: '{{ (((states.sensor.internet_speed_in.state | float ) / 100 ) * 100 ) | round(0) }}'
+          value_template: "{{ (states('sensor.internet_speed_in') | float ) }}"
+          unit_of_measurement: '%'
+
+automation:
+  - id: scale_percentage
+    alias: Bandwidthometer Value
+    trigger:
+      platform: state
+      entity_id: sensor.bandwidth_in_as_percentage
+    action:
+      service_template: light.turn_on
+      data_template:
+        # brightness_pct: {{ (states('input_number.bandwidth_in_as_a_percentage') | float) | round(0) | int }}
+        # brightness_pct: sensor.bandwidth_in_as_percentage
+        brightness_pct: >
+          {{ states.sensor.bandwidth_in_as_percentage.state|int}}
+        entity_id: light.bandwidthometer_display
+
+  - id: scale_backlight_up
+    alias: Bandwidthometer Backlight On
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.bandwidth_in_as_percentage
+      above: 80
+    action:
+      service_template: light.turn_on
+      data_template:
+        brightness_pct: 100
+        transition: 10
+        rgb_color: [255, 0, 0]
+        entity_id:
+          - light.bandwidthometer_light
+
+  - id: scale_backlight_down
+    alias: Bandwidthometer Backlight Off
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.bandwidth_in_as_percentage
+      below: 80
+    action:
+      service_template: light.turn_off
+      data_template:
+        entity_id:
+          - light.bandwidthometer_light
