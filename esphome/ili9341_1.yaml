@@ -42,6 +42,8 @@ time:
     id: esptime
     timezone: Europe/London
 
+esp32_ble_tracker:
+
 xpt2046:
   id: touchscreen
   cs_pin: GPIO12
@@ -180,6 +182,9 @@ sensor:
     internal: true
 
 text_sensor:
+  - platform: ble_scanner
+    name: ${friendly_name} BLE Scanner
+
   - platform: homeassistant
     id: next_bin
     entity_id: sensor.next_bin
