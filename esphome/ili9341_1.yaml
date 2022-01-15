@@ -42,8 +42,6 @@ time:
     id: esptime
     timezone: Europe/London
 
-esp32_ble_tracker:
-
 xpt2046:
   id: touchscreen
   cs_pin: GPIO12
@@ -77,9 +75,9 @@ font:
     id: slkscr8
     size: 8
 
-  - file: 'common/fonts/BebasNeue-Regular.ttf'
-    id: bebasneueregular20
-    size: 20
+  # - file: 'common/fonts/BebasNeue-Regular.ttf'
+  #   id: bebasneueregular20
+  #   size: 20
 
   - file: 'common/fonts/arial.ttf'
     id: arial14
@@ -182,9 +180,6 @@ sensor:
     internal: true
 
 text_sensor:
-  - platform: ble_scanner
-    name: ${friendly_name} BLE Scanner
-
   - platform: homeassistant
     id: next_bin
     entity_id: sensor.next_bin
