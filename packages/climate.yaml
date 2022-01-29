@@ -41,6 +41,8 @@ automation:
       - platform: state
         entity_id: group.call_for_heat
         to: 'on'
+        for:
+          seconds: 30
     action:
       - service: homeassistant.turn_on
         entity_id: switch.boiler_valve_controls_relay_2
@@ -51,6 +53,8 @@ automation:
       - platform: state
         entity_id: group.call_for_heat
         to: 'off'
+        for:
+          seconds: 30
     action:
       - service: homeassistant.turn_off
         entity_id: switch.boiler_valve_controls_relay_2
