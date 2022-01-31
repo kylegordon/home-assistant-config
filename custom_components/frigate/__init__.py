@@ -11,16 +11,19 @@ import logging
 import re
 from typing import Any, Callable, Final
 
+from awesomeversion import AwesomeVersion
+
 from custom_components.frigate.config_flow import get_config_entry_title
 from homeassistant.components.mqtt.subscription import (
     async_subscribe_topics,
     async_unsubscribe_topics,
 )
+from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_MODEL, CONF_HOST, CONF_URL
 from homeassistant.core import Config, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -32,25 +35,36 @@ try:
     from homeassistant.components.mqtt.models import (  # pylint: disable=no-name-in-module  # pragma: no cover
         ReceiveMessage,
     )
-except ImportError:
+except ImportError:  # pragma: no cover
     from homeassistant.components.mqtt.models import (  # pylint: disable=no-name-in-module  # pragma: no cover
         Message as ReceiveMessage,
     )
+
 from .api import FrigateApiClient, FrigateApiClientError
 from .const import (
     ATTR_CLIENT,
     ATTR_CONFIG,
     ATTR_COORDINATOR,
+    CONF_CAMERA_STATIC_IMAGE_HEIGHT,
     DOMAIN,
+    FRIGATE_RELEASES_URL,
+    FRIGATE_VERSION_ERROR_CUTOFF,
     NAME,
     PLATFORMS,
     STARTUP_MESSAGE,
 )
-from .views import ClipsProxyView, NotificationsProxyView, RecordingsProxyView
+from .views import (
+    JSMPEGProxyView,
+    NotificationsProxyView,
+    SnapshotsProxyView,
+    VodProxyView,
+    VodSegmentProxyView,
+)
 
 SCAN_INTERVAL = timedelta(seconds=5)
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
+
 
 # Typing notes:
 # - The HomeAssistant library does not provide usable type hints for custom
@@ -98,8 +112,22 @@ def get_cameras_zones_and_objects(config: dict[str, Any]) -> set[tuple[str, str]
     zone_objects = set()
     for cam_name, obj in camera_objects:
         for zone_name in config["cameras"][cam_name]["zones"]:
-            zone_objects.add((zone_name, obj))
+            zone_name_objects = config["cameras"][cam_name]["zones"][zone_name].get(
+                "objects"
+            )
+            if not zone_name_objects or obj in zone_name_objects:
+                zone_objects.add((zone_name, obj))
     return camera_objects.union(zone_objects)
+
+
+def get_cameras_and_zones(config: dict[str, Any]) -> set[str]:
+    """Get cameras and zones."""
+    cameras_zones = set()
+    for camera in config.get("cameras", {}).keys():
+        cameras_zones.add(camera)
+        for zone in config["cameras"][camera].get("zones", {}).keys():
+            cameras_zones.add(zone)
+    return cameras_zones
 
 
 async def async_setup(hass: HomeAssistant, config: Config) -> bool:
@@ -115,9 +143,11 @@ async def async_setup(hass: HomeAssistant, config: Config) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     session = async_get_clientsession(hass)
-    hass.http.register_view(ClipsProxyView(session))
-    hass.http.register_view(RecordingsProxyView(session))
+    hass.http.register_view(JSMPEGProxyView(session))
     hass.http.register_view(NotificationsProxyView(session))
+    hass.http.register_view(SnapshotsProxyView(session))
+    hass.http.register_view(VodProxyView(session))
+    hass.http.register_view(VodSegmentProxyView(session))
     return True
 
 
@@ -134,6 +164,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     except FrigateApiClientError as exc:
         raise ConfigEntryNotReady from exc
 
+    if AwesomeVersion(server_version) <= AwesomeVersion(FRIGATE_VERSION_ERROR_CUTOFF):
+        _LOGGER.error(
+            "Using a Frigate server (%s) with version %s <= %s which is not "
+            "compatible -- you must upgrade: %s",
+            entry.data[CONF_URL],
+            server_version,
+            FRIGATE_VERSION_ERROR_CUTOFF,
+            FRIGATE_RELEASES_URL,
+        )
+        return False
+
     model = f"{(await async_get_integration(hass, DOMAIN)).version}/{server_version}"
 
     hass.data[DOMAIN][entry.entry_id] = {
@@ -143,8 +184,44 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ATTR_MODEL: model,
     }
 
+    # Remove old devices associated with cameras that have since been removed
+    # from the Frigate server, keeping the 'master' device for this config
+    # entry.
+    current_devices: set[tuple[str, str]] = set({get_frigate_device_identifier(entry)})
+    for item in get_cameras_and_zones(config):
+        current_devices.add(get_frigate_device_identifier(entry, item))
+
+    device_registry = dr.async_get(hass)
+    for device_entry in dr.async_entries_for_config_entry(
+        device_registry, entry.entry_id
+    ):
+        for identifier in device_entry.identifiers:
+            if identifier in current_devices:
+                break
+        else:
+            device_registry.async_remove_device(device_entry.id)
+
+    # Cleanup old clips switch (<v0.9.0) if it exists.
+    entity_registry = er.async_get(hass)
+    for camera in config["cameras"].keys():
+        unique_id = get_frigate_entity_unique_id(
+            entry.entry_id, SWITCH_DOMAIN, f"{camera}_clips"
+        )
+        entity_id = entity_registry.async_get_entity_id(
+            SWITCH_DOMAIN, DOMAIN, unique_id
+        )
+        if entity_id:
+            entity_registry.async_remove(entity_id)
+
+    # Remove old `camera_image_height` option.
+    if CONF_CAMERA_STATIC_IMAGE_HEIGHT in entry.options:
+        new_options = entry.options.copy()
+        new_options.pop(CONF_CAMERA_STATIC_IMAGE_HEIGHT)
+        hass.config_entries.async_update_entry(entry, options=new_options)
+
     hass.config_entries.async_setup_platforms(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_entry_updated))
+
     return True
 
 
