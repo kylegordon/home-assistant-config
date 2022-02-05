@@ -4,7 +4,7 @@ packages:
   common: !include common/common.yaml
 
 substitutions:
-  device_name: Land Rover Battery Monitor
+  device_name: land_rover_battery_monitor
   device_description: Land Rover Battery Monitor
   friendly_name: Land Rover Battery Monitor
 
@@ -14,14 +14,49 @@ esphome:
   platform: ESP8266
   board: d1_mini
 
+  on_boot:
+    priority: -200
+    then:
+      - wait_until:
+          api.connected:
+      - delay: 2s
+      - logger.log: "Checking if deep sleep allowed"
+      - lambda: |-
+          if(id(esphome_ota_enable).state) {
+            ESP_LOGD("main", "Home-Assistant in OTA mode");
+            id(deep_sleep_1).prevent_deep_sleep();
+          } else {
+            ESP_LOGD("main", "Home-Assistant not in OTA mode");
+          }
+      - logger.log: "Sleep checked"
+
 # Enable logging
 logger:
 
 web_server:
 
 deep_sleep:
+  id: deep_sleep_1
   run_duration: 20s
   sleep_duration: 10min
+
+binary_sensor:
+  - platform: homeassistant
+    name: "Home-Assistant OTA Enable"
+    entity_id: input_boolean.esphome_ota_enable
+    id: esphome_ota_enable
+    internal: true
+    on_state:
+      then:
+        - if:
+            condition:
+              binary_sensor.is_on: esphome_ota_enable
+            then:
+              - logger.log: "Preventing deep sleep, Home Assistant activated"
+              - deep_sleep.prevent: deep_sleep_1
+            else:
+              - logger.log: "Allowing deep sleep, Home Assistant activated"
+              - deep_sleep.enter: deep_sleep_1
 
 sensor:
   - platform: adc
@@ -41,5 +76,86 @@ output:
 light:
   # ... and then make a light out of it.
   - platform: monochromatic
+    id: blue_led_light
     name: "Wemos Blue LED"
     output: blue_led
+
+# Blink the light if we aren't connected to WiFi.
+interval:
+  - interval: 5000ms
+    id: no_wifi
+    then:
+    - if:
+        condition:
+          not:
+            wifi.connected:
+        then:
+          - light.turn_on:
+              id: blue_led_light
+              brightness: 100%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: blue_led_light
+              transition_length: 0ms
+          - delay: 250ms
+  - interval: 5000ms
+    id: no_api
+    then:
+    - if:
+        condition:
+          not:
+            api.connected:
+        then:
+          - light.turn_on:
+              id: blue_led_light
+              brightness: 100%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: blue_led_light
+              transition_length: 0ms
+          - delay: 250ms
+          - light.turn_on:
+              id: blue_led_light
+              brightness: 100%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: blue_led_light
+              transition_length: 0ms
+          - delay: 250ms
+  - interval: 5000ms
+    id: ota_indicator_led
+    then:
+    - if:
+        condition:
+          binary_sensor.is_on: esphome_ota_enable
+        then:
+          - light.turn_on:
+              id: blue_led_light
+              brightness: 100%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: blue_led_light
+              transition_length: 0ms
+          - delay: 250ms
+          - light.turn_on:
+              id: blue_led_light
+              brightness: 100%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: blue_led_light
+              transition_length: 0ms
+          - delay: 250ms
+          - light.turn_on:
+              id: blue_led_light
+              brightness: 100%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: blue_led_light
+              transition_length: 0ms
+          - delay: 250ms
