@@ -49,6 +49,7 @@ sensor:
       unit_of_measurement: lx
     - name: "Lux Level"
       unit_of_measurement: lx
+      icon: mdi:sun-wireless-outline
 
 output:
   # Register the blue LED as a dimmable output ....
