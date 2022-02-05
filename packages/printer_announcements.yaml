@@ -1,0 +1,124 @@
+---
+sensor:
+  - platform: filter
+    name: octoprint_tool_0_temperature_smoothed
+    entity_id: sensor.octoprint_tool_0_temperature
+    filters:
+      - filter: time_simple_moving_average
+        window_size: "00:00:15"
+        precision: 0
+
+  - platform: filter
+    name: octoprint_bed_temperature_smoothed
+    entity_id: sensor.octoprint_bed_temperature
+    filters:
+      - filter: time_simple_moving_average
+        window_size: "00:00:15"
+        precision: 0
+
+binary_sensor:
+  - platform: trend
+    sensors:
+      # Also consider sensor.octoprint_bed_target
+      # and sensor.octoprint_tool_0_target
+      octoprint_bed_cooling:
+        entity_id: sensor.octoprint_bed_temperature_smoothed
+        sample_duration: 10
+        device_class: cold
+      octoprint_bed_heating:
+        entity_id: sensor.octoprint_bed_temperature_smoothed
+        sample_duration: 10
+        device_class: heat
+      octoprint_tool_cooling:
+        entity_id: sensor.octoprint_tool_0_temperature_smoothed
+        sample_duration: 10
+        device_class: cold
+      octoprint_tool_heating:
+        entity_id: sensor.octoprint_tool_0_temperature_smoothed
+        sample_duration: 10
+        device_class: heat
+
+automation:
+  - alias: 3D printer started printing
+    trigger:
+      - platform: state
+        entity_id: sensor.octoprint_print_status
+        from: "Operational"
+        to: "Printing"
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.study
+          data:
+            type: announce
+            # method: all
+          message: "3D printer has started printing."
+
+  - alias: 3D printer finishing printing
+    trigger:
+      - platform: state
+        entity_id: sensor.octoprint_print_status
+        from: "Printing"
+        to: "Finishing"
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.study
+          data:
+            type: announce
+            # method: all
+          message: "3D printer has finished printing."
+
+  - alias: 3D printer bed warming up
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.octoprint_bed_heating
+        to: "on"
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.study
+          data:
+            type: announce
+          message: Warming the print bed
+
+  - alias: 3D printer hot end warming up
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.octoprint_tool_heating
+        to: "on"
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.study
+          data:
+            type: announce
+          message: Warming the hot end
