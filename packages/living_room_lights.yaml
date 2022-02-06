@@ -77,4 +77,3 @@ automation:
             {% else %}
             light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
             {% endif %}
-
