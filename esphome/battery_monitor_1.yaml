@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: land_rover_battery_monitor
+  device_description: Land Rover Battery Monitor
+  friendly_name: Land Rover Battery Monitor
+
+<<: !include common/car_battery_monitor_common.yaml
