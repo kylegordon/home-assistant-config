@@ -38,7 +38,7 @@ binary_sensor:
           not:
             api.connected:
         then:
-          - switch.turn_on: relay_1
+          - switch.toggle: relay_1
 
 switch:
   - platform: gpio
