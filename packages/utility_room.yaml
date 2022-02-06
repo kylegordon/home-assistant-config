@@ -1,3 +1,4 @@
+---
 automation:
   - alias: Utility room light on
     trigger:
@@ -19,30 +20,6 @@ automation:
         data_template:
           entity_id:
             - light.utility_room
-          brightness_pct: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            100
-            {% elif states('sensor.time_of_day') == "Day" %}
-            100
-            {% elif states('sensor.time_of_day') == "Night" %}
-            30
-            {% endif %}
-          transition: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            10
-            {% elif states('sensor.time_of_day') == "Day" %}
-            2
-            {% elif states('sensor.time_of_day') == "Night" %}
-            5
-            {% endif %}
-          color_temp: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            200
-            {% elif states('sensor.time_of_day') == "Day" %}
-            300
-            {% elif states('sensor.time_of_day') == "Night" %}
-            375
-            {% endif %}
 
   - alias: Utility room light off
     trigger:
