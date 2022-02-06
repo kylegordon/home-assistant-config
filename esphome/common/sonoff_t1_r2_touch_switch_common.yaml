@@ -1,3 +1,4 @@
+---
 packages:
   common: !include common.yaml
 
@@ -64,7 +65,7 @@ light:
 interval:
   - interval: 500ms
     then:
-    - if:
+      - if:
         condition:
           not:
             wifi.connected:
