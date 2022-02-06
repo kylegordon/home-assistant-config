@@ -124,3 +124,28 @@ adaptive_lighting:
     sunset_offset: '00:00:00'  # in seconds or '00:15:00'
     take_over_control: true
     only_once: false
+
+  - name: "Living Room adaptive lighting"
+    lights:
+      - light.sofa_overhead
+      - light.dining_table_overhead
+      - light.dining_nook
+      - light.uplighter
+      - light.sideboard
+      - light.train_cabinets
+    prefer_rgb_color: false
+    transition: 5  # seconds
+    initial_transition: 5  # seconds
+    interval: 90  # seconds
+    min_brightness: 15  # percentage
+    max_brightness: 80  # percentage
+    min_color_temp: 2000
+    max_color_temp: 8500
+    sleep_brightness: 1
+    sleep_color_temp: 1500
+    # sunrise_time: "08:00:00"  # override the sunrise time
+    # sunrise_offset: '00:00:00'
+    # sunset_time:
+    sunset_offset: '00:00:00'  # in seconds or '00:15:00'
+    take_over_control: true
+    only_once: false
