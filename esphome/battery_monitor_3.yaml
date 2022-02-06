@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: tr6_battery_monitor
+  device_description: TR6 Battery Monitor
+  friendly_name: TR6 Battery Monitor
+
+<<: !include common/car_battery_monitor_common.yaml
