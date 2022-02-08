@@ -1,3 +1,4 @@
+---
 packages:
   common: !include common.yaml
 
@@ -38,7 +39,7 @@ binary_sensor:
           not:
             api.connected:
         then:
-          - switch.turn_on: relay_1
+          - switch.toggle: relay_1
 
 switch:
   - platform: gpio
@@ -64,16 +65,16 @@ light:
 interval:
   - interval: 500ms
     then:
-    - if:
-        condition:
-          not:
-            wifi.connected:
-        then:
-          - light.turn_on:
-              id: blue_led_light
-              brightness: 50%
-              transition_length: 0s
-          - delay: 250ms
-          - light.turn_off:
-              id: blue_led_light
-              transition_length: 250ms
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 50%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 250ms
