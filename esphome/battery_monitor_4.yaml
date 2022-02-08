@@ -3,5 +3,6 @@ substitutions:
   device_name: ac_battery_monitor
   device_description: AC Battery Monitor
   friendly_name: AC Battery Monitor
+  multiplier: "14.95"
 
 <<: !include common/car_battery_monitor_common.yaml
