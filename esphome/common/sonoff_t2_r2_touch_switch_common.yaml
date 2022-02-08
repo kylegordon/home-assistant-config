@@ -1,3 +1,4 @@
+---
 packages:
   common: !include common.yaml
 
@@ -57,7 +58,7 @@ binary_sensor:
           not:
             api.connected:
         then:
-          - switch.turn_on: hall_2_gang_relay_1
+          - switch.toggle: relay_1
   - platform: template
     id: failover_control_2
     on_press:
@@ -66,15 +67,15 @@ binary_sensor:
           not:
             api.connected:
         then:
-          - switch.turn_on: hall_2_gang_relay_2
+          - switch.toggle: relay_2
 
 switch:
   - platform: gpio
-    id: hall_2_gang_relay_1
+    id: relay_1
     name: "${friendly_name} Relay 1"
     pin: GPIO12
   - platform: gpio
-    id: hall_2_gang_relay_2
+    id: relay_2
     name: "${friendly_name} Relay 2"
     pin: GPIO5
 
@@ -96,16 +97,16 @@ light:
 interval:
   - interval: 500ms
     then:
-    - if:
-        condition:
-          not:
-            wifi.connected:
-        then:
-          - light.turn_on:
-              id: blue_led_light
-              brightness: 50%
-              transition_length: 0s
-          - delay: 250ms
-          - light.turn_off:
-              id: blue_led_light
-              transition_length: 250ms
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 50%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 250ms
