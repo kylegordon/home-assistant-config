@@ -28,9 +28,7 @@ from . import (
 )
 from .const import (
     ATTR_CONFIG,
-    CONF_CAMERA_STATIC_IMAGE_HEIGHT,
     CONF_RTMP_URL_TEMPLATE,
-    DEFAULT_CAMERA_STATIC_IMAGE_HEIGHT,
     DOMAIN,
     NAME,
     STATE_DETECTED,
@@ -71,7 +69,8 @@ class FrigateCamera(FrigateEntity, Camera):  # type: ignore[misc]
         self._cam_name = cam_name
         self._camera_config = camera_config
         self._url = config_entry.data[CONF_URL]
-        self._stream_enabled = self._camera_config["rtmp"]["enabled"]
+        self._attr_is_streaming = self._camera_config.get("rtmp", {}).get("enabled")
+        self._attr_is_recording = self._camera_config.get("record", {}).get("enabled")
 
         streaming_template = config_entry.options.get(
             CONF_RTMP_URL_TEMPLATE, ""
@@ -118,22 +117,20 @@ class FrigateCamera(FrigateEntity, Camera):  # type: ignore[misc]
     @property
     def supported_features(self) -> int:
         """Return supported features of this camera."""
-        if not self._stream_enabled:
+        if not self._attr_is_streaming:
             return 0
         return cast(int, SUPPORT_STREAM)
 
-    async def async_camera_image(self) -> bytes:
+    async def async_camera_image(
+        self, width: int | None = None, height: int | None = None
+    ) -> bytes | None:
         """Return bytes of camera image."""
         websession = cast(aiohttp.ClientSession, async_get_clientsession(self.hass))
-
-        height = self._config_entry.options.get(
-            CONF_CAMERA_STATIC_IMAGE_HEIGHT, DEFAULT_CAMERA_STATIC_IMAGE_HEIGHT
-        )
 
         image_url = str(
             URL(self._url)
             / f"api/{self._cam_name}/latest.jpg"
-            % ({"h": height} if height > 0 else {})
+            % ({"h": height} if height is not None and height > 0 else {})
         )
 
         with async_timeout.timeout(10):
@@ -142,7 +139,7 @@ class FrigateCamera(FrigateEntity, Camera):  # type: ignore[misc]
 
     async def stream_source(self) -> str | None:
         """Return the source of the stream."""
-        if not self._stream_enabled:
+        if not self._attr_is_streaming:
             return None
         return self._stream_source
 
@@ -209,7 +206,9 @@ class FrigateMqttSnapshots(FrigateMQTTEntity, Camera):  # type: ignore[misc]
         """Return the name of the sensor."""
         return f"{get_friendly_name(self._cam_name)} {self._obj_name}".title()
 
-    async def async_camera_image(self) -> bytes | None:
+    async def async_camera_image(
+        self, width: int | None = None, height: int | None = None
+    ) -> bytes | None:
         """Return image response."""
         return self._last_image
 
