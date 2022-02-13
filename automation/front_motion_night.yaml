@@ -25,7 +25,7 @@ action:
     data:
       entity_id: light.decking_lights
       brightness_pct: 100
-      white_value: 255
+      rgbww_color: [0, 0, 0, 255, 255]
       color_temp: 153
   # If this evaluates to false, the action will stop here.
   - condition: template
