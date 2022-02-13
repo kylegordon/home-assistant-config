@@ -1,0 +1,6 @@
+substitutions:
+  device_name: novoflood_6
+  device_description: 20W RGBWW flood light 6
+  friendly_name: 20W RGBWW flood light 6
+
+<<: !include common/novoflood_common.yaml

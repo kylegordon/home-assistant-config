@@ -1,7 +1,25 @@
+---
 # Inspired by https://github.com/downthedeck/hassio-config/blob/master/packages/klimaat.yaml
 # Not all modes are supported, as above uses Toon integration
 # https://www.home-assistant.io/integrations/generic_thermostat/
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
+
+group:
+  call_for_heat:
+    # Add zones here. Essentially a glorified OR condition
+    name: Call For Heat - Group
+    entities:
+      - input_boolean.call_for_rad_heat
+      - input_boolean.call_for_guest_heat
+
+input_boolean:
+  # Inputs from external thermostats, such as household generic or a single room
+  call_for_rad_heat:
+    name: Call for heat - General
+    icon: mdi:radiator
+  call_for_guest_heat:
+    name: Call for heat - Guest Room
+    icon: mdi:radiator
 
 sensor:
   - platform: season
@@ -17,6 +35,33 @@ binary_sensor:
     days_offset: 1
 
 automation:
+
+  - alias: "Call for heat - demand"
+    description: Turn on boiler relay if there's a call for heat
+    trigger:
+      platform: time_pattern
+      seconds: 30
+    condition:
+      - condition: state
+        entity_id: group.call_for_heat
+        state: 'on'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: switch.boiler_valve_controls_relay_2
+
+  - alias: "Call for heat - no demand"
+    description: Turn off boiler relay if demand for heat ceases
+    trigger:
+      platform: time_pattern
+      seconds: 30
+    condition:
+      - condition: state
+        entity_id: group.call_for_heat
+        state: 'off'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: switch.boiler_valve_controls_relay_2
+
   - alias: "Climate - Away"
     trigger:
       - platform: state
@@ -107,7 +152,7 @@ automation:
       - service: climate.set_preset_mode
         data:
           entity_id: climate.hot_water
-          preset_mode: "Away"
+          preset_mode: "away"
       - service: logbook.log
         data_template:
           name: EVENT
