@@ -3,27 +3,150 @@ alias: Frigate detection email
 trigger:
   platform: mqtt
   topic: frigate/events
+  payload: camera.driveway
+  value_template: "{{ value_json['after']['camera'] }}"
+variables:
+  id: "{{ trigger.payload_json['after']['id'] }}"
+  camera: "{{ trigger.payload_json['after']['camera'] }}"
+  camera_name: "{{ camera | replace('_', ' ') | title }}"
+  object: "{{ trigger.payload_json['after']['label'] }}"
+  label: "{{ object | title }}"
+  entered_zones: "{{ trigger.payload_json['after']['entered_zones'] }}"
+  type: "{{ trigger.payload_json['type'] }}"
+  base_url: !input base_url
+  group_target: !input notify_group
+  zone_only: !input zone_filter
+  input_zones: !input zones
+  zones: "{{ input_zones | list }}"
+  input_labels: !input labels
+  labels: "{{ input_labels | list }}"
+  presence_entity: !input presence_filter
+condition:
+  - "{{ type != 'end' }}"
+  - "{{ not zone_only or entered_zones|length > 0 }}"
+  - "{{ not zones|length or zones|select('in', entered_zones)|list|length > 0 }}"
+  - "{{ not labels|length or object in labels }}"
+  - "{{ not presence_entity or not is_state(presence_entity, 'home') }}"
 action:
-  # https://github.com/stmrocket/Home-Assistant-Config/blob/9cc4001397ca81f39e76157d5054a0a88916a66a/automation/cctv.yaml
-  - service: camera.snapshot
-    data:
-      entity_id: camera.driveway
-      filename: /config/www/cctv/driveway_full.jpg
-  - service: camera.snapshot
-    data:
-      entity_id: camera.front_door
-      filename: /config/www/cctv/front_door_full.jpg
-  - service: notify.email_kyle
-    data_template:
-      title: '{{trigger.payload_json["after"]["label"]}} detected on camera'
-      message: 'A {{trigger.payload_json["after"]["label"]}} was detected.
-      --------------------------------------------------------------------------------
-      {{trigger.payload_json}}'
-      data:
-        image: 'http://viewpoint.house:8123/api/frigate/notifications/{{trigger.payload_json["after"]["id"]}}/thumbnail.jpg?format=android'
-        tag: '{{trigger.payload_json["after"]["id"]}}'
-        when: '{{trigger.payload_json["after"]["start_time"]|int}}'
+  - choose:
+    - conditions: "{{ not group_target }}"
+      sequence:
+        - device_id: !input notify_device
+          domain: mobile_app
+          type: notify
+          message: 'A {{ label }} was detected on the {{ camera_name }} camera.'
+          data: 
+            tag: '{{ id }}'
+            group: 'frigate-notification-{{ camera }}'
+            image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android' # Android
+            attachment: # iOS
+              url: '/api/frigate/notifications/{{id}}/thumbnail.jpg'
+    default:
+      - service: "notify.{{ group_target }}"
         data:
-          images:
-            - /config/www/cctv/driveway_full.jpg
-            - /config/www/cctv/front_door_full.jpg
+          message: 'A {{ label }} was detected on the {{ camera_name }} camera.'
+          data:
+            tag: '{{ id }}'
+            group: 'frigate-notification-{{ camera }}'
+            image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android' # Android
+            attachment: # iOS
+              url: '/api/frigate/notifications/{{id}}/thumbnail.jpg'
+  - repeat:
+      sequence:
+        - wait_for_trigger:
+          - platform: mqtt
+            topic: frigate/events
+            payload: "{{ id }}"
+            value_template: "{{ value_json['after']['id'] }}"
+          timeout:
+            minutes: 2
+          continue_on_timeout: false
+        - condition: template
+          value_template: "{{ wait.trigger.payload_json['type'] == 'end' }}"
+        - choose:
+          - conditions: "{{ not group_target }}"
+            sequence:
+              - device_id: !input notify_device
+                domain: mobile_app
+                type: notify
+                message: 'A {{ label }} was detected on the {{ camera_name }} camera.'
+                data: 
+                  tag: '{{ id }}'
+                  group: 'frigate-notification-{{ camera }}'
+                  url: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4' # iOS
+                  clickAction: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4' # Android
+                  image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android' # Android
+                  sound: none
+                  attachment: # iOS
+                    url: '/api/frigate/notifications/{{id}}/thumbnail.jpg'
+                    # lazy: true
+                  actions:
+                    - action: URI
+                      title: View Clip
+                      uri: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4'
+                    - action: URI
+                      title: View Snapshot
+                      uri: '{{base_url}}/api/frigate/notifications/{{id}}/snapshot.jpg'
+                    - action: 'silence-{{ camera }}'
+                      title: Silence Notifications
+                      destructive: true
+          default:
+            - service: "notify.{{ group_target }}"
+              data:
+                message: 'A {{ label }} was detected on the {{ camera_name }} camera.'
+                data:
+                  tag: '{{ id }}'
+                  group: 'frigate-notification-{{ camera }}'
+                  url: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4' # iOS
+                  clickAction: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4' # Android
+                  image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android' # Android
+                  sound: none
+                  attachment: # iOS
+                    url: '/api/frigate/notifications/{{id}}/thumbnail.jpg'
+                    # lazy: true
+                  actions:
+                    - action: URI
+                      title: View Clip
+                      uri: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4'
+                    - action: URI
+                      title: View Snapshot
+                      uri: '{{base_url}}/api/frigate/notifications/{{id}}/snapshot.jpg'
+                    - action: 'silence-{{ camera }}'
+                      title: Silence Notifications
+                      destructive: true
+      until: "{{ wait.trigger.payload_json['type'] == 'end' }}"
+  - wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: 'silence-{{ camera }}'
+    timeout:
+      seconds: !input cooldown
+    continue_on_timeout: false
+  - delay:
+      minutes: !input silence_timer
+
+# action:
+#   # https://github.com/stmrocket/Home-Assistant-Config/blob/9cc4001397ca81f39e76157d5054a0a88916a66a/automation/cctv.yaml
+#   - service: camera.snapshot
+#     data:
+#       entity_id: camera.driveway
+#       filename: /config/www/cctv/driveway_full.jpg
+#   - service: camera.snapshot
+#     data:
+#       entity_id: camera.front_door
+#       filename: /config/www/cctv/front_door_full.jpg
+#   - service: notify.email_kyle
+#     data_template:
+#       title: '{{trigger.payload_json["after"]["label"]}} detected on camera'
+#       message: 'A {{trigger.payload_json["after"]["label"]}} was detected.
+#       --------------------------------------------------------------------------------
+#       {{trigger.payload_json}}'
+#       data:
+#         image: 'http://viewpoint.house:8123/api/frigate/notifications/{{trigger.payload_json["after"]["id"]}}/thumbnail.jpg?format=android'
+#         tag: '{{trigger.payload_json["after"]["id"]}}'
+#         when: '{{trigger.payload_json["after"]["start_time"]|int}}'
+#         data:
+#           images:
+#             - /config/www/cctv/driveway_full.jpg
+#             - /config/www/cctv/front_door_full.jpg
