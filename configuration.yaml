@@ -361,6 +361,12 @@ utility_meter:
   monthly_energy:
     source: sensor.energy_spent
     cycle: monthly
+  daily_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: daily
+  monthly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: monthly
 
 smartir:
 
