@@ -369,9 +369,9 @@ panel_iframe:
     title: "ESPHome"
     url: "http://viewpoint.house:6052"
     icon: mdi:car-esp
-  unifi:
-    title: "Unifi CCTV"
-    url: "http://viewpoint.house:7080"
+  cctv:
+    title: "CCTV"
+    url: "http://viewpoint.house:4999"
     icon: mdi:cctv
   sonarr:
     title: "Sonarr TV"
