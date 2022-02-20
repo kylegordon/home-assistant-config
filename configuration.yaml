@@ -355,11 +355,29 @@ mqtt:
     retain: true
 
 utility_meter:
+  quarter_hourly_energy:
+    source: sensor.energy_spent
+    cycle: quarter-hourly
+  hourly_energy:
+    source: sensor.energy_spent
+    cycle: hourly
   daily_energy:
     source: sensor.energy_spent
     cycle: daily
   monthly_energy:
     source: sensor.energy_spent
+    cycle: monthly
+  quarter_hourly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: quarter-hourly
+  hourly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: hourly
+  daily_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: daily
+  monthly_energy_tv:
+    source: sensor.energy_spent_tv
     cycle: monthly
 
 smartir:

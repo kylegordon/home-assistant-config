@@ -69,6 +69,11 @@
   name: energy_spent
   unit_prefix: k
   round: 2
+- platform: integration
+  source: sensor.tv_power_plug_power
+  name: energy_spent_tv
+  unit_prefix: k
+  round: 2
 
 ## MQTT ##
 
