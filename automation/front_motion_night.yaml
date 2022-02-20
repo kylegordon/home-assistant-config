@@ -31,7 +31,6 @@ action:
         - 0
         - 255
         - 255
-      color_temp: 153
   # If this evaluates to false, the action will stop here.
   - condition: template
     value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
