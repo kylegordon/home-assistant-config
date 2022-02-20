@@ -11,6 +11,8 @@ esphome:
   comment: ${device_description}
   platform: ESP8266
   board: d1_mini
+  framework:
+    version: 2.7.4
 
 captive_portal:
 
