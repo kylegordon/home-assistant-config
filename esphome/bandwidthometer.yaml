@@ -9,7 +9,6 @@ packages:
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP8266
   board: d1_mini
 
 esp8266:
