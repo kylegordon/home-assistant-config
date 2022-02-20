@@ -11,6 +11,8 @@ esphome:
   comment: ${device_description}
   platform: ESP8266
   board: d1_mini
+
+esp8266:
   framework:
     version: 2.7.4
 
