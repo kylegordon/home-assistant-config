@@ -12,7 +12,7 @@ action:
     data:
       entity_id: light.decking_lights
       brightness_pct: 0
-      rgbww_value:
+      rgbww_color:
         - 0
         - 0
         - 0
