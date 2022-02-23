@@ -24,7 +24,6 @@ action:
   - service: light.turn_on
     data:
       entity_id: light.decking_lights
-      brightness_pct: 100
       rgbww_color:
         - "{{state_attr('light.decking_lights', 'rgbww_color')[0]}}"
         - "{{state_attr('light.decking_lights', 'rgbww_color')[1]}}"
