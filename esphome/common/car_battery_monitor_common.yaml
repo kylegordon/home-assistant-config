@@ -59,7 +59,8 @@ sensor:
     name: "${friendly_name} Voltage"
     update_interval: 60s
     filters:
-      - multiply: 24.8
+      # This might need to be adjusted for your device
+      - multiply: ${multiplier}
 
 output:
   # Register the blue LED as a dimmable output ....
