@@ -1,3 +1,4 @@
+---
 light:
   - platform: group
     name: Glow Orbs
@@ -41,29 +42,29 @@ automation:
 
   - alias: Under Bed Cheerlights Motion - 2 minute timeout
     trigger:
-    - platform: state
-      entity_id: binary_sensor.under_bed_motion_sensor
-      to: 'off'
-      for:
-        minutes: 2
+      - platform: state
+        entity_id: binary_sensor.under_bed_motion_sensor
+        to: 'off'
+        for:
+          minutes: 2
     condition:
       - condition: time
         after: '23:00:00'
         before: '07:00:00'
     action:
-    - service: light.turn_off
-      entity_id: light.under_bed_lights
-      data:
-        transition: 30
+      - service: light.turn_off
+        entity_id: light.under_bed_lights
+        data:
+          transition: 30
 
   - alias: Cheerlights
     trigger:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
-    - condition: time
-      after: '06:00:00'
-      before: '01:00:00'
+      - condition: time
+        after: '06:00:00'
+        before: '01:00:00'
     action:
       service_template: light.turn_on
       data_template:
@@ -82,12 +83,12 @@ automation:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
-    - condition: time
-      after: '16:00:00'
-      before: '23:00:00'
-    - condition: state
-      entity_id: input_boolean.goodnight_process
-      state: "off"
+      - condition: time
+        after: '16:00:00'
+        before: '23:00:00'
+      - condition: state
+        entity_id: input_boolean.goodnight_process
+        state: "off"
     action:
       service_template: light.turn_on
       data_template:
