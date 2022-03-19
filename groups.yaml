@@ -164,6 +164,11 @@ hall:
     - light.hall_bathroom
     - light.hall_bedrooms
 
+bathroom:
+  name: Bathroom
+  entities:
+    - light.master_bathroom
+
 hall_view:
   name: Hall
   entities:
