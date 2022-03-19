@@ -1,5 +1,4 @@
-## Rooms ##
-
+---
 default_view:
   name: Home
   entities:
