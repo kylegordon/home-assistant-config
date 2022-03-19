@@ -1,3 +1,4 @@
+---
 all_off:
   sequence:
 
@@ -57,6 +58,11 @@ all_off:
   - service: light.turn_off
     data:
       entity_id: group.hall
+
+  ## Turn off bathroom
+  - service: switch.turn_off
+    data:
+      entity_id: group.bathroom
 
   - service: light.turn_off
     data:
