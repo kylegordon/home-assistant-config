@@ -1,3 +1,4 @@
+---
 alias: "Wakeup transition"
 trigger:
   - platform: time
@@ -21,6 +22,9 @@ condition:
       - wed
       - thu
       - fri
+  - condition: numeric_state
+    entity_id: sensor.average_external_light_level
+    below: 300
 action:
   - service: logbook.log
     data_template:
