@@ -1,5 +1,4 @@
-## Rooms ##
-
+---
 default_view:
   name: Home
   entities:
@@ -163,6 +162,11 @@ hall:
   entities:
     - light.hall_bathroom
     - light.hall_bedrooms
+
+bathroom:
+  name: Bathroom
+  entities:
+    - light.master_bathroom
 
 hall_view:
   name: Hall
