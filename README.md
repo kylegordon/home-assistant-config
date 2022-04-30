@@ -1,4 +1,4 @@
-![Home-Assistant](https://github.com/kylegordon/home-assistant-config/actions/workflows/main.yaml/badge.svg)
+![Home-Assistant](https://github.com/kylegordon/home-assistant-config/actions/workflows/main.yaml/badge.svg)  
 ![ESPHome](https://github.com/kylegordon/home-assistant-config/actions/workflows/esphome-parallel.yaml/badge.svg)
 
 
