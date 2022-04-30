@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/kylegordon/home-assistant-config.svg?branch=master)](https://travis-ci.org/kylegordon/home-assistant-config)
+![Home-Assistant](https://github.com/kylegordon/home-assistant-config/actions/workflows/main.yaml/badge.svg)
+![ESPHome](https://github.com/kylegordon/home-assistant-config/actions/workflows/esphome-parallel.yaml/badge.svg)
 
 
 My Home-Assistant configuration.
