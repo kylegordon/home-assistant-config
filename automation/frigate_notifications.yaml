@@ -35,11 +35,11 @@ action:
           domain: mobile_app
           type: notify
           message: 'A {{ label }} was detected on the {{ camera_name }} camera.'
-          data: 
+          data:
             tag: '{{ id }}'
             group: 'frigate-notification-{{ camera }}'
-            image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android' # Android
-            attachment: # iOS
+            image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android'  # Android
+            attachment:  # iOS
               url: '/api/frigate/notifications/{{id}}/thumbnail.jpg'
     default:
       - service: "notify.{{ group_target }}"
@@ -48,8 +48,8 @@ action:
           data:
             tag: '{{ id }}'
             group: 'frigate-notification-{{ camera }}'
-            image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android' # Android
-            attachment: # iOS
+            image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android'  # Android
+            attachment:  # iOS
               url: '/api/frigate/notifications/{{id}}/thumbnail.jpg'
   - repeat:
       sequence:
@@ -70,14 +70,14 @@ action:
                 domain: mobile_app
                 type: notify
                 message: 'A {{ label }} was detected on the {{ camera_name }} camera.'
-                data: 
+                data:
                   tag: '{{ id }}'
                   group: 'frigate-notification-{{ camera }}'
-                  url: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4' # iOS
-                  clickAction: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4' # Android
-                  image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android' # Android
+                  url: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4'  # iOS
+                  clickAction: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4'  # Android
+                  image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android'  # Android
                   sound: none
-                  attachment: # iOS
+                  attachment:  # iOS
                     url: '/api/frigate/notifications/{{id}}/thumbnail.jpg'
                     # lazy: true
                   actions:
@@ -97,11 +97,11 @@ action:
                 data:
                   tag: '{{ id }}'
                   group: 'frigate-notification-{{ camera }}'
-                  url: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4' # iOS
-                  clickAction: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4' # Android
-                  image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android' # Android
+                  url: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4'  # iOS
+                  clickAction: '{{base_url}}/api/frigate/notifications/{{id}}/{{camera}}/clip.mp4'          # Android
+                  image: '/api/frigate/notifications/{{id}}/thumbnail.jpg?format=android'  # Android
                   sound: none
-                  attachment: # iOS
+                  attachment:  # iOS
                     url: '/api/frigate/notifications/{{id}}/thumbnail.jpg'
                     # lazy: true
                   actions:
