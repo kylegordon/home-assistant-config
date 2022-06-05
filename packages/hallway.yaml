@@ -4,7 +4,7 @@ automation:
       - platform: state
         entity_id:
           - binary_sensor.hall_single_switch_touch_pad
-          - binary_sensor.hall_dual_switch_touchpad_1
+          - binary_sensor.hall_dual_switch_touchpad_2
         to: 'on'
     action:
       - service: switch.turn_on
