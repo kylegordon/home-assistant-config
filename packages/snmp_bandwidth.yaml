@@ -49,10 +49,12 @@ sensor:
 
   - platform: statistics
     name: 'WAN Traffic In'
+    state_characteristic: mean
     entity_id: sensor.internet_speed_in
 
   - platform: statistics
     name: 'WAN Traffic Out'
+    state_characteristic: mean
     entity_id: sensor.internet_speed_out
 
 input_number:
