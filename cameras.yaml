@@ -27,4 +27,3 @@
   name: FrontDoor
   still_image_url: http://viewpoint.house:4999/api/front_door/latest.jpg?h=400&motion=1
   stream_source: rtmp://viewpoint.house/live/front_door
-
