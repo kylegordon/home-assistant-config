@@ -57,7 +57,7 @@ sensor:
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
 
-binary_sensors:
+binary_sensor:
   - platform: mqtt
     name: Charlotte Bed Sensor
     device_class: occupancy
