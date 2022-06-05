@@ -1,10 +1,11 @@
+---
 automation:
   - alias: Hallway light toggle
     trigger:
       - platform: state
         entity_id:
           - binary_sensor.hall_single_switch_touch_pad
-          - binary_sensor.hall_dual_switch_touchpad_1
+          - binary_sensor.hall_dual_switch_touchpad_2
         to: 'on'
     action:
       - service: switch.turn_on
@@ -41,30 +42,30 @@ automation:
 
   - alias: Hallway motion - 2 minute night timeout
     trigger:
-    - platform: state
-      entity_id:
-        - binary_sensor.hall_door_motion
-        - binary_sensor.hall_rooms_motion
-      to: 'off'
-      for:
-        minutes: 2
+      - platform: state
+        entity_id:
+          - binary_sensor.hall_door_motion
+          - binary_sensor.hall_rooms_motion
+        to: 'off'
+        for:
+          minutes: 2
     condition:
       - condition: state
         entity_id: sensor.time_of_day
         state: "Night"
     action:
-    - service: light.turn_off
-      entity_id: group.hall
+      - service: light.turn_off
+        entity_id: group.hall
 
   - alias: Hallway motion - 10 minute timeout
     trigger:
-    - platform: state
-      entity_id:
-        - binary_sensor.hall_door_motion
-        - binary_sensor.hall_rooms_motion
-      to: 'off'
-      for:
-        minutes: 10
+      - platform: state
+        entity_id:
+          - binary_sensor.hall_door_motion
+          - binary_sensor.hall_rooms_motion
+        to: 'off'
+        for:
+          minutes: 10
     action:
-    - service: light.turn_off
-      entity_id: group.hall
+      - service: light.turn_off
+        entity_id: group.hall
