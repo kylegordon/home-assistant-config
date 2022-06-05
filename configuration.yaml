@@ -159,10 +159,6 @@ influxdb:
 # Discover some devices automatically
 discovery:
 
-spotify:
-  client_id: !secret spotify_client_id
-  client_secret: !secret spotify_client_secret
-
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
