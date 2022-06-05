@@ -142,11 +142,6 @@ deconz:
   host: 172.24.32.13
   port: 8100
 
-google:
-  client_id: !secret google_oauth_client_id
-  client_secret: !secret google_oauth_client_secret
-  track_new_calendar: false
-
 influxdb:
   host: 172.24.32.13
   port: 8086
