@@ -25,7 +25,7 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.hall_dual_switch_touchpad_2
+          - binary_sensor.hall_dual_switch_touchpad_1
         to: 'on'
     action:
       - service: switch.turn_on
