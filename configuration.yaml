@@ -312,6 +312,7 @@ emulated_hue:
 ############
 # automation: !include automation.yaml
 # script: !include scripts.yaml
+mqtt: !include mqtt.yaml
 sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
@@ -333,25 +334,6 @@ scene: !include_dir_list scenes
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
-
-mqtt:
-  broker: 172.24.32.13
-  port: 1883
-  client_id: home-assistant-1
-  discovery: true
-  discovery_prefix: "homeassistant"
-  keepalive: 60
-  protocol: 3.1
-  birth_message:
-    topic: 'hass/status'
-    payload: 'online'
-    qos: 1
-    retain: true
-  will_message:
-    topic: 'hass/status'
-    payload: 'offline'
-    qos: 1
-    retain: true
 
 utility_meter:
   quarter_hourly_energy:
