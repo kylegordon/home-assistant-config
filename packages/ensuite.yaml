@@ -1,3 +1,4 @@
+---
 automation:
   - alias: Ensuite light toggle
     trigger:
@@ -8,14 +9,15 @@ automation:
       - service: switch.turn_on
         entity_id: switch.ensuite_switch_relay
       - service: light.toggle
-        entity_id: >
-          {% if states('sensor.time_of_day') == "Morning" %}
-          light.ensuite_facilities
-          {% elif states('sensor.time_of_day') == "Night" %}
-          light.ensuite_facilities
-          {% else %}
-          light.ensuite
-          {% endif %}
+        data_template:
+          entity_id: >
+            {% if states('sensor.time_of_day') == "Morning" %}
+            light.ensuite_facilities
+            {% elif states('sensor.time_of_day') == "Night" %}
+            light.ensuite_facilities
+            {% else %}
+            light.ensuite
+            {% endif %}
       - service: logbook.log
         data_template:
           name: EVENT

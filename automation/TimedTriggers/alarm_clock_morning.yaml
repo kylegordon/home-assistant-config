@@ -21,6 +21,9 @@ condition:
       - wed
       - thu
       - fri
+  - condition: numeric_state
+    entity_id: sensor.average_external_light_level
+    below: 500
 action:
   - service: logbook.log
     data_template:

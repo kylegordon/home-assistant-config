@@ -134,6 +134,9 @@ konnected:
 
 alarm_control_panel:
     - platform: manual
+      name: Home Alarm
+      code_arm_required: false
+      code: !secret alarm_code
 
 deconz:
   host: 172.24.32.13
@@ -387,9 +390,9 @@ panel_iframe:
     title: "ESPHome"
     url: "http://viewpoint.house:6052"
     icon: mdi:car-esp
-  unifi:
-    title: "Unifi CCTV"
-    url: "http://viewpoint.house:7080"
+  cctv:
+    title: "CCTV"
+    url: "http://viewpoint.house:4999"
     icon: mdi:cctv
   sonarr:
     title: "Sonarr TV"
