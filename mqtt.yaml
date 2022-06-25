@@ -20,80 +20,67 @@ will_message:
 sensor:
 
   # Weather #
-  - platform: mqtt
-    name: "Weather station temperature"
+  - name: "Weather station temperature"
     state_topic: "weatherstation"
     unit_of_measurement: "°C"
     value_template: "{{ value_json.temperature }}"
-  - platform: mqtt
-    name: "Weather station relative humidity"
+  - name: "Weather station relative humidity"
     state_topic: "weatherstation"
     unit_of_measurement: "%"
     value_template: "{{ value_json.relhumidity }}"
-  - platform: mqtt
-    name: "Weather station wind velocity"
+  - name: "Weather station wind velocity"
     state_topic: "weatherstation"
     unit_of_measurement: "m/s"
     value_template: "{{ value_json.windvelocity }}"
-  - platform: mqtt
-    name: "Weather station wind maximum"
+  - name: "Weather station wind maximum"
     state_topic: "weatherstation"
     unit_of_measurement: "m/s"
     value_template: "{{ value_json.windmaximum }}"
-  - platform: mqtt
-    name: "Weather station wind direction"
+  - name: "Weather station wind direction"
     state_topic: "weatherstation"
     unit_of_measurement: ""
     value_template: "{{ value_json.winddirection }}"
-  - platform: mqtt
-    name: "Weather station rainfall"
+  - name: "Weather station rainfall"
     state_topic: "weatherstation"
     unit_of_measurement: "mm"
     value_template: "{{ value_json.rain }}"
 
-  - platform: mqtt
-    name: "Kyle Oneplus One Battery"
+  - name: "Kyle Oneplus One Battery"
     state_topic: "owntracks/bagpuss/a0001"
     unit_of_measurement: "%"
     value_template: "{{ value_json.batt }}"
 
 binary_sensor:
-  - platform: mqtt
-    name: Charlotte Bed Sensor
+  - name: Charlotte Bed Sensor
     device_class: occupancy
     state_topic: "devices/5ccf7fd8d915/Contact1/state"
     payload_on: "1"
     payload_off: "0"
 
-  - platform: mqtt
-    name: Kyle Bed Sensor
+  - name: Kyle Bed Sensor
     device_class: occupancy
     state_topic: "devices/5ccf7fd8d915/Contact2/state"
     payload_on: "1"
     payload_off: "0"
 
-  - platform: mqtt
-    name: "Kyle Driving"
+  - name: "Kyle Driving"
     state_topic: "driving/mode/kyle"
     payload_on: "true"
     payload_off: "false"
 
-  - platform: mqtt
-    name: "Charlotte Driving"
+  - name: "Charlotte Driving"
     state_topic: "driving/mode/charlotte"
     payload_on: "true"
     payload_off: "false"
 
 switch:
-  - platform: mqtt
-    name: Octoprint Relay 1
+  - name: Octoprint Relay 1
     unique_id: octoprint_relay_1
     command_topic: "octoprint/usb_relay_1/set"
     payload_on: 'true'
     payload_off: 'false'
 
-  - platform: mqtt
-    name: Octoprint Relay 2
+  - name: Octoprint Relay 2
     unique_id: octoprint_relay_2
     command_topic: "octoprint/usb_relay_2/set"
     payload_on: 'true'
@@ -101,17 +88,12 @@ switch:
 
 camera:
   - name: Back Door Last Person
-    platform: mqtt
     topic: frigate/back_door/person/snapshot
   - name: Front Door Last Person
-    platform: mqtt
     topic: frigate/front_door/person/snapshot
   - name: Driveway Last Person
-    platform: mqtt
     topic: frigate/driveway/person/snapshot
   - name: Driveway Last Car
-    platform: mqtt
     topic: frigate/driveway/car/snapshot
   - name: octoPrint camera
-    platform: mqtt
     topic: octoPrint/camera
