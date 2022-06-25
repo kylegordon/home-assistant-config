@@ -36,29 +36,3 @@
           mdi:home-outline
         {% endif %}
       value_template: "{{ is_state('person.kyle','home') or is_state('person.charlotte','home') or is_state('person.ronnie','home') }}"
-
-- platform: mqtt
-  name: Charlotte Bed Sensor
-  device_class: occupancy
-  state_topic: "devices/5ccf7fd8d915/Contact1/state"
-  payload_on: "1"
-  payload_off: "0"
-
-- platform: mqtt
-  name: Kyle Bed Sensor
-  device_class: occupancy
-  state_topic: "devices/5ccf7fd8d915/Contact2/state"
-  payload_on: "1"
-  payload_off: "0"
-
-- platform: mqtt
-  name: "Kyle Driving"
-  state_topic: "driving/mode/kyle"
-  payload_on: "true"
-  payload_off: "false"
-
-- platform: mqtt
-  name: "Charlotte Driving"
-  state_topic: "driving/mode/charlotte"
-  payload_on: "true"
-  payload_off: "false"
