@@ -50,13 +50,11 @@ from .config_flow import in_progess_instances
 from .const import (
     ALEXA_COMPONENTS,
     CONF_ACCOUNTS,
-    CONF_COOKIES_TXT,
     CONF_DEBUG,
     CONF_EXCLUDE_DEVICES,
     CONF_EXTENDED_ENTITY_DISCOVERY,
     CONF_INCLUDE_DEVICES,
     CONF_OAUTH,
-    CONF_OAUTH_LOGIN,
     CONF_OTPSECRET,
     CONF_QUEUE_DELAY,
     DATA_ALEXAMEDIA,
@@ -150,9 +148,12 @@ async def async_setup(hass, config, discovery_info=None):
                             CONF_SCAN_INTERVAL: account[
                                 CONF_SCAN_INTERVAL
                             ].total_seconds(),
-                            CONF_OAUTH: account.get(CONF_OAUTH, {}),
-                            CONF_OTPSECRET: account.get(CONF_OTPSECRET, ""),
-                            CONF_OAUTH_LOGIN: account.get(CONF_OAUTH_LOGIN, True),
+                            CONF_OAUTH: account.get(
+                                CONF_OAUTH, entry.data.get(CONF_OAUTH, {})
+                            ),
+                            CONF_OTPSECRET: account.get(
+                                CONF_OTPSECRET, entry.data.get(CONF_OTPSECRET, "")
+                            ),
                         },
                     )
                     entry_found = True
@@ -173,7 +174,6 @@ async def async_setup(hass, config, discovery_info=None):
                         CONF_SCAN_INTERVAL: account[CONF_SCAN_INTERVAL].total_seconds(),
                         CONF_OAUTH: account.get(CONF_OAUTH, {}),
                         CONF_OTPSECRET: account.get(CONF_OTPSECRET, ""),
-                        CONF_OAUTH_LOGIN: account.get(CONF_OAUTH_LOGIN, True),
                     },
                 )
             )
@@ -218,12 +218,11 @@ async def async_setup_entry(hass, config_entry):
                     otp_secret=account.get(CONF_OTPSECRET, ""),
                     oauth=account.get(CONF_OAUTH, {}),
                     uuid=uuid,
-                    oauth_login=bool(
-                        account.get(CONF_OAUTH, {}).get("access_token")
-                        or account.get(CONF_OAUTH_LOGIN)
-                    ),
+                    oauth_login=True,
                 )
                 hass.data[DATA_ALEXAMEDIA]["accounts"][email]["login_obj"] = login_obj
+            else:
+                login_obj.oauth_login = True
             await login_obj.reset()
             # await login_obj.login()
             if await test_login_status(hass, config_entry, login_obj):
@@ -310,10 +309,7 @@ async def async_setup_entry(hass, config_entry):
             otp_secret=account.get(CONF_OTPSECRET, ""),
             oauth=account.get(CONF_OAUTH, {}),
             uuid=uuid,
-            oauth_login=bool(
-                account.get(CONF_OAUTH, {}).get("access_token")
-                or account.get(CONF_OAUTH_LOGIN)
-            ),
+            oauth_login=True,
         ),
     )
     hass.data[DATA_ALEXAMEDIA]["accounts"][email]["login_obj"] = login
@@ -329,9 +325,7 @@ async def async_setup_entry(hass, config_entry):
             return True
         return False
     except AlexapyConnectionError as err:
-        raise ConfigEntryNotReady(
-                str(err) or "Connection Error during login"
-            ) from err
+        raise ConfigEntryNotReady(str(err) or "Connection Error during login") from err
 
 
 async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
@@ -622,7 +616,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
 
         hass.data[DATA_ALEXAMEDIA]["accounts"][email]["new_devices"] = False
         # prune stale devices
-        device_registry = await dr.async_get_registry(hass)
+        device_registry = dr.async_get(hass)
         for device_entry in dr.async_entries_for_config_entry(
             device_registry, config_entry.entry_id
         ):
@@ -652,6 +646,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                         "access_token": login_obj.access_token,
                         "refresh_token": login_obj.refresh_token,
                         "expires_in": login_obj.expires_in,
+                        "mac_dms": login_obj.mac_dms,
                     },
                 },
             )
@@ -662,7 +657,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         """Process raw notifications json."""
         if not raw_notifications:
             raw_notifications = await AlexaAPI.get_notifications(login_obj)
-        email: Text = login_obj.email
+        email: str = login_obj.email
         previous = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get(
             "notifications", {}
         )
@@ -802,6 +797,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         This will only attempt one login before failing.
         """
         websocket: Optional[WebsocketEchoClient] = None
+        email = login_obj.email
         try:
             if login_obj.session.closed:
                 _LOGGER.debug(
@@ -818,6 +814,17 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             )
             _LOGGER.debug("%s: Websocket created: %s", hide_email(email), websocket)
             await websocket.async_run()
+        except AlexapyLoginError as exception_:
+            _LOGGER.debug(
+                "%s: Login Error detected from websocket: %s",
+                hide_email(email),
+                exception_,
+            )
+            hass.bus.async_fire(
+                "alexa_media_relogin_required",
+                event_data={"email": hide_email(email), "url": login_obj.url},
+            )
+            return
         except BaseException as exception_:  # pylint: disable=broad-except
             _LOGGER.debug(
                 "%s: Websocket creation failed: %s", hide_email(email), exception_
@@ -989,6 +996,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                 "PUSH_LIST_ITEM_CHANGE",  # update shopping list
                 "PUSH_CONTENT_FOCUS_CHANGE",  # likely prime related refocus
                 "PUSH_DEVICE_SETUP_STATE_CHANGE",  # likely device changes mid setup
+                "PUSH_MEDIA_PREFERENCE_CHANGE",  # disliking or liking songs, https://github.com/custom-components/alexa_media_player/issues/1599
             ]:
                 pass
             else:
@@ -1051,7 +1059,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
     async def ws_open_handler():
         """Handle websocket open."""
 
-        email: Text = login_obj.email
+        email: str = login_obj.email
         _LOGGER.debug("%s: Websocket successfully connected", hide_email(email))
         hass.data[DATA_ALEXAMEDIA]["accounts"][email][
             "websocketerror"
@@ -1066,7 +1074,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         This should attempt to reconnect up to 5 times
         """
 
-        email: Text = login_obj.email
+        email: str = login_obj.email
         if login_obj.close_requested:
             _LOGGER.debug(
                 "%s: Close requested; will not reconnect websocket", hide_email(email)
@@ -1078,7 +1086,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             )
             return
         errors: int = hass.data[DATA_ALEXAMEDIA]["accounts"][email]["websocketerror"]
-        delay: int = 5 * 2 ** errors
+        delay: int = 5 * 2**errors
         last_attempt = hass.data[DATA_ALEXAMEDIA]["accounts"][email][
             "websocket_lastattempt"
         ]
@@ -1104,7 +1112,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             errors = hass.data[DATA_ALEXAMEDIA]["accounts"][email]["websocketerror"] = (
                 hass.data[DATA_ALEXAMEDIA]["accounts"][email]["websocketerror"] + 1
             )
-            delay = 5 * 2 ** errors
+            delay = 5 * 2**errors
             errors = hass.data[DATA_ALEXAMEDIA]["accounts"][email]["websocketerror"]
             await asyncio.sleep(delay)
         if not websocket_enabled:
@@ -1125,7 +1133,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         the websocket and determine if a reconnect should be done. By
         specification, websockets will issue a close after every error.
         """
-        email: Text = login_obj.email
+        email: str = login_obj.email
         errors = hass.data[DATA_ALEXAMEDIA]["accounts"][email]["websocketerror"]
         _LOGGER.debug(
             "%s: Received websocket error #%i %s: type %s",
@@ -1242,7 +1250,7 @@ async def async_unload_entry(hass, entry) -> bool:
     return True
 
 
-async def close_connections(hass, email: Text) -> None:
+async def close_connections(hass, email: str) -> None:
     """Clear open aiohttp connections for email."""
     if (
         email not in hass.data[DATA_ALEXAMEDIA]["accounts"]
@@ -1290,7 +1298,7 @@ async def test_login_status(hass, config_entry, login) -> bool:
     account = config_entry.data
     _LOGGER.debug("Logging in: %s %s", obfuscate(account), in_progess_instances(hass))
     _LOGGER.debug("Login stats: %s", login.stats)
-    message: Text = f"Reauthenticate {login.email} on the [Integrations](/config/integrations) page. "
+    message: str = f"Reauthenticate {login.email} on the [Integrations](/config/integrations) page. "
     if login.stats.get("login_timestamp") != datetime(1, 1, 1):
         elaspsed_time: str = str(datetime.now() - login.stats.get("login_timestamp"))
         api_calls: int = login.stats.get("api_calls")
@@ -1331,7 +1339,6 @@ async def test_login_status(hass, config_entry, login) -> bool:
             CONF_SCAN_INTERVAL: account[CONF_SCAN_INTERVAL].total_seconds()
             if isinstance(account[CONF_SCAN_INTERVAL], timedelta)
             else account[CONF_SCAN_INTERVAL],
-            CONF_COOKIES_TXT: account.get(CONF_COOKIES_TXT, ""),
             CONF_OTPSECRET: account.get(CONF_OTPSECRET, ""),
         },
     )
