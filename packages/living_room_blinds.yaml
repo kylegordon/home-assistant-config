@@ -34,7 +34,7 @@ automation:
       - platform: event
         event_type: deconz_event
         event_data:
-          id: tradfri_open_close_switch
+          id: patio_blinds_switch_2
           device_id: 6ce0802a8aef13556ad7c2b8cb43720b
     action:
       - variables:
@@ -76,7 +76,7 @@ automation:
       - service: cover.close_cover
         entity_id:
           - cover.patio_blinds
-          - cover.utility_room_blinds
+          - cover.front_hall_blind
 
   - alias: Open blinds when bright
     trigger:
@@ -89,4 +89,4 @@ automation:
       - service: cover.open_cover
         entity_id:
           - cover.patio_blinds
-          - cover.utility_room_blinds
+          - cover.front_hall_blind
