@@ -54,7 +54,9 @@ binary_sensor:
 automation:
 
   - alias: "Call for heat - demand"
-    description: Turn on boiler relay if there's a call for heat
+    description: >-
+      Turn on boiler relay if there's a call for heat
+      and all the openings are shut
     trigger:
       platform: time_pattern
       seconds: 30
@@ -62,6 +64,11 @@ automation:
       - condition: state
         entity_id: group.call_for_heat
         state: 'on'
+      - condition: state
+        entity_id: group.opening
+        state: 'off'
+        for:
+          minutes: 5
     action:
       - service: homeassistant.turn_on
         entity_id: switch.boiler_valve_controls_relay_2
