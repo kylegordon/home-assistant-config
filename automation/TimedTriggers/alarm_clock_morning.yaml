@@ -1,7 +1,7 @@
 alias: "Wakeup transition"
 trigger:
   - platform: time
-    at: '06:45:00'
+    at: '07:15:00'
 condition:
   - condition: state
     entity_id: calendar.holiday_mode
@@ -21,6 +21,9 @@ condition:
       - wed
       - thu
       - fri
+  - condition: numeric_state
+    entity_id: sensor.average_external_light_level
+    below: 500
 action:
   - service: logbook.log
     data_template:
