@@ -134,15 +134,13 @@ konnected:
 
 alarm_control_panel:
     - platform: manual
+      name: Home Alarm
+      code_arm_required: false
+      code: !secret alarm_code
 
 deconz:
   host: 172.24.32.13
   port: 8100
-
-google:
-  client_id: !secret google_oauth_client_id
-  client_secret: !secret google_oauth_client_secret
-  track_new_calendar: false
 
 influxdb:
   host: 172.24.32.13
@@ -155,10 +153,6 @@ influxdb:
 
 # Discover some devices automatically
 discovery:
-
-spotify:
-  client_id: !secret spotify_client_id
-  client_secret: !secret spotify_client_secret
 
 rfxtrx:
   # Remember this is mapped in the docker-compose file
@@ -313,6 +307,7 @@ emulated_hue:
 ############
 # automation: !include automation.yaml
 # script: !include scripts.yaml
+mqtt: !include mqtt.yaml
 sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
@@ -335,31 +330,30 @@ input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
 
-mqtt:
-  broker: 172.24.32.13
-  port: 1883
-  client_id: home-assistant-1
-  discovery: true
-  discovery_prefix: "homeassistant"
-  keepalive: 60
-  protocol: 3.1
-  birth_message:
-    topic: 'hass/status'
-    payload: 'online'
-    qos: 1
-    retain: true
-  will_message:
-    topic: 'hass/status'
-    payload: 'offline'
-    qos: 1
-    retain: true
-
 utility_meter:
+  quarter_hourly_energy:
+    source: sensor.energy_spent
+    cycle: quarter-hourly
+  hourly_energy:
+    source: sensor.energy_spent
+    cycle: hourly
   daily_energy:
     source: sensor.energy_spent
     cycle: daily
   monthly_energy:
     source: sensor.energy_spent
+    cycle: monthly
+  quarter_hourly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: quarter-hourly
+  hourly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: hourly
+  daily_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: daily
+  monthly_energy_tv:
+    source: sensor.energy_spent_tv
     cycle: monthly
 
 smartir:
@@ -369,9 +363,9 @@ panel_iframe:
     title: "ESPHome"
     url: "http://viewpoint.house:6052"
     icon: mdi:car-esp
-  unifi:
-    title: "Unifi CCTV"
-    url: "http://viewpoint.house:7080"
+  cctv:
+    title: "CCTV"
+    url: "http://viewpoint.house:4999"
     icon: mdi:cctv
   sonarr:
     title: "Sonarr TV"

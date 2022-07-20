@@ -35,12 +35,16 @@ binary_sensor:
     days_offset: 1
 
 automation:
+
   - alias: "Call for heat - demand"
     description: Turn on boiler relay if there's a call for heat
     trigger:
-      - platform: state
+      platform: time_pattern
+      seconds: 30
+    condition:
+      - condition: state
         entity_id: group.call_for_heat
-        to: 'on'
+        state: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: switch.boiler_valve_controls_relay_2
@@ -48,9 +52,12 @@ automation:
   - alias: "Call for heat - no demand"
     description: Turn off boiler relay if demand for heat ceases
     trigger:
-      - platform: state
+      platform: time_pattern
+      seconds: 30
+    condition:
+      - condition: state
         entity_id: group.call_for_heat
-        to: 'off'
+        state: 'off'
     action:
       - service: homeassistant.turn_off
         entity_id: switch.boiler_valve_controls_relay_2
@@ -85,8 +92,6 @@ automation:
       - condition: state
         entity_id: group.people
         state: "home"
-      - condition: template
-        value_template: '{{ states("sensor.season") != "summer" }}'
     action:
       - service: climate.set_preset_mode
         data:
@@ -107,9 +112,6 @@ automation:
       - platform: state
         entity_id: group.people
         to: "home"
-    condition:
-      - condition: template
-        value_template: '{{ states("sensor.season") != "summer" }}'
     action:
       - service: climate.set_preset_mode
         data:
@@ -145,7 +147,7 @@ automation:
       - service: climate.set_preset_mode
         data:
           entity_id: climate.hot_water
-          preset_mode: "Away"
+          preset_mode: "away"
       - service: logbook.log
         data_template:
           name: EVENT

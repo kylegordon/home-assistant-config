@@ -28,7 +28,7 @@
 
 - platform: bulb_energy
   postcode: "G78 3AX"
-  payplan: "monthly" # or legacyPrepay or smartPayg
+  payplan: "monthly"  # or legacyPrepay or smartPayg
   eco7: false
 
 - platform: template
@@ -69,46 +69,11 @@
   name: energy_spent
   unit_prefix: k
   round: 2
-
-## MQTT ##
-
-# Weather #
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station temperature"
-  unit_of_measurement: "°C"
-  value_template: "{{ value_json.temperature }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station relative humidity"
-  unit_of_measurement: "%"
-  value_template: "{{ value_json.relhumidity }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station wind velocity"
-  unit_of_measurement: "m/s"
-  value_template: "{{ value_json.windvelocity }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station wind maximum"
-  unit_of_measurement: "m/s"
-  value_template: "{{ value_json.windmaximum }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station wind direction"
-  unit_of_measurement: ""
-  value_template: "{{ value_json.winddirection }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station rainfall"
-  unit_of_measurement: "mm"
-  value_template: "{{ value_json.rain }}"
-
-- platform: mqtt
-  state_topic: "owntracks/bagpuss/a0001"
-  name: "Kyle Oneplus One Battery"
-  unit_of_measurement: "%"
-  value_template: "{{ value_json.batt }}"
+- platform: integration
+  source: sensor.tv_power_plug_power
+  name: energy_spent_tv
+  unit_prefix: k
+  round: 2
 
 - platform: min_max
   name: Average External Light Level

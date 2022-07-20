@@ -1,3 +1,4 @@
+---
 automation:
   - alias: Ensuite light toggle
     trigger:
@@ -16,30 +17,6 @@ automation:
             light.ensuite_facilities
             {% else %}
             light.ensuite
-            {% endif %}
-          brightness_pct: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            100
-            {% elif states('sensor.time_of_day') == "Day" %}
-            100
-            {% elif states('sensor.time_of_day') == "Night" %}
-            20
-            {% endif %}
-          # transition: >
-          #   {% if states('sensor.time_of_day') == "Morning" %}
-          #   10
-          #   {% elif states('sensor.time_of_day') == "Day" %}
-          #   2
-          #   {% elif states('sensor.time_of_day') == "Night" %}
-          #   30
-          #   {% endif %}
-          color_temp: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            200
-            {% elif states('sensor.time_of_day') == "Day" %}
-            300
-            {% elif states('sensor.time_of_day') == "Night" %}
-            375
             {% endif %}
       - service: logbook.log
         data_template:
@@ -62,14 +39,6 @@ automation:
             {% else %}
             light.ensuite
             {% endif %}
-          brightness_pct: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            100
-            {% elif states('sensor.time_of_day') == "Day" %}
-            100
-            {% elif states('sensor.time_of_day') == "Night" %}
-            20
-            {% endif %}
           transition: >
             {% if states('sensor.time_of_day') == "Morning" %}
             10
@@ -77,14 +46,6 @@ automation:
             2
             {% elif states('sensor.time_of_day') == "Night" %}
             30
-            {% endif %}
-          color_temp: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            200
-            {% elif states('sensor.time_of_day') == "Day" %}
-            300
-            {% elif states('sensor.time_of_day') == "Night" %}
-            375
             {% endif %}
 
   - alias: Ensuite shower activity
