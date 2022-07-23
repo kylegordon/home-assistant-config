@@ -93,45 +93,6 @@ http:
 
 stream:
 
-konnected:
-  access_token: !secret konnected_key
-  devices:
-    - id: bcddc2fdd1b2
-    - id: dc4f22199839
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Ensuite window'
-        - zone: 2
-          type: window
-          name: 'Craft room window'
-        - zone: 3
-          type: window
-          name: 'Master bedroom window'
-        - zone: 4
-          type: window
-          name: 'Guest bedroom window'
-        - zone: 5
-          type: window
-          name: 'Study window'
-    - id: dc4f22195dec
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Kitchen window'
-        - zone: 2
-          type: door
-          name: 'Back door'
-        - zone: 3
-          type: door
-          name: 'Patio door'
-        - zone: 4
-          type: window
-          name: 'Bathroom window'
-        - zone: 5
-          type: window
-          name: 'Dining table window'
-
 alarm_control_panel:
     - platform: manual
       name: Home Alarm
