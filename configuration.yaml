@@ -62,7 +62,7 @@ homeassistant:
       assumed_state: false
     light.arc_lamp:
       assumed_state: false
-    light.utility_room:
+    light.front_hall:
       assumed_state: false
     group.bedside_lights:
         icon: mdi:hotel
@@ -161,9 +161,6 @@ rfxtrx:
     ### Lights ###
     # 0a140029f0dd3c0e010060:
     #   name: Living Room
-    # 0a140017f090a201010070:
-    #   # Dimmable CFL Remote Left
-    #   name: Utility Room
     0a140001f0dd3c01010070:
       # White Remote A1
       # name: Christmas Star
@@ -195,9 +192,7 @@ rfxtrx:
     0b11000000b82b560a000060:
       # name: Outside Front Motion
       device_class: motion
-    # 0a1400002c22a70a010060:
-    #   name: Utility Room Door
-    #   device_class: opening
+
     ### Sensors ###
     ## RFXcom ##
     # Old 115a0100e452000000046600006462cb3e79:
