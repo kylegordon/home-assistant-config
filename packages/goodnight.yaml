@@ -26,7 +26,7 @@ automation:
         - group.living_room_lights
         - group.dining_nook
         - group.outside_lights
-        - group.utility_room
+        - group.front_hall
         - group.kitchen
         - group.hall
         - group.dining_nook_lights
