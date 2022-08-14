@@ -36,6 +36,9 @@ automation:
       - platform: state
         entity_id: binary_sensor.utility_room_door
         to: 'on'
+      - platform: state
+        entity_id: binary_sensor.utility_room_motion
+        to: 'on'
     action:
       - service: notify.alexa_media
         data_template:
