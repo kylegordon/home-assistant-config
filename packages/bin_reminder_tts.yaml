@@ -37,7 +37,7 @@ automation:
         entity_id: binary_sensor.front_hall_door
         to: 'on'
       - platform: state
-        entity_id: binary_sensor.utility_room_motion
+        entity_id: binary_sensor.front_hall_motion
         to: 'on'
     action:
       - service: notify.alexa_media
