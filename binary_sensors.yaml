@@ -41,4 +41,3 @@
       value_template: "{{ states.calendar.family_calendar.attributes.message == 'Holiday mode' }}"
       friendly_name: Holiday mode
       unique_id: binary_sensor.holiday_mode
-
