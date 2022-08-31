@@ -1,3 +1,4 @@
+---
 automation:
   - alias: Garage motion - Lights on
     initial_state: true
@@ -11,11 +12,11 @@ automation:
 
   - alias: Garage motion - 10 minute timeout
     trigger:
-    - platform: state
-      entity_id: binary_sensor.garage_motion
-      to: 'off'
-      for:
-        minutes: 10
-    action:
-    - service: light.turn_off
-      entity_id: light.garage_lights
+      - platform: state
+        entity_id: binary_sensor.garage_motion
+        to: 'off'
+        for:
+          minutes: 10
+      action:
+      - service: light.turn_off
+        entity_id: light.garage_lights
