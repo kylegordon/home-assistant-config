@@ -55,7 +55,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} double click
-                      device: ${device_name}
+                      device_name: ${device_name}
                       click_type: triple
               # toggle relay in case either wifi or api are not connected
               else:
@@ -78,7 +78,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} double click
-                      device: ${device_name}
+                      device_name: ${device_name}
                       click_type: double
               # toggle relay in case either wifi or api are not connected
               else:
@@ -98,7 +98,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} long click
-                      device: ${device_name}
+                      device_name: ${device_name}
                       click_type: long
               # toggle relay in case either wifi or api are not connected
               else:
@@ -119,7 +119,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} short click
-                      device: ${device_name}
+                      device_name: ${device_name}
                       click_type: single
               # toggle relay in case either wifi or api are not connected
               else:
