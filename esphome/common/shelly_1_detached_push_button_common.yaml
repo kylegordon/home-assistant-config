@@ -1,0 +1,96 @@
+---
+# Basic config
+packages:
+  common: !include common.yaml
+
+esphome:
+  name: ${friendly_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: esp01_1m
+
+captive_portal:
+
+# Enable logging
+logger:
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
+# Shelly 1 detached switch config with multi click options and fallback in case of wifi or api fail
+
+switch:
+  - platform: gpio
+    name: ${friendly_name} Relay
+    pin: GPIO4
+    id: shelly_relay
+    restore_mode: restore_default_off
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+    name: ${friendly_name} button
+    # config for multi click actions
+    on_multi_click:
+      # double click
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.2s
+        then:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send double click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: shelly ${device_name} double click
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: shelly_relay
+      # long click
+      - timing:
+          - ON for at least 1.5s
+        then:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send long click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: shelly ${device_name} long click
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: shelly_relay
+      # single click
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send single click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: shelly ${device_name} short click
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: shelly_relay
+    internal: true
+    id: button
