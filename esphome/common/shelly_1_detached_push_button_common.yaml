@@ -93,4 +93,4 @@ binary_sensor:
               else:
                 - switch.toggle: shelly_relay
     internal: true
-    id: button
+    id: button_input
