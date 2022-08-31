@@ -33,6 +33,7 @@ binary_sensor:
       number: GPIO5
     name: ${friendly_name} button
     # config for multi click actions
+    # Ideas from https://github.com/TheFes/HA-configuration/blob/main/esphome/packages/shelly1_detached_multi.yaml
     on_multi_click:
       # triple click
       - timing:
