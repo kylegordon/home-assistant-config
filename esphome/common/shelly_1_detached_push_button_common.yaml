@@ -34,6 +34,31 @@ binary_sensor:
     name: ${friendly_name} button
     # config for multi click actions
     on_multi_click:
+      # triple click
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.2s
+        then:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send double click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} double click
+                      device: ${device_name}
+                      click_type: triple
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: shelly_relay
       # double click
       - timing:
           - ON for at most 1s
@@ -52,6 +77,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} double click
+                      device: ${device_name}
                       click_type: double
               # toggle relay in case either wifi or api are not connected
               else:
@@ -71,6 +97,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} long click
+                      device: ${device_name}
                       click_type: long
               # toggle relay in case either wifi or api are not connected
               else:
@@ -91,6 +118,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} short click
+                      device: ${device_name}
                       click_type: single
               # toggle relay in case either wifi or api are not connected
               else:
