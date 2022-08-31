@@ -52,6 +52,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} double click
+                      click_type: double
               # toggle relay in case either wifi or api are not connected
               else:
                 - switch.toggle: shelly_relay
@@ -70,6 +71,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} long click
+                      click_type: long
               # toggle relay in case either wifi or api are not connected
               else:
                 - switch.toggle: shelly_relay
@@ -89,6 +91,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} short click
+                      click_type: single
               # toggle relay in case either wifi or api are not connected
               else:
                 - switch.toggle: shelly_relay
