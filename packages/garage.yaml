@@ -17,6 +17,6 @@ automation:
         to: 'off'
         for:
           minutes: 10
-      action:
+    action:
       - service: light.turn_off
         entity_id: light.garage_lights
