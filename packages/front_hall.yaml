@@ -1,11 +1,11 @@
 ---
 automation:
-  - alias: Utility room light on
+  - alias: Front hall light on
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.utility_room_door
-          - binary_sensor.utility_room_motion
+          - binary_sensor.front_hall_door
+          - binary_sensor.front_hall_motion
         to: 'on'
         from: 'off'
     condition:
@@ -19,20 +19,20 @@ automation:
       - service: homeassistant.turn_on
         data_template:
           entity_id:
-            - light.utility_room
+            - light.front_hall
 
-  - alias: Utility room light off
+  - alias: Front hall light off
     trigger:
       - platform: state
-        entity_id: binary_sensor.utility_room_door
+        entity_id: binary_sensor.front_hall_door
         to: 'off'
         for:
           seconds: 60
       - platform: state
-        entity_id: binary_sensor.utility_room_motion
+        entity_id: binary_sensor.front_hall_motion
         to: 'off'
         for:
           seconds: 60
     action:
       - service: light.turn_off
-        entity_id: light.utility_room
+        entity_id: light.front_hall
