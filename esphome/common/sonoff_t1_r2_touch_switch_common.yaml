@@ -22,28 +22,102 @@ binary_sensor:
       mode: INPUT_PULLUP
       inverted: true
     name: "${friendly_name} Touch Pad"
-    on_press:
-      if:
-        condition:
-          not:
-            api.connected:
+    on_multi_click:
+      # triple click
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.2s
         then:
-          - lambda: |-
-              id(failover_control_1).publish_state(true);
-              id(failover_control_1).publish_state(false);
-  - platform: template
-    id: failover_control_1
-    on_press:
-      if:
-        condition:
-          not:
-            api.connected:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send double click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} double click
+                      device_name: ${device_name}
+                      click_type: triple
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: sonoff_touch_relay
+      # double click
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.2s
         then:
-          - switch.toggle: relay_1
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send double click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} double click
+                      device_name: ${device_name}
+                      click_type: double
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: sonoff_touch_relay
+      # long click
+      - timing:
+          - ON for at least 1.5s
+        then:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send long click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} long click
+                      device_name: ${device_name}
+                      click_type: long
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: sonoff_touch_relay
+      # single click
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send single click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} short click
+                      device_name: ${device_name}
+                      click_type: single
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: sonoff_touch_relay
+    internal: true
+    id: button_input
 
 switch:
   - platform: gpio
-    id: relay_1
+    id: sonoff_touch_relay
     name: "${friendly_name} Relay"
     pin: GPIO12
 
