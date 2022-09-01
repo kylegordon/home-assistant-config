@@ -95,7 +95,7 @@ binary_sensor:
       # single click
       - timing:
           - ON for at most 1s
-          - OFF for at least 0.5s
+          - OFF for at least 0.2s
         then:
           - if:
               condition:
