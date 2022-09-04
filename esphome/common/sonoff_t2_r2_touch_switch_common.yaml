@@ -46,8 +46,8 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} double click
-                      device_name: ${device_name}
+                      title: ${friendly_name} touchpad 1 triple click
+                      device_name: ${device_name}_touchpad_1
                       click_type: triple
               # toggle relay in case either wifi or api are not connected
               else:
@@ -69,8 +69,8 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} double click
-                      device_name: ${device_name}
+                      title: ${friendly_name} touchpad 1 double click
+                      device_name: ${device_name}_touchpad_1
                       click_type: double
               # toggle relay in case either wifi or api are not connected
               else:
@@ -89,8 +89,8 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} long click
-                      device_name: ${device_name}
+                      title: ${friendly_name} touchpad 1 long click
+                      device_name: ${device_name}_touchpad_1
                       click_type: long
               # toggle relay in case either wifi or api are not connected
               else:
@@ -110,7 +110,7 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} short click
+                      title: ${friendly_name} touchpad 1 short click
                       device_name: ${device_name}
                       click_type: single
               # toggle relay in case either wifi or api are not connected
@@ -144,8 +144,8 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} double click
-                      device_name: ${device_name}
+                      title: ${friendly_name} touchpad 2 triple click
+                      device_name: ${device_name}_touchpad_2
                       click_type: triple
               # toggle relay in case either wifi or api are not connected
               else:
@@ -167,8 +167,8 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} double click
-                      device_name: ${device_name}
+                      title: ${friendly_name} touchpad 2 double click
+                      device_name: ${device_name}_touchpad_2
                       click_type: double
               # toggle relay in case either wifi or api are not connected
               else:
@@ -187,8 +187,8 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} long click
-                      device_name: ${device_name}
+                      title: ${friendly_name} touchpad 2 long click
+                      device_name: ${device_name}_touchpad_2
                       click_type: long
               # toggle relay in case either wifi or api are not connected
               else:
@@ -208,8 +208,8 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} short click
-                      device_name: ${device_name}
+                      title: ${friendly_name} touchpad 2 short click
+                      device_name: ${device_name}_touchpad_2
                       click_type: single
               # toggle relay in case either wifi or api are not connected
               else:

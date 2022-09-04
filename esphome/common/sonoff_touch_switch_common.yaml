@@ -43,7 +43,7 @@ binary_sensor:
                 - homeassistant.event:
                     event: esphome.button_pressed
                     data:
-                      title: ${friendly_name} double click
+                      title: ${friendly_name} triple click
                       device_name: ${device_name}
                       click_type: triple
               # toggle relay in case either wifi or api are not connected
