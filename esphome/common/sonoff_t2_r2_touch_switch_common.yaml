@@ -117,16 +117,7 @@ binary_sensor:
               else:
                 - switch.toggle: sonoff_touch_relay_1
     internal: true
-    id: button_input
-    # on_press:
-    #   if:
-    #     condition:
-    #       not:
-    #         api.connected:
-    #     then:
-    #       - lambda: |-
-    #           id(failover_control_1).publish_state(true);
-    #           id(failover_control_1).publish_state(false);
+    id: button_input_1
   - platform: gpio
     pin:
       number: GPIO9
@@ -224,34 +215,7 @@ binary_sensor:
               else:
                 - switch.toggle: sonoff_touch_relay_2
     internal: true
-    id: button_input
-    # on_press:
-    #   if:
-    #     condition:
-    #       not:
-    #         api.connected:
-    #     then:
-    #       - lambda: |-
-    #           id(failover_control_2).publish_state(true);
-    #           id(failover_control_2).publish_state(false);
-  # - platform: template
-  #   id: failover_control_1
-  #   on_press:
-  #     if:
-  #       condition:
-  #         not:
-  #           api.connected:
-  #       then:
-  #         - switch.toggle: relay_1
-  # - platform: template
-  #   id: failover_control_2
-  #   on_press:
-  #     if:
-  #       condition:
-  #         not:
-  #           api.connected:
-  #       then:
-  #         - switch.toggle: relay_2
+    id: button_input_2
 
 switch:
   - platform: gpio
