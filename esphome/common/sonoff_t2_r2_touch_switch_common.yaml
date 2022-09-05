@@ -111,7 +111,7 @@ binary_sensor:
                     event: esphome.button_pressed
                     data:
                       title: ${friendly_name} touchpad 1 short click
-                      device_name: ${device_name}
+                      device_name: ${device_name}_touchpad_1
                       click_type: single
               # toggle relay in case either wifi or api are not connected
               else:
