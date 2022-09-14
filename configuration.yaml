@@ -62,7 +62,7 @@ homeassistant:
       assumed_state: false
     light.arc_lamp:
       assumed_state: false
-    light.utility_room:
+    light.front_hall:
       assumed_state: false
     group.bedside_lights:
         icon: mdi:hotel
@@ -93,45 +93,6 @@ http:
 
 stream:
 
-konnected:
-  access_token: !secret konnected_key
-  devices:
-    - id: bcddc2fdd1b2
-    - id: dc4f22199839
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Ensuite window'
-        - zone: 2
-          type: window
-          name: 'Craft room window'
-        - zone: 3
-          type: window
-          name: 'Master bedroom window'
-        - zone: 4
-          type: window
-          name: 'Guest bedroom window'
-        - zone: 5
-          type: window
-          name: 'Study window'
-    - id: dc4f22195dec
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Kitchen window'
-        - zone: 2
-          type: door
-          name: 'Back door'
-        - zone: 3
-          type: door
-          name: 'Patio door'
-        - zone: 4
-          type: window
-          name: 'Bathroom window'
-        - zone: 5
-          type: window
-          name: 'Dining table window'
-
 alarm_control_panel:
     - platform: manual
       name: Home Alarm
@@ -161,9 +122,6 @@ rfxtrx:
     ### Lights ###
     # 0a140029f0dd3c0e010060:
     #   name: Living Room
-    # 0a140017f090a201010070:
-    #   # Dimmable CFL Remote Left
-    #   name: Utility Room
     0a140001f0dd3c01010070:
       # White Remote A1
       # name: Christmas Star
@@ -195,9 +153,7 @@ rfxtrx:
     0b11000000b82b560a000060:
       # name: Outside Front Motion
       device_class: motion
-    # 0a1400002c22a70a010060:
-    #   name: Utility Room Door
-    #   device_class: opening
+
     ### Sensors ###
     ## RFXcom ##
     # Old 115a0100e452000000046600006462cb3e79:
