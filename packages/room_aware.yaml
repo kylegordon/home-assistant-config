@@ -10,9 +10,8 @@ group:
       - media_player.garage
       - media_player.tin_hut
 
-sensor:
-  - platform: template
-    sensors:
+template:
+  - sensor:
       - name: last_alexa
         state: >
           {{ expand('group.echos') | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
