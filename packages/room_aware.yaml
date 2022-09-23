@@ -21,6 +21,7 @@ template:
 # "Alexa, turn on the lights"
 script:
   alexa_turn_on_the_lights:
+    alias: Alexa Turn On The Lights
     sequence:
       - service: homeassistant.turn_on
         data_template:
@@ -42,6 +43,7 @@ script:
 
   # "Alexa, turn off the lights"
   alexa_turn_off_the_lights:
+    alias: Alexa Turn Off The Lights
     sequence:
       - service: homeassistant.turn_off
         data_template:
