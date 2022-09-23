@@ -18,6 +18,22 @@ automation:
           name: EVENT
           message: "Toggling study light"
 
+  - alias: Study monitor light toggle
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    trigger:
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: study_switch
+          click_type: double
+    action:
+      - service: light.toggle
+        entity_id: light.monitor_lights
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling monitor lights"
+
   - alias: 'Increase brightness of lamp from dimmer'
     initial_state: 'on'
     trigger:

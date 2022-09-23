@@ -194,12 +194,12 @@ emulated_hue:
   # https://www.home-assistant.io/components/emulated_hue/
   listen_port: 80
   expose_by_default: false
-  exposed_domains:
-    - switch
-    - light
-    - group
-    - input_boolean
-    - media_player
+  #exposed_domains:
+    #- switch
+    #- light
+    #- group
+    #- input_boolean
+    #- media_player
   entities:
     group.lightswitch_relays:
       hidden: false
@@ -234,10 +234,6 @@ emulated_hue:
     light.sideboard:
       hidden: false
     light.uplighter:
-      hidden: false
-    light.sofa_overhead:
-      hidden: false
-    light.dining_table_overhead:
       hidden: false
     light.star_burst:
       hidden: false
