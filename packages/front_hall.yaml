@@ -24,11 +24,6 @@ automation:
   - alias: Front hall light off
     trigger:
       - platform: state
-        entity_id: binary_sensor.front_hall_door
-        to: 'off'
-        for:
-          seconds: 60
-      - platform: state
         entity_id: binary_sensor.front_hall_motion
         to: 'off'
         for:
