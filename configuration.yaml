@@ -255,6 +255,10 @@ emulated_hue:
       hidden: false
     input_boolean.night_view:
       hidden: false
+    script.alexa_turn_on_the_lights:
+      hidden: false
+    script.alexa_turn_off_the_lights:
+      hidden: false
 
 ############
 # Includes #
