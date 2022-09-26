@@ -71,3 +71,4 @@ automation:
           name: EVENT
           message: >
             {{ trigger.to_state.attributes.friendly_name }} has just left the house.
+
