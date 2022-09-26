@@ -105,9 +105,9 @@ adaptive_lighting:
     take_over_control: true
     only_once: false
 
-  - name: "Utility Room adaptive lighting"
+  - name: "Front hall adaptive lighting"
     lights:
-      - light.utility_room
+      - light.front_hall
     prefer_rgb_color: false
     transition: 5  # seconds
     initial_transition: 5  # seconds

@@ -10,6 +10,7 @@ import datetime
 import logging
 from typing import Callable, List, Optional, Text  # noqa pylint: disable=unused-import
 
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import (
     DEVICE_CLASS_TIMESTAMP,
     STATE_UNAVAILABLE,
@@ -18,7 +19,6 @@ from homeassistant.const import (
 )
 from homeassistant.exceptions import ConfigEntryNotReady, NoEntitySpecifiedError
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import async_track_point_in_utc_time
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt
@@ -37,6 +37,7 @@ from . import (
 from .alexa_entity import parse_temperature_from_coordinator
 from .const import (
     CONF_EXTENDED_ENTITY_DISCOVERY,
+    RECURRING_DAY,
     RECURRING_PATTERN,
     RECURRING_PATTERN_ISO_SET,
 )
@@ -181,7 +182,7 @@ def lookup_device_info(account_dict, device_serial):
     return None
 
 
-class TemperatureSensor(CoordinatorEntity):
+class TemperatureSensor(SensorEntity, CoordinatorEntity):
     """A temperature sensor reported by an Echo."""
 
     def __init__(self, coordinator, entity_id, name, media_player_device_id):
@@ -205,14 +206,18 @@ class TemperatureSensor(CoordinatorEntity):
         return None
 
     @property
-    def unit_of_measurement(self):
+    def native_unit_of_measurement(self):
         return TEMP_CELSIUS
 
     @property
-    def state(self):
+    def native_value(self):
         return parse_temperature_from_coordinator(
             self.coordinator, self.alexa_entity_id
         )
+
+    @property
+    def device_class(self):
+        return "temperature"
 
     @property
     def unique_id(self):
@@ -221,14 +226,14 @@ class TemperatureSensor(CoordinatorEntity):
         return self.alexa_entity_id + "_temperature"
 
 
-class AlexaMediaNotificationSensor(Entity):
+class AlexaMediaNotificationSensor(SensorEntity):
     """Representation of Alexa Media sensors."""
 
     def __init__(
         self,
         client,
         n_dict,
-        sensor_property: Text,
+        sensor_property: str,
         account,
         name="Next Notification",
         icon=None,
@@ -252,9 +257,9 @@ class AlexaMediaNotificationSensor(Entity):
         self._tracker: Optional[Callable] = None
         self._state: Optional[datetime.datetime] = None
         self._dismissed: Optional[datetime.datetime] = None
-        self._status: Optional[Text] = None
-        self._amz_id: Optional[Text] = None
-        self._version: Optional[Text] = None
+        self._status: Optional[str] = None
+        self._amz_id: Optional[str] = None
+        self._version: Optional[str] = None
 
     def _process_raw_notifications(self):
         self._all = (
@@ -356,35 +361,47 @@ class AlexaMediaNotificationSensor(Entity):
 
     def _update_recurring_alarm(self, value):
         _LOGGER.debug("Sensor value %s", value)
-        alarm = value[1][self._sensor_property]
+        next_item = value[1]
+        alarm = next_item[self._sensor_property]
         reminder = None
-        if isinstance(value[1][self._sensor_property], (int, float)):
+        recurrence = []
+        if isinstance(next_item[self._sensor_property], (int, float)):
             reminder = True
             alarm = dt.as_local(
                 self._round_time(
                     datetime.datetime.fromtimestamp(alarm / 1000, tz=LOCAL_TIMEZONE)
                 )
             )
-        alarm_on = value[1]["status"] == "ON"
-        recurring_pattern = value[1].get("recurringPattern")
+        alarm_on = next_item["status"] == "ON"
+        r_rule_data = next_item.get("rRuleData")
+        if r_rule_data:  # the new recurrence pattern; https://github.com/custom-components/alexa_media_player/issues/1608
+            next_trigger_times = r_rule_data.get("nextTriggerTimes")
+            weekdays = r_rule_data.get("byWeekDays")
+            if next_trigger_times:
+                alarm = next_trigger_times[0]
+            elif weekdays:
+                for day in weekdays:
+                    recurrence.append(RECURRING_DAY[day])
+        else:
+            recurring_pattern = next_item.get("recurringPattern")
+            recurrence = RECURRING_PATTERN_ISO_SET.get(recurring_pattern)
         while (
             alarm_on
-            and recurring_pattern
-            and RECURRING_PATTERN_ISO_SET.get(recurring_pattern)
-            and alarm.isoweekday not in RECURRING_PATTERN_ISO_SET[recurring_pattern]
+            and recurrence
+            and alarm.isoweekday not in recurrence
             and alarm < dt.now()
         ):
             alarm += datetime.timedelta(days=1)
         if reminder:
             alarm = dt.as_timestamp(alarm) * 1000
-        if alarm != value[1][self._sensor_property]:
+        if alarm != next_item[self._sensor_property]:
             _LOGGER.debug(
                 "%s with recurrence %s set to %s",
-                value[1]["type"],
-                RECURRING_PATTERN[recurring_pattern],
+                next_item["type"],
+                recurrence,
                 alarm,
             )
-            value[1][self._sensor_property] = alarm
+        next_item[self._sensor_property] = alarm
         return value
 
     @staticmethod
@@ -500,7 +517,9 @@ class AlexaMediaNotificationSensor(Entity):
         account_dict = self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._account]
         self._timestamp = account_dict["notifications"]["process_timestamp"]
         try:
-            self._n_dict = account_dict["notifications"][self._client.device_serial_number][self._type]
+            self._n_dict = account_dict["notifications"][
+                self._client.device_serial_number
+            ][self._type]
         except KeyError:
             self._n_dict = None
         self._process_raw_notifications()
@@ -526,7 +545,7 @@ class AlexaMediaNotificationSensor(Entity):
     def recurrence(self):
         """Return the recurrence pattern of the sensor."""
         return (
-            RECURRING_PATTERN[self._next.get("recurringPattern")]
+            RECURRING_PATTERN.get(self._next.get("recurringPattern"))
             if self._next
             else None
         )

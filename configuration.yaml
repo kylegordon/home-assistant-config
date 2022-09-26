@@ -62,7 +62,7 @@ homeassistant:
       assumed_state: false
     light.arc_lamp:
       assumed_state: false
-    light.utility_room:
+    light.front_hall:
       assumed_state: false
     group.bedside_lights:
         icon: mdi:hotel
@@ -93,56 +93,15 @@ http:
 
 stream:
 
-konnected:
-  access_token: !secret konnected_key
-  devices:
-    - id: bcddc2fdd1b2
-    - id: dc4f22199839
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Ensuite window'
-        - zone: 2
-          type: window
-          name: 'Craft room window'
-        - zone: 3
-          type: window
-          name: 'Master bedroom window'
-        - zone: 4
-          type: window
-          name: 'Guest bedroom window'
-        - zone: 5
-          type: window
-          name: 'Study window'
-    - id: dc4f22195dec
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Kitchen window'
-        - zone: 2
-          type: door
-          name: 'Back door'
-        - zone: 3
-          type: door
-          name: 'Patio door'
-        - zone: 4
-          type: window
-          name: 'Bathroom window'
-        - zone: 5
-          type: window
-          name: 'Dining table window'
-
 alarm_control_panel:
     - platform: manual
+      name: Home Alarm
+      code_arm_required: false
+      code: !secret alarm_code
 
 deconz:
   host: 172.24.32.13
   port: 8100
-
-google:
-  client_id: !secret google_oauth_client_id
-  client_secret: !secret google_oauth_client_secret
-  track_new_calendar: false
 
 influxdb:
   host: 172.24.32.13
@@ -156,10 +115,6 @@ influxdb:
 # Discover some devices automatically
 discovery:
 
-spotify:
-  client_id: !secret spotify_client_id
-  client_secret: !secret spotify_client_secret
-
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
@@ -167,9 +122,6 @@ rfxtrx:
     ### Lights ###
     # 0a140029f0dd3c0e010060:
     #   name: Living Room
-    # 0a140017f090a201010070:
-    #   # Dimmable CFL Remote Left
-    #   name: Utility Room
     0a140001f0dd3c01010070:
       # White Remote A1
       # name: Christmas Star
@@ -201,9 +153,7 @@ rfxtrx:
     0b11000000b82b560a000060:
       # name: Outside Front Motion
       device_class: motion
-    # 0a1400002c22a70a010060:
-    #   name: Utility Room Door
-    #   device_class: opening
+
     ### Sensors ###
     ## RFXcom ##
     # Old 115a0100e452000000046600006462cb3e79:
@@ -244,12 +194,12 @@ emulated_hue:
   # https://www.home-assistant.io/components/emulated_hue/
   listen_port: 80
   expose_by_default: false
-  exposed_domains:
-    - switch
-    - light
-    - group
-    - input_boolean
-    - media_player
+  #exposed_domains:
+    #- switch
+    #- light
+    #- group
+    #- input_boolean
+    #- media_player
   entities:
     group.lightswitch_relays:
       hidden: false
@@ -285,10 +235,6 @@ emulated_hue:
       hidden: false
     light.uplighter:
       hidden: false
-    light.sofa_overhead:
-      hidden: false
-    light.dining_table_overhead:
-      hidden: false
     light.star_burst:
       hidden: false
     light.lava_lamp:
@@ -313,6 +259,7 @@ emulated_hue:
 ############
 # automation: !include automation.yaml
 # script: !include scripts.yaml
+mqtt: !include mqtt.yaml
 sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
@@ -334,25 +281,6 @@ scene: !include_dir_list scenes
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
-
-mqtt:
-  broker: 172.24.32.13
-  port: 1883
-  client_id: home-assistant-1
-  discovery: true
-  discovery_prefix: "homeassistant"
-  keepalive: 60
-  protocol: 3.1
-  birth_message:
-    topic: 'hass/status'
-    payload: 'online'
-    qos: 1
-    retain: true
-  will_message:
-    topic: 'hass/status'
-    payload: 'offline'
-    qos: 1
-    retain: true
 
 utility_meter:
   quarter_hourly_energy:

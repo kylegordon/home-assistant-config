@@ -8,9 +8,10 @@ https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers
 """
 from datetime import timedelta
 
-__version__ = "3.10.15"
+__version__ = "4.1.2"
 PROJECT_URL = "https://github.com/custom-components/alexa_media_player/"
 ISSUE_URL = f"{PROJECT_URL}issues"
+NOTIFY_URL = f"{PROJECT_URL}wiki/Configuration%3A-Notification-Component#use-the-notifyalexa_media-service"
 
 DOMAIN = "alexa_media"
 DATA_ALEXAMEDIA = "alexa_media"
@@ -33,7 +34,6 @@ DEPENDENT_ALEXA_COMPONENTS = [
 
 HTTP_COOKIE_HEADER = "# HTTP Cookie File"
 CONF_ACCOUNTS = "accounts"
-CONF_COOKIES_TXT = "cookies_txt"
 CONF_DEBUG = "debug"
 CONF_HASS_URL = "hass_url"
 CONF_INCLUDE_DEVICES = "include_devices"
@@ -43,9 +43,9 @@ CONF_EXTENDED_ENTITY_DISCOVERY = "extended_entity_discovery"
 CONF_SECURITYCODE = "securitycode"
 CONF_OTPSECRET = "otp_secret"
 CONF_PROXY = "proxy"
+CONF_PROXY_WARNING = "proxy_warning"
 CONF_TOTP_REGISTER = "registered"
 CONF_OAUTH = "oauth"
-CONF_OAUTH_LOGIN = "oauth_login"
 DATA_LISTENER = "listener"
 
 EXCEPTION_TEMPLATE = "An exception of type {0} occurred. Arguments:\n{1!r}"
@@ -59,6 +59,7 @@ SERVICE_FORCE_LOGOUT = "force_logout"
 RECURRING_PATTERN = {
     None: "Never Repeat",
     "P1D": "Every day",
+    "P1M": "Every month",
     "XXXX-WE": "Weekends",
     "XXXX-WD": "Weekdays",
     "XXXX-WXX-1": "Every Monday",
@@ -70,6 +71,15 @@ RECURRING_PATTERN = {
     "XXXX-WXX-7": "Every Sunday",
 }
 
+RECURRING_DAY = {
+    "MO": 1,
+    "TU": 2,
+    "WE": 3,
+    "TH": 4,
+    "FR": 5,
+    "SA": 6,
+    "SU": 7,
+}
 RECURRING_PATTERN_ISO_SET = {
     None: {},
     "P1D": {1, 2, 3, 4, 5, 6, 7},

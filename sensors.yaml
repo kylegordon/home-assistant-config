@@ -1,4 +1,5 @@
-#!include travel_times.yaml
+---
+# !include travel_times.yaml
 
 # Improve with https://github.com/bah2830/Home-Assistant-Configs/blob/master/includes/automation/notifications.yaml
 
@@ -46,7 +47,8 @@
   sensors:
     next_bin:
       # value_template: "{{ states.calendar.next_bin.attributes.message }}"
-      value_template: "{{ states.calendar.next_bin.attributes.message|replace(' bin','') }}"
+      # value_template: "{{ states.calendar.family_calendar.attributes.message|replace(' bin','') }}"
+      value_template: "{{ states.calendar.garbage_collection.attributes.message|replace('bin','') }}"
       friendly_name: Next Bin
       # friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
       # entity_id: calendar.next_bin
@@ -75,46 +77,6 @@
   unit_prefix: k
   round: 2
 
-## MQTT ##
-
-# Weather #
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station temperature"
-  unit_of_measurement: "°C"
-  value_template: "{{ value_json.temperature }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station relative humidity"
-  unit_of_measurement: "%"
-  value_template: "{{ value_json.relhumidity }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station wind velocity"
-  unit_of_measurement: "m/s"
-  value_template: "{{ value_json.windvelocity }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station wind maximum"
-  unit_of_measurement: "m/s"
-  value_template: "{{ value_json.windmaximum }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station wind direction"
-  unit_of_measurement: ""
-  value_template: "{{ value_json.winddirection }}"
-- platform: mqtt
-  state_topic: "weatherstation"
-  name: "Weather station rainfall"
-  unit_of_measurement: "mm"
-  value_template: "{{ value_json.rain }}"
-
-- platform: mqtt
-  state_topic: "owntracks/bagpuss/a0001"
-  name: "Kyle Oneplus One Battery"
-  unit_of_measurement: "%"
-  value_template: "{{ value_json.batt }}"
-
 - platform: min_max
   name: Average External Light Level
   type: median
@@ -141,7 +103,7 @@
   name: House Average Humidity
   type: median
   entity_ids:
-    - sensor.utility_room_sensor_humidity
+    - sensor.front_hall_sensor_humidity
     - sensor.craft_room_humidity
     - sensor.guest_room_humidity
     - sensor.living_room_humidity
@@ -203,10 +165,10 @@
       friendly_name: Bathroom
       temperature_sensor: sensor.bathroom_temperature
       humidity_sensor: sensor.bathroom_humidity
-    utility_room:
-      friendly_name: Utility Room
-      temperature_sensor: sensor.utility_room_sensor_temperature
-      humidity_sensor: sensor.utility_room_sensor_humidity
+    front_hall:
+      friendly_name: Front Hall
+      temperature_sensor: sensor.front_hall_sensor_temperature
+      humidity_sensor: sensor.front_hall_sensor_humidity
     craft_room:
       friendly_name: Craft Room
       temperature_sensor: sensor.craft_room_temperature
