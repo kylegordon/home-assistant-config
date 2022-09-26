@@ -16,6 +16,12 @@ automation:
         entity_id: binary_sensor.home_occupied
         state: "on"
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning front hall lights on"
+          entity_id: light.front_hall
+          domain: light
       - service: homeassistant.turn_on
         data_template:
           entity_id:
@@ -29,5 +35,11 @@ automation:
         for:
           seconds: 60
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning front hall lights off"
+          entity_id: light.front_hall
+          domain: light
       - service: light.turn_off
         entity_id: light.front_hall
