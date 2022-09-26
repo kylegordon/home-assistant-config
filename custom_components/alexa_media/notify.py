@@ -18,6 +18,9 @@ from homeassistant.components.notify import (
     SERVICE_NOTIFY,
     BaseNotificationService,
 )
+import voluptuous as vol
+
+from custom_components.alexa_media.const import NOTIFY_URL
 
 from . import (
     CONF_EMAIL,
@@ -146,22 +149,46 @@ class AlexaNotificationService(BaseNotificationService):
         for email, account_dict in self.hass.data[DATA_ALEXAMEDIA]["accounts"].items():
             if "entities" not in account_dict:
                 return devices
+            last_called_entity = None
             for _, entity in account_dict["entities"]["media_player"].items():
                 entity_name = (entity.entity_id).split(".")[1]
                 devices[entity_name] = entity.unique_id
                 if self.last_called and entity.extra_state_attributes.get(
                     "last_called"
                 ):
-                    entity_name_last_called = (
-                        f"last_called{'_'+ email if entity_name[-1:].isdigit() else ''}"
-                    )
-                    _LOGGER.debug(
-                        "%s: Creating last_called target %s using %s",
-                        hide_email(email),
-                        entity_name_last_called,
-                        entity,
-                    )
-                    devices[entity_name_last_called] = entity.unique_id
+                    if last_called_entity is None:
+                        _LOGGER.debug(
+                            "%s: Found last_called %s called at %s",
+                            hide_email(email),
+                            entity,
+                            entity.extra_state_attributes.get("last_called_timestamp"),
+                        )
+                        last_called_entity = entity
+                    elif last_called_entity.extra_state_attributes.get(
+                        "last_called_timestamp"
+                    ) < entity.extra_state_attributes.get("last_called_timestamp"):
+                        _LOGGER.debug(
+                            "%s: Found newer last_called %s called at %s",
+                            hide_email(email),
+                            entity,
+                            entity.extra_state_attributes.get("last_called_timestamp"),
+                        )
+                        last_called_entity = entity
+            if last_called_entity is not None:
+                entity_name = (last_called_entity.entity_id).split(".")[1]
+                entity_name_last_called = (
+                    f"last_called{'_'+ email if entity_name[-1:].isdigit() else ''}"
+                )
+                _LOGGER.debug(
+                    "%s: Creating last_called target %s using %s called at %s",
+                    hide_email(email),
+                    entity_name_last_called,
+                    last_called_entity,
+                    last_called_entity.extra_state_attributes.get(
+                        "last_called_timestamp"
+                    ),
+                )
+                devices[entity_name_last_called] = last_called_entity.unique_id
         return devices
 
     @property
@@ -213,7 +240,11 @@ class AlexaNotificationService(BaseNotificationService):
             "accounts"
         ].items():
             for alexa in account_dict["entities"]["media_player"].values():
-                if data["type"] == "tts":
+                if data is None:
+                    errormessage = f"{account}: Missing `data` field. See {NOTIFY_URL}"
+                    _LOGGER.debug(errormessage)
+                    raise vol.Invalid(errormessage)
+                elif data.get("type", "") == "tts":
                     targets = self.convert(
                         entities, type_="entities", filter_matches=True
                     )
@@ -228,7 +259,7 @@ class AlexaNotificationService(BaseNotificationService):
                                 ]["options"].get(CONF_QUEUE_DELAY, DEFAULT_QUEUE_DELAY),
                             )
                         )
-                elif data["type"] == "announce":
+                elif data.get("type", "") == "announce":
                     targets = self.convert(
                         entities, type_="serialnumbers", filter_matches=True
                     )
@@ -257,7 +288,7 @@ class AlexaNotificationService(BaseNotificationService):
                             )
                         )
                         break
-                elif data["type"] == "push":
+                elif data.get("type", "") == "push":
                     targets = self.convert(
                         entities, type_="entities", filter_matches=True
                     )
@@ -272,7 +303,7 @@ class AlexaNotificationService(BaseNotificationService):
                                 ]["options"].get(CONF_QUEUE_DELAY, DEFAULT_QUEUE_DELAY),
                             )
                         )
-                elif data["type"] == "dropin_notification":
+                elif data.get("type", "") == "dropin_notification":
                     targets = self.convert(
                         entities, type_="entities", filter_matches=True
                     )
@@ -289,4 +320,8 @@ class AlexaNotificationService(BaseNotificationService):
                                 ]["options"].get(CONF_QUEUE_DELAY, DEFAULT_QUEUE_DELAY),
                             )
                         )
+                else:
+                    errormessage = f"{account}: Missing `type` key in `data` field. See {NOTIFY_URL}"
+                    _LOGGER.debug(errormessage)
+                    raise vol.Invalid(errormessage)
         await asyncio.gather(*tasks)
