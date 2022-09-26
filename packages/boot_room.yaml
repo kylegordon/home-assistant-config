@@ -1,9 +1,12 @@
 automation:
   - alias: Boot Room light toggle
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
-      - platform: state
-        entity_id: binary_sensor.boot_room_switch_touch_pad
-        to: 'on'
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: bootroom_switch
+          click_type: single
     action:
       - service: switch.turn_on
         entity_id:
@@ -39,30 +42,6 @@ automation:
       - service: light.turn_on
         data_template:
           entity_id: light.boot_room
-          brightness_pct: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            100
-            {% elif states('sensor.time_of_day') == "Day" %}
-            100
-            {% elif states('sensor.time_of_day') == "Night" %}
-            30
-            {% endif %}
-          transition: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            10
-            {% elif states('sensor.time_of_day') == "Day" %}
-            2
-            {% elif states('sensor.time_of_day') == "Night" %}
-            5
-            {% endif %}
-          color_temp: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            200
-            {% elif states('sensor.time_of_day') == "Day" %}
-            300
-            {% elif states('sensor.time_of_day') == "Night" %}
-            375
-            {% endif %}
 
   - alias: Boot Room motion - sunlight timeout
     trigger:
@@ -96,7 +75,7 @@ automation:
           entity_id: light.boot_room
           brightness_pct: 30
           transition: 10
-          rgb_color: [255,0,0]
+          rgb_color: [255, 0, 0]
 
   - alias: Boot room motion - 10 minute timeout
     trigger:

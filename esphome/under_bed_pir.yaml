@@ -1,38 +1,6 @@
-packages:
-  common: !include common/common.yaml
-
 substitutions:
   device_name: under_bed_pir
   device_description: Under Bed PIR
   friendly_name: Under Bed PIR
 
-esphome:
-  name: ${device_name}
-  comment: ${device_description}
-  platform: ESP8266
-  board: d1_mini
-
-# Enable logging
-logger:
-
-web_server:
-
-binary_sensor:
-  - platform: gpio
-    name: "Motion Sensor"
-    pin:
-      number: D1
-    device_class: motion
-
-output:
-  # Register the blue LED as a dimmable output ....
-  - platform: esp8266_pwm
-    id: blue_led
-    pin: D4
-    inverted: True
-
-light:
-  # ... and then make a light out of it.
-  - platform: monochromatic
-    name: "Wemos Blue LED"
-    output: blue_led
+<<: !include common/wemos_pir_common.yaml
