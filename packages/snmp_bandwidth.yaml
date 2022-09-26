@@ -49,10 +49,12 @@ sensor:
 
   - platform: statistics
     name: 'WAN Traffic In'
+    state_characteristic: mean
     entity_id: sensor.internet_speed_in
 
   - platform: statistics
     name: 'WAN Traffic Out'
+    state_characteristic: mean
     entity_id: sensor.internet_speed_out
 
 input_number:
@@ -79,7 +81,7 @@ automation:
         data_template:
           entity_id: input_number.internet_traffic_delta_in
           value: '{{ ((trigger.to_state.state | int - trigger.from_state.state | int) * 8 ) / ( as_timestamp(trigger.to_state.last_updated) - as_timestamp(trigger.from_state.last_updated) ) }}'
-  
+
   - id: snmp_monitor_traffic_out
     alias: Monitor Traffic Out
     trigger:

@@ -1,5 +1,4 @@
-## Rooms ##
-
+---
 default_view:
   name: Home
   entities:
@@ -34,16 +33,16 @@ kitchen:
     - light.kitchen
     - media_player.kitchen
 
-utility_room:
-  name: Utility Room
+front_hall:
+  name: Front Hall
   entities:
-    - light.utility_room
-    - sensor.utility_room_sensor_temperature
-    - sensor.utility_room_sensor_humidity
-    - sensor.utility_room_sensor_signal_level
-    - sensor.utility_room_lightlevel
-    - binary_sensor.utility_room_motion
-    - binary_sensor.utility_room_door
+    - light.front_hall
+    - sensor.front_hall_sensor_temperature
+    - sensor.front_hall_sensor_humidity
+    - sensor.front_hall_sensor_signal_level
+    - sensor.front_hall_lightlevel
+    - binary_sensor.front_hall_motion
+    - binary_sensor.front_hall_door
 
 living_room:
   name: Living Room
@@ -164,6 +163,11 @@ hall:
     - light.hall_bathroom
     - light.hall_bedrooms
 
+bathroom:
+  name: Bathroom
+  entities:
+    - light.master_bathroom
+
 hall_view:
   name: Hall
   entities:
@@ -184,7 +188,7 @@ outside:
     - sun.sun
     - binary_sensor.outside_front_motion
     - binary_sensor.outside_driveway_motion
-    - binary_sensor.outside_utility_room_motion
+    - binary_sensor.front_door_motion
     - group.climate
     - group.outside_lights
     - sensor.driveway_floodlights_signal_level

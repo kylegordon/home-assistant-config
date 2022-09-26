@@ -30,4 +30,3 @@ action:
         {% elif trigger.entity_id == 'input_select.charlotte_status_dropdown' %}
           Charlotte has been away for an extended time.
         {% endif %}
-
