@@ -60,7 +60,6 @@ living_room:
 living_room_lights:
   name: Living Room Lights
   entities:
-    - light.uplighter
     - light.sofa_overhead
     - light.edison_lamp
     - light.lava_lamp
@@ -207,6 +206,7 @@ outside_lights:
     - light.back_floodlights
     - light.mini_deck_floodlight
     - light.decking_lights
+    - light.front_door_dome
 
 climate:
   name: Climate
