@@ -1,21 +1,35 @@
 ---
-alias: "Outside nightlights on"
-trigger:
-  - platform: numeric_state
-    entity_id: sensor.average_external_light_level
-    below: input_number.blinds_evening
-    for:
-      minutes: 10
-condition:
-  - condition: state
-    entity_id: binary_sensor.home_occupied
-    state: "on"
-action:
-  - service: light.turn_on
-    entity_id:
-      - light.car_port
-      - light.front_door_dome
-    data:
-      brightness_pct: 100
-      color_temp: 400
-      transition: 30
+automation:
+  - alias: "Outside night lights on"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        below: input_number.blinds_evening
+        for:
+          minutes: 10
+    condition:
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id:
+          - light.car_port
+          - light.front_door_dome
+        data:
+          brightness_pct: 100
+          color_temp: 400
+          transition: 30
+
+  - alias: Outside night lights off
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        above: input_number.blinds_morning
+        for:
+          minutes: 10
+    action:
+      - service: light.turn_off
+        entity_id:
+          - light.car_port
+          - light.front_door_dome
