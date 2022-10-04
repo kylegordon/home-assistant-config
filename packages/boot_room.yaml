@@ -98,6 +98,28 @@ automation:
           transition: 10
           rgb_color: [255, 0, 0]
 
+  - alias: Boot room motion - 2 minute timeout
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.boot_room_motion
+        to: 'off'
+        for:
+          minutes: 2
+    condition:
+      - condition: state
+        entity_id: sensor.time_of_day
+        state: "Night"
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning boot room lights off"
+          entity_id: light.boot_room
+          domain: light
+      - service: light.turn_off
+        entity_id: light.boot_room
+
+
   - alias: Boot room motion - 10 minute timeout
     trigger:
       - platform: state
