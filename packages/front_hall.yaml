@@ -27,13 +27,34 @@ automation:
           entity_id:
             - light.front_hall
 
-  - alias: Front hall light off
+  - alias: Front hall - 2 minute timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.front_hall_motion
         to: 'off'
         for:
-          seconds: 60
+          minutes: 2
+    condition:
+      - condition: state
+        entity_id: sensor.time_of_day
+        state: "Night"
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning front hall lights off"
+          entity_id: light.front_hall
+          domain: light
+      - service: light.turn_off
+        entity_id: light.front_hall
+
+  - alias: Front hall - 10 minute timeout
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.front_hall_motion
+        to: 'off'
+        for:
+          minutes: 10
     action:
       - service: logbook.log
         data_template:
