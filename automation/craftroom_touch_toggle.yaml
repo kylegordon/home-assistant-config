@@ -1,9 +1,11 @@
+---
 alias: Craft Room light toggle
 trigger:
-  - platform: state
-    entity_id: binary_sensor.craft_room_switch_touch_pad
-    to: 'on'
-
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: craftroom_switch
+          click_type: single
 action:
   - service: switch.turn_on
     entity_id: switch.craft_room_switch_relay
