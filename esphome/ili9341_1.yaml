@@ -88,20 +88,17 @@ image:
 
 touchscreen:
   platform: xpt2046
-  id: touchscreen
+  id: toucharea
   cs_pin: GPIO12
-  irq_pin: GPIO16
-  dimension_x: 240
-  dimension_y: 320
-  on_state:
+  interrupt_pin: GPIO16
+  on_touch:
     - lambda: |-
-        if (touched)
-          ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
-              id(touchscreen).x,
-              id(touchscreen).y,
-              id(touchscreen).x_raw,
-              id(touchscreen).y_raw
-              );
+        ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
+            id(toucharea).x,
+            id(toucharea).y,
+            id(toucharea).x_raw,
+            id(toucharea).y_raw
+            );
 
 display:
   - id: my_display
