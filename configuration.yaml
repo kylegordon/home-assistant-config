@@ -234,7 +234,9 @@ emulated_hue:
       hidden: false
     light.sideboard:
       hidden: false
-    light.uplighter:
+    light.sofa_overhead:
+      hidden: false
+    light.dining_table_overhead:
       hidden: false
     light.star_burst:
       hidden: false
@@ -253,6 +255,10 @@ emulated_hue:
     input_boolean.goodnight_process:
       hidden: false
     input_boolean.night_view:
+      hidden: false
+    script.alexa_turn_on_the_lights:
+      hidden: false
+    script.alexa_turn_off_the_lights:
       hidden: false
 
 ############
