@@ -86,7 +86,8 @@ image:
     file: "delete-empty.png"
     type: RGB24
 
-xpt2046:
+touchscreen:
+  platform: xpt2046
   id: touchscreen
   cs_pin: GPIO12
   irq_pin: GPIO16
