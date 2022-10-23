@@ -1,3 +1,4 @@
+---
 # Inspired by https://github.com/bruhautomation/BRUH2-Home-Assistant-Configuration
 
 homeassistant:
@@ -194,12 +195,12 @@ emulated_hue:
   # https://www.home-assistant.io/components/emulated_hue/
   listen_port: 80
   expose_by_default: false
-  #exposed_domains:
-    #- switch
-    #- light
-    #- group
-    #- input_boolean
-    #- media_player
+  #  exposed_domains:
+  #  - switch
+  #  - light
+  #  - group
+  #  - input_boolean
+  #  - media_player
   entities:
     group.lightswitch_relays:
       hidden: false
@@ -277,7 +278,6 @@ camera: !include cameras.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
-# image_processing: !include openalpr.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
