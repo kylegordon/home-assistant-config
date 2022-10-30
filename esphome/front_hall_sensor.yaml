@@ -1,0 +1,6 @@
+substitutions:
+  device_name: front_hall_sensor
+  device_description: Front Hall Sensor
+  friendly_name: Front Hall Sensor
+
+<<: !include common/esp8266_dht_sensor_common.yaml
