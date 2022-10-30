@@ -24,7 +24,7 @@ automation:
       - service: logbook.log
         data_template:
           name: EVENT
-          message: "Toggling hallway light"
+          message: "Toggling hallway lights"
 
   - alias: Hallway light motion
     initial_state: true
@@ -42,6 +42,11 @@ automation:
         entity_id: binary_sensor.home_occupied
         state: "on"
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning hall lights on"
+          entity_id: group.hall
       - service: light.turn_on
         data_template:
           entity_id: group.hall
@@ -60,6 +65,11 @@ automation:
         entity_id: sensor.time_of_day
         state: "Night"
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning hall lights off"
+          entity_id: group.hall
       - service: light.turn_off
         entity_id: group.hall
 
@@ -73,5 +83,10 @@ automation:
         for:
           minutes: 10
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning hall lights off"
+          entity_id: group.hall
       - service: light.turn_off
         entity_id: group.hall

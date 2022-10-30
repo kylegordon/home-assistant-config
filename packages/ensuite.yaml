@@ -61,6 +61,11 @@ automation:
         entity_id: sensor.average_external_light_level
         below: 1000
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Shower is on"
+          entity_id: sensor.shower_pump_power_plug_power
       - service: light.turn_on
         data_template:
           entity_id: >
@@ -78,10 +83,10 @@ automation:
           color_temp: >
             200
       # https://developers.home-assistant.io/docs/core/entity/climate/
-      - service: climate.set_preset_mode
-        data_template:
-          entity_id: climate.hot_water
-          preset_mode: 'boost'
+      # - service: climate.set_preset_mode
+      #   data_template:
+      #     entity_id: climate.hot_water
+      #     preset_mode: 'boost'
       - service: notify.alexa_media
         data:
           target:
@@ -100,11 +105,16 @@ automation:
         for:
           minutes: 10
     action:
-      # https://developers.home-assistant.io/docs/core/entity/climate/
-      - service: climate.set_preset_mode
+      - service: logbook.log
         data_template:
-          entity_id: climate.hot_water
-          preset_mode: 'eco'
+          name: EVENT
+          message: "Shower is off"
+          entity_id: sensor.shower_pump_power_plug_power
+      # https://developers.home-assistant.io/docs/core/entity/climate/
+      # - service: climate.set_preset_mode
+      #   data_template:
+      #     entity_id: climate.hot_water
+      #     preset_mode: 'eco'
 
   - alias: Ensuite motion - night timeout
     trigger:
