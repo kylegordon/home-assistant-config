@@ -51,11 +51,13 @@ sensor:
     name: 'WAN Traffic In'
     state_characteristic: mean
     entity_id: sensor.internet_speed_in
+    sampling_size: 50
 
   - platform: statistics
     name: 'WAN Traffic Out'
     state_characteristic: mean
     entity_id: sensor.internet_speed_out
+    sampling_size: 50
 
 input_number:
   internet_traffic_delta_in:
