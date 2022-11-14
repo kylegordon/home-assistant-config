@@ -3,49 +3,24 @@
     "abort": {
       "forgot_password": "A página 'Esqueci a senha' foi detectada. Normalmente, isso é o resultado de logins que falharam. A Amazon pode exigir uma ação antes que um relogin possa ser tentado.",
       "login_failed": "Alexa Media Player não conseguiu fazer o login.",
-      "reauth_successful": "Alexa Media Player reautenticada com sucesso."
+      "reauth_successful": "Alexa Media Player reautenticado com sucesso. Por favor, ignore a mensagem \"Aborted\" do HA."
     },
     "error": {
       "2fa_key_invalid": "Chave 2FA integrada inválida",
       "connection_error": "Erro ao conectar; verifique a rede e tente novamente",
-      "hass_url_invalid": "Não foi possível conectar ao URL do Home Assistant. Verifique o URL externo em Configuração - > Geral",
       "identifier_exists": "E-mail para URL Alexa já registado",
       "invalid_credentials": "Credenciais inválidas",
-      "unknown_error": "Erro desconhecido, por favor habilite depuração avançada e informações de log de relatório"
+      "invalid_url": "O URL é inválido: {message}",
+      "unable_to_connect_hass_url": "Não foi possível conectar ao URL do Home Assistant. Verifique o URL interno em Configuração - > Geral",
+      "unknown_error": "Erro desconhecido: {message}"
     },
     "step": {
-      "action_required": {
+      "proxy_warning": {
         "data": {
-          "proxy": "Usar método de proxy de login (2FA não é necessário)"
+          "proxy_warning": "Ignore e Continue - Entendo que não há suporte para problemas de login para ignorar este aviso."
         },
-        "description": "**{email} - alexa.{url}**  \nA Amazon enviará uma notificação push de acordo com a mensagem abaixo. Por favor, responda completamente antes de continuar.  \n{message}",
-        "title": "Alexa Media Player - Ação Necessária"
-      },
-      "authselect": {
-        "data": {
-          "authselectoption": "Método OTP (senha de uso único)",
-          "proxy": "Usar método de proxy de login (2FA não é necessário)"
-        },
-        "description": "**{email} - alexa.{url}**  \n{message}",
-        "title": "Alexa Media Player - Senha de uso único"
-      },
-      "captcha": {
-        "data": {
-          "captcha": "Captcha",
-          "password": "Senha",
-          "proxy": "Usar método de proxy de login (2FA não é necessário)",
-          "securitycode": "Código 2FA (recomendado para evitar problemas de login)"
-        },
-        "description": "**{email} - alexa.{url}**  \n{message}  \n {captcha_image}",
-        "title": "Alexa Media Player - Captcha"
-      },
-      "claimspicker": {
-        "data": {
-          "authselectoption": "Método de verificação",
-          "proxy": "Usar método de proxy de login (2FA não é necessário)"
-        },
-        "description": "**{email} - alexa.{url}**  \nPor favor, selecione o método de verificação por número. (ex. '0' ou '1')  \n{message}",
-        "title": "Alexa Media Player - Método de verificação"
+        "description": "O servidor de alta disponibilidade não pode se conectar ao URL fornecido: {hass_url} .\n > {error} \n\n Para corrigir isso, confirme se seu **servidor HA** pode alcançar {hass_url} . Este campo é do URL externo em Configuração - > Geral, mas você pode tentar seu URL interno. \n\n Se você tiver **certeza** de que seu cliente pode acessar esse URL, ignore este aviso.",
+        "title": "Alexa Media Player - Não é possível conectar ao URL de alta disponibilidade"
       },
       "totp_register": {
         "data": {
@@ -54,50 +29,21 @@
         "description": "** {email} - alexa. {url} **\n Você confirmou com sucesso uma senha de uso único na aplicação 2FA integrada com a Amazon?\n > Código OTP {message}",
         "title": "Alexa Media Player - Confirmação OTP"
       },
-      "twofactor": {
-        "data": {
-          "proxy": "Usar método de proxy de login (2FA não é necessário)",
-          "securitycode": "Código 2FA"
-        },
-        "description": "**{email} - alexa.{url}**  \nDigite a senha de uso único (OTP).  \n{message}",
-        "title": "Alexa Media Player - autenticação de dois fatores"
-      },
       "user": {
         "data": {
-          "cookies_txt": "Dados de cookies.txt",
           "debug": "Depuração avançada",
           "email": "Endereço de e-mail",
           "exclude_devices": "Dispositivo excluído (separado por vírgula)",
           "hass_url": "URL para aceder o Home Assistant",
           "include_devices": "Dispositivo incluído (separado por vírgula)",
-          "oauth_login": "Habilitar método de aplicativo oauth-token",
           "otp_secret": "Chave de aplicativo 2FA integrada (gerar códigos 2FA automaticamente)",
           "password": "Senha",
-          "proxy": "Usar método de proxy de login (2FA não é necessário)",
           "scan_interval": "Segundos entre análises",
           "securitycode": "Código 2FA (recomendado para evitar problemas de login)",
           "url": "Região do domínio Amazon (ex. amazon.com.br)"
         },
-        "description": "Por favor, confirme as informações abaixo. Para configuração de compatibilidade, desative a opção 'Usar método de proxy de login'.",
+        "description": "Por favor, confirme as informações abaixo. Para configuração legada, desative a opção `Usar método de proxy de login`.",
         "title": "Alexa Media Player - Configuração"
-      },
-      "user_legacy": {
-        "data": {
-          "cookies_txt": "Dados de cookies.txt",
-          "debug": "Depuração avançada",
-          "email": "Endereço de e-mail",
-          "exclude_devices": "Dispositivo excluído (separado por vírgula)",
-          "include_devices": "Dispositivo incluído (separado por vírgula)",
-          "oauth_login": "Habilitar método de aplicativo oauth-token",
-          "otp_secret": "Chave de aplicativo 2FA integrada (gerar códigos 2FA automaticamente)",
-          "password": "Senha",
-          "proxy": "Usar método de proxy de login (2FA não é necessário)",
-          "scan_interval": "Segundos entre análises",
-          "securitycode": "Código 2FA (recomendado para evitar problemas de login)",
-          "url": "Região do domínio Amazon (ex. amazon.com.br)"
-        },
-        "description": "Por favor, introduza a sua [informação](https://github.com/custom-components/alexa_media_player/wiki/Configuration#integrations-page). **[Cookie import](https://github.com/custom-components/alexa_media_player/wiki/Configuration#cookie-import) pode ser mais fácil!**   \n**Aviso: a Amazon informa incorretamente 'Insira um e-mail ou número de celular válido' quando [2FA Code é necessário](https://github.com/custom-components/alexa_media_player/wiki/Configuration#enable-two-factor-authentication-for-your-amazon-account).**  \n>{message}",
-        "title": "Alexa Media Player - Configuração de Compatibilidade"
       }
     }
   },
