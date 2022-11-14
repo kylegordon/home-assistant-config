@@ -1,3 +1,4 @@
+---
 name: ESPHome
 
 # yamllint disable-line rule:truthy
@@ -5,6 +6,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  schedule:
+    - cron: 0 12 * * *
 
 jobs:
   files:  # Job that lists files
