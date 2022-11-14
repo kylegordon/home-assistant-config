@@ -1,3 +1,4 @@
+---
 binary_sensor:
   - platform: template
     sensors:
@@ -22,11 +23,13 @@ light:
 
 automation:
   - alias: Bathroom light toggle
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
-      - platform: state
-        entity_id:
-          - binary_sensor.hall_dual_switch_touchpad_2
-        to: 'on'
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: hall_dual_switch_touchpad_1
+          click_type: single
     action:
       - service: switch.turn_on
         entity_id:

@@ -6,7 +6,7 @@ trigger:
     for:
       seconds: 300
   - platform: state
-    entity_id: binary_sensor.outside_utility_room_motion
+    entity_id: binary_sensor.front_door_motion
     to: 'off'
     for:
       seconds: 300

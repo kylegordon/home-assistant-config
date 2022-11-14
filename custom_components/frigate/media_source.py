@@ -17,7 +17,6 @@ from homeassistant.components.media_player.const import (
     MEDIA_TYPE_IMAGE,
     MEDIA_TYPE_VIDEO,
 )
-from homeassistant.components.media_source.const import MEDIA_MIME_TYPES
 from homeassistant.components.media_source.error import MediaSourceError, Unresolvable
 from homeassistant.components.media_source.models import (
     BrowseMediaSource,
@@ -25,14 +24,16 @@ from homeassistant.components.media_source.models import (
     MediaSourceItem,
     PlayMedia,
 )
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.template import DATE_STR_FORMAT
 from homeassistant.util.dt import DEFAULT_TIME_ZONE
 
 from . import get_friendly_name
 from .api import FrigateApiClient, FrigateApiClientError
-from .const import ATTR_CLIENT, DOMAIN, NAME
+from .const import CONF_MEDIA_BROWSER_ENABLE, DOMAIN, NAME
 from .views import (
+    get_client_for_frigate_instance_id,
     get_config_entry_for_frigate_instance_id,
     get_default_config_entry,
     get_frigate_instance_id_for_config_entry,
@@ -48,6 +49,40 @@ SECONDS_IN_MONTH = SECONDS_IN_DAY * 31
 async def async_get_media_source(hass: HomeAssistant) -> MediaSource:
     """Set up Frigate media source."""
     return FrigateMediaSource(hass)
+
+
+class FrigateBrowseMediaMetadata:
+    """Metadata for browsable Frigate media files."""
+
+    event: dict[str, Any] | None
+
+    def __init__(self, event: dict[str, Any]):
+        """Initialize a FrigateBrowseMediaMetadata object."""
+        self.event = event
+
+    def as_dict(self) -> dict:
+        """Convert the object to a dictionary."""
+        return {"event": self.event}
+
+
+class FrigateBrowseMediaSource(BrowseMediaSource):  # type: ignore[misc]
+    """Represent a browsable Frigate media file."""
+
+    children: list[FrigateBrowseMediaSource] | None
+    frigate: FrigateBrowseMediaMetadata
+
+    def as_dict(self, *args: Any, **kwargs: Any) -> dict:
+        """Convert the object to a dictionary."""
+        res: dict = super().as_dict(*args, **kwargs)
+        res["frigate"] = self.frigate.as_dict()
+        return res
+
+    def __init__(
+        self, frigate: FrigateBrowseMediaMetadata, *args: Any, **kwargs: Any
+    ) -> None:
+        """Initialize media source browse media."""
+        super().__init__(*args, **kwargs)
+        self.frigate = frigate
 
 
 @attr.s(frozen=True)
@@ -511,18 +546,24 @@ class FrigateMediaSource(MediaSource):  # type: ignore[misc]
         super().__init__(DOMAIN)
         self.hass = hass
 
-    def _get_client(self, identifier: Identifier) -> FrigateApiClient:
-        """Get client for a given identifier."""
-        config_entry = get_config_entry_for_frigate_instance_id(
-            self.hass, identifier.frigate_instance_id
+    def _is_allowed_as_media_source(self, instance_id: str) -> bool:
+        """Whether a given frigate instance is allowed as a media source."""
+        config_entry: ConfigEntry = get_config_entry_for_frigate_instance_id(
+            self.hass, instance_id
+        )
+        return (
+            config_entry.options.get(CONF_MEDIA_BROWSER_ENABLE, True) is True
+            if config_entry
+            else False
         )
 
-        if config_entry:
-            client: FrigateApiClient = (
-                self.hass.data[DOMAIN].get(config_entry.entry_id, {}).get(ATTR_CLIENT)
-            )
-            if client:
-                return client
+    def _get_client(self, identifier: Identifier) -> FrigateApiClient:
+        """Get client for a given identifier."""
+        client = get_client_for_frigate_instance_id(
+            self.hass, identifier.frigate_instance_id
+        )
+        if client:
+            return client
 
         raise MediaSourceError(
             "Could not find client for frigate instance id: %s"
@@ -544,16 +585,19 @@ class FrigateMediaSource(MediaSource):  # type: ignore[misc]
             item.identifier,
             default_frigate_instance_id=self._get_default_frigate_instance_id(),
         )
-        if identifier:
+        if identifier and self._is_allowed_as_media_source(
+            identifier.frigate_instance_id
+        ):
             server_path = identifier.get_integration_proxy_path()
             return PlayMedia(
                 f"/api/frigate/{identifier.frigate_instance_id}/{server_path}",
                 identifier.mime_type,
             )
-        raise Unresolvable("Unknown identifier: %s" % item.identifier)
+        raise Unresolvable("Unknown or disallowed identifier: %s" % item.identifier)
 
     async def async_browse_media(
-        self, item: MediaSourceItem, media_types: tuple[str] = MEDIA_MIME_TYPES
+        self,
+        item: MediaSourceItem,
     ) -> BrowseMediaSource:
         """Browse media."""
 
@@ -574,7 +618,9 @@ class FrigateMediaSource(MediaSource):  # type: ignore[misc]
                 frigate_instance_id = get_frigate_instance_id_for_config_entry(
                     self.hass, config_entry
                 )
-                if frigate_instance_id:
+                if frigate_instance_id and self._is_allowed_as_media_source(
+                    frigate_instance_id
+                ):
                     clips_identifier = EventSearchIdentifier(
                         frigate_instance_id, FrigateMediaType.CLIPS
                     )
@@ -630,6 +676,13 @@ class FrigateMediaSource(MediaSource):  # type: ignore[misc]
             item.identifier,
             default_frigate_instance_id=self._get_default_frigate_instance_id(),
         )
+
+        if identifier is not None and not self._is_allowed_as_media_source(
+            identifier.frigate_instance_id
+        ):
+            raise MediaSourceError(
+                "Forbidden media source identifier: %s" % item.identifier
+            )
 
         if isinstance(identifier, EventSearchIdentifier):
             if identifier.frigate_media_type == FrigateMediaType.CLIPS:
@@ -797,7 +850,7 @@ class FrigateMediaSource(MediaSource):  # type: ignore[misc]
                 duration = int(end_time - start_time)
 
             children.append(
-                BrowseMediaSource(
+                FrigateBrowseMediaSource(
                     domain=DOMAIN,
                     identifier=EventIdentifier(
                         identifier.frigate_instance_id,
@@ -810,7 +863,8 @@ class FrigateMediaSource(MediaSource):  # type: ignore[misc]
                     title=f"{dt.datetime.fromtimestamp(event['start_time'], DEFAULT_TIME_ZONE).strftime(DATE_STR_FORMAT)} [{duration}s, {event['label'].capitalize()} {int(event['top_score']*100)}%]",
                     can_play=identifier.media_type == MEDIA_TYPE_VIDEO,
                     can_expand=False,
-                    thumbnail=f"data:image/jpeg;base64,{event['thumbnail']}",
+                    thumbnail=f"/api/frigate/{identifier.frigate_instance_id}/thumbnail/{event['id']}",
+                    frigate=FrigateBrowseMediaMetadata(event=event),
                 )
             )
         return children

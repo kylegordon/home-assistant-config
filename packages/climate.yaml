@@ -92,8 +92,6 @@ automation:
       - condition: state
         entity_id: group.people
         state: "home"
-      - condition: template
-        value_template: '{{ states("sensor.season") != "summer" }}'
     action:
       - service: climate.set_preset_mode
         data:
@@ -114,9 +112,6 @@ automation:
       - platform: state
         entity_id: group.people
         to: "home"
-    condition:
-      - condition: template
-        value_template: '{{ states("sensor.season") != "summer" }}'
     action:
       - service: climate.set_preset_mode
         data:
