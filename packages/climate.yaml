@@ -4,10 +4,18 @@
 # https://www.home-assistant.io/integrations/generic_thermostat/
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
 
-group:
-  opening:
+binary_sensor:
+  - platform: workday
+    name: Workday
+    country: GB
+  - platform: workday
+    name: Workday tomorrow
+    country: GB
+    days_offset: 1
+  - platform: group
     # Openings that should prevent the heating from coming on
     name: Climate Openings
+    device_class: opening
     entities:
       - binary_sensor.back_door
       - binary_sensor.front_door
@@ -22,6 +30,7 @@ group:
       - binary_sensor.kitchen_window
       - binary_sensor.utility_room_window
 
+group:
   call_for_heat:
     # Add zones here. Essentially a glorified OR condition
     name: Call For Heat - Group
@@ -42,17 +51,7 @@ sensor:
   - platform: season
     type: meteorological
 
-binary_sensor:
-  - platform: workday
-    name: Workday
-    country: GB
-  - platform: workday
-    name: Workday tomorrow
-    country: GB
-    days_offset: 1
-
 automation:
-
   - alias: "Call for heat - demand"
     description: >-
       Turn on boiler relay if there's a call for heat
@@ -65,7 +64,7 @@ automation:
         entity_id: group.call_for_heat
         state: 'on'
       - condition: state
-        entity_id: group.opening
+        entity_id: binary_sensor.climate_openings
         state: 'off'
         for:
           minutes: 5
@@ -78,10 +77,18 @@ automation:
     trigger:
       platform: time_pattern
       seconds: 30
+    #condition: or
     condition:
-      - condition: state
-        entity_id: group.call_for_heat
-        state: 'off'
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: group.call_for_heat
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.climate_openings
+          state: 'on'
+          for:
+            minutes: 5
     action:
       - service: homeassistant.turn_off
         entity_id: switch.boiler_valve_controls_relay_2
