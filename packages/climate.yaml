@@ -77,7 +77,6 @@ automation:
     trigger:
       platform: time_pattern
       seconds: 30
-    #condition: or
     condition:
       condition: or
       conditions:
