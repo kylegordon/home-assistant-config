@@ -5,6 +5,8 @@
   min_temp: 10
   max_temp: 25
   away_temp: 15
+  cold_tolerance: 0.2
+  hot_tolerance: 0.2
 
 - platform: generic_thermostat
   name: Hot Water

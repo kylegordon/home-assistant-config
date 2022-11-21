@@ -1,0 +1,8 @@
+---
+substitutions:
+  device_name: volvo_battery_monitor
+  device_description: Volvo Battery Monitor
+  friendly_name: Volvo Battery Monitor
+  multiplier: "15"
+
+<<: !include common/car_battery_monitor_common.yaml

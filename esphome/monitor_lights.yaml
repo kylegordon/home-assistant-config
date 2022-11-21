@@ -1,0 +1,6 @@
+substitutions:
+  device_name: monitor_lights
+  device_description: Monitor Lights Power Plug
+  friendly_name: Monitor Lights Power Plug
+
+<<: !include common/teckin_sp23_common.yaml

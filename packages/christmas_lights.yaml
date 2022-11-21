@@ -2,6 +2,10 @@ group:
   christmas_lights:
     name: Christmas Lights
     entities:
+      - switch.energenie_1
+      - switch.energenie_2
+      - switch.energenie_3
+      - switch.energenie_4
       - light.christmas_tree
       - light.candle_arch
       - light.star_burst
@@ -27,6 +31,8 @@ automation:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
         below: 500
+        for:
+          minutes: 10
     condition:
       - condition: state
         entity_id: binary_sensor.christmastime
@@ -80,6 +86,8 @@ automation:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
         above: 500
+        for:
+          minutes: 10
     action:
       - service: homeassistant.turn_off
         entity_id: light.outside_decorations

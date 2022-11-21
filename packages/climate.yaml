@@ -4,6 +4,32 @@
 # https://www.home-assistant.io/integrations/generic_thermostat/
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
 
+binary_sensor:
+  - platform: workday
+    name: Workday
+    country: GB
+  - platform: workday
+    name: Workday tomorrow
+    country: GB
+    days_offset: 1
+  - platform: group
+    # Openings that should prevent the heating from coming on
+    name: Climate Openings
+    device_class: opening
+    entities:
+      - binary_sensor.back_door
+      - binary_sensor.front_door
+      - binary_sensor.patio_door
+      - binary_sensor.ensuite_window
+      - binary_sensor.master_bedroom_window
+      - binary_sensor.guest_bedroom_window
+      - binary_sensor.study_window
+      - binary_sensor.craft_room_window
+      - binary_sensor.bathroom_window
+      - binary_sensor.dining_table_window
+      - binary_sensor.kitchen_window
+      - binary_sensor.utility_room_window
+
 group:
   call_for_heat:
     # Add zones here. Essentially a glorified OR condition
@@ -25,22 +51,23 @@ sensor:
   - platform: season
     type: meteorological
 
-binary_sensor:
-  - platform: workday
-    name: Workday
-    country: GB
-  - platform: workday
-    name: Workday tomorrow
-    country: GB
-    days_offset: 1
-
 automation:
   - alias: "Call for heat - demand"
-    description: Turn on boiler relay if there's a call for heat
+    description: >-
+      Turn on boiler relay if there's a call for heat
+      and all the openings are shut
     trigger:
-      - platform: state
+      platform: time_pattern
+      seconds: 30
+    condition:
+      - condition: state
         entity_id: group.call_for_heat
-        to: 'on'
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.climate_openings
+        state: 'off'
+        for:
+          minutes: 5
     action:
       - service: homeassistant.turn_on
         entity_id: switch.boiler_valve_controls_relay_2
@@ -48,9 +75,19 @@ automation:
   - alias: "Call for heat - no demand"
     description: Turn off boiler relay if demand for heat ceases
     trigger:
-      - platform: state
-        entity_id: group.call_for_heat
-        to: 'off'
+      platform: time_pattern
+      seconds: 30
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: group.call_for_heat
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.climate_openings
+          state: 'on'
+          for:
+            minutes: 5
     action:
       - service: homeassistant.turn_off
         entity_id: switch.boiler_valve_controls_relay_2
@@ -85,8 +122,6 @@ automation:
       - condition: state
         entity_id: group.people
         state: "home"
-      - condition: template
-        value_template: '{{ states("sensor.season") != "summer" }}'
     action:
       - service: climate.set_preset_mode
         data:
@@ -107,9 +142,6 @@ automation:
       - platform: state
         entity_id: group.people
         to: "home"
-    condition:
-      - condition: template
-        value_template: '{{ states("sensor.season") != "summer" }}'
     action:
       - service: climate.set_preset_mode
         data:
@@ -145,7 +177,7 @@ automation:
       - service: climate.set_preset_mode
         data:
           entity_id: climate.hot_water
-          preset_mode: "Away"
+          preset_mode: "away"
       - service: logbook.log
         data_template:
           name: EVENT

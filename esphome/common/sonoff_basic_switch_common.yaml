@@ -7,7 +7,7 @@ esphome:
   platform: ESP8266
   board: esp8285
 
-captive_portal:
+# captive_portal:
 
 # Enable logging
 logger:

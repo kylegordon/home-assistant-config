@@ -1,0 +1,81 @@
+---
+sensor:
+
+  # Weather #
+  - name: "Weather station temperature"
+    state_topic: "weatherstation"
+    unit_of_measurement: "°C"
+    value_template: "{{ value_json.temperature }}"
+  - name: "Weather station relative humidity"
+    state_topic: "weatherstation"
+    unit_of_measurement: "%"
+    value_template: "{{ value_json.relhumidity }}"
+  - name: "Weather station wind velocity"
+    state_topic: "weatherstation"
+    unit_of_measurement: "m/s"
+    value_template: "{{ value_json.windvelocity }}"
+  - name: "Weather station wind maximum"
+    state_topic: "weatherstation"
+    unit_of_measurement: "m/s"
+    value_template: "{{ value_json.windmaximum }}"
+  - name: "Weather station wind direction"
+    state_topic: "weatherstation"
+    unit_of_measurement: ""
+    value_template: "{{ value_json.winddirection }}"
+  - name: "Weather station rainfall"
+    state_topic: "weatherstation"
+    unit_of_measurement: "mm"
+    value_template: "{{ value_json.rain }}"
+
+  - name: "Kyle Oneplus One Battery"
+    state_topic: "owntracks/bagpuss/a0001"
+    unit_of_measurement: "%"
+    value_template: "{{ value_json.batt }}"
+
+binary_sensor:
+  - name: Charlotte Bed Sensor
+    device_class: occupancy
+    state_topic: "devices/5ccf7fd8d915/Contact1/state"
+    payload_on: "1"
+    payload_off: "0"
+
+  - name: Kyle Bed Sensor
+    device_class: occupancy
+    state_topic: "devices/5ccf7fd8d915/Contact2/state"
+    payload_on: "1"
+    payload_off: "0"
+
+  - name: "Kyle Driving"
+    state_topic: "driving/mode/kyle"
+    payload_on: "true"
+    payload_off: "false"
+
+  - name: "Charlotte Driving"
+    state_topic: "driving/mode/charlotte"
+    payload_on: "true"
+    payload_off: "false"
+
+switch:
+  - name: Octoprint Relay 1
+    unique_id: octoprint_relay_1
+    command_topic: "octoprint/usb_relay_1/set"
+    payload_on: 'true'
+    payload_off: 'false'
+
+  - name: Octoprint Relay 2
+    unique_id: octoprint_relay_2
+    command_topic: "octoprint/usb_relay_2/set"
+    payload_on: 'true'
+    payload_off: 'false'
+
+camera:
+  - name: Back Door Last Person
+    topic: frigate/back_door/person/snapshot
+  - name: Front Door Last Person
+    topic: frigate/front_door/person/snapshot
+  - name: Driveway Last Person
+    topic: frigate/driveway/person/snapshot
+  - name: Driveway Last Car
+    topic: frigate/driveway/car/snapshot
+  - name: octoPrint camera
+    topic: octoPrint/camera

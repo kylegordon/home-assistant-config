@@ -3,7 +3,7 @@ trigger:
   - platform: state
     entity_id:
       - binary_sensor.outside_driveway_motion
-      - binary_sensor.outside_utility_room_motion
+      - binary_sensor.front_door_motion
     to: 'on'
 condition:
   - condition: state

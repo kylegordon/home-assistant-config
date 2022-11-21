@@ -32,7 +32,7 @@ action:
   entity_id:
     - group.living_room
     - group.outside_lights
-    - group.utility_room
+    - group.front_hall
     - group.kitchen
     - group.hall
     - light.twig_lights

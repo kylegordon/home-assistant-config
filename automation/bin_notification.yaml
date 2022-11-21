@@ -1,7 +1,7 @@
 alias: 'Bin notification'
 trigger:
   - platform: template
-    value_template: '{{ states.sensor.date.state == strptime(states.calendar.next_bin.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")}}'
+    value_template: '{{ states.sensor.date.state == strptime(states.calendar.garbage_collection.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")}}'
   - platform: time
     at: '17:00:00'
 condition:
@@ -19,5 +19,5 @@ condition:
 action:
 - service: persistent_notification.create
   data:
-    message: "Next bin: {{ states.calendar.next_bin.attributes.message }}. "
+    message: "Next bin: {{ states.calendar.garbage_collection.attributes.message }}. "
     title: "Bin Reminder"
