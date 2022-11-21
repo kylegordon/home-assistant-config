@@ -1,3 +1,4 @@
+---
 # Inspired by https://github.com/bruhautomation/BRUH2-Home-Assistant-Configuration
 
 homeassistant:
@@ -62,7 +63,7 @@ homeassistant:
       assumed_state: false
     light.arc_lamp:
       assumed_state: false
-    light.utility_room:
+    light.front_hall:
       assumed_state: false
     group.bedside_lights:
         icon: mdi:hotel
@@ -93,56 +94,15 @@ http:
 
 stream:
 
-konnected:
-  access_token: !secret konnected_key
-  devices:
-    - id: bcddc2fdd1b2
-    - id: dc4f22199839
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Ensuite window'
-        - zone: 2
-          type: window
-          name: 'Craft room window'
-        - zone: 3
-          type: window
-          name: 'Master bedroom window'
-        - zone: 4
-          type: window
-          name: 'Guest bedroom window'
-        - zone: 5
-          type: window
-          name: 'Study window'
-    - id: dc4f22195dec
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Kitchen window'
-        - zone: 2
-          type: door
-          name: 'Back door'
-        - zone: 3
-          type: door
-          name: 'Patio door'
-        - zone: 4
-          type: window
-          name: 'Bathroom window'
-        - zone: 5
-          type: window
-          name: 'Dining table window'
-
 alarm_control_panel:
     - platform: manual
+      name: Home Alarm
+      code_arm_required: false
+      code: !secret alarm_code
 
 deconz:
   host: 172.24.32.13
   port: 8100
-
-google:
-  client_id: !secret google_oauth_client_id
-  client_secret: !secret google_oauth_client_secret
-  track_new_calendar: false
 
 influxdb:
   host: 172.24.32.13
@@ -156,10 +116,6 @@ influxdb:
 # Discover some devices automatically
 discovery:
 
-spotify:
-  client_id: !secret spotify_client_id
-  client_secret: !secret spotify_client_secret
-
 rfxtrx:
   # Remember this is mapped in the docker-compose file
   device: /dev/ttyUSB0
@@ -167,9 +123,6 @@ rfxtrx:
     ### Lights ###
     # 0a140029f0dd3c0e010060:
     #   name: Living Room
-    # 0a140017f090a201010070:
-    #   # Dimmable CFL Remote Left
-    #   name: Utility Room
     0a140001f0dd3c01010070:
       # White Remote A1
       # name: Christmas Star
@@ -201,9 +154,7 @@ rfxtrx:
     0b11000000b82b560a000060:
       # name: Outside Front Motion
       device_class: motion
-    # 0a1400002c22a70a010060:
-    #   name: Utility Room Door
-    #   device_class: opening
+
     ### Sensors ###
     ## RFXcom ##
     # Old 115a0100e452000000046600006462cb3e79:
@@ -244,12 +195,12 @@ emulated_hue:
   # https://www.home-assistant.io/components/emulated_hue/
   listen_port: 80
   expose_by_default: false
-  exposed_domains:
-    - switch
-    - light
-    - group
-    - input_boolean
-    - media_player
+  #  exposed_domains:
+  #  - switch
+  #  - light
+  #  - group
+  #  - input_boolean
+  #  - media_player
   entities:
     group.lightswitch_relays:
       hidden: false
@@ -283,8 +234,6 @@ emulated_hue:
       hidden: false
     light.sideboard:
       hidden: false
-    light.uplighter:
-      hidden: false
     light.sofa_overhead:
       hidden: false
     light.dining_table_overhead:
@@ -307,12 +256,17 @@ emulated_hue:
       hidden: false
     input_boolean.night_view:
       hidden: false
+    script.alexa_turn_on_the_lights:
+      hidden: false
+    script.alexa_turn_off_the_lights:
+      hidden: false
 
 ############
 # Includes #
 ############
 # automation: !include automation.yaml
 # script: !include scripts.yaml
+mqtt: !include mqtt.yaml
 sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
@@ -324,7 +278,6 @@ camera: !include cameras.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
-# image_processing: !include openalpr.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
@@ -335,50 +288,42 @@ input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
 
-mqtt:
-  broker: 172.24.32.13
-  port: 1883
-  client_id: home-assistant-1
-  discovery: true
-  discovery_prefix: "homeassistant"
-  keepalive: 60
-  protocol: 3.1
-  birth_message:
-    topic: 'hass/status'
-    payload: 'online'
-    qos: 1
-    retain: true
-  will_message:
-    topic: 'hass/status'
-    payload: 'offline'
-    qos: 1
-    retain: true
-
 utility_meter:
+  quarter_hourly_energy:
+    source: sensor.energy_spent
+    cycle: quarter-hourly
+  hourly_energy:
+    source: sensor.energy_spent
+    cycle: hourly
   daily_energy:
     source: sensor.energy_spent
     cycle: daily
   monthly_energy:
     source: sensor.energy_spent
     cycle: monthly
+  quarter_hourly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: quarter-hourly
+  hourly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: hourly
+  daily_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: daily
+  monthly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: monthly
 
 smartir:
-
-octoprint:
-  host: !secret octoprint_host
-  port: 88
-  api_key: !secret octoprint_key
-  bed: true
-  number_of_tools: 1
 
 panel_iframe:
   esphome:
     title: "ESPHome"
     url: "http://viewpoint.house:6052"
     icon: mdi:car-esp
-  unifi:
-    title: "Unifi CCTV"
-    url: "http://viewpoint.house:7080"
+  cctv:
+    title: "CCTV"
+    url: "http://viewpoint.house:4999"
     icon: mdi:cctv
   sonarr:
     title: "Sonarr TV"
