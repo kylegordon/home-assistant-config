@@ -1,5 +1,5 @@
 ---
-# The input_boolean.call_for_guest_heat is provided at the upper level climate 
+# The input_boolean.call_for_guest_heat is provided at the upper level climate
 # package, in /packages/climate.yaml
 
 automation:
@@ -27,4 +27,3 @@ automation:
     action:
       - service: homeassistant.turn_off
         entity_id: input_boolean.call_for_guest_heat
-
