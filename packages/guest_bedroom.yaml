@@ -9,6 +9,9 @@ automation:
         value_template: "{{ state_attr('climate.guest_bedroom','hvac_action') == 'heating'  }}"
       - platform: template
         value_template: "{{ (states.climate.guest_bedroom.attributes.current_temperature | float) < (states.climate.guest_bedroom.attributes.temperature | float) }}"
+    condition:
+      - condition: template
+        value_template: "{{ states.climate.guest_bedroom.state == 'heat' }}"
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.call_for_guest_heat
@@ -19,6 +22,8 @@ automation:
         value_template: "{{ state_attr('climate.guest_bedroom','hvac_action') != 'heating'  }}"
       - platform: template
         value_template: "{{ (states.climate.guest_bedroom.attributes.current_temperature | float) >= (states.climate.guest_bedroom.attributes.temperature | float) }}"
+      - platform: template
+        value_template: "{{ states.climate.guest_bedroom.state != heat }}"
     action:
       - service: homeassistant.turn_off
         entity_id: input_boolean.call_for_guest_heat
