@@ -1,0 +1,25 @@
+---
+# The input_boolean.call_for_guest_heat is provided at the upper level climate 
+# package, in /packages/climate.yaml
+
+automation:
+  - alias: 'Guest bedroom call for heat - on'
+    trigger:
+      - platform: template
+        value_template: "{{ state_attr('climate.guest_bedroom','hvac_action') == 'heating'  }}"
+      - platform: template
+        value_template: "{{ (states.climate.guest_bedroom.attributes.current_temperature | float) < (states.climate.guest_bedroom.attributes.temperature | float) }}"
+    action:
+      - service: homeassistant.turn_on
+        entity_id: input_boolean.call_for_guest_heat
+
+  - alias: 'Guest bedroom call for heat - off'
+    trigger:
+      - platform: template
+        value_template: "{{ state_attr('climate.guest_bedroom','hvac_action') != 'heating'  }}"
+      - platform: template
+        value_template: "{{ (states.climate.guest_bedroom.attributes.current_temperature | float) >= (states.climate.guest_bedroom.attributes.temperature | float) }}"
+    action:
+      - service: homeassistant.turn_off
+        entity_id: input_boolean.call_for_guest_heat
+
