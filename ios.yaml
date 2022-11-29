@@ -1,20 +1,20 @@
+---
 actions:
     - name: Fred
       background_color: "#000000"
       label:
-        text: "Hello, World"
-        color: "#ff0000"
+          text: "Hello, World"
+          color: "#ff0000"
       icon:
-        icon: earth
-        color: "#ffffff"
+          icon: earth
+          color: "#ffffff"
 
     - name: "LINN_STUDY_USB"
       label:
-        text: "Linn Study - USB"
+          text: "Linn Study - USB"
       icon:
-        icon: speaker
+          icon: speaker
       # actions:
       #   - identifier: 'LINN_STUDY_USB'
       #     title: 'USB Input'
       #     destructive: true
-

@@ -10,7 +10,7 @@ automation:
       event_data:
         actionName: LINN_STUDY_USB
     action:
-     - service: media_player.select_source
-       data:
-         entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
-         source: USB
+      - service: media_player.select_source
+        data:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+          source: USB
