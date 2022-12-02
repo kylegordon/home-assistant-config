@@ -1,25 +1,32 @@
-  - platform: twitter
-    name: twitter_thegordonhome
-    consumer_key: !secret twitter_consumer_key
-    consumer_secret: !secret twitter_consumer_secret
-    access_token: !secret twitter_access_token
-    access_token_secret: !secret twitter_access_token_secret
-  - platform: twitter
-    name: twitter_overuplawmoor
-    consumer_key: !secret overuplawmoor_consumer_key
-    consumer_secret: !secret overuplawmoor_consumer_secret
-    access_token: !secret overuplawmoor_access_token
-    access_token_secret: !secret overuplawmoor_access_token_secret
-  - platform: smtp
-    name: email_kyle
-    server: smtp.gmail.com
-    port: 587
-    starttls: true
-    username: !secret gmail_username
-    password: !secret gmail_password
-    sender: homeassistant@glasgownet.com
-    recipient: kyle@glasgownet.com
-  - platform: alexa_media
-    name: alexa_media
-  - platform: syslog
-    name: syslog
+---
+- platform: twitter
+  name: twitter_thegordonhome
+  consumer_key: !secret twitter_consumer_key
+  consumer_secret: !secret twitter_consumer_secret
+  access_token: !secret twitter_access_token
+  access_token_secret: !secret twitter_access_token_secret
+- platform: twitter
+  name: twitter_overuplawmoor
+  consumer_key: !secret overuplawmoor_consumer_key
+  consumer_secret: !secret overuplawmoor_consumer_secret
+  access_token: !secret overuplawmoor_access_token
+  access_token_secret: !secret overuplawmoor_access_token_secret
+- platform: mastodon
+  name: mastodon_overuplawmoor
+  base_url: https://botsin.space/
+  access_token: !secret mastodon_overuplawmoor_access_token
+  client_id: !secret mastodon_overuplawmoor_client_id
+  client_secret: !secret mastodon_overuplawmoor_client_secret
+- platform: smtp
+  name: email_kyle
+  server: smtp.gmail.com
+  port: 587
+  starttls: true
+  username: !secret gmail_username
+  password: !secret gmail_password
+  sender: homeassistant@glasgownet.com
+  recipient: kyle@glasgownet.com
+- platform: alexa_media
+  name: alexa_media
+- platform: syslog
+  name: syslog
