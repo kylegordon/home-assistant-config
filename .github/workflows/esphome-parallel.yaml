@@ -67,7 +67,7 @@ jobs:
       - run: echo Compiling ${{matrix.file}}
       - run: docker run --rm -v "${PWD}":/config esphome/esphome:beta compile ${{matrix.file}}
 
-    loop-dev:
+  loop-dev:
     name: Test ESPHome Dev firmware
     runs-on: ubuntu-latest
     needs: [files]  # Depends on previous job
