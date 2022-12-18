@@ -31,7 +31,8 @@ automation:
         entity_id:
           - group.living_room
           - group.living_room_lights
-          - group.dining_nook
+          - group.dining_nook_lights
+          - group.nook_art_2
           - group.outside_lights
           - group.front_hall
           - group.kitchen
