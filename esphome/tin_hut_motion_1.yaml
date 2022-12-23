@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: tin_hut_motion_1
+  device_description: Tin Hut Motion Sensor 1
+  friendly_name: Tin Hut Motion Sensor 1
+
+<<: !include common/wemos_pir_common.yaml
