@@ -1,0 +1,61 @@
+---
+# Basic config
+packages:
+  common: !include common.yaml
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: esp01_1m
+
+captive_portal:
+
+# Enable logging
+logger:
+
+web_server:
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
+# Shelly 1 detached switch config with multi click options and fallback in case of wifi or api fail
+
+switch:
+  - platform: gpio
+    name: ${friendly_name} Relay
+    pin: GPIO4
+    id: shelly_relay
+    restore_mode: ALWAYS_OFF
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+    name: ${friendly_name} button
+    # config for multi click actions
+    # Ideas from https://github.com/TheFes/HA-configuration/blob/main/esphome/packages/shelly1_detached_multi.yaml
+    # small delay to prevent debouncing
+    filters:
+      - delayed_on_off: 50ms
+    # config for state change of input button
+    on_state:
+      then:
+        - if:
+            condition:
+              and:
+                - wifi.connected:
+                - api.connected:
+                - switch.is_on: shelly_relay
+            # toggle smart light if wifi and api are connected and relay is on
+            then:
+              - homeassistant.service:
+                  service: light.toggle
+                  data:
+                    entity_id: ${ha_entity}
+            # else, toggle relay
+            else:
+              - switch.toggle: shelly_relay
+    internal: true
+    id: button_input
