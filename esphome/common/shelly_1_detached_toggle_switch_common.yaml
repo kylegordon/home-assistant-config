@@ -34,8 +34,7 @@ binary_sensor:
     pin:
       number: GPIO5
     name: ${friendly_name} button
-    # config for multi click actions
-    # Ideas from https://github.com/TheFes/HA-configuration/blob/main/esphome/packages/shelly1_detached_multi.yaml
+    # Sourced from https://www.esphome-devices.com/devices/Shelly-1#detached-switch-mode-for-toggle-light-switch
     # small delay to prevent debouncing
     filters:
       - delayed_on_off: 50ms
