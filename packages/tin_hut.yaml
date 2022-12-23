@@ -1,0 +1,29 @@
+---
+group:
+  tin_hut_motion_sensors:
+    name: Tin Hut Motion Sensors
+    entities:
+      - binary_sensor.tin_hut_motion_1
+      - binary_sensor.tin_hut_motion_2
+
+automation:
+  - alias: Tin hut motion - Lights on
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: group.tin_hut_motion_sensors
+        to: 'on'
+    action:
+      - service: light.turn_on
+        entity_id: light.garage_lights
+
+  - alias: Tin hut motion - 10 minute timeout
+    trigger:
+      - platform: state
+        entity_id: group.tin_hut_motion_sensors
+        to: 'off'
+        for:
+          minutes: 10
+    action:
+      - service: light.turn_off
+        entity_id: light.tin_hut_lights
