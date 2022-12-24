@@ -47,10 +47,6 @@ input_boolean:
     name: Call for heat - Guest Room
     icon: mdi:radiator
 
-sensor:
-  - platform: season
-    type: meteorological
-
 automation:
   - alias: "Call for heat - demand"
     description: >-
