@@ -5,7 +5,7 @@ trigger:
     at: '07:15:00'
 condition:
   - condition: state
-    entity_id: calendar.holiday_mode
+    entity_id: binary_sensor.holiday_mode
     state: 'off'
   - condition: or
     conditions:
