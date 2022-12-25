@@ -32,11 +32,6 @@
   payplan: "monthly"  # or legacyPrepay or smartPayg
   eco7: false
 
-- platform: radarr
-  api_key: ba4d5fad0a5a433c82be11d22f23b263
-  host: homeauto.vpn.glasgownet.com
-  port: 7878
-
 - platform: template
   sensors:
     next_bin:
