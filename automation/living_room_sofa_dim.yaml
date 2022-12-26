@@ -20,5 +20,4 @@ action:
     entity_id:
       - light.sofa_overhead
       - light.dining_table_overhead
-      - light.uplighter
       - light.sideboard
