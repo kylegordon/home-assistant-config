@@ -59,3 +59,17 @@
 - platform: switch
   name: Octoprint Lighting
   entity_id: switch.octoprint_relay_1
+
+- platform: group
+  name: Nook Art
+  unique_id: nook_art
+  entities:
+    - light.art_1
+    - light.art_2
+
+- platform: group
+  name: Living Room Main
+  unique_id: living_room_main
+  entities:
+    - light.sofa_overhead
+    - light.dining_table_overhead

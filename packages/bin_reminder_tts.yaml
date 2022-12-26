@@ -22,13 +22,13 @@ automation:
             before: '09:00:00'
             weekday:
               - mon
-              - fri
+              # - fri
           - condition: time
             after: '16:00:00'
             before: '18:00:00'
             weekday:
               - sun
-              - thu
+              # - thu
       - condition: state
         entity_id: input_boolean.bin_reminder
         state: 'on'
