@@ -79,6 +79,11 @@ homeassistant:
       friendly_name: Daily energy usage
     sensor.monthly_energy:
       friendly_name: Monthly energy usage
+    scene.cheerlights_state:
+      unique_id: cheerlights_state
+    scene.glow_orbs_state:
+      unique_id: glow_orbs_state
+
 
 # The default_config meta-component provides a host of other configs options, some listed at
 # https://www.home-assistant.io/integrations/default_config/
