@@ -17,7 +17,6 @@ automation:
       - service: scene.create
         data_template:
           scene_id: cheerlights_state
-          unique_id: cheerlights_state
           entities:
             light.under_bed_lights:
               state: "on"
@@ -28,7 +27,6 @@ automation:
       - service: scene.create
         data_template:
           scene_id: glow_orbs_state
-          unique_id: glow_orbs_state
           entities:
             light.glow_orbs:
               state: "on"
