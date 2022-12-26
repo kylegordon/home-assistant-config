@@ -30,7 +30,7 @@ automation:
           entities:
             light.glow_orbs:
               state: "on"
-              brightness_pct: 50
+              brightness: 128  # Cannot use brightness_pct
               rgb_color:
                 - "{{ trigger.payload[1:3] | int(0,16) }}"
                 - "{{ trigger.payload[3:5] | int(0,16) }}"
