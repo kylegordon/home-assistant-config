@@ -7,6 +7,22 @@ light:
         - light.sense_gloworb_2_ring
         - light.sense_gloworb_3_ring
 
+
+mqtt:
+  sensor:
+    - name: cheerlights_red
+      friendly_name: 'Cheerlights Red value'
+      state_topic: cheerlightsRGB
+      value_template: '"{{ value[1:3] | int(0,16) }}"'
+    - name: cheerlights_green
+      friendly_name: 'Cheerlights Green value'
+      state_topic: cheerlightsRGB
+      value_template: '"{{ value[3:5] | int(0,16) }}"'
+    - name: cheerlights_blue
+      friendly_name: 'Cheerlights Blue value'
+      state_topic: cheerlightsRGB
+      value_template: '"{{ value[-2:] | int(0,16) }}"'
+
 automation:
   - alias: Under Bed Cheerlights Motion
     trigger:
@@ -20,7 +36,7 @@ automation:
     action:
       - service_template: light.turn_on
         data_template:
-          brightness: 256
+          brightness: 255
           rgb_color:
             - "{{ trigger.payload[1:3] | int(0,16) }}"
             - "{{ trigger.payload[3:5] | int(0,16) }}"
@@ -81,7 +97,7 @@ automation:
     action:
       service_template: light.turn_on
       data_template:
-        brightness: 256
+        brightness: 255
         rgb_color:
           - "{{ trigger.payload[1:3] | int(0,16) }}"
           - "{{ trigger.payload[3:5] | int(0,16) }}"
