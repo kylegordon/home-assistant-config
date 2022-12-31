@@ -1,3 +1,4 @@
+---
 alias: Front outdoor lights off
 trigger:
   - platform: state
