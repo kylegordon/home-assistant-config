@@ -70,12 +70,10 @@ automation:
       - service_template: light.turn_on
         data_template:
           brightness: 128
-          rgbww_color:
+          rgb_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-            - 0
-            - 0
           entity_id:
             - light.sense_gloworb_1_ring
             - light.sense_gloworb_2_ring
