@@ -29,8 +29,8 @@ action:
         - "{{state_attr('light.decking_lights', 'rgbww_color')[0]}}"
         - "{{state_attr('light.decking_lights', 'rgbww_color')[1]}}"
         - "{{state_attr('light.decking_lights', 'rgbww_color')[2]}}"
-        - "255"
-        - "255"
+        - 255
+        - 255
   # If this evaluates to false, the action will stop here.
   - condition: template
     value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
