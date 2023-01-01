@@ -16,8 +16,8 @@ action:
     data:
       entity_id: light.decking_lights
       rgbww_color:
-        - "{{state_attr('light.decking_lights', 'rgbww_color')[0]}}"
-        - "{{state_attr('light.decking_lights', 'rgbww_color')[1]}}"
-        - "{{state_attr('light.decking_lights', 'rgbww_color')[2]}}"
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | int }}"
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | int }}"
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | int }}"
         - 0
         - 0
