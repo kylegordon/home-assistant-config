@@ -125,8 +125,8 @@ automation:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-            - "{{state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16)}}"
-            - "{{state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16)}}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
 
   - alias: Cheerlights - off
     trigger:
