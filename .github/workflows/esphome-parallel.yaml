@@ -4,8 +4,12 @@ name: ESPHome
 # yamllint disable-line rule:truthy
 on:
   pull_request:
+    paths:
+      - 'esphome/**'
   push:
     branches: [main]
+    paths:
+      - 'esphome/**'
   schedule:
     - cron: 0 12 * * *
 
