@@ -1,3 +1,4 @@
+---
 alias: Front outdoor lights on
 trigger:
   - platform: state
@@ -20,13 +21,18 @@ action:
         "Did you hear that? I can't see a thing. Turning on the outside lights"
          ] | random + " https://amzn.to/2CR5mbQ" }}
   - service: light.turn_on
-    entity_id: light.driveway_floodlights, light.mini_deck_floodlight
+    entity_id:
+      - light.driveway_floodlights
+      - light.mini_deck_floodlight
   - service: light.turn_on
     data:
       entity_id: light.decking_lights
-      brightness_pct: 100
-      white_value: 255
-      color_temp: 153
+      rgbww_color:
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"
+        - 255
+        - 255
   # If this evaluates to false, the action will stop here.
   - condition: template
     value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
