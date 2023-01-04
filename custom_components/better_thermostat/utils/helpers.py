@@ -8,8 +8,18 @@ from homeassistant.helpers.entity_registry import async_entries_for_config_entry
 
 from homeassistant.components.climate.const import HVACMode
 
+from custom_components.better_thermostat.utils.model_quirks import (
+    fix_local_calibration,
+    fix_target_temperature_calibration,
+)
 
-from ..const import CONF_HEAT_AUTO_SWAPPED
+
+from ..const import (
+    CONF_HEAT_AUTO_SWAPPED,
+    CONF_HEATING_POWER_CALIBRATION,
+    CONF_FIX_CALIBRATION,
+    CONF_PROTECT_OVERHEATING,
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -72,11 +82,34 @@ def calculate_local_setpoint_delta(self, entity_id) -> Union[float, None]:
     """
     _context = "calculate_local_setpoint_delta()"
 
-    _current_trv_calibration = convert_to_float(
-        str(self.real_trvs[entity_id]["last_calibration"]), self.name, _context
-    )
+    if None in (self.cur_temp, self.bt_target_temp, self.old_internal_temp):
+        return None
+
+    # check if we need to calculate
+    if (
+        self.real_trvs[entity_id]["current_temperature"] == self.old_internal_temp
+        and self.cur_temp == self.old_external_temp
+    ):
+        return None
+
     _cur_trv_temp = convert_to_float(
         str(self.real_trvs[entity_id]["current_temperature"]), self.name, _context
+    )
+
+    _calibration_delta = float(
+        str(format(float(abs(_cur_trv_temp - self.cur_temp)), ".1f"))
+    )
+
+    if _calibration_delta <= 0.5:
+        return None
+
+    self.old_internal_temp = self.real_trvs[entity_id]["current_temperature"]
+    self.old_external_temp = self.cur_temp
+
+    _current_trv_calibration = round_to_half_degree(
+        convert_to_float(
+            str(self.real_trvs[entity_id]["last_calibration"]), self.name, _context
+        )
     )
 
     if None in (_current_trv_calibration, self.cur_temp, _cur_trv_temp):
@@ -86,22 +119,63 @@ def calculate_local_setpoint_delta(self, entity_id) -> Union[float, None]:
         )
         return None
 
-    if self.real_trvs[entity_id]["advanced"].get("fix_calibration", False) is True:
-        _temp_diff = float(float(self.bt_target_temp) - float(self.cur_temp))
-        if _temp_diff > 0.2 and _temp_diff < 1:
-            _cur_trv_temp = round_to_half_degree(_cur_trv_temp)
-            _cur_trv_temp += 0.5
-        if _temp_diff >= 1.2:
-            _cur_trv_temp = round_to_half_degree(_cur_trv_temp)
-            _cur_trv_temp += 2.5
-        if _temp_diff > -0.2 and _temp_diff < 0:
-            _cur_trv_temp = round_down_to_half_degree(_cur_trv_temp)
-            _cur_trv_temp -= 0.5
-        if _temp_diff >= -1.2 and _temp_diff < 0:
-            _cur_trv_temp = round_down_to_half_degree(_cur_trv_temp)
-            _cur_trv_temp -= 2.5
-
     _new_local_calibration = (self.cur_temp - _cur_trv_temp) + _current_trv_calibration
+
+    _calibration_mode = self.real_trvs[entity_id]["advanced"].get(
+        "calibration_mode", "default"
+    )
+    if _calibration_mode == CONF_FIX_CALIBRATION:
+        _temp_diff = float(float(self.bt_target_temp) - float(self.cur_temp))
+        if _temp_diff > 0.30 and _new_local_calibration > -2.5:
+            _new_local_calibration -= 2.5
+
+    elif _calibration_mode == CONF_HEATING_POWER_CALIBRATION:
+        _temp_diff = float(float(self.bt_target_temp) - float(self.cur_temp))
+        if _temp_diff > 0.0:
+            valve_position = heating_power_valve_position(self, entity_id)
+            _new_local_calibration = _current_trv_calibration - (
+                (self.real_trvs[entity_id]["local_calibration_min"] + _cur_trv_temp)
+                * valve_position
+            )
+
+    _new_local_calibration = fix_local_calibration(
+        self, entity_id, _new_local_calibration
+    )
+
+    _overheating_protection = self.real_trvs[entity_id]["advanced"].get(
+        CONF_PROTECT_OVERHEATING, False
+    )
+
+    if _overheating_protection is True:
+        if (self.cur_temp + 0.10) >= self.bt_target_temp:
+            _new_local_calibration += 1.0
+
+    _new_local_calibration = round_down_to_half_degree(_new_local_calibration)
+
+    if _new_local_calibration > float(
+        self.real_trvs[entity_id]["local_calibration_max"]
+    ):
+        _new_local_calibration = float(
+            self.real_trvs[entity_id]["local_calibration_max"]
+        )
+    elif _new_local_calibration < float(
+        self.real_trvs[entity_id]["local_calibration_min"]
+    ):
+        _new_local_calibration = float(
+            self.real_trvs[entity_id]["local_calibration_min"]
+        )
+
+    _new_local_calibration = convert_to_float(
+        str(_new_local_calibration), self.name, _context
+    )
+
+    _LOGGER.debug(
+        "better_thermostat %s: %s - output calib: %s",
+        self.name,
+        entity_id,
+        _new_local_calibration,
+    )
+
     return convert_to_float(str(_new_local_calibration), self.name, _context)
 
 
@@ -121,23 +195,66 @@ def calculate_setpoint_override(self, entity_id) -> Union[float, None]:
     float
             new target temp with calibration
     """
+    if None in (self.cur_temp, self.bt_target_temp):
+        return None
+
     _cur_trv_temp = self.hass.states.get(entity_id).attributes["current_temperature"]
     if None in (self.bt_target_temp, self.cur_temp, _cur_trv_temp):
         return None
 
     _calibrated_setpoint = (self.bt_target_temp - self.cur_temp) + _cur_trv_temp
 
-    if self.real_trvs[entity_id]["advanced"].get("fix_calibration", False) is True:
+    _calibration_mode = self.real_trvs[entity_id]["advanced"].get(
+        "calibration_mode", "default"
+    )
+    if _calibration_mode == CONF_FIX_CALIBRATION:
         _temp_diff = float(float(self.bt_target_temp) - float(self.cur_temp))
-        if _temp_diff > 0.3 and _calibrated_setpoint - _cur_trv_temp < 2.5:
+        if _temp_diff > 0.0 and _calibrated_setpoint - _cur_trv_temp < 2.5:
             _calibrated_setpoint += 2.5
+
+    elif _calibration_mode == CONF_HEATING_POWER_CALIBRATION:
+        _temp_diff = float(float(self.bt_target_temp) - float(self.cur_temp))
+        if _temp_diff > 0.0:
+            valve_position = heating_power_valve_position(self, entity_id)
+            _calibrated_setpoint = _cur_trv_temp + (
+                (self.real_trvs[entity_id]["max_temp"] - _cur_trv_temp) * valve_position
+            )
+
+    _calibrated_setpoint = fix_target_temperature_calibration(
+        self, entity_id, _calibrated_setpoint
+    )
+
+    _overheating_protection = self.real_trvs[entity_id]["advanced"].get(
+        CONF_PROTECT_OVERHEATING, False
+    )
+
+    if _overheating_protection is True:
+        if (self.cur_temp + 0.10) >= self.bt_target_temp:
+            _calibrated_setpoint -= 1.0
+
+    _calibrated_setpoint = round_down_to_half_degree(_calibrated_setpoint)
 
     # check if new setpoint is inside the TRV's range, else set to min or max
     if _calibrated_setpoint < self.real_trvs[entity_id]["min_temp"]:
         _calibrated_setpoint = self.real_trvs[entity_id]["min_temp"]
     if _calibrated_setpoint > self.real_trvs[entity_id]["max_temp"]:
         _calibrated_setpoint = self.real_trvs[entity_id]["max_temp"]
+
     return _calibrated_setpoint
+
+
+def heating_power_valve_position(self, entity_id):
+    _temp_diff = float(float(self.bt_target_temp) - float(self.cur_temp))
+    valve_pos = (_temp_diff / self.heating_power) / 100
+    if valve_pos < 0.0:
+        valve_pos = 0.0
+    if valve_pos > 1.0:
+        valve_pos = 1.0
+
+    _LOGGER.debug(
+        f"better_thermostat {self.name}: {entity_id} / heating_power_valve_position - temp diff: {round(_temp_diff, 1)} - heating power: {round(self.heating_power, 4)} - expected valve position: {round(valve_pos * 100)}%"
+    )
+    return valve_pos
 
 
 def convert_to_float(
@@ -162,12 +279,12 @@ def convert_to_float(
             If error occurred and cannot convert the value.
     """
     if isinstance(value, float):
-        return value
+        return round(value, 1)
     elif value is None or value == "None":
         return None
     else:
         try:
-            return float(str(format(float(value), ".1f")))
+            return round(float(str(format(float(value), ".1f"))), 1)
         except (ValueError, TypeError, AttributeError, KeyError):
             _LOGGER.debug(
                 f"better thermostat {instance_name}: Could not convert '{value}' to float in {context}"
@@ -217,8 +334,11 @@ def round_down_to_half_degree(
         return None
     split = str(float(str(value))).split(".", 1)
     decimale = int(split[1])
-    if decimale > 7:
-        return float(str(split[0])) + 0.5
+    if decimale >= 5:
+        if float(split[0]) > 0:
+            return float(str(split[0])) + 0.5
+        else:
+            return float(str(split[0])) - 0.5
     else:
         return float(str(split[0]))
 
