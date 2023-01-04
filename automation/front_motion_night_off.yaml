@@ -1,3 +1,4 @@
+---
 alias: Front outdoor lights off
 trigger:
   - platform: state
@@ -7,9 +8,16 @@ trigger:
       seconds: 600
 action:
   - service: light.turn_off
-    entity_id: light.driveway_floodlights, light.mini_deck_floodlight, light.front_door_floodlights
+    entity_id:
+      - light.driveway_floodlights
+      - light.mini_deck_floodlight
+      - light.front_door_floodlights
   - service: light.turn_on
     data:
       entity_id: light.decking_lights
-      brightness_pct: 0
-      white_value: 0
+      rgbww_color:
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"
+        - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"
+        - 0
+        - 0
