@@ -18,7 +18,5 @@ jobs:
   final:
     name: Final ESPHome check
     runs-on: ubuntu-latest
-    needs: [loop-stable, loop-beta, loop-dev]
     steps:
-      - name: Getting your configuration from GitHub
-        uses: actions/checkout@v2
+      - run: 'echo "No build required"'
