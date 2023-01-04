@@ -1,6 +1,4 @@
 import logging
-
-
 import voluptuous as vol
 from collections import OrderedDict
 
@@ -9,15 +7,15 @@ from .utils.bridge import load_adapter
 from .utils.helpers import get_device_model, get_trv_intigration
 
 from .const import (
-    CONF_CALIBRATIION_ROUND,
+    CONF_PROTECT_OVERHEATING,
     CONF_CALIBRATION,
     CONF_CHILD_LOCK,
-    CONF_FIX_CALIBRATION,
     CONF_HEAT_AUTO_SWAPPED,
     CONF_HEATER,
     CONF_HOMATICIP,
     CONF_HUMIDITY,
     CONF_MODEL,
+    CONF_NO_SYSTEM_MODE_OFF,
     CONF_OFF_TEMPERATURE,
     CONF_OUTDOOR_SENSOR,
     CONF_SENSOR,
@@ -25,21 +23,67 @@ from .const import (
     CONF_VALVE_MAINTENANCE,
     CONF_WEATHER,
     CONF_WINDOW_TIMEOUT,
+    CONF_CALIBRATION_MODE,
+    CalibrationMode,
+    CalibrationType,
 )
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.components.climate.const import HVACMode
+from homeassistant.helpers import config_validation as cv
 
 
 from . import DOMAIN  # pylint:disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
 
+CALIBRATION_TYPE_SELECTOR = selector.SelectSelector(
+    selector.SelectSelectorConfig(
+        options=[
+            selector.SelectOptionDict(
+                value=CalibrationType.TARGET_TEMP_BASED,
+                label="Target Temperature Based",
+            )
+        ],
+        mode=selector.SelectSelectorMode.DROPDOWN,
+    )
+)
+
+CALIBRATION_TYPE_ALL_SELECTOR = selector.SelectSelector(
+    selector.SelectSelectorConfig(
+        options=[
+            selector.SelectOptionDict(
+                value=CalibrationType.TARGET_TEMP_BASED,
+                label="Target Temperature Based",
+            ),
+            selector.SelectOptionDict(
+                value=CalibrationType.LOCAL_BASED, label="Offset Based"
+            ),
+        ],
+        mode=selector.SelectSelectorMode.DROPDOWN,
+    )
+)
+
+CALIBRATION_MODE_SELECTOR = selector.SelectSelector(
+    selector.SelectSelectorConfig(
+        options=[
+            selector.SelectOptionDict(value=CalibrationMode.DEFAULT, label="Normal"),
+            selector.SelectOptionDict(
+                value=CalibrationMode.FIX_CALIBRATION, label="Agressive"
+            ),
+            selector.SelectOptionDict(
+                value=CalibrationMode.HEATING_POWER_CALIBRATION, label="AI Time Based"
+            ),
+        ],
+        mode=selector.SelectSelectorMode.DROPDOWN,
+    )
+)
+
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    VERSION = 2
+    VERSION = 5
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
     def __init__(self):
@@ -108,46 +152,56 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         fields = OrderedDict()
 
-        _calibration = {"target_temp_based": "Target Temperature"}
         _default_calibration = "target_temp_based"
         _adapter = _trv_config.get("adapter", None)
         if _adapter is not None:
             _info = await _adapter.get_info(self, _trv_config.get("trv"))
 
             if _info.get("support_offset", False):
-                _calibration["local_calibration_based"] = "Local Calibration"
                 _default_calibration = "local_calibration_based"
+
+        if _default_calibration == "local_calibration_based":
+            fields[
+                vol.Required(
+                    CONF_CALIBRATION,
+                    default=user_input.get(CONF_CALIBRATION, _default_calibration),
+                )
+            ] = CALIBRATION_TYPE_ALL_SELECTOR
+        else:
+            fields[
+                vol.Required(
+                    CONF_CALIBRATION,
+                    default=user_input.get(CONF_CALIBRATION, _default_calibration),
+                )
+            ] = CALIBRATION_TYPE_SELECTOR
 
         fields[
             vol.Required(
-                CONF_CALIBRATION,
-                default=user_input.get(CONF_CALIBRATION, _default_calibration),
+                CONF_CALIBRATION_MODE,
+                default=user_input.get(
+                    CONF_CALIBRATION_MODE, CalibrationMode.HEATING_POWER_CALIBRATION
+                ),
             )
-        ] = vol.In(_calibration)
+        ] = CALIBRATION_MODE_SELECTOR
 
-        has_auto = False
-        trv = self.hass.states.get(_trv_config.get("trv"))
-        if HVACMode.AUTO in trv.attributes.get("hvac_modes"):
-            has_auto = True
+        fields[
+            vol.Optional(
+                CONF_PROTECT_OVERHEATING,
+                default=user_input.get(CONF_PROTECT_OVERHEATING, False),
+            )
+        ] = bool
+
+        fields[
+            vol.Optional(
+                CONF_NO_SYSTEM_MODE_OFF,
+                default=user_input.get(CONF_NO_SYSTEM_MODE_OFF, False),
+            )
+        ] = bool
 
         fields[
             vol.Optional(
                 CONF_HEAT_AUTO_SWAPPED,
-                default=user_input.get(CONF_HEAT_AUTO_SWAPPED, has_auto),
-            )
-        ] = bool
-
-        fields[
-            vol.Optional(
-                CONF_FIX_CALIBRATION,
-                default=user_input.get(CONF_FIX_CALIBRATION, False),
-            )
-        ] = bool
-
-        fields[
-            vol.Optional(
-                CONF_CALIBRATIION_ROUND,
-                default=user_input.get(CONF_CALIBRATIION_ROUND, True),
+                default=user_input.get(CONF_HEAT_AUTO_SWAPPED, False),
             )
         ] = bool
 
@@ -194,6 +248,19 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self.data[CONF_OUTDOOR_SENSOR] = None
             if CONF_WEATHER not in self.data:
                 self.data[CONF_WEATHER] = None
+
+            if CONF_WINDOW_TIMEOUT in self.data:
+                self.data[CONF_WINDOW_TIMEOUT] = (
+                    int(
+                        cv.time_period_dict(
+                            user_input.get(CONF_WINDOW_TIMEOUT, None)
+                        ).total_seconds()
+                    )
+                    or 0
+                )
+            else:
+                self.data[CONF_WINDOW_TIMEOUT] = 0
+
             if "base" not in errors:
                 for trv in self.heater_entity_id:
                     _intigration = await get_trv_intigration(self, trv)
@@ -205,7 +272,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             "adapter": load_adapter(self, _intigration, trv),
                         }
                     )
-
                 self.data[CONF_MODEL] = "/".join([x["model"] for x in self.trv_bundle])
                 return await self.async_step_advanced(None, self.trv_bundle[0])
 
@@ -254,10 +320,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Optional(CONF_WEATHER): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="weather", multiple=False)
                     ),
-                    vol.Optional(
-                        CONF_WINDOW_TIMEOUT,
-                        default=user_input.get(CONF_WINDOW_TIMEOUT, 0),
-                    ): int,
+                    vol.Optional(CONF_WINDOW_TIMEOUT): selector.DurationSelector(),
                     vol.Optional(
                         CONF_OFF_TEMPERATURE,
                         default=user_input.get(CONF_OFF_TEMPERATURE, 20),
@@ -306,8 +369,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
             self.updated_config[CONF_HEATER] = self.trv_bundle
             _LOGGER.debug("Updated config: %s", self.updated_config)
-            # self.hass.config_entries.async_update_entry(self.config_entry, data=self.updated_config)
-            return self.async_create_entry(title="", data=self.updated_config)
+            self.hass.config_entries.async_update_entry(
+                self.config_entry, data=self.updated_config
+            )
+            return self.async_create_entry(
+                title=self.updated_config["name"], data=self.updated_config
+            )
 
         user_input = user_input or {}
         homematic = False
@@ -316,24 +383,65 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         fields = OrderedDict()
 
-        _calibration = {"target_temp_based": "Target Temperature"}
         _default_calibration = "target_temp_based"
-        _adapter = _trv_config.get("adapter", None)
+        self.name = user_input.get(CONF_NAME, "-")
+
+        _adapter = load_adapter(
+            self, _trv_config.get("integration"), _trv_config.get("trv")
+        )
         if _adapter is not None:
             _info = await _adapter.get_info(self, _trv_config.get("trv"))
 
             if _info.get("support_offset", False):
-                _calibration["local_calibration_based"] = "Local Calibration"
                 _default_calibration = "local_calibration_based"
+
+        if _default_calibration == "local_calibration_based":
+            fields[
+                vol.Required(
+                    CONF_CALIBRATION,
+                    default=user_input.get(
+                        CONF_CALIBRATION,
+                        _trv_config["advanced"].get(
+                            CONF_CALIBRATION, _default_calibration
+                        ),
+                    ),
+                )
+            ] = CALIBRATION_TYPE_ALL_SELECTOR
+        else:
+            fields[
+                vol.Required(
+                    CONF_CALIBRATION,
+                    default=user_input.get(
+                        CONF_CALIBRATION,
+                        _trv_config["advanced"].get(
+                            CONF_CALIBRATION, _default_calibration
+                        ),
+                    ),
+                )
+            ] = CALIBRATION_TYPE_SELECTOR
 
         fields[
             vol.Required(
-                CONF_CALIBRATION,
+                CONF_CALIBRATION_MODE,
                 default=_trv_config["advanced"].get(
-                    CONF_CALIBRATION, _default_calibration
+                    CONF_CALIBRATION_MODE, CalibrationMode.HEATING_POWER_CALIBRATION
                 ),
             )
-        ] = vol.In(_calibration)
+        ] = CALIBRATION_MODE_SELECTOR
+
+        fields[
+            vol.Optional(
+                CONF_PROTECT_OVERHEATING,
+                default=_trv_config["advanced"].get(CONF_PROTECT_OVERHEATING, False),
+            )
+        ] = bool
+
+        fields[
+            vol.Optional(
+                CONF_NO_SYSTEM_MODE_OFF,
+                default=_trv_config["advanced"].get(CONF_NO_SYSTEM_MODE_OFF, False),
+            )
+        ] = bool
 
         has_auto = False
         trv = self.hass.states.get(_trv_config.get("trv"))
@@ -344,20 +452,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             vol.Optional(
                 CONF_HEAT_AUTO_SWAPPED,
                 default=_trv_config["advanced"].get(CONF_HEAT_AUTO_SWAPPED, has_auto),
-            )
-        ] = bool
-
-        fields[
-            vol.Optional(
-                CONF_FIX_CALIBRATION,
-                default=_trv_config["advanced"].get(CONF_FIX_CALIBRATION, False),
-            )
-        ] = bool
-
-        fields[
-            vol.Optional(
-                CONF_CALIBRATIION_ROUND,
-                default=_trv_config["advanced"].get(CONF_CALIBRATIION_ROUND, True),
             )
         ] = bool
 
@@ -403,15 +497,25 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 CONF_OUTDOOR_SENSOR, None
             )
             self.updated_config[CONF_WEATHER] = user_input.get(CONF_WEATHER, None)
-            self.updated_config[CONF_WINDOW_TIMEOUT] = user_input.get(
-                CONF_WINDOW_TIMEOUT
-            )
+
+            if CONF_WINDOW_TIMEOUT in self.updated_config:
+                self.updated_config[CONF_WINDOW_TIMEOUT] = (
+                    int(
+                        cv.time_period_dict(
+                            user_input.get(CONF_WINDOW_TIMEOUT, None)
+                        ).total_seconds()
+                    )
+                    or 0
+                )
+            else:
+                self.updated_config[CONF_WINDOW_TIMEOUT] = 0
+
             self.updated_config[CONF_OFF_TEMPERATURE] = user_input.get(
                 CONF_OFF_TEMPERATURE
             )
-            self.name = user_input.get(CONF_NAME, "-")
+
             for trv in self.updated_config[CONF_HEATER]:
-                trv["adapter"] = load_adapter(self, trv["integration"], trv["trv"])
+                trv["adapter"] = None
                 self.trv_bundle.append(trv)
 
             return await self.async_step_advanced(
@@ -494,12 +598,20 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             selector.EntitySelectorConfig(domain="weather", multiple=False)
         )
 
+        _timeout = self.config_entry.data.get(CONF_WINDOW_TIMEOUT, 0)
+        _timeout = str(cv.time_period_seconds(_timeout))
+        _timeout = {
+            "hours": int(_timeout.split(":", maxsplit=1)[0]),
+            "minutes": int(_timeout.split(":")[1]),
+            "seconds": int(_timeout.split(":")[2]),
+        }
         fields[
             vol.Optional(
                 CONF_WINDOW_TIMEOUT,
-                default=self.config_entry.data.get(CONF_WINDOW_TIMEOUT, 30),
+                default=_timeout,
+                description={"suggested_value": _timeout},
             )
-        ] = int
+        ] = selector.DurationSelector()
 
         fields[
             vol.Optional(
