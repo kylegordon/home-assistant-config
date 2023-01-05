@@ -93,11 +93,11 @@ jobs:
       - run: echo Compiling ${{matrix.file}}
       - run: docker run --rm -v "${PWD}":/config esphome/esphome:dev compile ${{matrix.file}}
 
-
-#  final:
-#    name: Final ESPHome check
-#    runs-on: ubuntu-latest
-#    needs: [loop-stable, loop-beta, loop-dev]
-#    steps:
-#      - name: Getting your configuration from GitHub
-#        uses: actions/checkout@v2
+  # This is used by branch protections
+  final:
+    name: Final ESPHome check
+    runs-on: ubuntu-latest
+    needs: [loop-stable, loop-beta, loop-dev]
+    steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v2
