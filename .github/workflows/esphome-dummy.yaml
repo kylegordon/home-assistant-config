@@ -1,6 +1,8 @@
 ---
 name: ESPHome
 
+## This workflow exists to keep branch protection happy in the event of no changes being made to the esphome directory.
+
 # yamllint disable-line rule:truthy
 on:
   pull_request:
