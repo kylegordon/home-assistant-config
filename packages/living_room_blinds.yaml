@@ -27,39 +27,31 @@ automation:
   - alias: Control Blinds
     trigger:
       - platform: event
-        event_type: deconz_event
+        event_type: zha_event
         event_data:
-          id: tradfri_open_close_switch
           device_id: 402b382edcbcbd22f65129957ce935f8
       - platform: event
-        event_type: deconz_event
+        event_type: zha_event
         event_data:
-          id: patio_blinds_switch_2
           device_id: 6ce0802a8aef13556ad7c2b8cb43720b
     action:
       - variables:
-          event: "{{ trigger.event.data.event }}"
+          event: "{{ trigger.event.data.command }}"
       - choose:
           - conditions:
-              - "{{ event == 1002 }}"
+              - "{{ event == up_open }}"
             sequence:
               - service: cover.open_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ event == 2002 }}"
+              - "{{ event == down_close }}"
             sequence:
               - service: cover.close_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ event == 1003 }}"
-            sequence:
-              - service: cover.stop_cover
-                target:
-                  entity_id: cover.patio_blinds
-          - conditions:
-              - "{{ event == 2003 }}"
+              - "{{ event == stop }}"
             sequence:
               - service: cover.stop_cover
                 target:
