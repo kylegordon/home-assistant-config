@@ -39,19 +39,19 @@ automation:
           event: "{{ trigger.event.data.command }}"
       - choose:
           - conditions:
-              - "{{ event == up_open }}"
+              - "{{ command == up_open }}"
             sequence:
               - service: cover.open_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ event == down_close }}"
+              - "{{ command == down_close }}"
             sequence:
               - service: cover.close_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ event == stop }}"
+              - "{{ command == stop }}"
             sequence:
               - service: cover.stop_cover
                 target:
