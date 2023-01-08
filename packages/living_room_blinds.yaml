@@ -36,22 +36,22 @@ automation:
           device_id: 6ce0802a8aef13556ad7c2b8cb43720b
     action:
       - variables:
-          event: "{{ trigger.event.data.command }}"
+          command: "{{ trigger.event.data.command }}"
       - choose:
           - conditions:
-              - "{{ command == up_open }}"
+              - '{{ command == "up_open" }}'
             sequence:
               - service: cover.open_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ command == down_close }}"
+              - '{{ command == "down_close" }}'
             sequence:
               - service: cover.close_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ command == stop }}"
+              - '{{ command == "stop" }}'
             sequence:
               - service: cover.stop_cover
                 target:
