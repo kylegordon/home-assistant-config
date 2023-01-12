@@ -238,7 +238,7 @@ emulated_hue:
       hidden: false
     light.sofa_overhead:
       hidden: false
-    light.dining_table_overhead:
+    light.living_room_1:
       hidden: false
     light.star_burst:
       hidden: false
