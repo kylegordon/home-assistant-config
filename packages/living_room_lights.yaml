@@ -51,7 +51,7 @@ automation:
           minutes: 60
     action:
       service: homeassistant.turn_off
-      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
+      entity_id: light.living_room_1, light.living_room_2, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
 
   - alias: Living Room motion - sunlight timeout
     trigger:
@@ -60,7 +60,7 @@ automation:
         above: 1000
     action:
       service: homeassistant.turn_off
-      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
+      entity_id: light.living_room_1, light.living_room_2, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
 
   - alias: Living Room motion
     trigger:
@@ -98,7 +98,7 @@ automation:
         data_template:
           entity_id: >
             {% if states('sensor.time_of_day') == "Morning" %}
-            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
+            light.living_room_1, light.living_room_2, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
             {% else %}
-            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
+            light.living_room_1, light.living_room_2, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
             {% endif %}

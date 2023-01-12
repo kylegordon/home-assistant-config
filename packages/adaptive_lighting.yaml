@@ -108,8 +108,8 @@ adaptive_lighting:
 
   - name: "Living Room adaptive lighting"
     lights:
-      - light.sofa_overhead
-      - light.dining_table_overhead
+      - light.living_room_1
+      - light.living_room_2
       - light.dining_nook
       - light.uplighter
       - light.sideboard
