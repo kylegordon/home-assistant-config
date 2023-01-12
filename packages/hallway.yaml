@@ -46,10 +46,10 @@ automation:
         data_template:
           name: EVENT
           message: "Turning hall lights on"
-          entity_id: group.hall
+          entity_id: light.hall
       - service: light.turn_on
         data_template:
-          entity_id: group.hall
+          entity_id: light.hall
 
   - alias: Hallway motion - 2 minute night timeout
     trigger:
@@ -69,9 +69,9 @@ automation:
         data_template:
           name: EVENT
           message: "Turning hall lights off"
-          entity_id: group.hall
+          entity_id: light.hall
       - service: light.turn_off
-        entity_id: group.hall
+        entity_id: light.hall
 
   - alias: Hallway motion - 10 minute timeout
     trigger:
@@ -87,6 +87,6 @@ automation:
         data_template:
           name: EVENT
           message: "Turning hall lights off"
-          entity_id: group.hall
+          entity_id: light.hall
       - service: light.turn_off
-        entity_id: group.hall
+        entity_id: light.hall
