@@ -36,7 +36,7 @@ automation:
           - group.outside_lights
           - group.front_hall
           - group.kitchen
-          - group.hall
+          - light.hall
           - group.dining_nook_lights
           - light.boot_room
           - light.twig_lights
