@@ -23,7 +23,7 @@ action:
       message: "Home late..."
   - service: light.turn_on
     data:
-      entity_id: group.hall
+      entity_id: light.hall
       brightness_pct: >
         {% if states('sensor.time_of_day') == "Morning" %}
         100

@@ -169,7 +169,7 @@ bathroom:
 hall_view:
   name: Hall
   entities:
-    - group.hall
+    - light.hall
     - binary_sensor.hall_rooms_motion
     - sensor.hall_rooms_motion
     - binary_sensor.hall_door_motion
