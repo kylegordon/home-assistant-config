@@ -158,8 +158,8 @@ study_lighting:
 hall:
   name: Hall lights
   entities:
-    - light.hall_bathroom
-    - light.hall_bedrooms
+    - light.hallway_bathroom
+    - light.hallway_bedrooms
 
 bathroom:
   name: Bathroom
