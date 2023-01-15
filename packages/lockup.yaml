@@ -1,0 +1,35 @@
+---
+homeassistant:
+  ## This doesn't seem to work. It needs to be surfaced in configuration.yaml
+  customize:
+    input_boolean.lockup_process:
+      hidden: false
+
+input_boolean:
+  lockup_process:
+    name: Lockup process
+    icon: mdi:sleep
+    initial: false
+
+automation:
+  - alias: Lockup process
+    trigger:
+      - platform: state
+        entity_id: input_boolean.lockup_process
+        to: 'on'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Triggering lockup process"
+          entity_id: input_boolean.lockup_process
+          domain: input_boolean
+      - service: homeassistant.turn_off
+        entity_id:
+          - switch.tin_hut_lights_relay
+      - service: media_player.turn_off
+        data: {}
+        target:
+        entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.lockup_process
