@@ -30,6 +30,6 @@ automation:
       - service: media_player.turn_off
         data: {}
         target:
-        entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
       - service: input_boolean.turn_off
         entity_id: input_boolean.lockup_process
