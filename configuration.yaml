@@ -256,6 +256,8 @@ emulated_hue:
       hidden: false
     input_boolean.goodnight_process:
       hidden: false
+    input_boolean.lockup_process:
+      hidden: false
     input_boolean.night_view:
       hidden: false
     script.alexa_turn_on_the_lights:
