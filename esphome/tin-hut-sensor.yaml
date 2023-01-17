@@ -1,5 +1,5 @@
 substitutions:
-  device_name: hallway_sensor
+  device_name: "tin-hut-sensor"
   device_description: Hallway Sensor
   friendly_name: Hallway Sensor
 
