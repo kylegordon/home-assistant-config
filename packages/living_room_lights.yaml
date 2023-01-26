@@ -1,4 +1,24 @@
 ---
+homeassistant:
+  ## This doesn't seem to work. It needs to be surfaced in configuration.yaml
+  customize:
+    light.art:
+      icon: mdi:lightbulb-group
+
+    light.living_room:
+      icon: mdi:lightbulb-group
+
+lights:
+  - platform: group
+    name: Dining Nook Group
+    unique_id: dining_nook_group
+    icon: mdi:lightbulb-group
+    entities:
+      - light.art
+      - light.sideboard
+      - light.dining_table
+      - light.train_cabinets
+
 automation:
   - alias: Living room light toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
