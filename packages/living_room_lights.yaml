@@ -8,11 +8,13 @@ homeassistant:
     light.living_room:
       icon: mdi:lightbulb-group
 
-lights:
+    light.dining_nook_group:
+      icon: mdi:lightbulb-group
+
+light:
   - platform: group
     name: Dining Nook Group
     unique_id: dining_nook_group
-    icon: mdi:lightbulb-group
     entities:
       - light.art
       - light.sideboard
