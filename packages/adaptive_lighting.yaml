@@ -116,7 +116,7 @@ adaptive_lighting:
     interval: 30  # seconds
     min_brightness: 15  # percentage
     max_brightness: 100  # percentage
-    min_color_temp: 2000
+    min_color_temp: 2300  # Might be able to reduce to 2200
     max_color_temp: 8500
     sleep_brightness: 1
     sleep_color_temp: 1500
