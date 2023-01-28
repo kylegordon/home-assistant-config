@@ -57,7 +57,6 @@ automation:
       topic: devices/60019485376d/button/event
       # Optional
       payload: 'DOUBLEHELD'
-
     action:
       - service: light.toggle
         entity_id: group.bedside_lights
@@ -65,3 +64,29 @@ automation:
         data_template:
           name: EVENT
           message: "Toggling bedside lights"
+
+  - alias: "Bedtime lights on"
+    trigger:
+      - platform: time
+        at: '21:00:00'
+    condition:
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: group.bedside_lights
+        data:
+          brightness_pct: 75
+          color_temp: 400
+          transition: 30
+
+  - alias: "Off wakup lights"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        above: 500
+    action:
+      - service: light.turn_off
+        data:
+            entity_id: light.master_bedroom, light.bedside_charlotte, light.bedside_kyle
