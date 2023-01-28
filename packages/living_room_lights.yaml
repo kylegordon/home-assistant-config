@@ -1,14 +1,14 @@
 ---
 input_number:
-  living_room_light_level:
-    name: Living Room light level
+  living_room_light_level_trigger:
+    name: Living Room light level trigger
     icon: mdi:sun-angle-outline
     unit_of_measurement: lx
     min: 0
     max: 10000
     step: 1
-  dining_nook_light_level:
-    name: Dining nook light level
+  dining_nook_light_level_trigger:
+    name: Dining nook light level trigger
     icon: mdi:sun-angle-outline
     unit_of_measurement: lx
     min: 0
@@ -73,7 +73,7 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level
+        below: input_number.living_room_light_level_trigger
         for:
           minutes: 10
     action:
@@ -93,7 +93,7 @@ automation:
         state: "off"
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level
+        below: input_number.living_room_light_level_trigger
         for:
           minutes: 10
       - condition: state
