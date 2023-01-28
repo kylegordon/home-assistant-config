@@ -50,3 +50,18 @@ automation:
         entity_id:
           - group.bedside_lights
           - light.twig_lights
+
+  - alias: Bedside light toggle
+    trigger:
+      platform: mqtt
+      topic: devices/60019485376d/button/event
+      # Optional
+      payload: 'DOUBLEHELD'
+
+    action:
+      - service: light.toggle
+        entity_id: group.bedside_lights
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling bedside lights"
