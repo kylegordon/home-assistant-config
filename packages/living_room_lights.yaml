@@ -11,6 +11,22 @@ homeassistant:
     light.dining_nook_group:
       icon: mdi:lightbulb-group
 
+input_number:
+  living_room_light_level_trigger:
+    name: Living Room light level trigger
+    icon: mdi:sun-angle-outline
+    unit_of_measurement: lx
+    min: 0
+    max: 10000
+    step: 1
+  dining_nook_light_level_trigger:
+    name: Dining nook light level trigger
+    icon: mdi:sun-angle-outline
+    unit_of_measurement: lx
+    min: 0
+    max: 10000
+    step: 1
+
 light:
   - platform: group
     name: Dining Nook Group
@@ -79,7 +95,9 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        above: 1000
+        below: input_number.living_room_light_level_trigger
+        for:
+          minutes: 10
     action:
       service: homeassistant.turn_off
       entity_id: light.living_room, light.dining_nook_group
@@ -95,9 +113,11 @@ automation:
       - condition: state
         entity_id: input_boolean.night_view
         state: "off"
-      - condition: numeric_state
+      - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        below: 1000
+        below: input_number.living_room_light_level_trigger
+        for:
+          minutes: 10
       - condition: state
         entity_id: binary_sensor.home_occupied
         state: "on"
