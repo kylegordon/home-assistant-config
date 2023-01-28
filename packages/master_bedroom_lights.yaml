@@ -89,4 +89,7 @@ automation:
     action:
       - service: light.turn_off
         data:
-            entity_id: light.master_bedroom, light.bedside_charlotte, light.bedside_kyle
+          entity_id:
+            - light.master_bedroom
+            - light.bedside_charlotte
+            - light.bedside_kyle
