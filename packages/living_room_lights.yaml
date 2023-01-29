@@ -91,11 +91,11 @@ automation:
       - condition: state
         entity_id: input_boolean.night_view
         state: "off"
-      - platform: numeric_state
+      - condition: numeric_state
         entity_id: sensor.average_external_light_level
         below: input_number.living_room_light_level_trigger
-        for:
-          minutes: 10
+        # for:
+        #   minutes: 10
       - condition: state
         entity_id: binary_sensor.home_occupied
         state: "on"
