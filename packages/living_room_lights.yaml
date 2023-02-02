@@ -1,4 +1,16 @@
 ---
+homeassistant:
+  ## This doesn't seem to work. It needs to be surfaced in configuration.yaml
+  customize:
+    light.art:
+      icon: mdi:lightbulb-group
+
+    light.living_room:
+      icon: mdi:lightbulb-group
+
+    light.dining_nook_group:
+      icon: mdi:lightbulb-group
+
 input_number:
   living_room_light_level_trigger:
     name: Living Room light level trigger
@@ -14,6 +26,16 @@ input_number:
     min: 0
     max: 10000
     step: 1
+
+light:
+  - platform: group
+    name: Dining Nook Group
+    unique_id: dining_nook_group
+    entities:
+      - light.art
+      - light.sideboard
+      - light.dining_table
+      - light.train_cabinets
 
 automation:
   - alias: Living room light toggle
@@ -67,7 +89,7 @@ automation:
           minutes: 60
     action:
       service: homeassistant.turn_off
-      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
+      entity_id: light.living_room, light.dining_nook_group
 
   - alias: Living Room motion - sunlight timeout
     trigger:
@@ -78,7 +100,7 @@ automation:
           minutes: 10
     action:
       service: homeassistant.turn_off
-      entity_id: light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
+      entity_id: light.living_room, light.dining_nook_group
 
   - alias: Living Room motion
     trigger:
@@ -118,7 +140,7 @@ automation:
         data_template:
           entity_id: >
             {% if states('sensor.time_of_day') == "Morning" %}
-            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
+            light.living_room, light.dining_nook_group
             {% else %}
-            light.sofa_overhead, light.dining_table_overhead, light.uplighter, light.sideboard, light.train_cabinets, light.dining_nook
+            light.living_room, light.dining_nook_group
             {% endif %}
