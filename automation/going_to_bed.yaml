@@ -34,7 +34,7 @@ action:
     - group.outside_lights
     - group.front_hall
     - group.kitchen
-    - group.hall
+    - light.hall
     - light.twig_lights
     - group.bedroom_2
     - group.bedroom_3
