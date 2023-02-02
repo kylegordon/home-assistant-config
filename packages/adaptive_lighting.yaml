@@ -33,7 +33,7 @@ adaptive_lighting:
     initial_transition: 5  # seconds
     interval: 30  # seconds
     min_brightness: 15  # percentage
-    max_brightness: 80  # percentage
+    max_brightness: 100  # percentage
     min_color_temp: 2000
     max_color_temp: 8500
     sleep_brightness: 1
@@ -53,7 +53,7 @@ adaptive_lighting:
     initial_transition: 5  # seconds
     interval: 30  # seconds
     min_brightness: 15  # percentage
-    max_brightness: 80  # percentage
+    max_brightness: 100  # percentage
     min_color_temp: 2000
     max_color_temp: 8500
     sleep_brightness: 1
@@ -73,7 +73,7 @@ adaptive_lighting:
     initial_transition: 5  # seconds
     interval: 30  # seconds
     min_brightness: 15  # percentage
-    max_brightness: 80  # percentage
+    max_brightness: 100  # percentage
     min_color_temp: 2000
     max_color_temp: 8500
     sleep_brightness: 1
@@ -94,7 +94,7 @@ adaptive_lighting:
     initial_transition: 5  # seconds
     interval: 30  # seconds
     min_brightness: 15  # percentage
-    max_brightness: 80  # percentage
+    max_brightness: 100  # percentage
     min_color_temp: 2000
     max_color_temp: 8500
     sleep_brightness: 1
@@ -108,19 +108,15 @@ adaptive_lighting:
 
   - name: "Living Room adaptive lighting"
     lights:
-      - light.sofa_overhead
-      - light.dining_table_overhead
-      - light.dining_nook
-      - light.uplighter
-      - light.sideboard
-      - light.train_cabinets
+      - light.living_room
+      - light.dining_nook_group
     prefer_rgb_color: false
     transition: 45  # seconds
     initial_transition: 5  # seconds
     interval: 30  # seconds
     min_brightness: 15  # percentage
-    max_brightness: 80  # percentage
-    min_color_temp: 2000
+    max_brightness: 100  # percentage
+    min_color_temp: 2300  # Might be able to reduce to 2200
     max_color_temp: 8500
     sleep_brightness: 1
     sleep_color_temp: 1500
