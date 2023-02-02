@@ -11,11 +11,12 @@ sensor:
     latitude: 55.765
     longitude: -4.496
 
-  - platform: mqtt
-    name: flightradar_home
-    state_topic: 'flightradar/viewpoint'
-    # just an example atm
-    value_template: "{{ value_json.id if value_json.lat == 55 else states('sensor.outdoor_temperature') }}"
+mqtt:
+  sensor:
+    - name: flightradar_home
+      state_topic: 'flightradar/viewpoint'
+      # just an example atm
+      value_template: "{{ value_json.id if value_json.lat == 55 else states('sensor.outdoor_temperature') }}"
 
 automation:
   - alias: 'Flight entry notification - Home'
