@@ -1,12 +1,18 @@
 ---
 automation:
   - alias: Hallway light toggle
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
-      - platform: state
-        entity_id:
-          - binary_sensor.hall_single_switch_touch_pad
-          - binary_sensor.hall_dual_switch_touchpad_2
-        to: 'on'
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: hall_single_switch
+          click_type: single
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: hall_dual_switch_touchpad_2
+          click_type: single
     action:
       - service: switch.turn_on
         entity_id:
@@ -18,7 +24,7 @@ automation:
       - service: logbook.log
         data_template:
           name: EVENT
-          message: "Toggling hallway light"
+          message: "Toggling hallway lights"
 
   - alias: Hallway light motion
     initial_state: true
@@ -36,9 +42,14 @@ automation:
         entity_id: binary_sensor.home_occupied
         state: "on"
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning hall lights on"
+          entity_id: light.hall
       - service: light.turn_on
         data_template:
-          entity_id: group.hall
+          entity_id: light.hall
 
   - alias: Hallway motion - 2 minute night timeout
     trigger:
@@ -54,8 +65,13 @@ automation:
         entity_id: sensor.time_of_day
         state: "Night"
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning hall lights off"
+          entity_id: light.hall
       - service: light.turn_off
-        entity_id: group.hall
+        entity_id: light.hall
 
   - alias: Hallway motion - 10 minute timeout
     trigger:
@@ -67,5 +83,10 @@ automation:
         for:
           minutes: 10
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Turning hall lights off"
+          entity_id: light.hall
       - service: light.turn_off
-        entity_id: group.hall
+        entity_id: light.hall

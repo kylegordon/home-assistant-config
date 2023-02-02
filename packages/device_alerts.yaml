@@ -4,15 +4,15 @@ automation:
       - platform: state
         entity_id:
           - sensor.kitchen_temperature
-          - binary_sensor.utility_room_sensor_status
+          - binary_sensor.front_hall_sensor_status
           - sensor.garage_temperature
           - binary_sensor.hall_door_motion
           - binary_sensor.hall_rooms_motion
           - binary_sensor.ensuite_motion
           - binary_sensor.living_room_motion
           - binary_sensor.kitchen_motion
-          - binary_sensor.utility_room_motion
-          - binary_sensor.outside_utility_room_motion
+          - binary_sensor.front_hall_motion
+          - binary_sensor.front_door_motion
           - binary_sensor.washing_machine_power_plug_status
           - binary_sensor.dishwasher_power_plug_status
           - binary_sensor.shower_pump_power_plug_status
@@ -46,10 +46,8 @@ automation:
           - light.guest_bedroom
           - light.master_bedroom
           - light.craft_room
-          - light.hall_bedrooms
-          - light.hall_entrance
-          - light.hall_bedrooms
-          - light.hall_bathroom
+          - light.hallway_bedrooms
+          - light.hallway_bathroom
           - light.kitchen_cabinets
           - light.kitchen
           - light.boot_room

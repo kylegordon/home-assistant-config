@@ -1,3 +1,4 @@
+---
 alias: Living Room TV dimmer
 trigger:
   - platform: state
@@ -7,18 +8,16 @@ condition:
   - condition: or
     conditions:
       - condition: state
-        entity_id: light.sofa_overhead
+        entity_id: light.living_room_1
         state: 'on'
       - condition: state
-        entity_id: light.dining_table_overhead
+        entity_id: light.living_room_2
         state: 'on'
       - condition: state
-        entity_id: light.uplighter
+        entity_id: light.dining_nook_group
         state: 'on'
 action:
   - service: light.turn_off
     entity_id:
-      - light.sofa_overhead
-      - light.dining_table_overhead
-      - light.uplighter
-      - light.sideboard
+      - light.living_room
+      - light.dining_nook_group

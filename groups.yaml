@@ -7,7 +7,6 @@ default_view:
     - sensor.electricity_energy_usage
     - sensor.house_average_temperature
     - sensor.house_average_humidity
-    - calendar.holiday_mode
     - calendar.next_bin
     - sensor.next_bin
     - sensor.tmo
@@ -33,16 +32,16 @@ kitchen:
     - light.kitchen
     - media_player.kitchen
 
-utility_room:
-  name: Utility Room
+front_hall:
+  name: Front Hall
   entities:
-    - light.utility_room
-    - sensor.utility_room_sensor_temperature
-    - sensor.utility_room_sensor_humidity
-    - sensor.utility_room_sensor_signal_level
-    - sensor.utility_room_lightlevel
-    - binary_sensor.utility_room_motion
-    - binary_sensor.utility_room_door
+    - light.front_hall
+    - sensor.front_hall_sensor_temperature
+    - sensor.front_hall_sensor_humidity
+    - sensor.front_hall_sensor_signal_level
+    - sensor.front_hall_lightlevel
+    - binary_sensor.front_hall_motion
+    - binary_sensor.front_hall_door
 
 living_room:
   name: Living Room
@@ -60,8 +59,8 @@ living_room:
 living_room_lights:
   name: Living Room Lights
   entities:
-    - light.uplighter
-    - light.sofa_overhead
+    - light.living_room_1
+    - light.living_room_2
     - light.edison_lamp
     - light.lava_lamp
     - light.star_burst
@@ -160,8 +159,8 @@ study_lighting:
 hall:
   name: Hall lights
   entities:
-    - light.hall_bathroom
-    - light.hall_bedrooms
+    - light.hallway_bathroom
+    - light.hallway_bedrooms
 
 bathroom:
   name: Bathroom
@@ -171,7 +170,7 @@ bathroom:
 hall_view:
   name: Hall
   entities:
-    - group.hall
+    - light.hall
     - binary_sensor.hall_rooms_motion
     - sensor.hall_rooms_motion
     - binary_sensor.hall_door_motion
@@ -188,7 +187,7 @@ outside:
     - sun.sun
     - binary_sensor.outside_front_motion
     - binary_sensor.outside_driveway_motion
-    - binary_sensor.outside_utility_room_motion
+    - binary_sensor.front_door_motion
     - group.climate
     - group.outside_lights
     - sensor.driveway_floodlights_signal_level
@@ -207,6 +206,7 @@ outside_lights:
     - light.back_floodlights
     - light.mini_deck_floodlight
     - light.decking_lights
+    - light.front_door_dome
 
 climate:
   name: Climate
