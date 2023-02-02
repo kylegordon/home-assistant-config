@@ -8,9 +8,9 @@ adaptive_lighting:
       - light.boot_room
       - light.front_hall
     prefer_rgb_color: false
-    transition: 5  # seconds
+    transition: 45  # seconds
     initial_transition: 5  # seconds
-    interval: 90  # seconds
+    interval: 30  # seconds
     min_brightness: 15  # percentage
     max_brightness: 100  # percentage
     min_color_temp: 2000
@@ -29,9 +29,9 @@ adaptive_lighting:
       - light.ensuite
       - light.master_bedroom
     prefer_rgb_color: false
-    transition: 5  # seconds
+    transition: 45  # seconds
     initial_transition: 5  # seconds
-    interval: 90  # seconds
+    interval: 30  # seconds
     min_brightness: 15  # percentage
     max_brightness: 80  # percentage
     min_color_temp: 2000
@@ -49,9 +49,9 @@ adaptive_lighting:
     lights:
       - light.guest_bedroom
     prefer_rgb_color: false
-    transition: 5  # seconds
+    transition: 45  # seconds
     initial_transition: 5  # seconds
-    interval: 90  # seconds
+    interval: 30  # seconds
     min_brightness: 15  # percentage
     max_brightness: 80  # percentage
     min_color_temp: 2000
@@ -69,9 +69,9 @@ adaptive_lighting:
     lights:
       - light.master_bathroom
     prefer_rgb_color: false
-    transition: 5  # seconds
+    transition: 45  # seconds
     initial_transition: 5  # seconds
-    interval: 90  # seconds
+    interval: 30  # seconds
     min_brightness: 15  # percentage
     max_brightness: 80  # percentage
     min_color_temp: 2000
@@ -90,9 +90,9 @@ adaptive_lighting:
       - light.kitchen
       - light.kitchen_cabinets
     prefer_rgb_color: false
-    transition: 5  # seconds
+    transition: 45  # seconds
     initial_transition: 5  # seconds
-    interval: 90  # seconds
+    interval: 30  # seconds
     min_brightness: 15  # percentage
     max_brightness: 80  # percentage
     min_color_temp: 2000
@@ -115,9 +115,9 @@ adaptive_lighting:
       - light.sideboard
       - light.train_cabinets
     prefer_rgb_color: false
-    transition: 5  # seconds
+    transition: 45  # seconds
     initial_transition: 5  # seconds
-    interval: 90  # seconds
+    interval: 30  # seconds
     min_brightness: 15  # percentage
     max_brightness: 80  # percentage
     min_color_temp: 2000
