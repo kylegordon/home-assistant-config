@@ -17,6 +17,12 @@
   access_token: !secret mastodon_overuplawmoor_access_token
   client_id: !secret mastodon_overuplawmoor_client_id
   client_secret: !secret mastodon_overuplawmoor_client_secret
+- platform: mastodon
+  name: mastodon_viewpoint
+  base_url: https://botsin.space/
+  access_token: !secret mastodon_viewpoint_access_token
+  client_id: !secret mastodon_viewpoint_client_id
+  client_secret: !secret mastodon_viewpoint_client_secret
 - platform: smtp
   name: email_kyle
   server: smtp.gmail.com
