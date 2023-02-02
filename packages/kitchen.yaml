@@ -1,4 +1,13 @@
 ---
+input_number:
+  kitchen_light_level_trigger:
+    name: Kitchen light level trigger
+    icon: mdi:sun-angle-outline
+    unit_of_measurement: lx
+    min: 0
+    max: 10000
+    step: 1
+
 automation:
   - alias: Kitchen motion
     trigger:
@@ -8,7 +17,9 @@ automation:
     condition:
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
-        below: 1000
+        below: input_number.kitchen_light_level_trigger
+        # for:
+        #   minutes: 10
     action:
       - service: homeassistant.turn_on
         data_template:
