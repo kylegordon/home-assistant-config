@@ -49,11 +49,7 @@ automation:
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
-      - service: notify.twitter_overuplawmoor
-        data_template:
-          message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
-          https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
       - service: notify.mastodon_overuplawmoor
         data_template:
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
