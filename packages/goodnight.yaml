@@ -29,15 +29,13 @@ automation:
           - cover.patio_blinds
       - service: homeassistant.turn_off
         entity_id:
-          - group.living_room
-          - group.living_room_lights
-          - group.dining_nook_lights
-          - group.nook_art_2
+          - light.living_room
+          - light.dining_nook_group
+          - light.art
           - group.outside_lights
           - group.front_hall
           - group.kitchen
-          - group.hall
-          - group.dining_nook_lights
+          - light.hall
           - light.boot_room
           - light.twig_lights
           - light.glow_orbs
