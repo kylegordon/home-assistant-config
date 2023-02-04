@@ -50,6 +50,10 @@
   name: "Candle Arch"
   entity_id: switch.candle_arch
 
+- platform: switch
+  name: "Outside Decorations"
+  entity_id: switch.outside_decorations
+
 - platform: group
   name: Decking Lights
   entities:

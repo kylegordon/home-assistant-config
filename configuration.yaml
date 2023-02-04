@@ -28,6 +28,8 @@ homeassistant:
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
+  country: GB
+  currency: GBP
 
   # Includes
   packages: !include_dir_named packages
@@ -210,7 +212,7 @@ emulated_hue:
       hidden: false
     group.outside_lights:
       hidden: false
-    group.hall:
+    light.hall:
       hidden: false
     group.living_room_lights:
       hidden: false
@@ -234,7 +236,7 @@ emulated_hue:
       hidden: false
     light.sideboard:
       hidden: false
-    light.uplighter:
+    light.living_room:
       hidden: false
     light.star_burst:
       hidden: false
@@ -252,7 +254,15 @@ emulated_hue:
       hidden: false
     input_boolean.goodnight_process:
       hidden: false
+    input_boolean.lockup_process:
+      hidden: false
+    input_boolean.open_tin_hut_process:
+      hidden: false
     input_boolean.night_view:
+      hidden: false
+    script.alexa_turn_on_the_lights:
+      hidden: false
+    script.alexa_turn_off_the_lights:
       hidden: false
 
 ############

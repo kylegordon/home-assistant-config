@@ -1,3 +1,4 @@
+---
 homeassistant:
   ## This doesn't seem to work. It needs to be surfaced in configuration.yaml
   customize:
@@ -17,26 +18,31 @@ automation:
         entity_id: input_boolean.goodnight_process
         to: 'on'
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Triggering goodnight mode"
+          entity_id: input_boolean.goodnight_process
+          domain: input_boolean
       - service: cover.close_cover
         entity_id:
-        - cover.patio_blinds
+          - cover.patio_blinds
       - service: homeassistant.turn_off
         entity_id:
-        - group.living_room
-        - group.living_room_lights
-        - group.dining_nook
-        - group.outside_lights
-        - group.front_hall
-        - group.kitchen
-        - group.hall
-        - group.dining_nook_lights
-        - light.boot_room
-        - light.twig_lights
-        - light.glow_orbs
-        - light.under_bed_lights
-        - group.bedroom_1
-        - group.bedroom_3
-        - group.bedroom_4
+          - light.living_room
+          - light.dining_nook_group
+          - light.art
+          - group.outside_lights
+          - group.front_hall
+          - group.kitchen
+          - light.hall
+          - light.boot_room
+          - light.twig_lights
+          - light.glow_orbs
+          - light.under_bed_lights
+          - group.bedroom_1
+          - group.bedroom_3
+          - group.bedroom_4
       - condition: or
         # If guests are staying, don't turn off their bedroom lights
         conditions:
@@ -45,7 +51,7 @@ automation:
             state: 'off'
       - service: homeassistant.turn_off
         entity_id:
-        - group.bedroom_2
+          - group.bedroom_2
 
   - alias: Goodnight process reset
     trigger:
@@ -56,5 +62,7 @@ automation:
         data_template:
           name: EVENT
           message: "Resetting goodnight mode"
+          entity_id: input_boolean.goodnight_process
+          domain: input_boolean
       - service: input_boolean.turn_off
         entity_id: input_boolean.goodnight_process
