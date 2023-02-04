@@ -11,7 +11,7 @@
 - platform: ping
   hosts:
     charlotte_phone: 172.24.32.144
-    kyle_phone: 172.24.32.135
+#    kyle_phone: 172.24.32.135
 # - platform: owntracks
 #   max_gps_accuracy: 250
 

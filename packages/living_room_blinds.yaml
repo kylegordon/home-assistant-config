@@ -26,40 +26,29 @@ cover:
 automation:
   - alias: Control Blinds
     trigger:
-      - platform: event
-        event_type: deconz_event
-        event_data:
-          id: tradfri_open_close_switch
-          device_id: 402b382edcbcbd22f65129957ce935f8
-      - platform: event
-        event_type: deconz_event
-        event_data:
-          id: patio_blinds_switch_2
-          device_id: 6ce0802a8aef13556ad7c2b8cb43720b
+      - platform: mqtt
+        topic: zigbee2mqtt/zigbee2mqtt/Blinds Remote 2/action
+      - platform: mqtt
+        topic: "zigbee2mqtt/zigbee2mqtt/Blinds Remote 2/action"
+
     action:
       - variables:
-          event: "{{ trigger.event.data.event }}"
+          command: "{{ trigger.payload }}"
       - choose:
           - conditions:
-              - "{{ event == 1002 }}"
+              - '{{ command == "open" }}'
             sequence:
               - service: cover.open_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ event == 2002 }}"
+              - '{{ command == "close" }}'
             sequence:
               - service: cover.close_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ event == 1003 }}"
-            sequence:
-              - service: cover.stop_cover
-                target:
-                  entity_id: cover.patio_blinds
-          - conditions:
-              - "{{ event == 2003 }}"
+              - '{{ command == "stop" }}'
             sequence:
               - service: cover.stop_cover
                 target:

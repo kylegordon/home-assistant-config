@@ -34,17 +34,6 @@
 
 - platform: template
   sensors:
-    last_alexa:
-      value_template: >
-        {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
-
-- platform: radarr
-  api_key: ba4d5fad0a5a433c82be11d22f23b263
-  host: homeauto.vpn.glasgownet.com
-  port: 7878
-
-- platform: template
-  sensors:
     next_bin:
       # value_template: "{{ states.calendar.next_bin.attributes.message }}"
       # value_template: "{{ states.calendar.family_calendar.attributes.message|replace(' bin','') }}"

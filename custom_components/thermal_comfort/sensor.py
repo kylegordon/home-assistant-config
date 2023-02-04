@@ -43,6 +43,7 @@ from homeassistant.helpers.event import (
 )
 from homeassistant.helpers.template import Template
 from homeassistant.loader import async_get_custom_components
+from homeassistant.util.unit_conversion import TemperatureConverter
 import voluptuous as vol
 
 from .const import DEFAULT_NAME, DOMAIN
@@ -101,24 +102,28 @@ class SensorType(StrEnum):
         """Return the sensor type from string."""
         if string in list(cls):
             return cls(string)
-        elif string == "absolutehumidity":
-            return cls.ABSOLUTE_HUMIDITY
-        elif string == "dewpoint":
-            return cls.DEW_POINT
-        elif string == "frostpoint":
-            return cls.FROST_POINT
-        elif string == "frostrisk":
-            return cls.FROST_RISK
-        elif string == "heatindex":
-            return cls.HEAT_INDEX
-        elif string == "simmerindex":
-            return cls.SIMMER_INDEX
-        elif string == "simmerzone":
-            return cls.SIMMER_ZONE
-        elif string == "perception":
-            return cls.THERMAL_PERCEPTION
         else:
-            raise ValueError(f"Unknown sensor type: {string}")
+            _LOGGER.warning(
+                "Sensor type shortform and legacy YAML will be removed in 2.0. You should update to the new yaml format: https://github.com/dolezsa/thermal_comfort/blob/master/documentation/yaml.md"
+            )
+            if string == "absolutehumidity":
+                return cls.ABSOLUTE_HUMIDITY
+            elif string == "dewpoint":
+                return cls.DEW_POINT
+            elif string == "frostpoint":
+                return cls.FROST_POINT
+            elif string == "frostrisk":
+                return cls.FROST_RISK
+            elif string == "heatindex":
+                return cls.HEAT_INDEX
+            elif string == "simmerindex":
+                return cls.SIMMER_INDEX
+            elif string == "simmerzone":
+                return cls.SIMMER_ZONE
+            elif string == "perception":
+                return cls.THERMAL_PERCEPTION
+            else:
+                raise ValueError(f"Unknown sensor type: {string}")
 
 
 SENSOR_TYPES = {
@@ -266,6 +271,9 @@ def compute_once_lock(sensor_type):
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the Thermal Comfort sensors."""
     if discovery_info is None:
+        _LOGGER.warning(
+            "Legacy YAML configuration support will be removed in 2.0. You should update to the new yaml format: https://github.com/dolezsa/thermal_comfort/blob/master/documentation/yaml.md"
+        )
         devices = [
             dict(device_config, **{CONF_NAME: device_name})
             for (device_name, device_config) in config[CONF_SENSORS].items()
@@ -319,7 +327,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up entity configured via user interface.
 
-    Called via async_setup_platforms(, SENSOR) from __init__.py
+    Called via async_forward_entry_setups(, SENSOR) from __init__.py
     """
     data = hass.data[DOMAIN][config_entry.entry_id]
     if data.get(CONF_SCAN_INTERVAL) is None:
@@ -563,7 +571,7 @@ class DeviceThermalComfort:
             self.extra_state_attributes[ATTR_TEMPERATURE] = temp
             # convert to celsius if necessary
             if unit == TEMP_FAHRENHEIT:
-                temp = util.temperature.fahrenheit_to_celsius(temp)
+                temp = TemperatureConverter.convert(temp, TEMP_FAHRENHEIT, TEMP_CELSIUS)
             self._temperature = temp
             await self.async_update()
 
@@ -594,7 +602,9 @@ class DeviceThermalComfort:
     @compute_once_lock(SensorType.HEAT_INDEX)
     async def heat_index(self) -> float:
         """Heat Index <http://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml>."""
-        fahrenheit = util.temperature.celsius_to_fahrenheit(self._temperature)
+        fahrenheit = TemperatureConverter.convert(
+            self._temperature, TEMP_CELSIUS, TEMP_FAHRENHEIT
+        )
         hi = 0.5 * (
             fahrenheit + 61.0 + ((fahrenheit - 68.0) * 1.2) + (self._humidity * 0.094)
         )
@@ -616,7 +626,7 @@ class DeviceThermalComfort:
         elif self._humidity > 85 and fahrenheit >= 80 and fahrenheit <= 87:
             hi = hi + ((self._humidity - 85) * 0.1) * ((87 - fahrenheit) * 0.2)
 
-        return round(util.temperature.fahrenheit_to_celsius(hi), 2)
+        return round(TemperatureConverter.convert(hi, TEMP_FAHRENHEIT, TEMP_CELSIUS), 2)
 
     @compute_once_lock(SensorType.THERMAL_PERCEPTION)
     async def thermal_perception(self) -> ThermalPerception:
@@ -686,7 +696,9 @@ class DeviceThermalComfort:
     @compute_once_lock(SensorType.SIMMER_INDEX)
     async def simmer_index(self) -> float:
         """<https://www.vcalc.com/wiki/rklarsen/Summer+Simmer+Index>."""
-        fahrenheit = util.temperature.celsius_to_fahrenheit(self._temperature)
+        fahrenheit = TemperatureConverter.convert(
+            self._temperature, TEMP_CELSIUS, TEMP_FAHRENHEIT
+        )
 
         si = (
             1.98
@@ -697,7 +709,7 @@ class DeviceThermalComfort:
         if fahrenheit < 70:
             si = fahrenheit
 
-        return round(util.temperature.fahrenheit_to_celsius(si), 2)
+        return round(TemperatureConverter.convert(si, TEMP_FAHRENHEIT, TEMP_CELSIUS), 2)
 
     @compute_once_lock(SensorType.SIMMER_ZONE)
     async def simmer_zone(self) -> SimmerZone:

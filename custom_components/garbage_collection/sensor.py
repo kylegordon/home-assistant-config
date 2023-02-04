@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date, datetime, time, timedelta
-from typing import Generator
+from typing import Any, Dict, Generator
 
 from dateutil.relativedelta import relativedelta
 from homeassistant.config_entries import ConfigEntry
@@ -14,8 +14,9 @@ from homeassistant.const import (
     CONF_NAME,
     WEEKDAYS,
 )
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.discovery import async_load_platform
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 
@@ -29,7 +30,7 @@ THROTTLE_INTERVAL = timedelta(seconds=60)
 
 
 async def async_setup_entry(
-    _, config_entry: ConfigEntry, async_add_devices: AddEntitiesCallback
+    _: HomeAssistant, config_entry: ConfigEntry, async_add_devices: AddEntitiesCallback
 ) -> None:
     """Create garbage collection entities defined in config_flow and add them to HA."""
     frequency = config_entry.options.get(const.CONF_FREQUENCY)
@@ -38,18 +39,20 @@ async def async_setup_entry(
         if config_entry.title is not None
         else config_entry.data.get(CONF_NAME)
     )
-    if frequency in ["weekly", "even-weeks", "odd-weeks", "every-n-weeks"]:
-        async_add_devices([WeeklyCollection(config_entry)], True)
-    elif frequency == "every-n-days":
-        async_add_devices([DailyCollection(config_entry)], True)
-    elif frequency == "monthly":
-        async_add_devices([MonthlyCollection(config_entry)], True)
-    elif frequency == "annual":
-        async_add_devices([AnnualCollection(config_entry)], True)
-    elif frequency == "group":
-        async_add_devices([GroupCollection(config_entry)], True)
-    elif frequency == "blank":
-        async_add_devices([BlankCollection(config_entry)], True)
+    _frequency_function = {
+        "weekly": WeeklyCollection,
+        "even-weeks": WeeklyCollection,
+        "odd-weeks": WeeklyCollection,
+        "every-n-weeks": WeeklyCollection,
+        "every-n-days": DailyCollection,
+        "monthly": MonthlyCollection,
+        "annual": AnnualCollection,
+        "group": GroupCollection,
+        "blank": BlankCollection,
+    }
+    if frequency in _frequency_function:
+        add_devices = _frequency_function[frequency]
+        async_add_devices([add_devices(config_entry)], True)
     else:
         _LOGGER.error("(%s) Unknown frequency %s", name, frequency)
         raise ValueError
@@ -93,16 +96,13 @@ class GarbageCollection(RestoreEntity):
         self._hidden = config.get(ATTR_HIDDEN, False)
         self._manual = config.get(const.CONF_MANUAL)
         first_month = config.get(const.CONF_FIRST_MONTH, const.DEFAULT_FIRST_MONTH)
+        months = [m["value"] for m in const.MONTH_OPTIONS]
         self._first_month: int = (
-            const.MONTH_OPTIONS.index(first_month) + 1
-            if first_month in const.MONTH_OPTIONS
-            else 1
+            months.index(first_month) + 1 if first_month in months else 1
         )
         last_month = config.get(const.CONF_LAST_MONTH, const.DEFAULT_LAST_MONTH)
         self._last_month: int = (
-            const.MONTH_OPTIONS.index(last_month) + 1
-            if last_month in const.MONTH_OPTIONS
-            else 12
+            months.index(last_month) + 1 if last_month in months else 12
         )
         self._verbose_state = config.get(const.CONF_VERBOSE_STATE)
         self._icon_normal = config.get(const.CONF_ICON_NORMAL)
@@ -110,7 +110,12 @@ class GarbageCollection(RestoreEntity):
         self._icon_tomorrow = config.get(const.CONF_ICON_TOMORROW)
         exp = config.get(const.CONF_EXPIRE_AFTER)
         self.expire_after: time | None = (
-            None if exp is None else datetime.strptime(exp, "%H:%M:%S").time()
+            None
+            if (
+                exp is None
+                or datetime.strptime(exp, "%H:%M:%S").time() == time(0, 0, 0)
+            )
+            else datetime.strptime(exp, "%H:%M:%S").time()
         )
         self._date_format = config.get(
             const.CONF_DATE_FORMAT, const.DEFAULT_DATE_FORMAT
@@ -126,25 +131,33 @@ class GarbageCollection(RestoreEntity):
         self._attr_state = "" if bool(self._verbose_state) else 2
         self._attr_icon = self._icon_normal
 
-    async def async_added_to_hass(self):
+    async def async_added_to_hass(self) -> None:
         """When sensor is added to hassio, add it to calendar."""
         await super().async_added_to_hass()
-        if const.DOMAIN not in self.hass.data:
-            self.hass.data[const.DOMAIN] = {}
-        if const.SENSOR_PLATFORM not in self.hass.data[const.DOMAIN]:
-            self.hass.data[const.DOMAIN][const.SENSOR_PLATFORM] = {}
         self.hass.data[const.DOMAIN][const.SENSOR_PLATFORM][self.entity_id] = self
 
+        # Restore stored state
         if (state := await self.async_get_last_state()) is not None:
+            self._last_updated = None  # Unblock update - after options change
             self._attr_state = state.state
-            self._days = state.attributes[const.ATTR_DAYS]
-            self._next_date = helpers.parse_datetime(
-                state.attributes[const.ATTR_NEXT_DATE]
+            self._days = (
+                state.attributes[const.ATTR_DAYS]
+                if const.ATTR_DAYS in state.attributes
+                else None
             )
-            self.last_collection = helpers.parse_datetime(
-                state.attributes[const.ATTR_LAST_COLLECTION]
+            next_date = (
+                helpers.parse_datetime(state.attributes[const.ATTR_NEXT_DATE])
+                if const.ATTR_NEXT_DATE in state.attributes
+                else None
+            )
+            self._next_date = None if next_date is None else next_date.date()
+            self.last_collection = (
+                helpers.parse_datetime(state.attributes[const.ATTR_LAST_COLLECTION])
+                if const.ATTR_LAST_COLLECTION in state.attributes
+                else None
             )
 
+        # Create device
         device_registry = dr.async_get(self.hass)
         device_registry.async_get_or_create(
             config_entry_id=self.config_entry.entry_id,
@@ -153,26 +166,22 @@ class GarbageCollection(RestoreEntity):
             manufacturer="bruxy70",
         )
 
+        # Create or add to calendar
         if not self.hidden:
             if const.CALENDAR_PLATFORM not in self.hass.data[const.DOMAIN]:
                 self.hass.data[const.DOMAIN][
                     const.CALENDAR_PLATFORM
                 ] = EntitiesCalendarData(self.hass)
                 _LOGGER.debug("Creating garbage_collection calendar")
-                self.hass.async_create_task(
-                    async_load_platform(
-                        self.hass,
-                        const.CALENDAR_PLATFORM,
-                        const.DOMAIN,
-                        {"name": const.CALENDAR_NAME},
-                        {"name": const.CALENDAR_NAME},
-                    )
+                await self.hass.config_entries.async_forward_entry_setup(
+                    self.config_entry, const.CALENDAR_PLATFORM
                 )
+
             self.hass.data[const.DOMAIN][const.CALENDAR_PLATFORM].add_entity(
                 self.entity_id
             )
 
-    async def async_will_remove_from_hass(self):
+    async def async_will_remove_from_hass(self) -> None:
         """When sensor is added to hassio, remove it."""
         await super().async_will_remove_from_hass()
         del self.hass.data[const.DOMAIN][const.SENSOR_PLATFORM][self.entity_id]
@@ -188,7 +197,7 @@ class GarbageCollection(RestoreEntity):
         return self.config_entry.entry_id
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo | None:
         """Return device info."""
         return {
             "identifiers": {(const.DOMAIN, self.unique_id)},
@@ -202,53 +211,58 @@ class GarbageCollection(RestoreEntity):
         return self._attr_name
 
     @property
-    def next_date(self):
+    def next_date(self) -> date | None:
         """Return next date attribute."""
         return self._next_date
 
     @property
-    def hidden(self):
+    def hidden(self) -> bool:
         """Return the hidden attribute."""
         return self._hidden
 
     @property
-    def state(self):
+    def native_unit_of_measurement(self) -> str | None:
+        """Return unit of measurement - None for numerical value."""
+        return None
+
+    @property
+    def native_value(self) -> object:
         """Return the state of the sensor."""
         return self._attr_state
 
     @property
-    def last_updated(self):
+    def last_updated(self) -> datetime | None:
         """Return when the sensor was last updated."""
         return self._last_updated
 
     @property
-    def icon(self):
+    def icon(self) -> str:
         """Return the entity icon."""
         return self._attr_icon
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> Dict[str, Any]:
         """Return the state attributes."""
-        res = {}
-        if self._next_date is None:
-            res[const.ATTR_NEXT_DATE] = None
-        else:
-            res[const.ATTR_NEXT_DATE] = datetime(
+        state_attr = {
+            const.ATTR_DAYS: self._days,
+            const.ATTR_LAST_COLLECTION: self.last_collection,
+            const.ATTR_LAST_UPDATED: self._last_updated,
+            const.ATTR_NEXT_DATE: None
+            if self._next_date is None
+            else datetime(
                 self._next_date.year, self._next_date.month, self._next_date.day
-            ).astimezone()
-        res[const.ATTR_DAYS] = self._days
-        res[const.ATTR_LAST_COLLECTION] = self.last_collection
-        res[const.ATTR_LAST_UPDATED] = self._last_updated
-        # Needed for translations to work
-        res[ATTR_DEVICE_CLASS] = self.DEVICE_CLASS
-        return res
+            ).astimezone(),
+            # Needed for translations to work
+            ATTR_DEVICE_CLASS: self.DEVICE_CLASS,
+        }
+        return state_attr
 
     @property
-    def DEVICE_CLASS(self):  # pylint: disable=C0103
+    def DEVICE_CLASS(self) -> str:  # pylint: disable=C0103
         """Return the class of the sensor."""
         return const.DEVICE_CLASS
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return main sensor parameters."""
         return (
             f"{self.__class__.__name__}(name={self._attr_name}, "
@@ -276,7 +290,7 @@ class GarbageCollection(RestoreEntity):
         try:
             ready_for_update = bool(self._last_updated.date() != today)  # type: ignore
         except AttributeError:
-            ready_for_update = True
+            return True
         try:
             if self._next_date == today and (
                 (
@@ -288,7 +302,7 @@ class GarbageCollection(RestoreEntity):
                     and self.last_collection.date() == today
                 )
             ):
-                ready_for_update = True
+                return True
         except (AttributeError, TypeError):
             pass
         return ready_for_update
@@ -305,19 +319,20 @@ class GarbageCollection(RestoreEntity):
         if not self.date_inside(day):
             year = day.year
             month = day.month
+            months = [m["label"] for m in const.MONTH_OPTIONS]
             if self._first_month <= self._last_month < month:
                 _LOGGER.debug(
                     "(%s) %s outside the range, lookig from %s next year",
                     self._attr_name,
                     day,
-                    const.MONTH_OPTIONS[self._first_month - 1],
+                    months[self._first_month - 1],
                 )
                 return date(year + 1, self._first_month, 1)
             _LOGGER.debug(
                 "(%s) %s outside the range, searching from %s",
                 self._attr_name,
                 day,
-                const.MONTH_OPTIONS[self._first_month - 1],
+                months[self._first_month - 1],
             )
             return date(year, self._first_month, 1)
         return day
@@ -458,6 +473,8 @@ class GarbageCollection(RestoreEntity):
                     self._attr_icon = self._icon_tomorrow
         else:
             self._days = None
+            self._attr_state = None
+            self._attr_icon = self._icon_normal
 
 
 class WeeklyCollection(GarbageCollection):
