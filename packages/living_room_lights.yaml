@@ -107,6 +107,7 @@ automation:
       - platform: state
         entity_id: binary_sensor.living_room_motion
         to: 'on'
+        from: 'off'
     condition:
       condition: and
       conditions:
