@@ -6,6 +6,7 @@ automation:
       - platform: state
         entity_id: binary_sensor.garage_motion
         to: 'on'
+        from: 'off'
     action:
       - service: light.turn_on
         entity_id: light.garage_lights
