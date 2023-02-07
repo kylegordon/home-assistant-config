@@ -14,6 +14,7 @@ automation:
       platform: state
       entity_id: binary_sensor.kitchen_motion
       to: 'on'
+      from: 'off'
     condition:
       - condition: numeric_state
         entity_id: sensor.average_external_light_level

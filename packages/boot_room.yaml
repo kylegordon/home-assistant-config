@@ -27,6 +27,7 @@ automation:
       - platform: state
         entity_id: binary_sensor.boot_room_motion
         to: 'on'
+        from: 'off'
     # Sensor attached to wrong door at the moment...
     #   - platform: state
     #     entity_id: binary_sensor.boot_room_door
@@ -73,6 +74,7 @@ automation:
       - platform: state
         entity_id: binary_sensor.boot_room_motion
         to: 'on'
+        from: 'off'
     # Sensor attached to wrong door at the moment...
     #   - platform: state
     #     entity_id: binary_sensor.boot_room_door
