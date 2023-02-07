@@ -53,10 +53,10 @@ all_off:
     ## Turn off Hall switches and lights
     - service: switch.turn_off
       data:
-        entity_id: group.hall
+        entity_id: light.hall
     - service: light.turn_off
       data:
-        entity_id: group.hall
+        entity_id: light.hall
 
     ## Turn off bathroom
     - service: switch.turn_off
