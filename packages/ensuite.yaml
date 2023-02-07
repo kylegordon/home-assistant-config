@@ -32,6 +32,7 @@ automation:
       - platform: state
         entity_id: binary_sensor.ensuite_motion
         to: 'on'
+        from: 'off'
     action:
       - service: light.turn_on
         data_template:

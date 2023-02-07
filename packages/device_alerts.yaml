@@ -46,10 +46,8 @@ automation:
           - light.guest_bedroom
           - light.master_bedroom
           - light.craft_room
-          - light.hall_bedrooms
-          - light.hall_entrance
-          - light.hall_bedrooms
-          - light.hall_bathroom
+          - light.hallway_bedrooms
+          - light.hallway_bathroom
           - light.kitchen_cabinets
           - light.kitchen
           - light.boot_room
