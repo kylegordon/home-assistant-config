@@ -95,7 +95,7 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level_trigger
+        above: input_number.living_room_light_level_trigger
         for:
           minutes: 10
     action:
