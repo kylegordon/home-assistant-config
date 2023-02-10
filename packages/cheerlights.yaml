@@ -7,7 +7,6 @@ light:
       - light.sense_gloworb_2_ring
       - light.sense_gloworb_3_ring
 
-
 mqtt:
   sensor:
     - name: cheerlights_red
@@ -118,14 +117,16 @@ automation:
         before: '23:00:00'
     action:
       - service: light.turn_on
+        # Adjust the RGB values, and keep existing white channels
         data_template:
           entity_id: light.decking_lights
           brightness: 170
-          white_value: 0
-          rgb_color:
+          rgbww_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
 
   - alias: Cheerlights - off
     trigger:

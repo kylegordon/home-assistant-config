@@ -10,7 +10,8 @@ automation:
           click_type: single
     action:
       - service: switch.turn_on
-        entity_id: switch.ensuite_switch_relay
+        entity_id:
+          - switch.ensuite_switch_relay
       - service: light.toggle
         data_template:
           entity_id: >
@@ -31,6 +32,7 @@ automation:
       - platform: state
         entity_id: binary_sensor.ensuite_motion
         to: 'on'
+        from: 'off'
     action:
       - service: light.turn_on
         data_template:

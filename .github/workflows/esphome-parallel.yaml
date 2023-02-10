@@ -93,7 +93,7 @@ jobs:
       - run: echo Compiling ${{matrix.file}}
       - run: docker run --rm -v "${PWD}":/config esphome/esphome:dev compile ${{matrix.file}}
 
-
+  # This is used by branch protections
   final:
     name: Final ESPHome check
     runs-on: ubuntu-latest
