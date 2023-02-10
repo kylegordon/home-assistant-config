@@ -1,0 +1,41 @@
+---
+homeassistant:
+  ## This doesn't seem to work. It needs to be surfaced in configuration.yaml
+  customize:
+    input_boolean.open_tin_hut_process:
+      hidden: false
+
+input_boolean:
+  openup_process:
+    name: Open tin hut process
+    icon: mdi:sleep
+    initial: false
+
+automation:
+  - alias: Open tin hut process
+    trigger:
+      - platform: state
+        entity_id: input_boolean.open_tin_hut_process
+        to: 'on'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Triggering openup process"
+          entity_id: input_boolean.open_tin_hut_process
+          domain: input_boolean
+      - service: homeassistant.turn_on
+        entity_id:
+          - switch.tin_hut_lights_relay
+      - service: openhome.invoke_pin
+        data:
+          pin: 1
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: media_player.volume_set
+        data:
+          volume_level: 0.4
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.open_tin_hut_process

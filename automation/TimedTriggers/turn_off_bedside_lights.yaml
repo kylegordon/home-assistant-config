@@ -1,9 +1,0 @@
-alias: "Off wakup lights"
-trigger:
-  - platform: numeric_state
-    entity_id: sensor.average_external_light_level
-    above: 500
-action:
-  - service: light.turn_off
-    data:
-        entity_id: light.master_bedroom, light.bedside_charlotte, light.bedside_kyle

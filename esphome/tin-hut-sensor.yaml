@@ -1,0 +1,6 @@
+substitutions:
+  device_name: "tin-hut-sensor"
+  device_description: Tin Hut Sensor
+  friendly_name: Tin Hut Sensor
+
+<<: !include common/esp8266_dht_sensor_common.yaml

@@ -1,3 +1,4 @@
+---
 sensor:
   - platform: opensky
     name: opensky_home
@@ -9,6 +10,13 @@ sensor:
     altitude: 5000
     latitude: 55.765
     longitude: -4.496
+
+mqtt:
+  sensor:
+    - name: flightradar_home
+      state_topic: 'flightradar/viewpoint'
+      # just an example atm
+      value_template: "{{ value_json.id if value_json.lat == 55 else states('sensor.outdoor_temperature') }}"
 
 automation:
   - alias: 'Flight entry notification - Home'
@@ -41,7 +49,8 @@ automation:
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
-      - service: notify.twitter_overuplawmoor
+
+      - service: notify.mastodon_overuplawmoor
         data_template:
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
