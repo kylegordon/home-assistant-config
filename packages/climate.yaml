@@ -198,10 +198,6 @@ automation:
         entity_id: binary_sensor.home_occupied
         state: "on"
     action:
-      - service: climate.set_preset_mode
-        data:
-          entity_id: all
-          preset_mode: "none"
       - service: climate.set_temperature
         data:
           entity_id: climate.house
@@ -224,10 +220,6 @@ automation:
         entity_id: binary_sensor.home_occupied
         state: "on"
     action:
-      - service: climate.set_preset_mode
-        data:
-          entity_id: all
-          preset_mode: "none"
       - service: climate.set_temperature
         data:
           entity_id: climate.house
