@@ -98,11 +98,7 @@ automation:
     action:
       - service: climate.set_preset_mode
         data:
-          entity_id: climate.house
-          preset_mode: "away"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
+          entity_id: all
           preset_mode: "away"
       - service: logbook.log
         data_template:
@@ -123,10 +119,6 @@ automation:
         data:
           entity_id: climate.house
           preset_mode: "none"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -141,11 +133,7 @@ automation:
     action:
       - service: climate.set_preset_mode
         data:
-          entity_id: climate.house
-          preset_mode: "none"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
+          entity_id: all
           preset_mode: "none"
       - service: logbook.log
         data_template:
@@ -170,10 +158,6 @@ automation:
         data:
           entity_id: climate.house
           temperature: 17
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "away"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -196,10 +180,6 @@ automation:
         data:
           entity_id: climate.house
           temperature: 17
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "Away"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -222,10 +202,6 @@ automation:
         data:
           entity_id: climate.house
           temperature: 20
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -248,10 +224,6 @@ automation:
         data:
           entity_id: climate.house
           temperature: 20
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
       - service: logbook.log
         data_template:
           name: EVENT
