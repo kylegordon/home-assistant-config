@@ -49,6 +49,12 @@ output:
     channel: 3  # Don't stomp on the cameras use of timer channel 1
     pin: GPIO4
 
+esp32_camera_web_server:
+  - port: 8080
+    mode: stream
+  - port: 8081
+    mode: snapshot
+
 light:
   # ... and then make a light out of it.
   - platform: monochromatic
