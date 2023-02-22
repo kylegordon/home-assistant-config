@@ -1,3 +1,4 @@
+---
 automation:
   - alias: Alert when a critical device goes offline
     trigger:
