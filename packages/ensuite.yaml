@@ -1,4 +1,18 @@
 ---
+binary_sensor:
+  - platform: template
+    sensors:
+      bathroom_window:
+        friendly_name: Bathroom Window
+        device_class: window
+        icon_template: >-
+          {% if is_state('binary_sensor.ensuite_window','on') %}
+            mdi:window-open
+          {% else %}
+            mdi:window-closed
+          {% endif %}
+        value_template: "{{ is_state('binary_sensor.ensuite_window_opening_contact','on') or is_state('binary_sensor.ensuite_window_vibration','on') }}"
+
 automation:
   - alias: Ensuite light toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml

@@ -18,7 +18,8 @@ automation:
           - binary_sensor.shower_pump_power_plug_status
           - binary_sensor.tv_power_plug_status
           - binary_sensor.craft_room_window
-          - binary_sensor.ensuite_window
+          - binary_sensor.ensuite_window_vibration
+          - binary_sensor.ensuite_window_opening_contact
           - binary_sensor.guest_bedroom_window
           - binary_sensor.master_bedroom_window
           - binary_sensor.study_window
