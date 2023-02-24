@@ -1,3 +1,4 @@
+---
 # Use ESPHome-Flasher, as esptool.py doesn't seem to do some sort of magic with the bootloader.
 # See https://github.com/esphome/issues/issues/598
 
@@ -33,7 +34,8 @@ esp32_camera:
 
   # Image settings
   name: ${friendly_name} Camera
-  resolution: 1600x1200
+  # resolution: 1600x1200  # Works but slow
+  resolution: 1280x1024  # Works well
   # resolution: 800x600 XX
   # resolution: 640x480 XX
 

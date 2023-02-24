@@ -2,8 +2,8 @@
 binary_sensor:
   - platform: template
     sensors:
-      bathroom_window:
-        friendly_name: Bathroom Window
+      ensuite_window:
+        friendly_name: Ensuite Window
         device_class: window
         icon_template: >-
           {% if is_state('binary_sensor.ensuite_window','on') %}
