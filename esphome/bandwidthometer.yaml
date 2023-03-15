@@ -13,8 +13,6 @@ esphome:
 
 esp8266:
   board: d1_mini
-  framework:
-    version: 2.7.4
 
 captive_portal:
 
@@ -62,12 +60,12 @@ light:
     output: pwm_output
     gamma_correct: 0
     name: "${friendly_name} Display"
-  - platform: fastled_clockless
+  - platform: neopixelbus
     id: ws2811_backlight
-    chipset: WS2811
+    variant: WS2811
     pin: D1
     num_leds: 4
-    rgb_order: GRB
+    type: GRB
     name: "${friendly_name} Light"
     effects:
       - strobe:
