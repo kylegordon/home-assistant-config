@@ -102,8 +102,8 @@ touchscreen:
 
 display:
   - id: my_display
-    platform: ili9341
-    model: "TFT 2.4"
+    platform: ili9xxx
+    model: ili9341
     cs_pin: GPIO5
     dc_pin: GPIO27
     reset_pin: GPIO33
