@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: tin_hut_shelf_lights_right
+  device_description: Tin Hut Shelf Light Right
+  friendly_name: Tin Hut Shelf Lights Right
+
+<<: !include common/h801_common.yaml
