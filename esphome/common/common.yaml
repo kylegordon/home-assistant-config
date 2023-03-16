@@ -19,7 +19,7 @@ sensor:
     name: ${friendly_name} Uptime
     filters:
       - lambda: return x / 60.0;
-    unit_of_measurement: minutes
+    unit_of_measurement: min
 
 binary_sensor:
   # Reports if this device is Connected or not

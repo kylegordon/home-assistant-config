@@ -1,3 +1,4 @@
+---
 packages:
   common: !include common.yaml
 
@@ -26,21 +27,31 @@ output:
     frequency: 1000 Hz
     id: pwm_b
   - platform: esp8266_pwm
-    pin: 13
+    pin: GPIO13
     frequency: 1000 Hz
     id: pwm_g
   - platform: esp8266_pwm
-    pin: 15
+    pin: GPIO15
     frequency: 1000 Hz
     id: pwm_r
+  - platform: esp8266_pwm
+    pin: GPIO14
+    frequency: 1000 Hz
+    id: pwm_w2
+  - platform: esp8266_pwm
+    pin: GPIO04
+    frequency: 1000 Hz
+    id: pwm_w1
 
 # RGB, RGBW, RGBWW also available
 light:
-  - platform: rgb
-    name: "H801 Light"
+  - platform: rgbww
+    name: ${friendly_name}
     red: pwm_r
     green: pwm_g
     blue: pwm_b
+    cold_white: pwm_w1
+    warm_white: pwm_w2
     id: thelight
     effects:
       - random:
