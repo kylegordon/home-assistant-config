@@ -114,6 +114,12 @@ automation:
       - condition: state
         entity_id: input_boolean.night_view
         state: "off"
+      - condition: state
+        entity_id: light.living_room
+        state: "off"
+      - condition: state
+        entity_id: light.dining_nook_group
+        state: "off"
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
         below: input_number.living_room_light_level_trigger
