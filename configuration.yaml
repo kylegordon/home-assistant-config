@@ -325,6 +325,10 @@ panel_iframe:
     title: "ESPHome"
     url: "http://viewpoint.house:6052"
     icon: mdi:car-esp
+  zigbee2mqtt:
+    title: "Z2M"
+    url: "http://viewpoint.house:8081"
+    icon: mdi:antenna
   cctv:
     title: "CCTV"
     url: "http://viewpoint.house:4999"
