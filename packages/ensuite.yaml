@@ -110,8 +110,7 @@ automation:
           data:
             type: announce
             # method: all
-          message: 
-            Hello! Enjoy your shower! The hot tank is currently {{ states('sensor.hot_tank_temperature') }} degrees.
+          message: Hello! Enjoy your shower! The hot tank is currently {{ states('sensor.hot_tank_temperature') }} degrees.
 
   - alias: Ensuite shower off
     description: Return the heating boost to eco mode after the shower is finished
@@ -164,4 +163,3 @@ automation:
     action:
       service: light.turn_off
       entity_id: light.ensuite
-
