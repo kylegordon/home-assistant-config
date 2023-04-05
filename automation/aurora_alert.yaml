@@ -1,10 +1,9 @@
 ---
 alias: Aurora Alert
 trigger:
-  platform: state
-  entity_id: binary_sensor.aurora_visibility_alert
-  from: "off"
-  to: "on"
+  platform: numeric_state
+  entity_id: sensor.aurora_visibility
+  above: 1
 action:
   - service: notify.alexa_media_everywhere
     data:
