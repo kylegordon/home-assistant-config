@@ -63,3 +63,10 @@
 - platform: switch
   name: Octoprint Lighting
   entity_id: switch.octoprint_relay_1
+
+- platform: group
+  name: Tin Hut Shelving
+  entities:
+    - light.tin_hut_shelf_lights_left
+    - light.tin_hut_shelf_lights_right
+    - light.tin_hut_shelf_lights_bench
