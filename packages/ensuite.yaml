@@ -164,3 +164,4 @@ automation:
     action:
       service: light.turn_off
       entity_id: light.ensuite
+
