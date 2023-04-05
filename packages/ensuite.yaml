@@ -71,11 +71,11 @@ automation:
     trigger:
       - platform: numeric_state
         entity_id: sensor.shower_pump_power_plug_power
-        above: 10
+        above: 100
     condition:
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
-        below: 1000
+        above: 500
     action:
       - service: logbook.log
         data_template:
@@ -104,13 +104,14 @@ automation:
       #     entity_id: climate.hot_water
       #     preset_mode: 'boost'
       - service: notify.alexa_media
-        data:
+        data_template:
           target:
             - media_player.bedroom
           data:
             type: announce
             # method: all
-          message: "Hello! Enjoy your shower!"
+          message: 
+            Hello! Enjoy your shower! The hot tank is currently {{ states('sensor.hot_tank_temperature') }} degrees.
 
   - alias: Ensuite shower off
     description: Return the heating boost to eco mode after the shower is finished

@@ -22,11 +22,11 @@ automation:
         data:
           volume_level: >
             {% if states('sensor.time_of_day') == "Morning" %}
-            5
+            0.5
             {% elif states('sensor.time_of_day') == "Day" %}
-            5
+            0.5
             {% elif states('sensor.time_of_day') == "Night" %}
-            2
+            0.2
             {% endif %}
       - service: notify.alexa_media
         data_template:
