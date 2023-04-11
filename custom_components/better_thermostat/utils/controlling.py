@@ -42,11 +42,28 @@ async def control_queue(self):
                 self.ignore_states = True
                 result = True
                 for trv in self.real_trvs.keys():
-                    _temp = await control_trv(self, trv)
-                    if _temp is False:
+                    try:
+                        _temp = await control_trv(self, trv)
+                        if _temp is False:
+                            result = False
+                    except Exception:
+                        _LOGGER.exception(
+                            "better_thermostat %s: ERROR controlling: %s",
+                            self.name,
+                            trv,
+                        )
                         result = False
+
+                # Retry task if some TRVs failed. Discard the task if the queue is full
+                # to avoid blocking and therefore deadlocking this function.
                 if result is False:
-                    await self.control_queue_task.put(self)
+                    try:
+                        self.control_queue_task.put_nowait(self)
+                    except asyncio.QueueFull:
+                        _LOGGER.debug(
+                            "better_thermostat %s: control queue is full, discarding task"
+                        )
+
                 self.control_queue_task.task_done()
                 self.ignore_states = False
 
