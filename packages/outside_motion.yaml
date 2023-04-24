@@ -6,11 +6,12 @@ automation:
         entity_id:
           - binary_sensor.outside_front_motion
           - binary_sensor.outside_driveway_motion
+          - binary_sensor.back_door_motion
           - binary_sensor.front_door_motion
           - binary_sensor.back_door_person_occupancy
           - binary_sensor.driveway_person_occupancy
-          - binary_sensor.driveway_person_occupancy
           - binary_sensor.gates_person_occupancy
+          - binary_sensor.back_door_all_occupancy
         to: 'on'
     condition:
       - condition: state
