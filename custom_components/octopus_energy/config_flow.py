@@ -13,6 +13,12 @@ from .const import (
   
   CONFIG_MAIN_API_KEY,
   CONFIG_MAIN_ACCOUNT_ID,
+  CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION,
+  CONFIG_MAIN_CALORIFIC_VALUE,
+  CONFIG_MAIN_ELECTRICITY_PRICE_CAP,
+  CONFIG_MAIN_CLEAR_ELECTRICITY_PRICE_CAP,
+  CONFIG_MAIN_GAS_PRICE_CAP,
+  CONFIG_MAIN_CLEAR_GAS_PRICE_CAP,
   
   CONFIG_TARGET_NAME,
   CONFIG_TARGET_HOURS,
@@ -81,7 +87,15 @@ class OctopusEnergyConfigFlow(ConfigFlow, domain=DOMAIN):
     """Setup the initial account based on the provided user input"""
     errors = {}
 
-    client = OctopusEnergyApiClient(user_input[CONFIG_MAIN_API_KEY])
+    electricity_price_cap = None
+    if CONFIG_MAIN_ELECTRICITY_PRICE_CAP in user_input:
+      electricity_price_cap = user_input[CONFIG_MAIN_ELECTRICITY_PRICE_CAP]
+
+    gas_price_cap = None
+    if CONFIG_MAIN_GAS_PRICE_CAP in user_input:
+      gas_price_cap = user_input[CONFIG_MAIN_GAS_PRICE_CAP]
+
+    client = OctopusEnergyApiClient(user_input[CONFIG_MAIN_API_KEY], electricity_price_cap, gas_price_cap)
     account_info = await client.async_get_account(user_input[CONFIG_MAIN_ACCOUNT_ID])
     if (account_info == None):
       errors[CONFIG_MAIN_ACCOUNT_ID] = "account_not_found"
@@ -91,7 +105,7 @@ class OctopusEnergyConfigFlow(ConfigFlow, domain=DOMAIN):
 
     # Setup our basic sensors
     return self.async_create_entry(
-      title="Octopus Energy", 
+      title="Account", 
       data=user_input
     )
 
@@ -101,7 +115,7 @@ class OctopusEnergyConfigFlow(ConfigFlow, domain=DOMAIN):
 
     meters = []
     now = utcnow()
-    if len(account_info["electricity_meter_points"]) > 0:
+    if account_info is not None and len(account_info["electricity_meter_points"]) > 0:
       for point in account_info["electricity_meter_points"]:
         active_tariff_code = get_active_tariff_code(now, point["agreements"])
         if active_tariff_code != None:
@@ -183,10 +197,12 @@ class OptionsFlowHandler(OptionsFlow):
   async def __async_setup_target_rate_schema(self, config, errors):
     client = self.hass.data[DOMAIN][DATA_CLIENT]
     account_info = await client.async_get_account(self.hass.data[DOMAIN][DATA_ACCOUNT_ID])
+    if account_info is None:
+      errors[CONFIG_TARGET_MPAN] = "account_not_found"
 
     meters = []
     now = utcnow()
-    if len(account_info["electricity_meter_points"]) > 0:
+    if account_info is not None and len(account_info["electricity_meter_points"]) > 0:
       for point in account_info["electricity_meter_points"]:
         active_tariff_code = get_active_tariff_code(now, point["agreements"])
         if active_tariff_code != None:
@@ -215,7 +231,12 @@ class OptionsFlowHandler(OptionsFlow):
     return self.async_show_form(
       step_id="target_rate",
       data_schema=vol.Schema({
+        vol.Required(CONFIG_TARGET_NAME, default=config[CONFIG_TARGET_NAME]): str,
         vol.Required(CONFIG_TARGET_HOURS, default=f'{config[CONFIG_TARGET_HOURS]}'): str,
+        vol.Required(CONFIG_TARGET_TYPE, default=config[CONFIG_TARGET_TYPE]): vol.In({
+          "Continuous": "Continuous",
+          "Intermittent": "Intermittent"
+        }),
         vol.Required(CONFIG_TARGET_MPAN, default=config[CONFIG_TARGET_MPAN]): vol.In(
           meters
         ),
@@ -234,10 +255,32 @@ class OptionsFlowHandler(OptionsFlow):
       config = dict(self._entry.data)
       if self._entry.options is not None:
         config.update(self._entry.options)
+
+      supports_live_consumption = False
+      if CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION in config:
+        supports_live_consumption = config[CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION]
+      
+      calorific_value = 40
+      if CONFIG_MAIN_CALORIFIC_VALUE in config:
+        calorific_value = config[CONFIG_MAIN_CALORIFIC_VALUE]
+
+      electricity_price_cap_key = vol.Optional(CONFIG_MAIN_ELECTRICITY_PRICE_CAP)
+      if (CONFIG_MAIN_ELECTRICITY_PRICE_CAP in config):
+        electricity_price_cap_key = vol.Optional(CONFIG_MAIN_ELECTRICITY_PRICE_CAP, default=config[CONFIG_MAIN_ELECTRICITY_PRICE_CAP])
+
+      gas_price_cap_key = vol.Optional(CONFIG_MAIN_GAS_PRICE_CAP)
+      if (CONFIG_MAIN_GAS_PRICE_CAP in config):
+        gas_price_cap_key = vol.Optional(CONFIG_MAIN_GAS_PRICE_CAP, default=config[CONFIG_MAIN_GAS_PRICE_CAP])
       
       return self.async_show_form(
         step_id="user", data_schema=vol.Schema({
           vol.Required(CONFIG_MAIN_API_KEY, default=config[CONFIG_MAIN_API_KEY]): str,
+          vol.Required(CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION, default=supports_live_consumption): bool,
+          vol.Required(CONFIG_MAIN_CALORIFIC_VALUE, default=calorific_value): cv.positive_float,
+          electricity_price_cap_key: cv.positive_float,
+          vol.Required(CONFIG_MAIN_CLEAR_ELECTRICITY_PRICE_CAP): bool,
+          gas_price_cap_key: cv.positive_float,
+          vol.Required(CONFIG_MAIN_CLEAR_GAS_PRICE_CAP): bool,
         })
       )
     elif CONFIG_TARGET_TYPE in self._entry.data:
@@ -255,6 +298,13 @@ class OptionsFlowHandler(OptionsFlow):
     if user_input is not None:
       config = dict(self._entry.data)
       config.update(user_input)
+
+      if config[CONFIG_MAIN_CLEAR_ELECTRICITY_PRICE_CAP] == True:
+        del config[CONFIG_MAIN_ELECTRICITY_PRICE_CAP]
+
+      if config[CONFIG_MAIN_CLEAR_GAS_PRICE_CAP] == True:
+        del config[CONFIG_MAIN_GAS_PRICE_CAP]
+
       return self.async_create_entry(title="", data=config)
 
     return self.async_abort(reason="not_supported")
