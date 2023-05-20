@@ -282,9 +282,7 @@ def get_sensors_by_device_class(
 
     def filter_thermal_comfort_ids(entity_id: str) -> bool:
         """Filter out device_ids containing our SensorType."""
-        return all(
-            sensor_type.to_shortform() not in entity_id for sensor_type in SensorType
-        )
+        return all(sensor_type not in entity_id for sensor_type in SensorType)
 
     filters_for_additional_sensors: list[callable] = [
         filter_useless_device_class,
@@ -424,7 +422,7 @@ def build_schema(
                         default=list(SensorType),
                     ): cv.multi_select(
                         {
-                            sensor_type: sensor_type.to_title()
+                            sensor_type: sensor_type.to_name()
                             for sensor_type in SensorType
                         }
                     ),
@@ -464,6 +462,8 @@ def check_input(hass: HomeAssistant, user_input: dict) -> dict:
 class ThermalComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Configuration flow for setting up new thermal_comfort entry."""
 
+    VERSION = 2
+
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
@@ -485,7 +485,9 @@ class ThermalComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                 if t_sensor is not None and p_sensor is not None:
                     unique_id = f"{t_sensor.unique_id}-{p_sensor.unique_id}"
-                    await self.async_set_unique_id(unique_id)
+                    entry = await self.async_set_unique_id(unique_id)
+                    if entry is not None:
+                        _LOGGER.debug(f"An entry with the unique_id {unique_id} already exists: {entry.data}")
                     self._abort_if_unique_id_configured()
 
                 return self.async_create_entry(
