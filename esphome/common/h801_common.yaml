@@ -45,13 +45,13 @@ output:
 
 # RGB, RGBW, RGBWW also available
 light:
-  - platform: rgbww
+  - platform: rgb
     name: ${friendly_name}
     red: pwm_r
     green: pwm_g
     blue: pwm_b
-    cold_white: pwm_w1
-    warm_white: pwm_w2
+    #cold_white: pwm_w1
+    #warm_white: pwm_w2
     id: thelight
     effects:
       - random:
