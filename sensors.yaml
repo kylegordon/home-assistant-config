@@ -85,7 +85,7 @@
     - sensor.nook_temperature
     - sensor.hall_temperature
     - sensor.study_temperature
-    - sensor.bathroom_temperature
+    - sensor.bathroom_multi_sensor_temperature
 
 - platform: min_max
   name: House Average Humidity
@@ -99,7 +99,7 @@
     - sensor.nook_humidity
     - sensor.hall_humidity
     - sensor.study_humidity
-    - sensor.bathroom_humidity
+    - sensor.bathroom_multi_sensor_humidity
 
 - platform: time_date
   display_options:
