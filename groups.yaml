@@ -94,7 +94,7 @@ ensuite:
   name: Ensuite
   entities:
     - sensor.ensuite_lightlevel
-    - binary_sensor.ensuite_motion
+    - binary_sensor.ensuite_motion_occupancy
     - light.ensuite_entrance
     - light.ensuite_towels
     - light.ensuite_shower
