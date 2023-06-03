@@ -9,7 +9,7 @@ automation:
           - sensor.garage_temperature
           - binary_sensor.hall_door_motion
           - binary_sensor.hall_rooms_motion
-          - binary_sensor.ensuite_motion
+          - binary_sensor.ensuite_motion_occupancy
           - binary_sensor.living_room_motion
           - binary_sensor.kitchen_motion
           - binary_sensor.front_hall_motion
