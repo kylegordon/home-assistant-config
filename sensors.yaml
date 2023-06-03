@@ -93,7 +93,7 @@
   entity_ids:
     - sensor.front_hall_sensor_humidity
     - sensor.craft_room_humidity
-    - sensor.guest_room_humidity
+    - sensor.guest_room_multi_sensor_humidity
     - sensor.living_room_humidity
     - sensor.master_bedroom_humidity
     - sensor.nook_humidity
@@ -175,8 +175,8 @@
     guest_room:
       friendly_name: Guest Room
       unique_id: guest_room_thermal_comfort
-      temperature_sensor: sensor.guest_room_temperature
-      humidity_sensor: sensor.guest_room_humidity
+      temperature_sensor: sensor.guest_room_multi_sensor_temperature
+      humidity_sensor: sensor.guest_room_multi_sensor_humidity
     master_bedroom:
       friendly_name: Master Bedroom
       unique_id: master_bedroom_thermal_comfort
