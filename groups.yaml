@@ -40,8 +40,8 @@ front_hall:
     - sensor.front_hall_sensor_humidity
     - sensor.front_hall_sensor_signal_level
     - sensor.front_hall_lightlevel
-    - binary_sensor.front_hall_motion
-    - binary_sensor.front_hall_door
+    - binary_sensor.front_hall_motion_occupancy
+    - binary_sensor.front_hall_door_contact
 
 living_room:
   name: Living Room

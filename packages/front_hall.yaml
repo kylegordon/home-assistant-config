@@ -13,8 +13,8 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.front_hall_door
-          - binary_sensor.front_hall_motion
+          - binary_sensor.front_hall_door_contact
+          - binary_sensor.front_hall_motion_occupancy
         to: 'on'
         from: 'off'
     condition:
