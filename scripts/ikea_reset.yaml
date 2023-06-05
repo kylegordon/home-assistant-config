@@ -1,0 +1,35 @@
+reset_ikea:
+  alias: reset_ikea
+  sequence:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.boot_room_switch_relay
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - repeat:
+      count: '5'
+      sequence:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.boot_room_switch_relay
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 400
+      - service: switch.turn_off
+        target:
+          entity_id: switch.boot_room_switch_relay
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 500
+  - service: switch.turn_on
+    target:
+      entity_id: switch.boot_room_switch_relay
+  mode: single
+
