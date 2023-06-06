@@ -26,8 +26,7 @@ kitchen:
   entities:
     - sensor.kitchen_temperature
     - sensor.kitchen_esp8266_signal_level
-    - binary_sensor.kitchen_motion
-    - sensor.kitchen_motion
+    - binary_sensor.kitchen_motion_occupancy
     - light.kitchen_cabinets
     - light.kitchen
     - media_player.kitchen
@@ -50,8 +49,7 @@ living_room:
     - media_player.living_room_kodi
     - media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
     - switch.tellybox
-    - binary_sensor.living_room_motion
-    - sensor.living_room_motion
+    - binary_sensor.living_room_motion_occupancy
     - sensor.living_room_temperature
     - sensor.living_room_pressure
     - sensor.living_room_humidity
@@ -171,10 +169,10 @@ hall_view:
   name: Hall
   entities:
     - light.hall
-    - binary_sensor.hall_rooms_motion
+    - binary_sensor.hall_rooms_motion_occupancy
     - sensor.hall_rooms_motion
-    - binary_sensor.hall_door_motion
-    - binary_sensor.boot_room_motion
+    - binary_sensor.hall_door_motion_occupancy
+    - binary_sensor.boot_room_motion_occupancy
     - sensor.hall_door_motion
     - sensor.hall_temperature
     - sensor.hall_humidity

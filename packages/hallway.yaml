@@ -40,8 +40,8 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.hall_door_motion
-          - binary_sensor.hall_rooms_motion
+          - binary_sensor.hallway_rooms_occupancy
+          - binary_sensor.hallway_bathroom_occupancy
         to: 'on'
         from: 'off'
     condition:
@@ -65,8 +65,8 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.hall_door_motion
-          - binary_sensor.hall_rooms_motion
+          - binary_sensor.hallway_rooms_occupancy
+          - binary_sensor.hallway_bathroom_occupancy
         to: 'off'
         for:
           minutes: 2
@@ -87,8 +87,8 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.hall_door_motion
-          - binary_sensor.hall_rooms_motion
+          - binary_sensor.hallway_rooms_occupancy
+          - binary_sensor.hallway_bathroom_occupancy
         to: 'off'
         for:
           minutes: 10

@@ -7,12 +7,12 @@ automation:
           - sensor.kitchen_temperature
           - binary_sensor.front_hall_sensor_status
           - sensor.garage_temperature
-          - binary_sensor.hall_door_motion
-          - binary_sensor.hall_rooms_motion
+          - binary_sensor.hallway_bathroom_occupancy
+          - binary_sensor.hallway_rooms_occupancy
           - binary_sensor.ensuite_motion_occupancy
-          - binary_sensor.living_room_motion
-          - binary_sensor.kitchen_motion
-          - binary_sensor.front_hall_motion
+          - binary_sensor.living_room_motion_occupancy
+          - binary_sensor.kitchen_motion_occupancy
+          - binary_sensor.front_hall_motion_occupancy
           - binary_sensor.front_door_motion
           - binary_sensor.washing_machine_power_plug_status
           - binary_sensor.dishwasher_power_plug_status
@@ -25,7 +25,7 @@ automation:
           - binary_sensor.master_bedroom_window
           - binary_sensor.study_window
           - binary_sensor.garden_door
-          - binary_sensor.boot_room_motion
+          - binary_sensor.boot_room_motion_occupancy
           - binary_sensor.boot_room_door
           - binary_sensor.bathroom_window
           - binary_sensor.dining_table_window
