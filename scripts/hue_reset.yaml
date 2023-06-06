@@ -1,35 +1,35 @@
+---
 reset_hue:
   alias: reset_hue
   sequence:
-  - service: switch.turn_off
-    target:
-      entity_id: switch.candle_arch
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - repeat:
-      count: '2'
-      sequence:
-      - service: switch.turn_on
-        target:
-          entity_id: switch.candle_arch
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 8
-          milliseconds: 0
-      - service: switch.turn_off
-        target:
-          entity_id: switch.candle_arch
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 2
-          milliseconds: 0
-  - service: switch.turn_on
-    target:
-      entity_id: switch.candle_arch
+    - service: switch.turn_off
+      target:
+        entity_id: switch.candle_arch
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 5
+        milliseconds: 0
+    - repeat:
+        count: '2'
+        sequence:
+          - service: switch.turn_on
+            target:
+              entity_id: switch.candle_arch
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 8
+              milliseconds: 0
+          - service: switch.turn_off
+            target:
+              entity_id: switch.candle_arch
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+    - service: switch.turn_on
+      target:
+        entity_id: switch.candle_arch
   mode: single
-
