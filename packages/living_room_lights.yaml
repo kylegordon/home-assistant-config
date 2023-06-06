@@ -83,7 +83,7 @@ automation:
   - alias: Living Room motion - motion timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.living_room_motion
+        entity_id: binary_sensor.living_room_motion_occupancy
         to: 'off'
         for:
           minutes: 60
@@ -105,7 +105,7 @@ automation:
   - alias: Living Room motion
     trigger:
       - platform: state
-        entity_id: binary_sensor.living_room_motion
+        entity_id: binary_sensor.living_room_motion_occupancy
         to: 'on'
         from: 'off'
     condition:
