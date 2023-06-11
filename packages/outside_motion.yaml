@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: Outdoor lights on
+    id: outdoor_lights_on
     trigger:
       - platform: state
         entity_id:
@@ -47,6 +48,7 @@ automation:
         entity_id: light.front_door_floodlights
 
   - alias: Outdoor lights off
+    id: outdoor_lights_off
     trigger:
       - platform: state
         entity_id:

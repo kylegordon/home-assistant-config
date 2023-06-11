@@ -1,4 +1,6 @@
+---
 alias: "Media playing at night"
+id: media_playing_night
 trigger:
   - platform: state
     entity_id: media_player.living_room_kodi
