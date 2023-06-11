@@ -1,5 +1,6 @@
 ---
 alias: Living Room TV dimmer
+id: living_room_tv_dimmer
 trigger:
   - platform: state
     entity_id: media_player.living_room_kodi
