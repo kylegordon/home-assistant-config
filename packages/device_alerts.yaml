@@ -58,7 +58,7 @@ automation:
           - sensor.living_room_multi_sensor_battery_level
           - sensor.master_bedroom_multi_sensor_battery_level
           - sensor.study_multi_sensor_battery_level
-          - sensor.hall_multi_sensor_battery_level
+          - sensor.hallway_multi_sensor_battery_level
           - sensor.dining_nook_multi_sensor_battery_level
           - sensor.bathroom_multi_sensor_battery_level
         to: 'unavailable'

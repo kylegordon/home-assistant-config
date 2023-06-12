@@ -83,7 +83,7 @@
     - sensor.living_room_multi_sensor_temperature
     - sensor.master_bedroom_multi_sensor_temperature
     - sensor.nook_multi_sensor_temperature
-    - sensor.hall_multi_sensor_temperature
+    - sensor.hallway_multi_sensor_temperature
     - sensor.study_multi_sensor_temperature
     - sensor.bathroom_multi_sensor_temperature
 
@@ -97,7 +97,7 @@
     - sensor.living_room_multi_sensor_humidity
     - sensor.master_bedroom_multi_sensor_humidity
     - sensor.nook_multi_sensor_humidity
-    - sensor.hall_multi_sensor_humidity
+    - sensor.hallway_multi_sensor_humidity
     - sensor.study_multi_sensor_humidity
     - sensor.bathroom_multi_sensor_humidity
 
