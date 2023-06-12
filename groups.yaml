@@ -174,9 +174,9 @@ hall_view:
     - binary_sensor.hall_door_motion_occupancy
     - binary_sensor.boot_room_motion_occupancy
     - sensor.hall_door_motion
-    - sensor.hall_temperature
-    - sensor.hall_humidity
-    - sensor.hall_pressure
+    - sensor.hallway_multi_sensor_temperature
+    - sensor.hallway_multi_sensor__humidity
+    - sensor.hallway_multi_sensor__pressure
     - binary_sensor.boot_room_door
 
 outside:
