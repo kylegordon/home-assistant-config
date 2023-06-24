@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: compressor
+  device_description: Air Compressor Power
+  friendly_name: Air Compressor Power
+
+<<: !include common/shelly_1_detached_push_button_common.yaml
