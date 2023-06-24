@@ -1,6 +1,6 @@
 substitutions:
   device_name: driveway_floodlights
-  device_description: Driveway floodlights
+  device_description: Driveway & Car Port floodlights
   friendly_name: Driveway floodlights
 
-<<: !include common/sonoff_basic_switch_common.yaml
+<<: !include common/shelly_1_detached_push_button_common.yaml
