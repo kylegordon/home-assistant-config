@@ -56,7 +56,7 @@
       unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
-  source: sensor.electricity_energy_usage
+  source: sensor.elec2_cm119_160_db_92_instantaneous_power
   name: energy_spent
   unit_prefix: k
   round: 2
