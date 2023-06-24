@@ -10,11 +10,12 @@ input_number:
 
 automation:
   - alias: Front hall motion
+    id: front_hall_motion
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.front_hall_door
-          - binary_sensor.front_hall_motion
+          - binary_sensor.front_hall_door_contact
+          - binary_sensor.front_hall_motion_occupancy
         to: 'on'
         from: 'off'
     condition:
@@ -37,9 +38,10 @@ automation:
             - light.front_hall
 
   - alias: Front hall - 2 minute timeout
+    id: front_hall_motion_2_minute
     trigger:
       - platform: state
-        entity_id: binary_sensor.front_hall_motion
+        entity_id: binary_sensor.front_hall_motion_occupancy
         to: 'off'
         for:
           minutes: 2
@@ -58,9 +60,10 @@ automation:
         entity_id: light.front_hall
 
   - alias: Front hall - 10 minute timeout
+    id: front_hall_motion_10_minute
     trigger:
       - platform: state
-        entity_id: binary_sensor.front_hall_motion
+        entity_id: binary_sensor.front_hall_motion_occupancy
         to: 'off'
         for:
           minutes: 10

@@ -44,7 +44,7 @@ automation:
   - alias: Ensuite motion
     trigger:
       - platform: state
-        entity_id: binary_sensor.ensuite_motion
+        entity_id: binary_sensor.ensuite_motion_occupancy
         to: 'on'
         from: 'off'
     action:
@@ -135,7 +135,7 @@ automation:
   - alias: Ensuite motion - night timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.ensuite_motion
+        entity_id: binary_sensor.ensuite_motion_occupancy
         to: 'off'
         for:
           minutes: 2
@@ -153,7 +153,7 @@ automation:
   - alias: Ensuite motion - regular timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.ensuite_motion
+        entity_id: binary_sensor.ensuite_motion_occupancy
         to: 'off'
         for:
           minutes: 10

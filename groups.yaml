@@ -26,8 +26,7 @@ kitchen:
   entities:
     - sensor.kitchen_temperature
     - sensor.kitchen_esp8266_signal_level
-    - binary_sensor.kitchen_motion
-    - sensor.kitchen_motion
+    - binary_sensor.kitchen_motion_occupancy
     - light.kitchen_cabinets
     - light.kitchen
     - media_player.kitchen
@@ -40,8 +39,8 @@ front_hall:
     - sensor.front_hall_sensor_humidity
     - sensor.front_hall_sensor_signal_level
     - sensor.front_hall_lightlevel
-    - binary_sensor.front_hall_motion
-    - binary_sensor.front_hall_door
+    - binary_sensor.front_hall_motion_occupancy
+    - binary_sensor.front_hall_door_contact
 
 living_room:
   name: Living Room
@@ -50,8 +49,7 @@ living_room:
     - media_player.living_room_kodi
     - media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
     - switch.tellybox
-    - binary_sensor.living_room_motion
-    - sensor.living_room_motion
+    - binary_sensor.living_room_motion_occupancy
     - sensor.living_room_temperature
     - sensor.living_room_pressure
     - sensor.living_room_humidity
@@ -94,7 +92,7 @@ ensuite:
   name: Ensuite
   entities:
     - sensor.ensuite_lightlevel
-    - binary_sensor.ensuite_motion
+    - binary_sensor.ensuite_motion_occupancy
     - light.ensuite_entrance
     - light.ensuite_towels
     - light.ensuite_shower
@@ -116,9 +114,9 @@ bedroom_2:
   name: Guest bedroom
   entities:
     - light.guest_bedroom
-    - sensor.guest_room_temperature
-    - sensor.guest_room_pressure
-    - sensor.guest_room_humidity
+    - sensor.guest_room_multi_sensor_temperature
+    - sensor.guest_room_multi_sensor_pressure
+    - sensor.guest_room_multi_sensor_humidity
 
 bedroom_3:
   name: Study
@@ -171,14 +169,14 @@ hall_view:
   name: Hall
   entities:
     - light.hall
-    - binary_sensor.hall_rooms_motion
+    - binary_sensor.hall_rooms_motion_occupancy
     - sensor.hall_rooms_motion
-    - binary_sensor.hall_door_motion
-    - binary_sensor.boot_room_motion
+    - binary_sensor.hall_door_motion_occupancy
+    - binary_sensor.boot_room_motion_occupancy
     - sensor.hall_door_motion
-    - sensor.hall_temperature
-    - sensor.hall_humidity
-    - sensor.hall_pressure
+    - sensor.hallway_multi_sensor_temperature
+    - sensor.hallway_multi_sensor_humidity
+    - sensor.hallway_multi_sensor_pressure
     - binary_sensor.boot_room_door
 
 outside:

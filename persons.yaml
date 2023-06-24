@@ -1,13 +1,13 @@
 - name: Kyle
   id: Kyle001
   device_trackers:
-    - device_tracker.kyle_phone
+    # - device_tracker.kyle_phone
     - device_tracker.nothing_phone
 
 - name: Charlotte
   id: Charlotte001
   device_trackers:
-    - device_tracker.charlotte_phone
+    - device_tracker.mine
 
 - name: Ronnie
   id: Ronnie0001
