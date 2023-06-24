@@ -79,27 +79,27 @@
   type: mean
   entity_ids:
     - sensor.kitchen_temperature
-    - sensor.craft_room_temperature
-    - sensor.living_room_temperature
-    - sensor.master_bedroom_temperature
-    - sensor.nook_temperature
-    - sensor.hall_temperature
-    - sensor.study_temperature
-    - sensor.bathroom_temperature
+    - sensor.craft_room_multi_sensor_temperature
+    - sensor.living_room_multi_sensor_temperature
+    - sensor.master_bedroom_multi_sensor_temperature
+    - sensor.nook_multi_sensor_temperature
+    - sensor.hallway_multi_sensor_temperature
+    - sensor.study_multi_sensor_temperature
+    - sensor.bathroom_multi_sensor_temperature
 
 - platform: min_max
   name: House Average Humidity
   type: median
   entity_ids:
-    - sensor.front_hall_sensor_humidity
-    - sensor.craft_room_humidity
-    - sensor.guest_room_humidity
-    - sensor.living_room_humidity
-    - sensor.master_bedroom_humidity
-    - sensor.nook_humidity
-    - sensor.hall_humidity
-    - sensor.study_humidity
-    - sensor.bathroom_humidity
+    - sensor.front_hall_multi_sensor_humidity
+    - sensor.craft_room_multi_sensor_humidity
+    - sensor.guest_room_multi_sensor_humidity
+    - sensor.living_room_multi_sensor_humidity
+    - sensor.master_bedroom_multi_sensor_humidity
+    - sensor.nook_multi_sensor_humidity
+    - sensor.hallway_multi_sensor_humidity
+    - sensor.study_multi_sensor_humidity
+    - sensor.bathroom_multi_sensor_humidity
 
 - platform: time_date
   display_options:
@@ -140,43 +140,43 @@
     living_room:
       friendly_name: Living Room
       unique_id: living_room_thermal_comfort
-      temperature_sensor: sensor.living_room_temperature
-      humidity_sensor: sensor.living_room_humidity
+      temperature_sensor: sensor.living_room_multi_sensor_temperature
+      humidity_sensor: sensor.living_room_multi_sensor_humidity
     dining_nook:
       friendly_name: Dining Nook
       unique_id: dining_nook_thermal_comfort
-      temperature_sensor: sensor.nook_temperature
-      humidity_sensor: sensor.nook_humidity
+      temperature_sensor: sensor.nook_multi_sensor_temperature
+      humidity_sensor: sensor.nook_multi_sensor_humidity
     hall:
       friendly_name: Hall
       unique_id: hall_thermal_comfort
-      temperature_sensor: sensor.hall_temperature
-      humidity_sensor: sensor.hall_humidity
+      temperature_sensor: sensor.hall_multi_sensor_temperature
+      humidity_sensor: sensor.hall_multi_sensor_humidity
     bathroom:
       friendly_name: Bathroom
       unique_id: bathroom_thermal_comfort
-      temperature_sensor: sensor.bathroom_temperature
-      humidity_sensor: sensor.bathroom_humidity
+      temperature_sensor: sensor.bathroom_multi_sensor_temperature
+      humidity_sensor: sensor.bathroom_multi_sensor_humidity
     front_hall:
       friendly_name: Front Hall
       unique_id: front_hall_thermal_comfort
-      temperature_sensor: sensor.front_hall_sensor_temperature
-      humidity_sensor: sensor.front_hall_sensor_humidity
+      temperature_sensor: sensor.front_hall_multi_sensor_temperature
+      humidity_sensor: sensor.front_hall_multi_sensor_humidity
     craft_room:
       friendly_name: Craft Room
       unique_id: craft_room_thermal_comfort
-      temperature_sensor: sensor.craft_room_temperature
-      humidity_sensor: sensor.craft_room_humidity
+      temperature_sensor: sensor.craft_room_multi_sensor_temperature
+      humidity_sensor: sensor.craft_room_multi_sensor_humidity
     study:
       friendly_name: Study
       unique_id: study_thermal_comfort
-      temperature_sensor: sensor.study_temperature
-      humidity_sensor: sensor.study_humidity
+      temperature_sensor: sensor.study_multi_sensor_temperature
+      humidity_sensor: sensor.study_multi_sensor_humidity
     guest_room:
       friendly_name: Guest Room
       unique_id: guest_room_thermal_comfort
-      temperature_sensor: sensor.guest_room_temperature
-      humidity_sensor: sensor.guest_room_humidity
+      temperature_sensor: sensor.guest_room_multi_sensor_temperature
+      humidity_sensor: sensor.guest_room_multi_sensor_humidity
     master_bedroom:
       friendly_name: Master Bedroom
       unique_id: master_bedroom_thermal_comfort

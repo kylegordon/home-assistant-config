@@ -12,7 +12,7 @@ automation:
   - alias: Kitchen motion
     trigger:
       platform: state
-      entity_id: binary_sensor.kitchen_motion
+      entity_id: binary_sensor.kitchen_motion_occupancy
       to: 'on'
       from: 'off'
     condition:
@@ -31,7 +31,7 @@ automation:
   - alias: Kitchen motion - 10 minute timeout
     trigger:
       platform: state
-      entity_id: binary_sensor.kitchen_motion
+      entity_id: binary_sensor.kitchen_motion_occupancy
       to: 'off'
       for:
         minutes: 10
