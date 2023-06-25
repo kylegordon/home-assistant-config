@@ -13,6 +13,7 @@ input_boolean:
 
 automation:
   - alias: Goodnight process
+    id: goodnight_process
     trigger:
       - platform: state
         entity_id: input_boolean.goodnight_process
@@ -30,7 +31,7 @@ automation:
       - service: homeassistant.turn_off
         entity_id:
           - light.living_room
-          - light.dining_nook_group
+          - light.dining_nook
           - light.art
           - group.outside_lights
           - group.front_hall
