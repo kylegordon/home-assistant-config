@@ -109,7 +109,7 @@ adaptive_lighting:
   - name: "Living Room adaptive lighting"
     lights:
       - light.living_room
-      - light.dining_nook_group
+      - light.dining_nook
     prefer_rgb_color: false
     transition: 45  # seconds
     initial_transition: 5  # seconds
