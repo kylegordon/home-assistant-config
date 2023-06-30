@@ -173,5 +173,6 @@ automation:
           - light.decking_lights
           - light.under_bed_lights
           - light.glow_orbs
+          - light.tin_hut_shelving
         data:
           transition: 10
