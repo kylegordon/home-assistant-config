@@ -21,6 +21,7 @@ mqtt:
 
 automation:
   - alias: Under Bed Cheerlights Motion
+    id: under_bed_cheerlights_motion
     trigger:
       - platform: state
         entity_id: binary_sensor.under_bed_motion_sensor
@@ -42,6 +43,7 @@ automation:
           transition: 2
 
   - alias: Under Bed Cheerlights Motion - 2 minute timeout
+    id: under_bed_cheerlights_motion_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.under_bed_motion_sensor
@@ -59,6 +61,7 @@ automation:
         transition: 30
 
   - alias: Cheerlights - Glow Orbs
+    id: cheerlights_glow_orbs
     trigger:
       platform: mqtt
       topic: cheerlightsRGB
@@ -80,6 +83,7 @@ automation:
             - light.sense_gloworb_3_ring
 
   - alias: Cheerlights - Under Bed
+    id: cheerlights_under_bed
     trigger:
       platform: mqtt
       topic: cheerlightsRGB
@@ -102,6 +106,7 @@ automation:
             - light.under_bed_lights
 
   - alias: Cheerlights - Outside
+    id: cheerlights_outside
     trigger:
       platform: mqtt
       topic: cheerlightsRGB
@@ -129,6 +134,7 @@ automation:
             - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
 
   - alias: Cheerlights - Tin Hut
+    id: cheerlights_tin_hut
     trigger:
       platform: mqtt
       topic: cheerlightsRGB
@@ -153,6 +159,7 @@ automation:
             - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
 
   - alias: Cheerlights - off
+    id: cheerlights_off
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
