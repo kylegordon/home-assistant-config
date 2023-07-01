@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: "Outside night lights on"
+    id: outside_night_lights_on
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
@@ -22,6 +23,7 @@ automation:
           transition: 30
 
   - alias: Outside night lights off
+    id: outside_night_lights_off
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
