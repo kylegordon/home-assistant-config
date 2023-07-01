@@ -139,9 +139,9 @@ automation:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
-      - condition: numeric_state
-        entity_id: sensor.average_external_light_level
-        below: 300
+      #- condition: numeric_state
+      #  entity_id: sensor.average_external_light_level
+      #  below: 300
       - condition: time
         after: '16:00:00'
         before: '23:00:00'
@@ -149,8 +149,11 @@ automation:
       - service: light.turn_on
         # Adjust the RGB values, and keep existing white channels
         data_template:
-          entity_id: light.tin_hut_shelving
-          brightness: 170
+          entity_id:
+            - light.tin_hut_shelf_lights_bench
+            - light.tin_hut_shelf_lights_left
+            - light.tin_hut_shelf_lights_right
+          brightness: 255
           rgbww_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
@@ -173,6 +176,6 @@ automation:
           - light.decking_lights
           - light.under_bed_lights
           - light.glow_orbs
-          - light.tin_hut_shelving
+          #- light.tin_hut_shelving
         data:
           transition: 10
