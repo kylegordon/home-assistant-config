@@ -92,7 +92,7 @@ automation:
           minutes: 60
     action:
       service: homeassistant.turn_off
-      entity_id: light.living_room, light.dining_nook_group
+      entity_id: light.living_room, light.dining_nook
 
   - alias: Living Room motion - sunlight timeout
     trigger:
@@ -103,7 +103,7 @@ automation:
           minutes: 10
     action:
       service: homeassistant.turn_off
-      entity_id: light.living_room, light.dining_nook_group
+      entity_id: light.living_room, light.dining_nook
 
   - alias: Living Room motion
     id: living_room_motion
