@@ -16,7 +16,7 @@ automation:
       - service: homeassistant.turn_on
         entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
       - delay:
-          seconds: 5
+          seconds: 15
       - service: media_player.play_media
         data:
           entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
