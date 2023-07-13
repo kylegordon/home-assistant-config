@@ -39,6 +39,8 @@ script:
               light.garage
             {%- elif room == "living_room" -%}
               group.living_room_lights
+            {%- elif room == "tin_hut" -%}
+              light.tin_hut_lights_relay
             {%- endif -%}
 
   # "Alexa, turn off the lights"
