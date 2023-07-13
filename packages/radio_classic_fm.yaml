@@ -1,7 +1,7 @@
 ---
 input_boolean:
   radio_classic_fm:
-    name: Classic FM
+    name: Radio Classic FM
     initial: false
 
 automation:
@@ -9,7 +9,7 @@ automation:
     id: play_radio_classic_fm
     trigger:
       platform: state
-      entity_id: input_boolean.classic_fm
+      entity_id: input_boolean.radio_classic_fm
       from: 'off'
       to: 'on'
     action:
@@ -19,4 +19,4 @@ automation:
           media_content_id: "airable://radio?version=1&radioId=4888751676771790&deviceId=a8abcca3-9d48-4a95-8c02-cb839b85d6ab"
           media_content_type: music
       - service: homeassistant.turn_off
-        entity_id: input_boolean.classic_fm
+        entity_id: input_boolean.radio_classic_fm
