@@ -6,10 +6,12 @@ on:
   pull_request:
     paths:
       - 'esphome/**'
+      - '.github/workflows/esphome**'
   push:
     branches: [main]
     paths:
       - 'esphome/**'
+      - '.github/workflows/esphome**'
   schedule:
     - cron: 0 12 * * *
 
