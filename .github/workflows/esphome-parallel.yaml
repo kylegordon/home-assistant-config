@@ -90,8 +90,11 @@ jobs:
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
-      - run: echo Compiling ${{matrix.file}}
-      - run: docker run --rm -v "${PWD}":/config esphome/esphome:dev compile ${{matrix.file}}
+      - name: Compile all ESPHome ${{matrix.file}}
+        uses: esphome/build-actions@v1
+        with:
+          version: latest
+          yaml_file: ${{matrix.file}}
 
   # This is used by branch protections
   final:
