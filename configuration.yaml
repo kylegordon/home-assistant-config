@@ -266,33 +266,29 @@ smartir:
 panel_iframe:
   esphome:
     title: "ESPHome"
-    url: "http://viewpoint.house:6052"
+    url: "http://esphome.viewpoint.house:90"
     icon: mdi:car-esp
   zigbee2mqtt:
     title: "Z2M"
-    url: "http://viewpoint.house:8081"
+    url: "http://z2m.viewpoint.house:90"
     icon: mdi:antenna
   cctv:
     title: "CCTV"
-    url: "http://viewpoint.house:4999"
+    url: "http://cctv.viewpoint.house:90"
     icon: mdi:cctv
   sonarr:
     title: "Sonarr TV"
-    url: "http://viewpoint.house:8989/sonarr"
+    url: "http://tv.viewpoint.house:90"
     icon: mdi:television-classic
   radarr:
     title: "Radar Movies"
-    url: "http://viewpoint.house:7878/radarr"
+    url: "http://movies.viewpoint.house:90"
     icon: mdi:movie-open
   lazylibrarian:
     title: "LazyLibrarian Books"
-    url: "http://viewpoint.house:5299"
+    url: "http://books.viewpoint.house:90"
     icon: mdi:book-open-page-variant
-  airsonic:
-    title: "AirSonic Music"
-    url: "http://viewpoint.house:4040/index"
-    icon: mdi:music-circle-outline
-  nzbget:
-    title: "NZBGet Downloader"
-    url: "http://viewpoint.house:6789"
-    icon: mdi:cloud-download-outline
+  homepage:
+    title: "Home Page"
+    url: "http://home.viewpoint.house:90"
+    icon: mdi:home
