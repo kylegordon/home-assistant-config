@@ -111,9 +111,6 @@ influxdb:
   bucket: !secret influxdb_bucket
   token: !secret influxdb_token
 
-# Discover some devices automatically
-discovery:
-
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
