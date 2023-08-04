@@ -225,7 +225,6 @@ switch: !include switches.yaml
 media_player: !include media_players.yaml
 device_tracker: !include device_trackers.yaml
 group: !include groups.yaml
-camera: !include cameras.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
