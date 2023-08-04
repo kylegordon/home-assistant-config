@@ -102,10 +102,6 @@ alarm_control_panel:
       code_arm_required: false
       code: !secret alarm_code
 
-deconz:
-  host: 172.24.32.13
-  port: 8100
-
 influxdb:
   host: 172.24.32.13
   port: 8086
@@ -114,58 +110,6 @@ influxdb:
   organization: !secret influxdb_organization
   bucket: !secret influxdb_bucket
   token: !secret influxdb_token
-
-# Discover some devices automatically
-discovery:
-
-rfxtrx:
-  # Remember this is mapped in the docker-compose file
-  device: /dev/ttyUSB0
-  devices:
-    ### Lights ###
-    # 0a140029f0dd3c0e010060:
-    #   name: Living Room
-    0a140001f0dd3c01010070:
-      # White Remote A1
-      # name: Christmas Star
-    0a140075f0dd3c10000060:
-      # Black Remote D4
-    0a14000bf0dd3c0f010070:
-      # name: Lava Lamp
-    0a140037f0dd3c0b010060:
-      # name: Christmas Tree
-    0a14003cf0dd3c0a010060:
-      # name: Craft room fairy lights
-    0710080041020000:
-      # name: Star Burst
-    0710080041030000:
-      # name: Energenie 4 way
-    0710080041040000:
-      # name: Energenie 4 way
-    0a140041f0dd3c09010070:
-      # name: Arc Lamp
-    0a14005ff0dd3c05010060:
-      # name: Energenie 4 way
-    ### Switches ###
-    0710080041010000:
-      # name: Cordless phone
-    ### Binary Sensors ###
-    0b1100d800b8196e0a010f70:
-      # name: Outside Driveway Motion
-      device_class: motion
-    0b11000000b82b560a000060:
-      # name: Outside Front Motion
-      device_class: motion
-
-    ### Sensors ###
-    ## RFXcom ##
-    # Old 115a0100e452000000046600006462cb3e79:
-    115a0102e20200000003e500000000d02979:
-      # name: Electricity
-
-# zwave:
-#   usb_path: /dev/zwave
-#   debug: false
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -278,7 +222,6 @@ switch: !include switches.yaml
 media_player: !include media_players.yaml
 device_tracker: !include device_trackers.yaml
 group: !include groups.yaml
-camera: !include cameras.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
@@ -323,33 +266,29 @@ smartir:
 panel_iframe:
   esphome:
     title: "ESPHome"
-    url: "http://viewpoint.house:6052"
+    url: "http://esphome.viewpoint.house:90"
     icon: mdi:car-esp
   zigbee2mqtt:
     title: "Z2M"
-    url: "http://viewpoint.house:8081"
+    url: "http://z2m.viewpoint.house:90"
     icon: mdi:antenna
   cctv:
     title: "CCTV"
-    url: "http://viewpoint.house:4999"
+    url: "http://cctv.viewpoint.house:90"
     icon: mdi:cctv
   sonarr:
     title: "Sonarr TV"
-    url: "http://viewpoint.house:8989/sonarr"
+    url: "http://tv.viewpoint.house:90"
     icon: mdi:television-classic
   radarr:
     title: "Radar Movies"
-    url: "http://viewpoint.house:7878/radarr"
+    url: "http://movies.viewpoint.house:90"
     icon: mdi:movie-open
   lazylibrarian:
     title: "LazyLibrarian Books"
-    url: "http://viewpoint.house:5299"
+    url: "http://books.viewpoint.house:90"
     icon: mdi:book-open-page-variant
-  airsonic:
-    title: "AirSonic Music"
-    url: "http://viewpoint.house:4040/index"
-    icon: mdi:music-circle-outline
-  nzbget:
-    title: "NZBGet Downloader"
-    url: "http://viewpoint.house:6789"
-    icon: mdi:cloud-download-outline
+  homepage:
+    title: "Home Page"
+    url: "http://home.viewpoint.house:90"
+    icon: mdi:home
