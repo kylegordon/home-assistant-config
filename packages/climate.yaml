@@ -5,13 +5,6 @@
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
 
 binary_sensor:
-  - platform: workday
-    name: Workday
-    country: GB
-  - platform: workday
-    name: Workday tomorrow
-    country: GB
-    days_offset: 1
   - platform: group
     # Openings that should prevent the heating from coming on
     name: Climate Openings
