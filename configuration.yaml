@@ -102,10 +102,6 @@ alarm_control_panel:
       code_arm_required: false
       code: !secret alarm_code
 
-deconz:
-  host: 172.24.32.13
-  port: 8100
-
 influxdb:
   host: 172.24.32.13
   port: 8086
