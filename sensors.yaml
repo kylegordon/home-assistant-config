@@ -56,13 +56,18 @@
       unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
-  source: sensor.electricity_energy_usage
+  source: sensor.elec2_cm119_160_db_92_instantaneous_power
   name: energy_spent
   unit_prefix: k
   round: 2
 - platform: integration
   source: sensor.tv_power_plug_power
   name: energy_spent_tv
+  unit_prefix: k
+  round: 2
+- platform: integration
+  source: sensor.shower_power_plug_power
+  name: energy_spent_shower
   unit_prefix: k
   round: 2
 
