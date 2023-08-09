@@ -1,0 +1,344 @@
+---
+# These substitutions allow the end user to override certain values
+substitutions:
+  # Device Names
+  name: "localbytes-plug-pm"
+  friendly_name: "Localbytes Plug PM"
+
+  # Icon
+  main_icon: "power-socket-uk"
+
+  # Default Relay State
+  # Aka: `restore_mode` in documentation
+  # Options: `RESTORE_DEFAULT_OFF`, `RESTORE_DEFAULT_ON`, `ALWAYS_ON` & `ALWAYS_OFF`
+  default_state: "RESTORE_DEFAULT_OFF"
+
+esphome:
+  name: "${device_name}"
+  friendly_name: "${friendly_name}"
+
+  # Automatically add the mac address to the name
+  # so you can use a single firmware for all devices
+  # name_add_mac_suffix: true
+
+  # This will allow for (future) project identification,
+  # configuration and updates.
+  project:
+    name: localbytes.plug-pm
+    version: "1.6.2"
+
+esp8266:
+  board: esp01_1m
+  restore_from_flash: true
+
+logger:
+
+ota:
+
+# This should point to the public location of this yaml file.
+dashboard_import:
+  package_import_url: github://kylegordon/home-assistant-config/esphome/common/localbytes-plug-pm-common.yaml@main
+
+wifi:
+  output_power: 18db
+  power_save_mode: light
+  ap:
+    ssid: "${friendly_name}"
+
+captive_portal:
+
+web_server:
+  port: 80
+
+time:
+  - platform: homeassistant
+    timezone: Europe/London
+
+api:
+  services:
+    - service: calibrate_voltage
+      variables:
+        actual_value: float
+      then:
+        - lambda: |-
+            id(voltage_multiply) = actual_value / id(voltage).raw_state;
+        - number.set:
+            id: voltage_factor
+            value: !lambda "return id(voltage_multiply);"
+
+    - service: calibrate_power
+      variables:
+        actual_value: float
+      then:
+        - lambda: |-
+            id(power_multiply) = actual_value / id(power).raw_state;
+        - number.set:
+            id: power_factor
+            value: !lambda "return id(power_multiply);"
+
+    - service: calibrate_current
+      variables:
+        actual_value: float
+      then:
+        - lambda: |-
+            id(current_multiply) = actual_value / id(current).raw_state;
+        - number.set:
+            id: current_factor
+            value: !lambda "return id(current_multiply);"
+
+globals:
+  - id: voltage_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.3"
+
+  - id: power_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.133"
+
+  - id: current_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.805"
+
+binary_sensor:
+  # Push Button (Toggles Relay When Pressed)
+  - platform: gpio
+    pin:
+      number: GPIO3
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Button"
+    on_click:
+
+      - max_length: 1s
+        then:
+          if:
+            condition:
+              switch.is_off: disable_button
+            then:
+              switch.toggle: relay
+
+      - min_length: 1.5s
+        max_length: 5s
+        then:
+          switch.toggle: disable_led
+
+      - min_length: 8s
+        max_length: 12s
+        then:
+          switch.toggle: disable_button
+
+  - platform: status
+    name: "Server Status"
+
+switch:
+  # Relay (As Switch)
+  - platform: gpio
+    name: ""
+    icon: "mdi:${main_icon}"
+    pin: GPIO14
+    id: relay
+    restore_mode: "${default_state}"
+    on_turn_on:
+      if:
+        condition:
+          switch.is_off: disable_led
+        then:
+          light.turn_on:
+            id: led
+    on_turn_off:
+      - light.turn_off:
+          id: led
+
+  - platform: template
+    name: "Disable LED"
+    id: disable_led
+    icon: "mdi:led-variant-off"
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+    on_turn_on:
+      # Flash twice
+      - light.turn_off: led
+      - delay: 0.1s
+      - light.turn_on: led
+      - delay: 0.1s
+      - light.turn_off: led
+      - delay: 0.1s
+      - light.turn_on: led
+      - delay: 0.1s
+      # Final state
+      - light.turn_off: led
+    on_turn_off:
+      # Flash twice
+      - light.turn_on: led
+      - delay: 0.1s
+      - light.turn_off: led
+      - delay: 0.1s
+      - light.turn_on: led
+      - delay: 0.1s
+      - light.turn_off: led
+      - delay: 0.7s
+      # Final state
+      - if:
+          condition:
+            switch.is_on: relay
+          then:
+            light.turn_on: led
+
+  - platform: template
+    name: "Disable Button"
+    id: disable_button
+    icon: "mdi:toggle-switch-off-outline"
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+    on_turn_on:
+      # Flash thrice
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      # Final state
+      - if:
+          condition:
+            switch.is_off: relay
+          then:
+            light.turn_off: led
+    on_turn_off:
+      # Flash thrice
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.7s
+      # Final state
+      - if:
+          condition:
+            switch.is_on: relay
+          then:
+            light.turn_on: led
+
+sensor:
+  # WiFi Signal Sensor
+  - platform: wifi_signal
+    name: "WiFi Status"
+    update_interval: 60s
+
+  # Power Monitoring
+  - platform: hlw8012
+    sel_pin:
+      number: GPIO12
+      inverted: true
+    cf_pin: GPIO4
+    cf1_pin: GPIO5
+    change_mode_every: 3
+    update_interval: 6s
+
+    voltage:
+      name: "Voltage"
+      id: voltage
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      filters:
+        - lambda: return x * id(voltage_multiply);
+
+    power:
+      name: "Power"
+      id: power
+      unit_of_measurement: W
+      accuracy_decimals: 0
+      filters:
+        - lambda: return x * id(power_multiply);
+
+    current:
+      name: "Current"
+      id: current
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      filters:
+        - lambda: return x * id(current_multiply);
+
+  # Total daily energy sensor
+  - platform: total_daily_energy
+    name: "Daily Energy"
+    power_id: power
+    filters:
+      # Multiplication factor from W to kW is 0.001
+      - multiply: 0.001
+    unit_of_measurement: kWh
+
+# Make calibration factor data readable/setable from home assistant
+number:
+  - platform: template
+    name: "Voltage Calibration Factor"
+    id: voltage_factor
+    icon: "mdi:sine-wave"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(voltage_multiply);
+    set_action:
+      lambda: |-
+        id(voltage_multiply) = x;
+
+  - platform: template
+    name: "Power Calibration Factor"
+    id: power_factor
+    icon: "mdi:flash"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(power_multiply);
+    set_action:
+      lambda: |-
+        id(power_multiply) = x;
+
+  - platform: template
+    name: "Current Calibration Factor"
+    id: current_factor
+    icon: "mdi:current-ac"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(current_multiply);
+    set_action:
+      lambda: |-
+        id(current_multiply) = x;
+
+# Relay State LED
+output:
+  - platform: esp8266_pwm
+    id: state_led
+    pin:
+      number: GPIO13
+      inverted: true
+
+light:
+  - platform: binary
+    output: state_led
+    id: led
