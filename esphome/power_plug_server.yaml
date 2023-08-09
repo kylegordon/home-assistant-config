@@ -1,0 +1,9 @@
+---
+substitutions:
+  device_name: power_plug_server
+  device_description: Server Power Plug
+  friendly_name: Server Power Plug
+  default_state: "RESTORE_DEFAULT_ON"
+  main_icon: power-socket-uk
+
+<<: !include common/localbytes_plug_pm_common.yaml
