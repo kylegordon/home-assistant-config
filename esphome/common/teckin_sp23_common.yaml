@@ -91,6 +91,47 @@ globals:
     restore_value: true
     initial_value: "0.805"
 
+binary_sensor:
+  # Push Button (Toggles Relay When Pressed)
+  - platform: gpio
+    pin:
+      number: GPIO13
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Button"
+    on_click:
+
+      - max_length: 1s
+        then:
+          if:
+            condition:
+              switch.is_off: disable_button
+            then:
+              switch.toggle: relay
+
+      - min_length: 1.5s
+        max_length: 5s
+        then:
+          switch.toggle: disable_led
+
+      - min_length: 8s
+        max_length: 12s
+        then:
+          switch.toggle: disable_button
+
+  - platform: status
+    name: "Server Status"
+
+# binary_sensor:
+#   # Binary sensor for the button press
+#   - platform: gpio
+#     name: button
+#     pin:
+#       number: GPIO13
+#       inverted: true
+#     on_press:
+#       - switch.toggle: relay
+
 sensor:
   - platform: hlw8012
     sel_pin:
@@ -152,16 +193,6 @@ sensor:
       #   # Make everything below 2W appear as just 0W.
       #   # Furthermore it corrects 1.14W for the power usage of the plug.
       #   - lambda: if (x < (2 + 1.14)) return 0; else return (x - 1.14);
-
-binary_sensor:
-  # Binary sensor for the button press
-  - platform: gpio
-    name: button
-    pin:
-      number: GPIO13
-      inverted: true
-    on_press:
-      - switch.toggle: relay
 
 switch:
   # Switch to toggle the relay
