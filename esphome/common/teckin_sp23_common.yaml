@@ -245,66 +245,115 @@ switch:
 #       - light.turn_off: led
 
 sensor:
+  # WiFi Signal Sensor
+  - platform: wifi_signal
+    name: "WiFi Status"
+    update_interval: 60s
+
+  # Power Monitoring
   - platform: hlw8012
     sel_pin:
       number: GPIO12
       inverted: true
-    cf_pin: GPIO05
-    cf1_pin: GPIO14
-    # Higher value gives lower watt readout
-    current_resistor: 0.00221
-    # Lower value gives lower voltage readout
-    voltage_divider: 871
+    cf_pin: GPIO4
+    cf1_pin: GPIO5
     change_mode_every: 3
-    update_interval: 1s
-    # Current sensor
-    current:
-      name: ${friendly_name} Current
-      unit_of_measurement: A
-      accuracy_decimals: 3
-      # filters:
-      #   # Map from sensor -> measured value
-      #   - calibrate_linear:
-      #       - 0.0 -> 0.013
-      #       - 0.08208 -> 0.071
-      #       - 1.34223 -> 1.066
-      #       - 5.57170 -> 4.408
-      #       - 6.69184 -> 5.259
-      #       - 6.97187 -> 5.540
-      #   # Make everything below 0.01A appear as just 0A.
-      #   # Furthermore it corrects 0.013A for the power usage of the plug.
-      #   - lambda: if (x < (0.01 - 0.013)) return 0; else return (x - 0.013);
-    # Voltage sensor
+    update_interval: 6s
+
     voltage:
-      name: ${friendly_name} Voltage
+      name: "Voltage"
+      id: voltage
       unit_of_measurement: V
       accuracy_decimals: 1
-      # filters:
-      #   # Map from sensor -> measured value
-      #   - calibrate_linear:
-      #       - 0.0 -> 0.0
-      #       - 602.87506 -> 229.9
-      #       - 609.8 -> 232.8
-    # Power sensor
+      filters:
+        - lambda: return x * id(voltage_multiply);
+
     power:
+      name: "Power"
       id: power
-      name: ${friendly_name} Power
       unit_of_measurement: W
       accuracy_decimals: 0
-      # filters:
-      #   # Map from sensor -> measured value
-      #   - calibrate_linear:
-      #       - 0.0 -> 1.14
-      #       - 62.06167 -> 10.93
-      #       - 1503.27161 -> 247.6
-      #       - 1599.81213 -> 263.7
-      #       - 3923.67700 -> 631.4
-      #       - 7109.50928 -> 1148.0
-      #       - 7237.0857 -> 1193.0
-      #       - 7426.71338 -> 1217.0
-      #   # Make everything below 2W appear as just 0W.
-      #   # Furthermore it corrects 1.14W for the power usage of the plug.
-      #   - lambda: if (x < (2 + 1.14)) return 0; else return (x - 1.14);
+      filters:
+        - lambda: return x * id(power_multiply);
+
+    current:
+      name: "Current"
+      id: current
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      filters:
+        - lambda: return x * id(current_multiply);
+
+  # Total daily energy sensor
+  - platform: total_daily_energy
+    name: "Daily Energy"
+    power_id: power
+    filters:
+      # Multiplication factor from W to kW is 0.001
+      - multiply: 0.001
+    unit_of_measurement: kWh
+
+# sensor:
+#   - platform: hlw8012
+#     sel_pin:
+#       number: GPIO12
+#       inverted: true
+#     cf_pin: GPIO05
+#     cf1_pin: GPIO14
+#     # Higher value gives lower watt readout
+#     current_resistor: 0.00221
+#     # Lower value gives lower voltage readout
+#     voltage_divider: 871
+#     change_mode_every: 3
+#     update_interval: 1s
+#     # Current sensor
+#     current:
+#       name: ${friendly_name} Current
+#       unit_of_measurement: A
+#       accuracy_decimals: 3
+#       # filters:
+#       #   # Map from sensor -> measured value
+#       #   - calibrate_linear:
+#       #       - 0.0 -> 0.013
+#       #       - 0.08208 -> 0.071
+#       #       - 1.34223 -> 1.066
+#       #       - 5.57170 -> 4.408
+#       #       - 6.69184 -> 5.259
+#       #       - 6.97187 -> 5.540
+#       #   # Make everything below 0.01A appear as just 0A.
+#       #   # Furthermore it corrects 0.013A for the power usage of the plug.
+#       #   - lambda: if (x < (0.01 - 0.013)) return 0; else return (x - 0.013);
+#     # Voltage sensor
+#     voltage:
+#       name: ${friendly_name} Voltage
+#       unit_of_measurement: V
+#       accuracy_decimals: 1
+#       # filters:
+#       #   # Map from sensor -> measured value
+#       #   - calibrate_linear:
+#       #       - 0.0 -> 0.0
+#       #       - 602.87506 -> 229.9
+#       #       - 609.8 -> 232.8
+#     # Power sensor
+#     power:
+#       id: power
+#       name: ${friendly_name} Power
+#       unit_of_measurement: W
+#       accuracy_decimals: 0
+#       # filters:
+#       #   # Map from sensor -> measured value
+#       #   - calibrate_linear:
+#       #       - 0.0 -> 1.14
+#       #       - 62.06167 -> 10.93
+#       #       - 1503.27161 -> 247.6
+#       #       - 1599.81213 -> 263.7
+#       #       - 3923.67700 -> 631.4
+#       #       - 7109.50928 -> 1148.0
+#       #       - 7237.0857 -> 1193.0
+#       #       - 7426.71338 -> 1217.0
+#       #   # Make everything below 2W appear as just 0W.
+#       #   # Furthermore it corrects 1.14W for the power usage of the plug.
+#       #   - lambda: if (x < (2 + 1.14)) return 0; else return (x - 1.14);
 
 
 output:
