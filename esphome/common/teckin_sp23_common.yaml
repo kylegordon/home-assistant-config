@@ -132,6 +132,118 @@ binary_sensor:
 #     on_press:
 #       - switch.toggle: relay
 
+switch:
+  # Relay (As Switch)
+  - platform: gpio
+    name: ""
+    icon: "mdi:${main_icon}"
+    pin: GPIO15
+    id: relay
+    restore_mode: "${default_state}"
+    on_turn_on:
+      if:
+        condition:
+          switch.is_off: disable_led
+        then:
+          light.turn_on:
+            id: led
+    on_turn_off:
+      - light.turn_off:
+          id: led
+
+  - platform: template
+    name: "Disable LED"
+    id: disable_led
+    icon: "mdi:led-variant-off"
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+    on_turn_on:
+      # Flash twice
+      - light.turn_off: led
+      - delay: 0.1s
+      - light.turn_on: led
+      - delay: 0.1s
+      - light.turn_off: led
+      - delay: 0.1s
+      - light.turn_on: led
+      - delay: 0.1s
+      # Final state
+      - light.turn_off: led
+    on_turn_off:
+      # Flash twice
+      - light.turn_on: led
+      - delay: 0.1s
+      - light.turn_off: led
+      - delay: 0.1s
+      - light.turn_on: led
+      - delay: 0.1s
+      - light.turn_off: led
+      - delay: 0.7s
+      # Final state
+      - if:
+          condition:
+            switch.is_on: relay
+          then:
+            light.turn_on: led
+
+  - platform: template
+    name: "Disable Button"
+    id: disable_button
+    icon: "mdi:toggle-switch-off-outline"
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+    on_turn_on:
+      # Flash thrice
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      # Final state
+      - if:
+          condition:
+            switch.is_off: relay
+          then:
+            light.turn_off: led
+    on_turn_off:
+      # Flash thrice
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.15s
+      - light.turn_on: led
+      - delay: 0.15s
+      - light.turn_off: led
+      - delay: 0.7s
+      # Final state
+      - if:
+          condition:
+            switch.is_on: relay
+          then:
+            light.turn_on: led
+
+# switch:
+#   # Switch to toggle the relay
+#   - platform: gpio
+#     id: relay
+#     name: ${friendly_name} Switch
+#     pin: GPIO15
+#     on_turn_on:
+#       - light.turn_on: led
+#     on_turn_off:
+#       - light.turn_off: led
+
 sensor:
   - platform: hlw8012
     sel_pin:
@@ -194,16 +306,6 @@ sensor:
       #   # Furthermore it corrects 1.14W for the power usage of the plug.
       #   - lambda: if (x < (2 + 1.14)) return 0; else return (x - 1.14);
 
-switch:
-  # Switch to toggle the relay
-  - platform: gpio
-    id: relay
-    name: ${friendly_name} Switch
-    pin: GPIO15
-    on_turn_on:
-      - light.turn_on: led
-    on_turn_off:
-      - light.turn_off: led
 
 output:
   # Relay state led
