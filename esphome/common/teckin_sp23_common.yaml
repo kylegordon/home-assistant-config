@@ -43,6 +43,54 @@ syslog:
   ip_address: 172.24.32.13
   port: 515
 
+api:
+  services:
+    - service: calibrate_voltage
+      variables:
+        actual_value: float
+      then:
+        - lambda: |-
+            id(voltage_multiply) = actual_value / id(voltage).raw_state;
+        - number.set:
+            id: voltage_factor
+            value: !lambda "return id(voltage_multiply);"
+
+    - service: calibrate_power
+      variables:
+        actual_value: float
+      then:
+        - lambda: |-
+            id(power_multiply) = actual_value / id(power).raw_state;
+        - number.set:
+            id: power_factor
+            value: !lambda "return id(power_multiply);"
+
+    - service: calibrate_current
+      variables:
+        actual_value: float
+      then:
+        - lambda: |-
+            id(current_multiply) = actual_value / id(current).raw_state;
+        - number.set:
+            id: current_factor
+            value: !lambda "return id(current_multiply);"
+
+globals:
+  - id: voltage_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.3"
+
+  - id: power_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.133"
+
+  - id: current_multiply
+    type: float
+    restore_value: true
+    initial_value: "0.805"
+
 sensor:
   - platform: hlw8012
     sel_pin:
