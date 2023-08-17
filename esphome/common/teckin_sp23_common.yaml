@@ -255,8 +255,8 @@ sensor:
     sel_pin:
       number: GPIO12
       inverted: true
-    cf_pin: GPIO4
-    cf1_pin: GPIO5
+    cf_pin: GPIO5
+    cf1_pin: GPIO14
     change_mode_every: 3
     update_interval: 6s
 
@@ -355,6 +355,52 @@ sensor:
 #       #   # Furthermore it corrects 1.14W for the power usage of the plug.
 #       #   - lambda: if (x < (2 + 1.14)) return 0; else return (x - 1.14);
 
+# Make calibration factor data readable/setable from home assistant
+number:
+  - platform: template
+    name: "Voltage Calibration Factor"
+    id: voltage_factor
+    icon: "mdi:sine-wave"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(voltage_multiply);
+    set_action:
+      lambda: |-
+        id(voltage_multiply) = x;
+
+  - platform: template
+    name: "Power Calibration Factor"
+    id: power_factor
+    icon: "mdi:flash"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(power_multiply);
+    set_action:
+      lambda: |-
+        id(power_multiply) = x;
+
+  - platform: template
+    name: "Current Calibration Factor"
+    id: current_factor
+    icon: "mdi:current-ac"
+    min_value: 0
+    max_value: 10
+    step: 0.001
+    entity_category: diagnostic
+    mode: box
+    lambda: |-
+      return id(current_multiply);
+    set_action:
+      lambda: |-
+        id(current_multiply) = x;
 
 output:
   # Relay state led
