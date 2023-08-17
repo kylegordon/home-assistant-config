@@ -1,6 +1,9 @@
+---
 substitutions:
   device_name: monitor_lights
   device_description: Monitor Lights Power Plug
   friendly_name: Monitor Lights Power Plug
+  default_state: "RESTORE_DEFAULT_ON"
+  main_icon: power-socket-uk
 
 <<: !include common/teckin_sp23_common.yaml

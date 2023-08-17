@@ -1,6 +1,9 @@
+---
 substitutions:
   device_name: tv
   device_description: TV Power Plug
   friendly_name: TV Power Plug
+  default_state: "RESTORE_DEFAULT_ON"
+  main_icon: power-socket-uk
 
 <<: !include common/teckin_sp23_common.yaml
