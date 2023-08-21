@@ -16,6 +16,7 @@ substitutions:
 esphome:
   name: "${device_name}"
   friendly_name: "${friendly_name}"
+  comment: ${device_description}
 
   # Automatically add the mac address to the name
   # so you can use a single firmware for all devices
