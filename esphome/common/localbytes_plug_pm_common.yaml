@@ -343,3 +343,9 @@ light:
   - platform: binary
     output: state_led
     id: led
+
+# Uses the red LED as a status indicator
+status_led:
+  pin:
+    number: GPIO0
+    inverted: true
