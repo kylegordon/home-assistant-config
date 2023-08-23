@@ -2,16 +2,16 @@
 # These substitutions allow the end user to override certain values
 substitutions:
   # Device Names
-  name: "localbytes-plug-pm"
-  friendly_name: "Localbytes Plug PM"
+  name: ${name}
+  friendly_name: ${friendly_name}
 
   # Icon
-  main_icon: "power-socket-uk"
+  main_icon: ${main_icon}
 
   # Default Relay State
   # Aka: `restore_mode` in documentation
   # Options: `RESTORE_DEFAULT_OFF`, `RESTORE_DEFAULT_ON`, `ALWAYS_ON` & `ALWAYS_OFF`
-  default_state: "RESTORE_DEFAULT_OFF"
+  default_state: ${default_state}
 
 esphome:
   name: "${device_name}"
