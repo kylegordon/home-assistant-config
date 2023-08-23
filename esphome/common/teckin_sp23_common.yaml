@@ -1,19 +1,44 @@
 ---
+# These substitutions allow the end user to override certain values
+substitutions:
+  # Device Names
+  name: ${name}
+  friendly_name: ${friendly_name}
 
-# Sourced from https://frenck.dev/calibrating-an-esphome-flashed-power-plug/
-# and https://gist.github.com/timmo001/7b0cf9958b80f6356a3f47d2f29aa1a6
-# TV manual and specs at https://www.manualslib.com/manual/650244/Panasonic-Viera-Th-D42ps81ea.html?page=51#manual
+  # Icon
+  main_icon: ${main_icon}
 
-packages:
-  common: !include common.yaml
+  # Default Relay State
+  # Aka: `restore_mode` in documentation
+  # Options: `RESTORE_DEFAULT_OFF`, `RESTORE_DEFAULT_ON`, `ALWAYS_ON` & `ALWAYS_OFF`
+  default_state: ${default_state}
 
 esphome:
-  name: ${device_name}
+  name: "${device_name}"
+  friendly_name: "${friendly_name}"
   comment: ${device_description}
+
+  # Automatically add the mac address to the name
+  # so you can use a single firmware for all devices
+  # name_add_mac_suffix: true
+
+  # This will allow for (future) project identification,
+  # configuration and updates.
+  project:
+    name: teckinsp23.plug-pm
+    version: "1.6.2"
 
 esp8266:
   board: esp01_1m
   restore_from_flash: true
+
+logger:
+
+ota:
+
+# This should point to the public location of this yaml file.
+dashboard_import:
+  package_import_url: github://kylegordon/home-assistant-config/esphome/common/localbytes-plug-pm-common.yaml@main
 
 wifi:
   output_power: 18db
@@ -23,23 +48,12 @@ wifi:
 
 captive_portal:
 
-debug:
-
-# Enable logging
-logger:
-  level: debug
-
-# Enable Web server
 web_server:
   port: 80
 
 time:
   - platform: homeassistant
     timezone: Europe/London
-
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
 
 api:
   services:
@@ -119,16 +133,6 @@ binary_sensor:
 
   - platform: status
     name: "Server Status"
-
-# binary_sensor:
-#   # Binary sensor for the button press
-#   - platform: gpio
-#     name: button
-#     pin:
-#       number: GPIO13
-#       inverted: true
-#     on_press:
-#       - switch.toggle: relay
 
 switch:
   # Relay (As Switch)
@@ -231,17 +235,6 @@ switch:
           then:
             light.turn_on: led
 
-# switch:
-#   # Switch to toggle the relay
-#   - platform: gpio
-#     id: relay
-#     name: ${friendly_name} Switch
-#     pin: GPIO15
-#     on_turn_on:
-#       - light.turn_on: led
-#     on_turn_off:
-#       - light.turn_off: led
-
 sensor:
   # WiFi Signal Sensor
   - platform: wifi_signal
@@ -291,68 +284,6 @@ sensor:
       - multiply: 0.001
     unit_of_measurement: kWh
 
-# sensor:
-#   - platform: hlw8012
-#     sel_pin:
-#       number: GPIO12
-#       inverted: true
-#     cf_pin: GPIO05
-#     cf1_pin: GPIO14
-#     # Higher value gives lower watt readout
-#     current_resistor: 0.00221
-#     # Lower value gives lower voltage readout
-#     voltage_divider: 871
-#     change_mode_every: 3
-#     update_interval: 1s
-#     # Current sensor
-#     current:
-#       name: ${friendly_name} Current
-#       unit_of_measurement: A
-#       accuracy_decimals: 3
-#       # filters:
-#       #   # Map from sensor -> measured value
-#       #   - calibrate_linear:
-#       #       - 0.0 -> 0.013
-#       #       - 0.08208 -> 0.071
-#       #       - 1.34223 -> 1.066
-#       #       - 5.57170 -> 4.408
-#       #       - 6.69184 -> 5.259
-#       #       - 6.97187 -> 5.540
-#       #   # Make everything below 0.01A appear as just 0A.
-#       #   # Furthermore it corrects 0.013A for the power usage of the plug.
-#       #   - lambda: if (x < (0.01 - 0.013)) return 0; else return (x - 0.013);
-#     # Voltage sensor
-#     voltage:
-#       name: ${friendly_name} Voltage
-#       unit_of_measurement: V
-#       accuracy_decimals: 1
-#       # filters:
-#       #   # Map from sensor -> measured value
-#       #   - calibrate_linear:
-#       #       - 0.0 -> 0.0
-#       #       - 602.87506 -> 229.9
-#       #       - 609.8 -> 232.8
-#     # Power sensor
-#     power:
-#       id: power
-#       name: ${friendly_name} Power
-#       unit_of_measurement: W
-#       accuracy_decimals: 0
-#       # filters:
-#       #   # Map from sensor -> measured value
-#       #   - calibrate_linear:
-#       #       - 0.0 -> 1.14
-#       #       - 62.06167 -> 10.93
-#       #       - 1503.27161 -> 247.6
-#       #       - 1599.81213 -> 263.7
-#       #       - 3923.67700 -> 631.4
-#       #       - 7109.50928 -> 1148.0
-#       #       - 7237.0857 -> 1193.0
-#       #       - 7426.71338 -> 1217.0
-#       #   # Make everything below 2W appear as just 0W.
-#       #   # Furthermore it corrects 1.14W for the power usage of the plug.
-#       #   - lambda: if (x < (2 + 1.14)) return 0; else return (x - 1.14);
-
 # Make calibration factor data readable/setable from home assistant
 number:
   - platform: template
@@ -400,8 +331,8 @@ number:
       lambda: |-
         id(current_multiply) = x;
 
+# Relay State LED
 output:
-  # Relay state led
   - platform: esp8266_pwm
     id: state_led
     pin:
@@ -409,8 +340,7 @@ output:
       inverted: true
 
 light:
-  # Relay state light
-  - platform: monochromatic
+  - platform: binary
     output: state_led
     id: led
 
