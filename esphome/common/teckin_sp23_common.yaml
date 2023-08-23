@@ -1,4 +1,7 @@
 ---
+packages:
+  common: !include common.yaml
+
 # These substitutions allow the end user to override certain values
 substitutions:
   # Device Names
@@ -34,17 +37,9 @@ esp8266:
 
 logger:
 
-ota:
-
 # This should point to the public location of this yaml file.
 dashboard_import:
   package_import_url: github://kylegordon/home-assistant-config/esphome/common/localbytes-plug-pm-common.yaml@main
-
-wifi:
-  output_power: 18db
-  power_save_mode: light
-  ap:
-    ssid: "${friendly_name}"
 
 captive_portal:
 
@@ -130,9 +125,6 @@ binary_sensor:
         max_length: 12s
         then:
           switch.toggle: disable_button
-
-  - platform: status
-    name: "Server Status"
 
 switch:
   # Relay (As Switch)
@@ -236,11 +228,6 @@ switch:
             light.turn_on: led
 
 sensor:
-  # WiFi Signal Sensor
-  - platform: wifi_signal
-    name: "WiFi Status"
-    update_interval: 60s
-
   # Power Monitoring
   - platform: hlw8012
     sel_pin:
