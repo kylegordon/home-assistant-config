@@ -39,7 +39,7 @@ logger:
 
 # This should point to the public location of this yaml file.
 dashboard_import:
-  package_import_url: github://kylegordon/home-assistant-config/esphome/common/localbytes-plug-pm-common.yaml@main
+  package_import_url: github://kylegordon/home-assistant-config/esphome/common/teckin_sp23-common.yaml@main
 
 captive_portal:
 
