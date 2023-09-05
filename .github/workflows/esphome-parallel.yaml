@@ -21,7 +21,7 @@ jobs:
       file: ${{ steps.set-files.outputs.file }}  # generate output name file by using inner step output
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get list of files
         id: set-files  # Give it an id to handle to get step outputs in the outputs key above
         run: echo "::set-output name=file::$(ls esphome/*.yaml | jq -R -s -c 'split("\n")[:-1]')"
@@ -36,7 +36,7 @@ jobs:
         file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: ESPHome Version
         uses: "docker://esphome/esphome:stable"
         with:
@@ -58,7 +58,7 @@ jobs:
         file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: ESPHome Version
         uses: "docker://esphome/esphome:beta"
         with:
@@ -80,7 +80,7 @@ jobs:
         file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: ESPHome Version
         uses: "docker://esphome/esphome:dev"
         with:
@@ -100,4 +100,4 @@ jobs:
     needs: [loop-stable, loop-beta, loop-dev]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
