@@ -6,14 +6,12 @@ automation:
       - platform: state
         entity_id:
           - binary_sensor.outside_front_motion
-          - binary_sensor.outside_driveway_motion
-        to: 'on'
-      - platform: numeric_state
-        entity_id:
+          - binary_sensor.driveway_pir
           - binary_sensor.driveway_person_occupancy
           - binary_sensor.back_door_person_occupancy
           - binary_sensor.gates_person_occupancy
           - binary_sensor.front_door_person_occupancy
+        to: 'on'
     condition:
       - condition: state
         entity_id: input_boolean.night_view
@@ -59,7 +57,7 @@ automation:
       - platform: state
         entity_id:
           - binary_sensor.outside_front_motion
-          - binary_sensor.outside_driveway_motion
+          - binary_sensor.driveway_pir
           - binary_sensor.front_door_motion
           - binary_sensor.back_door_person_occupancy
           - binary_sensor.driveway_person_occupancy
