@@ -1,4 +1,8 @@
 ---
+#### Notes here
+#
+#### End notes
+
 packages:
   common: !include common.yaml
 
@@ -36,6 +40,10 @@ esp8266:
   restore_from_flash: true
 
 logger:
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
 
 # This should point to the public location of this yaml file.
 dashboard_import:
