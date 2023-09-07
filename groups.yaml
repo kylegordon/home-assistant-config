@@ -182,7 +182,7 @@ outside:
   name: Outside
   entities:
     - sun.sun
-    - binary_sensor.outside_front_motion
+    - binary_sensor.back_door_pir
     - binary_sensor.driveway_pir
     - binary_sensor.front_door_motion
     - group.climate
