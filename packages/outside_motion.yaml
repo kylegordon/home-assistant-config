@@ -5,7 +5,7 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.outside_front_motion
+          - binary_sensor.back_door_pir
           - binary_sensor.driveway_pir
           - binary_sensor.driveway_person_occupancy
           - binary_sensor.back_door_person_occupancy
@@ -56,7 +56,7 @@ automation:
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.outside_front_motion
+          - binary_sensor.back_door_pir
           - binary_sensor.driveway_pir
           - binary_sensor.front_door_motion
           - binary_sensor.back_door_person_occupancy
