@@ -1,6 +1,7 @@
 ---
-
-# Values from https://gist.github.com/timmo001/7b0cf9958b80f6356a3f47d2f29aa1a6
+#### Notes here
+#
+#### End notes
 
 packages:
   common: !include common.yaml
@@ -31,7 +32,7 @@ esphome:
   # This will allow for (future) project identification,
   # configuration and updates.
   project:
-    name: teckinsp23.plug-pm
+    name: localbytes.plug-pm
     version: "1.6.2"
 
 esp8266:
@@ -46,7 +47,7 @@ syslog:
 
 # This should point to the public location of this yaml file.
 dashboard_import:
-  package_import_url: github://kylegordon/home-assistant-config/esphome/common/teckin_sp23-common.yaml@main
+  package_import_url: github://kylegordon/home-assistant-config/esphome/common/localbytes-plug-pm-common.yaml@main
 
 captive_portal:
 
@@ -109,7 +110,7 @@ binary_sensor:
   # Push Button (Toggles Relay When Pressed)
   - platform: gpio
     pin:
-      number: GPIO13
+      number: GPIO3
       mode: INPUT_PULLUP
       inverted: true
     name: "Button"
@@ -138,7 +139,7 @@ switch:
   - platform: gpio
     name: ""
     icon: "mdi:${main_icon}"
-    pin: GPIO15
+    pin: GPIO14
     id: relay
     restore_mode: "${default_state}"
     on_turn_on:
@@ -240,8 +241,8 @@ sensor:
     sel_pin:
       number: GPIO12
       inverted: true
-    cf_pin: GPIO5
-    cf1_pin: GPIO14
+    cf_pin: GPIO4
+    cf1_pin: GPIO5
     change_mode_every: 3
     update_interval: 6s
 
@@ -330,7 +331,7 @@ output:
   - platform: esp8266_pwm
     id: state_led
     pin:
-      number: GPIO2
+      number: GPIO13
       inverted: true
 
 light:
