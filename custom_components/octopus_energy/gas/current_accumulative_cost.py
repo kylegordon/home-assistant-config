@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime
-from ..statistics.consumption import async_import_external_statistics_from_consumption
 
 from homeassistant.core import HomeAssistant
+
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
 )
@@ -10,32 +10,32 @@ from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorStateClass
 )
-from homeassistant.const import (
-    ENERGY_KILO_WATT_HOUR
-)
-
 from . import (
   calculate_gas_consumption_and_cost,
 )
 
 from .base import (OctopusEnergyGasSensor)
 
+from ..statistics.cost import async_import_external_statistics_from_cost
+
 _LOGGER = logging.getLogger(__name__)
+  
+class OctopusEnergyCurrentAccumulativeGasCost(CoordinatorEntity, OctopusEnergyGasSensor):
+  """Sensor for displaying the current days accumulative gas cost."""
 
-class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, OctopusEnergyGasSensor):
-  """Sensor for displaying the previous days accumulative gas consumption in kwh."""
-
-  def __init__(self, hass: HomeAssistant, coordinator, tariff_code, meter, point, calorific_value):
+  def __init__(self, hass: HomeAssistant, coordinator, rates_coordinator, standing_charge_coordinator, tariff_code, meter, point, calorific_value):
     """Init sensor."""
     super().__init__(coordinator)
     OctopusEnergyGasSensor.__init__(self, hass, meter, point)
-
+    
     self._hass = hass
     self._tariff_code = tariff_code
-    self._native_consumption_units = meter["consumption_units"]
+
     self._state = None
     self._last_reset = None
     self._calorific_value = calorific_value
+    self._rates_coordinator = rates_coordinator
+    self._standing_charge_coordinator = standing_charge_coordinator
 
   @property
   def entity_registry_enabled_default(self) -> bool:
@@ -48,17 +48,17 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
   @property
   def unique_id(self):
     """The id of the sensor."""
-    return f"octopus_energy_gas_{self._serial_number}_{self._mprn}_previous_accumulative_consumption_kwh"
+    return f"octopus_energy_gas_{self._serial_number}_{self._mprn}_current_accumulative_cost"
     
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Gas {self._serial_number} {self._mprn} Previous Accumulative Consumption (kWh)"
+    return f"Gas {self._serial_number} {self._mprn} Current Accumulative Cost"
 
   @property
   def device_class(self):
     """The type of sensor"""
-    return SensorDeviceClass.ENERGY
+    return SensorDeviceClass.MONETARY
 
   @property
   def state_class(self):
@@ -68,12 +68,12 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
   @property
   def unit_of_measurement(self):
     """The unit of measurement of sensor"""
-    return ENERGY_KILO_WATT_HOUR
+    return "GBP"
 
   @property
   def icon(self):
     """Icon of the sensor."""
-    return "mdi:lightning-bolt"
+    return "mdi:currency-gbp"
 
   @property
   def extra_state_attributes(self):
@@ -87,65 +87,47 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
 
   @property
   def state(self):
-    """Retrieve the previous days accumulative consumption"""
-    return self._state
-  
-  @property
-  def should_poll(self) -> bool:
-    return True
-    
-  async def async_update(self):
-    await super().async_update()
-
-    if not self.enabled:
-      return
-    
-    consumption_data = self.coordinator.data["consumption"] if self.coordinator is not None and self.coordinator.data is not None and "consumption" in self.coordinator.data else None
-    rate_data = self.coordinator.data["rates"] if self.coordinator is not None and self.coordinator.data is not None and "rates" in self.coordinator.data else None
-    standing_charge = self.coordinator.data["standing_charge"] if self.coordinator is not None and self.coordinator.data is not None and "standing_charge" in self.coordinator.data else None
+    """Retrieve the currently calculated state"""
+    consumption_data = self.coordinator.data if self.coordinator is not None and self.coordinator.data is not None else None
+    rate_data = self._rates_coordinator.data[self._mprn] if self._rates_coordinator is not None and self._rates_coordinator.data is not None and self._mprn in self._rates_coordinator.data else None
+    standing_charge = self._standing_charge_coordinator.data[self._mprn]["value_inc_vat"] if self._standing_charge_coordinator is not None and self._standing_charge_coordinator.data is not None and self._mprn in self._standing_charge_coordinator.data and "value_inc_vat" in self._standing_charge_coordinator.data[self._mprn] else None
 
     consumption_and_cost = calculate_gas_consumption_and_cost(
       consumption_data,
       rate_data,
       standing_charge,
-      self._last_reset,
+      None, # We want to always recalculate
       self._tariff_code,
-      self._native_consumption_units,
-      self._calorific_value,
-      # During BST, two records are returned before the rest of the data is available
-      3
+      "kwh",
+      self._calorific_value
     )
 
     if (consumption_and_cost is not None):
-      _LOGGER.debug(f"Calculated previous gas consumption for '{self._mprn}/{self._serial_number}'...")
-
-      await async_import_external_statistics_from_consumption(
-        self._hass,
-        f"gas_{self._serial_number}_{self._mprn}_previous_accumulative_consumption_kwh",
-        self.name,
-        consumption_and_cost["charges"],
-        rate_data,
-        ENERGY_KILO_WATT_HOUR,
-        "consumption_kwh",
-        False
-      )
-
-      self._state = consumption_and_cost["total_consumption_kwh"]
+      _LOGGER.debug(f"Calculated current gas consumption cost for '{self._mprn}/{self._serial_number}'...")
       self._last_reset = consumption_and_cost["last_reset"]
+      self._state = consumption_and_cost["total_cost"]
 
       self._attributes = {
         "mprn": self._mprn,
         "serial_number": self._serial_number,
-        "is_estimated": self._native_consumption_units == "m³",
+        "tariff_code": self._tariff_code,
+        "standing_charge": f'{consumption_and_cost["standing_charge"]}p',
+        "total_without_standing_charge": f'£{consumption_and_cost["total_cost_without_standing_charge"]}',
+        "total": f'£{consumption_and_cost["total_cost"]}',
         "last_calculated_timestamp": consumption_and_cost["last_calculated_timestamp"],
         "charges": list(map(lambda charge: {
           "from": charge["from"],
           "to": charge["to"],
-          "consumption_m3": charge["consumption_m3"],
-          "consumption_kwh": charge["consumption_kwh"]
+          "rate": f'{charge["rate"]}p',
+          "consumption": f'{charge["consumption_kwh"]} kWh',
+          "consumption_raw": charge["consumption_kwh"],
+          "cost": f'£{charge["cost"]}',
+          "cost_raw": charge["cost"],
         }, consumption_and_cost["charges"])),
         "calorific_value": self._calorific_value
       }
+    
+    return self._state
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -161,5 +143,5 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
 
         if x == "last_reset":
           self._last_reset = datetime.strptime(state.attributes[x], "%Y-%m-%dT%H:%M:%S%z")
-    
-      _LOGGER.debug(f'Restored OctopusEnergyPreviousAccumulativeGasConsumptionKwh state: {self._state}')
+
+      _LOGGER.debug(f'Restored OctopusEnergyCurrentAccumulativeGasCost state: {self._state}')

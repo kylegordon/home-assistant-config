@@ -15,7 +15,7 @@ from homeassistant.const import (
 )
 
 from . import (
-  async_calculate_gas_consumption_and_cost,
+  calculate_gas_consumption_and_cost,
 )
 
 from .base import (OctopusEnergyGasSensor)
@@ -95,18 +95,25 @@ class OctopusEnergyPreviousAccumulativeGasConsumption(CoordinatorEntity, Octopus
     return True
     
   async def async_update(self):
-    consumption_data = self.coordinator.data["consumption"] if self.coordinator.data is not None and "consumption" in self.coordinator.data else None
-    rate_data = self.coordinator.data["rates"] if self.coordinator.data is not None and "rates" in self.coordinator.data else None
-    standing_charge = self.coordinator.data["standing_charge"] if self.coordinator.data is not None and "standing_charge" in self.coordinator.data else None
+    await super().async_update()
 
-    consumption_and_cost = await async_calculate_gas_consumption_and_cost(
+    if not self.enabled:
+      return
+    
+    consumption_data = self.coordinator.data["consumption"] if self.coordinator is not None and self.coordinator.data is not None and "consumption" in self.coordinator.data else None
+    rate_data = self.coordinator.data["rates"] if self.coordinator is not None and self.coordinator.data is not None and "rates" in self.coordinator.data else None
+    standing_charge = self.coordinator.data["standing_charge"] if self.coordinator is not None and self.coordinator.data is not None and "standing_charge" in self.coordinator.data else None
+
+    consumption_and_cost = calculate_gas_consumption_and_cost(
       consumption_data,
       rate_data,
       standing_charge,
       self._last_reset,
       self._tariff_code,
       self._native_consumption_units,
-      self._calorific_value
+      self._calorific_value,
+      # During BST, two records are returned before the rest of the data is available
+      3
     )
 
     if (consumption_and_cost is not None):

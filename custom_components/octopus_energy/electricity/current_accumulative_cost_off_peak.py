@@ -10,10 +10,6 @@ from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorStateClass
 )
-from homeassistant.const import (
-    ENERGY_KILO_WATT_HOUR
-)
-
 from . import (
   calculate_electricity_consumption_and_cost,
 )
@@ -22,18 +18,20 @@ from .base import (OctopusEnergyElectricitySensor)
 
 _LOGGER = logging.getLogger(__name__)
 
-class OctopusEnergyPreviousAccumulativeElectricityConsumptionOffPeak(CoordinatorEntity, OctopusEnergyElectricitySensor):
-  """Sensor for displaying the previous days accumulative electricity reading during off peak hours."""
+class OctopusEnergyCurrentAccumulativeElectricityCostOffPeak(CoordinatorEntity, OctopusEnergyElectricitySensor):
+  """Sensor for displaying the current days accumulative electricity cost during off peak hours."""
 
-  def __init__(self, hass: HomeAssistant, coordinator, tariff_code, meter, point):
+  def __init__(self, hass: HomeAssistant, coordinator, rates_coordinator, standing_charge_coordinator, tariff_code, meter, point):
     """Init sensor."""
     super().__init__(coordinator)
     OctopusEnergyElectricitySensor.__init__(self, hass, meter, point)
 
     self._state = None
+    self._latest_date = None
+    
     self._tariff_code = tariff_code
-    self._last_reset = None
-    self._hass = hass
+    self._rates_coordinator = rates_coordinator
+    self._standing_charge_coordinator = standing_charge_coordinator
 
   @property
   def entity_registry_enabled_default(self) -> bool:
@@ -46,17 +44,17 @@ class OctopusEnergyPreviousAccumulativeElectricityConsumptionOffPeak(Coordinator
   @property
   def unique_id(self):
     """The id of the sensor."""
-    return f"octopus_energy_electricity_{self._serial_number}_{self._mpan}{self._export_id_addition}_previous_accumulative_consumption_off_peak"
-
+    return f"octopus_energy_electricity_{self._serial_number}_{self._mpan}{self._export_id_addition}_current_accumulative_cost_off_peak"
+    
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Electricity {self._serial_number} {self._mpan}{self._export_name_addition} Previous Accumulative Consumption (Off Peak)"
+    return f"Electricity {self._serial_number} {self._mpan}{self._export_name_addition} Current Accumulative Cost (Off Peak)"
 
   @property
   def device_class(self):
     """The type of sensor"""
-    return SensorDeviceClass.ENERGY
+    return SensorDeviceClass.MONETARY
 
   @property
   def state_class(self):
@@ -66,12 +64,12 @@ class OctopusEnergyPreviousAccumulativeElectricityConsumptionOffPeak(Coordinator
   @property
   def unit_of_measurement(self):
     """The unit of measurement of sensor"""
-    return ENERGY_KILO_WATT_HOUR
+    return "GBP"
 
   @property
   def icon(self):
     """Icon of the sensor."""
-    return "mdi:lightning-bolt"
+    return "mdi:currency-gbp"
 
   @property
   def extra_state_attributes(self):
@@ -85,26 +83,24 @@ class OctopusEnergyPreviousAccumulativeElectricityConsumptionOffPeak(Coordinator
 
   @property
   def state(self):
-    """Retrieve the previous days accumulative consumption"""
-    consumption_data = self.coordinator.data["consumption"] if self.coordinator is not None and self.coordinator.data is not None and "consumption" in self.coordinator.data else None
-    rate_data = self.coordinator.data["rates"] if self.coordinator is not None and self.coordinator.data is not None and "rates" in self.coordinator.data else None
-    standing_charge = self.coordinator.data["standing_charge"] if self.coordinator is not None and self.coordinator.data is not None and "standing_charge" in self.coordinator.data else None
+    """Retrieve the currently calculated state"""
+    consumption_data = self.coordinator.data if self.coordinator is not None and self.coordinator.data is not None else None
+    rate_data = self._rates_coordinator.data[self._mpan] if self._rates_coordinator is not None and self._rates_coordinator.data is not None and self._mpan in self._rates_coordinator.data else None
+    standing_charge = self._standing_charge_coordinator.data[self._mpan]["value_inc_vat"] if self._standing_charge_coordinator is not None and self._standing_charge_coordinator.data is not None and self._mpan in self._standing_charge_coordinator.data and "value_inc_vat" in self._standing_charge_coordinator.data[self._mpan] else None
 
     consumption_and_cost = calculate_electricity_consumption_and_cost(
       consumption_data,
       rate_data,
       standing_charge,
-      self._last_reset,
-      self._tariff_code,
-      # During BST, two records are returned before the rest of the data is available
-      3
+      None, # We want to always recalculate
+      self._tariff_code
     )
 
     if (consumption_and_cost is not None):
-      _LOGGER.debug(f"Calculated previous electricity consumption off peak for '{self._mpan}/{self._serial_number}'...")
+      _LOGGER.debug(f"Calculated current electricity consumption cost off peak for '{self._mpan}/{self._serial_number}'...")
 
-      self._state = consumption_and_cost["total_consumption_off_peak"] if "total_consumption_off_peak" in consumption_and_cost else 0
       self._last_reset = consumption_and_cost["last_reset"]
+      self._state = consumption_and_cost["total_cost_off_peak"] if "total_cost_off_peak" in consumption_and_cost else 0
 
       self._attributes["last_calculated_timestamp"] = consumption_and_cost["last_calculated_timestamp"]
 
@@ -124,5 +120,5 @@ class OctopusEnergyPreviousAccumulativeElectricityConsumptionOffPeak(Coordinator
 
         if x == "last_reset":
           self._last_reset = datetime.strptime(state.attributes[x], "%Y-%m-%dT%H:%M:%S%z")
-
-      _LOGGER.debug(f'Restored OctopusEnergyPreviousAccumulativeElectricityConsumptionOffPeak state: {self._state}')
+    
+      _LOGGER.debug(f'Restored OctopusEnergyCurrentAccumulativeElectricityCostOffPeak state: {self._state}')
