@@ -1,9 +1,11 @@
 ---
+packages:
+  plug: !include common/localbytes_plug_pm_common.yaml
+  common: !include common/power_plug_common.yaml
+
 substitutions:
   device_name: ups_power_plug
   device_description: UPS Power Plug
   friendly_name: UPS Power Plug
   default_state: "RESTORE_DEFAULT_ON"
   main_icon: power-socket-uk
-
-<<: !include common/localbytes_plug_pm_common.yaml
