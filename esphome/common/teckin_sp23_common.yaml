@@ -10,5 +10,3 @@ substitutions:
   sensor_cf1_pin: GPIO14
   output_pin: GPIO2
   status_led_pin: GPIO0
-
-<<: !include power_plug_common.yaml
