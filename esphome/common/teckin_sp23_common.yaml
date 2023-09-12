@@ -2,7 +2,6 @@
 substitutions:
   project_name: teckinsp23.plug-pm
   package_import_url: github://kylegordon/home-assistant-config/esphome/common/teckin_sp23-common.yaml@main
-
   binary_sensor_pin: GPIO13
   switch_pin: GPIO15
   sensor_sel_pin: GPIO12
