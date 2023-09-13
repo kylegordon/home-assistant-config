@@ -1,7 +1,3 @@
-from ..api_client import OctopusEnergyApiClient
-
-minimum_consumption_records = 2
-
 def __get_interval_end(item):
     return item["interval_end"]
 
@@ -22,16 +18,17 @@ def convert_kwh_to_m3(value, calorific_value):
   m3_value = m3_value / calorific_value # Calorific value
   return round(m3_value / 1.02264, 3) # Volume correction factor
       
-async def async_calculate_gas_consumption_and_cost(
+def calculate_gas_consumption_and_cost(
     consumption_data,
     rate_data,
     standing_charge,
     last_reset,
     tariff_code,
     consumption_units,
-    calorific_value
+    calorific_value,
+    minimum_consumption_records = 0
   ):
-  if (consumption_data is not None and len(consumption_data) > minimum_consumption_records and rate_data is not None and len(rate_data) > 0 and standing_charge is not None):
+  if (consumption_data is not None and len(consumption_data) >= minimum_consumption_records and rate_data is not None and len(rate_data) > 0 and standing_charge is not None):
 
     sorted_consumption_data = __sort_consumption(consumption_data)
 
@@ -76,7 +73,7 @@ async def async_calculate_gas_consumption_and_cost(
           "rate": value,
           "consumption_m3": current_consumption_m3,
           "consumption_kwh": current_consumption_kwh,
-          "cost": f'£{round(cost / 100, 2)}'
+          "cost": round(cost / 100, 2)
         })
       
       total_cost = round(total_cost_in_pence / 100, 2)
