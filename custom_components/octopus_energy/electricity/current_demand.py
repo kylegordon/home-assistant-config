@@ -1,3 +1,4 @@
+from homeassistant.util.dt import (now)
 import logging
 
 from homeassistant.core import HomeAssistant
@@ -24,6 +25,9 @@ class OctopusEnergyCurrentElectricityDemand(CoordinatorEntity, OctopusEnergyElec
 
     self._state = None
     self._latest_date = None
+    self._attributes = {
+      "last_updated_timestamp": None
+    }
 
   @property
   def unique_id(self):
@@ -59,22 +63,16 @@ class OctopusEnergyCurrentElectricityDemand(CoordinatorEntity, OctopusEnergyElec
   def extra_state_attributes(self):
     """Attributes of the sensor."""
     return self._attributes
-
-  @property
-  def last_reset(self):
-    """Return the time when the sensor was last reset, if any."""
-    return self._latest_date
   
   @property
   def state(self):
     """Handle updated data from the coordinator."""
     _LOGGER.debug('Updating OctopusEnergyCurrentElectricityConsumption')
-    consumption_result = self.coordinator.data
+    consumption_result = self.coordinator.data if self.coordinator is not None else None
 
     if (consumption_result is not None):
-      self._latest_date = consumption_result["startAt"]
-      self._state = consumption_result["demand"]
-      self._attributes["last_updated_timestamp"] = consumption_result["startAt"]
+      self._state = consumption_result[-1]["demand"]
+      self._attributes["last_updated_timestamp"] = now()
 
     return self._state
 
