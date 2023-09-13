@@ -1,3 +1,4 @@
+---
 ####
 ##
 ## Konnected Alarm Panel (ESP8266)
@@ -47,7 +48,7 @@ packages:
       - packages/alarm-panel/zone5.yaml
       - packages/alarm-panel/zone6.yaml
       - packages/alarm-panel/alarm.yaml
-    
+
       ####
       # WIFI
       # Enables WiFi connectivity and diagnostics.
@@ -75,7 +76,7 @@ dashboard_import:
 web_server:
   include_internal: true
 
-#### 
+####
 # LOGGER
 # more: https://esphome.io/components/logger.html
 logger:
@@ -86,7 +87,7 @@ logger:
 # more: https://esphome.io/components/api.html
 api:
 
-#### 
+####
 # OTA UPDATES
 # Enables over-the-air updates
 # more: https://esphome.io/components/ota.html

@@ -1,3 +1,4 @@
+---
 substitutions:
 
   ####
@@ -29,7 +30,7 @@ substitutions:
   alarm: D8
   out: D8
   status_led: D4
-  
+
   ####
   # CONNECTION MAPPINGS
   warning_beep_pin: $out

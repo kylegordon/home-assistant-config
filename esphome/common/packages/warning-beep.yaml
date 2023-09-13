@@ -1,9 +1,10 @@
+---
 output:
   - id: buzzer_output
     platform: gpio
     pin: $warning_beep_pin
 
-light: 
+light:
   - id: warning_beep
     name: Warning Beep
     platform: binary
