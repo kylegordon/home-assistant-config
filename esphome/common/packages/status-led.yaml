@@ -1,3 +1,4 @@
+---
 light:
   - platform: status_led
     id: blue_status_led
