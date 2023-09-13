@@ -1,0 +1,13 @@
+---
+esphome:
+  name: $name
+  name_add_mac_suffix: false
+  platform: ESP8266
+  board: nodemcuv2
+  esp8266_restore_from_flash: true
+  project:
+    name: $project_name
+    version: $project_version
+
+substitutions:
+  status_led_inverted: "true"
