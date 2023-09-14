@@ -4,7 +4,6 @@ default_view:
   entities:
     - group.people_status
     - group.modes
-    - sensor.electricity_energy_usage
     - sensor.house_average_temperature
     - sensor.house_average_humidity
     - calendar.next_bin
