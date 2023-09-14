@@ -6,10 +6,12 @@ on:
   pull_request:
     paths:
       - 'esphome/**'
+      - '.github/workflows/esphome**'
   push:
     branches: [main]
     paths:
       - 'esphome/**'
+      - '.github/workflows/esphome**'
   schedule:
     - cron: 0 12 * * *
 
@@ -46,8 +48,11 @@ jobs:
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
-      - run: echo Compiling ${{matrix.file}}
-      - run: docker run --rm -v "${PWD}":/config esphome/esphome:stable compile ${{matrix.file}}
+      - name: Compile all ESPHome ${{matrix.file}}
+        uses: esphome/build-action@v1
+        with:
+          version: stable
+          yaml_file: ${{matrix.file}}
 
   loop-beta:
     name: Test ESPHome Beta firmware
@@ -68,8 +73,11 @@ jobs:
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
-      - run: echo Compiling ${{matrix.file}}
-      - run: docker run --rm -v "${PWD}":/config esphome/esphome:beta compile ${{matrix.file}}
+      - name: Compile all ESPHome ${{matrix.file}}
+        uses: esphome/build-action@v1
+        with:
+          version: beta
+          yaml_file: ${{matrix.file}}
 
   loop-dev:
     name: Test ESPHome Dev firmware
@@ -90,8 +98,11 @@ jobs:
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
-      - run: echo Compiling ${{matrix.file}}
-      - run: docker run --rm -v "${PWD}":/config esphome/esphome:dev compile ${{matrix.file}}
+      - name: Compile all ESPHome ${{matrix.file}}
+        uses: esphome/build-action@v1
+        with:
+          version: dev
+          yaml_file: ${{matrix.file}}
 
   # This is used by branch protections
   final:
