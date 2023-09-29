@@ -204,6 +204,7 @@ outside_lights:
     - light.mini_deck_floodlight
     - light.decking_lights
     - light.front_door_dome
+    - light.car_port
 
 climate:
   name: Climate
