@@ -15,10 +15,10 @@ condition:
         entity_id: light.living_room_2
         state: 'on'
       - condition: state
-        entity_id: light.dining_nook_group
+        entity_id: light.dining_nook
         state: 'on'
 action:
   - service: light.turn_off
     entity_id:
       - light.living_room
-      - light.dining_nook_group
+      - light.dining_nook
