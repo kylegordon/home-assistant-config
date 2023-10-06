@@ -1,3 +1,4 @@
+---
 automation:
   - alias: Completed Download
     trigger:
@@ -15,7 +16,6 @@ automation:
           message: "{{trigger.event.data.name}}"
           level: info
 
-
   - alias: Completed Star Trek Download
     trigger:
       platform: event
@@ -24,7 +24,7 @@ automation:
         category: tv
     condition:
       condition: template
-      value_template: '{% if trigger.event.data.name | regex_search("star.trek", ignorecase=True) %}True{% endif %}'
+      value_template: '{% if trigger.event.data.name | regex_search("star.trek", ignorecase=True) %}True{% endif %}'  # yamllint disable-line rule:line-length
     action:
       service: notify.email_kyle
       data_template:
@@ -39,7 +39,7 @@ automation:
         category: tv
     condition:
       condition: template
-      value_template: '{% if trigger.event.data.name | regex_search("westworld", ignorecase=True) %}True{% endif %}'
+      value_template: '{% if trigger.event.data.name | regex_search("westworld", ignorecase=True) %}True{% endif %}'  # yamllint disable-line rule:line-length
     action:
       - service: notify.email_kyle
         data_template:
@@ -52,4 +52,4 @@ automation:
           data:
             type: announce
             # method: all
-          message: "Hello! You have a new show to watch. Westworld has finished downloading!"
+          message: "Hello! You have a new show to watch. Westworld has finished downloading!"  # yamllint disable-line rule:line-length
