@@ -1,26 +1,4 @@
 automation:
-  - alias: Pause nzbget when occupied
-    initial_state: false
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.home_occupied
-        from: "off"
-        to: "on"
-    action:
-      - service: nzbget.pause
-
-  - alias: Resume nzbget when unoccupied
-    initial_state: false
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.home_occupied
-        from: "on"
-        to: "off"
-        for:
-          minutes: 5
-    action:
-      - service: nzbget.resume
-
   - alias: Completed Download
     trigger:
       platform: event
