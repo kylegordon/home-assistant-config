@@ -9,6 +9,7 @@ homeassistant:
       trusted_networks:
         - 172.24.32.0/24
         - 172.24.34.0/24
+        - 172.18.0.0/24
         - 10.8.0.18/32
         - 127.0.0.1
     - type: legacy_api_password
@@ -90,6 +91,11 @@ config:
 recorder: !include recorder.yaml
 
 http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.18.0.5
+    - 127.0.0.1
+    - ::1
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
     - http://viewpoint.house
@@ -266,29 +272,29 @@ smartir:
 panel_iframe:
   esphome:
     title: "ESPHome"
-    url: "http://esphome.viewpoint.house:90"
+    url: "https://esphome.viewpoint.house"
     icon: mdi:car-esp
   zigbee2mqtt:
     title: "Z2M"
-    url: "http://z2m.viewpoint.house:90"
+    url: "https://z2m.viewpoint.house"
     icon: mdi:antenna
   cctv:
     title: "CCTV"
-    url: "http://cctv.viewpoint.house:90"
+    url: "https://cctv.viewpoint.house"
     icon: mdi:cctv
   sonarr:
-    title: "Sonarr TV"
-    url: "http://tv.viewpoint.house:90"
+    title: "TV Shows"
+    url: "https://tv.viewpoint.house"
     icon: mdi:television-classic
   radarr:
-    title: "Radar Movies"
-    url: "http://movies.viewpoint.house:90"
+    title: "Movies"
+    url: "https://movies.viewpoint.house"
     icon: mdi:movie-open
   lazylibrarian:
-    title: "LazyLibrarian Books"
-    url: "http://books.viewpoint.house:90"
+    title: "Books"
+    url: "https://books.viewpoint.house"
     icon: mdi:book-open-page-variant
   homepage:
     title: "Home Page"
-    url: "http://home.viewpoint.house:90"
+    url: "https://home.viewpoint.house"
     icon: mdi:home
