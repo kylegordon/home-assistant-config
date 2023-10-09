@@ -1,0 +1,8 @@
+{
+  "domain": "bulb_energy",
+  "name": "Bulb Energy",
+  "documentation": "https://www.home-assistant.io/integrations/bulb_energy",
+  "codeowners": ["@kylegordon"],
+  "iot_class": "cloud_polling",
+  "version": "0.0.1"
+}

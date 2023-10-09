@@ -1,0 +1,19 @@
+{
+  "domain": "octopus_energy",
+  "name": "Octopus Energy",
+  "codeowners": [
+    "@bottlecapdave"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "repairs",
+    "recorder"
+  ],
+  "documentation": "https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/",
+  "homekit": {},
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/issues",
+  "ssdp": [],
+  "version": "8.2.0",
+  "zeroconf": []
+}

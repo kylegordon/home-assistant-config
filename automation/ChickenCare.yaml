@@ -37,4 +37,3 @@ action:
       message: >
         {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
         Bring in the chickens water to stop it freezing
-

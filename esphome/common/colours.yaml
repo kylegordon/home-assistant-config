@@ -1,0 +1,1183 @@
+# Redistributed from https://gitlab.com/wjcarpenter/esphome-colors
+# under the BSD 2-Clause License
+
+# From https://gitlab.com/wjcarpenter/esphome-colors/-/blob/master/color/COLOR_CSS
+
+color:
+  # name and values from https://www.w3.org/wiki/CSS/Properties/color/keywords
+
+  # #f0f8ff
+  # 240,248,255
+  - id: COLOR_CSS_ALICEBLUE
+    red:   0.9412
+    green: 0.9725
+    blue:  1.0000
+    white: 0.0000
+
+  # #faebd7
+  # 250,235,215
+  - id: COLOR_CSS_ANTIQUEWHITE
+    red:   0.9804
+    green: 0.9216
+    blue:  0.8431
+    white: 0.0000
+
+  # #00ffff
+  # 0,255,255
+  - id: COLOR_CSS_AQUA
+    red:   0.0000
+    green: 1.0000
+    blue:  1.0000
+    white: 0.0000
+
+  # #7fffd4
+  # 127,255,212
+  - id: COLOR_CSS_AQUAMARINE
+    red:   0.4980
+    green: 1.0000
+    blue:  0.8314
+    white: 0.0000
+
+  # #f0ffff
+  # 240,255,255
+  - id: COLOR_CSS_AZURE
+    red:   0.9412
+    green: 1.0000
+    blue:  1.0000
+    white: 0.0000
+
+  # #f5f5dc
+  # 245,245,220
+  - id: COLOR_CSS_BEIGE
+    red:   0.9608
+    green: 0.9608
+    blue:  0.8627
+    white: 0.0000
+
+  # #ffe4c4
+  # 255,228,196
+  - id: COLOR_CSS_BISQUE
+    red:   1.0000
+    green: 0.8941
+    blue:  0.7686
+    white: 0.0000
+
+  # #000000
+  # 0,0,0
+  - id: COLOR_CSS_BLACK
+    red:   0.0000
+    green: 0.0000
+    blue:  0.0000
+    white: 0.0000
+
+  # #ffebcd
+  # 255,235,205
+  - id: COLOR_CSS_BLANCHEDALMOND
+    red:   1.0000
+    green: 0.9216
+    blue:  0.8039
+    white: 0.0000
+
+  # #0000ff
+  # 0,0,255
+  - id: COLOR_CSS_BLUE
+    red:   0.0000
+    green: 0.0000
+    blue:  1.0000
+    white: 0.0000
+
+  # #8a2be2
+  # 138,43,226
+  - id: COLOR_CSS_BLUEVIOLET
+    red:   0.5412
+    green: 0.1686
+    blue:  0.8863
+    white: 0.0000
+
+  # #a52a2a
+  # 165,42,42
+  - id: COLOR_CSS_BROWN
+    red:   0.6471
+    green: 0.1647
+    blue:  0.1647
+    white: 0.0000
+
+  # #deb887
+  # 222,184,135
+  - id: COLOR_CSS_BURLYWOOD
+    red:   0.8706
+    green: 0.7216
+    blue:  0.5294
+    white: 0.0000
+
+  # #5f9ea0
+  # 95,158,160
+  - id: COLOR_CSS_CADETBLUE
+    red:   0.3725
+    green: 0.6196
+    blue:  0.6275
+    white: 0.0000
+
+  # #7fff00
+  # 127,255,0
+  - id: COLOR_CSS_CHARTREUSE
+    red:   0.4980
+    green: 1.0000
+    blue:  0.0000
+    white: 0.0000
+
+  # #d2691e
+  # 210,105,30
+  - id: COLOR_CSS_CHOCOLATE
+    red:   0.8235
+    green: 0.4118
+    blue:  0.1176
+    white: 0.0000
+
+  # #ff7f50
+  # 255,127,80
+  - id: COLOR_CSS_CORAL
+    red:   1.0000
+    green: 0.4980
+    blue:  0.3137
+    white: 0.0000
+
+  # #6495ed
+  # 100,149,237
+  - id: COLOR_CSS_CORNFLOWERBLUE
+    red:   0.3922
+    green: 0.5843
+    blue:  0.9294
+    white: 0.0000
+
+  # #fff8dc
+  # 255,248,220
+  - id: COLOR_CSS_CORNSILK
+    red:   1.0000
+    green: 0.9725
+    blue:  0.8627
+    white: 0.0000
+
+  # #dc143c
+  # 220,20,60
+  - id: COLOR_CSS_CRIMSON
+    red:   0.8627
+    green: 0.0784
+    blue:  0.2353
+    white: 0.0000
+
+  # #00ffff
+  # 0,255,255
+  - id: COLOR_CSS_CYAN
+    red:   0.0000
+    green: 1.0000
+    blue:  1.0000
+    white: 0.0000
+
+  # #00008b
+  # 0,0,139
+  - id: COLOR_CSS_DARKBLUE
+    red:   0.0000
+    green: 0.0000
+    blue:  0.5451
+    white: 0.0000
+
+  # #008b8b
+  # 0,139,139
+  - id: COLOR_CSS_DARKCYAN
+    red:   0.0000
+    green: 0.5451
+    blue:  0.5451
+    white: 0.0000
+
+  # #b8860b
+  # 184,134,11
+  - id: COLOR_CSS_DARKGOLDENROD
+    red:   0.7216
+    green: 0.5255
+    blue:  0.0431
+    white: 0.0000
+
+  # #a9a9a9
+  # 169,169,169
+  - id: COLOR_CSS_DARKGRAY
+    red:   0.6627
+    green: 0.6627
+    blue:  0.6627
+    white: 0.0000
+
+  # #006400
+  # 0,100,0
+  - id: COLOR_CSS_DARKGREEN
+    red:   0.0000
+    green: 0.3922
+    blue:  0.0000
+    white: 0.0000
+
+  # #a9a9a9
+  # 169,169,169
+  - id: COLOR_CSS_DARKGREY
+    red:   0.6627
+    green: 0.6627
+    blue:  0.6627
+    white: 0.0000
+
+  # #bdb76b
+  # 189,183,107
+  - id: COLOR_CSS_DARKKHAKI
+    red:   0.7412
+    green: 0.7176
+    blue:  0.4196
+    white: 0.0000
+
+  # #8b008b
+  # 139,0,139
+  - id: COLOR_CSS_DARKMAGENTA
+    red:   0.5451
+    green: 0.0000
+    blue:  0.5451
+    white: 0.0000
+
+  # #556b2f
+  # 85,107,47
+  - id: COLOR_CSS_DARKOLIVEGREEN
+    red:   0.3333
+    green: 0.4196
+    blue:  0.1843
+    white: 0.0000
+
+  # #ff8c00
+  # 255,140,0
+  - id: COLOR_CSS_DARKORANGE
+    red:   1.0000
+    green: 0.5490
+    blue:  0.0000
+    white: 0.0000
+
+  # #9932cc
+  # 153,50,204
+  - id: COLOR_CSS_DARKORCHID
+    red:   0.6000
+    green: 0.1961
+    blue:  0.8000
+    white: 0.0000
+
+  # #8b0000
+  # 139,0,0
+  - id: COLOR_CSS_DARKRED
+    red:   0.5451
+    green: 0.0000
+    blue:  0.0000
+    white: 0.0000
+
+  # #e9967a
+  # 233,150,122
+  - id: COLOR_CSS_DARKSALMON
+    red:   0.9137
+    green: 0.5882
+    blue:  0.4784
+    white: 0.0000
+
+  # #8fbc8f
+  # 143,188,143
+  - id: COLOR_CSS_DARKSEAGREEN
+    red:   0.5608
+    green: 0.7373
+    blue:  0.5608
+    white: 0.0000
+
+  # #483d8b
+  # 72,61,139
+  - id: COLOR_CSS_DARKSLATEBLUE
+    red:   0.2824
+    green: 0.2392
+    blue:  0.5451
+    white: 0.0000
+
+  # #2f4f4f
+  # 47,79,79
+  - id: COLOR_CSS_DARKSLATEGRAY
+    red:   0.1843
+    green: 0.3098
+    blue:  0.3098
+    white: 0.0000
+
+  # #2f4f4f
+  # 47,79,79
+  - id: COLOR_CSS_DARKSLATEGREY
+    red:   0.1843
+    green: 0.3098
+    blue:  0.3098
+    white: 0.0000
+
+  # #00ced1
+  # 0,206,209
+  - id: COLOR_CSS_DARKTURQUOISE
+    red:   0.0000
+    green: 0.8078
+    blue:  0.8196
+    white: 0.0000
+
+  # #9400d3
+  # 148,0,211
+  - id: COLOR_CSS_DARKVIOLET
+    red:   0.5804
+    green: 0.0000
+    blue:  0.8275
+    white: 0.0000
+
+  # #ff1493
+  # 255,20,147
+  - id: COLOR_CSS_DEEPPINK
+    red:   1.0000
+    green: 0.0784
+    blue:  0.5765
+    white: 0.0000
+
+  # #00bfff
+  # 0,191,255
+  - id: COLOR_CSS_DEEPSKYBLUE
+    red:   0.0000
+    green: 0.7490
+    blue:  1.0000
+    white: 0.0000
+
+  # #696969
+  # 105,105,105
+  - id: COLOR_CSS_DIMGRAY
+    red:   0.4118
+    green: 0.4118
+    blue:  0.4118
+    white: 0.0000
+
+  # #696969
+  # 105,105,105
+  - id: COLOR_CSS_DIMGREY
+    red:   0.4118
+    green: 0.4118
+    blue:  0.4118
+    white: 0.0000
+
+  # #1e90ff
+  # 30,144,255
+  - id: COLOR_CSS_DODGERBLUE
+    red:   0.1176
+    green: 0.5647
+    blue:  1.0000
+    white: 0.0000
+
+  # #b22222
+  # 178,34,34
+  - id: COLOR_CSS_FIREBRICK
+    red:   0.6980
+    green: 0.1333
+    blue:  0.1333
+    white: 0.0000
+
+  # #fffaf0
+  # 255,250,240
+  - id: COLOR_CSS_FLORALWHITE
+    red:   1.0000
+    green: 0.9804
+    blue:  0.9412
+    white: 0.0000
+
+  # #228b22
+  # 34,139,34
+  - id: COLOR_CSS_FORESTGREEN
+    red:   0.1333
+    green: 0.5451
+    blue:  0.1333
+    white: 0.0000
+
+  # #ff00ff
+  # 255,0,255
+  - id: COLOR_CSS_FUCHSIA
+    red:   1.0000
+    green: 0.0000
+    blue:  1.0000
+    white: 0.0000
+
+  # #dcdcdc
+  # 220,220,220
+  - id: COLOR_CSS_GAINSBORO
+    red:   0.8627
+    green: 0.8627
+    blue:  0.8627
+    white: 0.0000
+
+  # #f8f8ff
+  # 248,248,255
+  - id: COLOR_CSS_GHOSTWHITE
+    red:   0.9725
+    green: 0.9725
+    blue:  1.0000
+    white: 0.0000
+
+  # #ffd700
+  # 255,215,0
+  - id: COLOR_CSS_GOLD
+    red:   1.0000
+    green: 0.8431
+    blue:  0.0000
+    white: 0.0000
+
+  # #daa520
+  # 218,165,32
+  - id: COLOR_CSS_GOLDENROD
+    red:   0.8549
+    green: 0.6471
+    blue:  0.1255
+    white: 0.0000
+
+  # #808080
+  # 128,128,128
+  - id: COLOR_CSS_GRAY
+    red:   0.5020
+    green: 0.5020
+    blue:  0.5020
+    white: 0.0000
+
+  # #008000
+  # 0,128,0
+  - id: COLOR_CSS_GREEN
+    red:   0.0000
+    green: 0.5020
+    blue:  0.0000
+    white: 0.0000
+
+  # #adff2f
+  # 173,255,47
+  - id: COLOR_CSS_GREENYELLOW
+    red:   0.6784
+    green: 1.0000
+    blue:  0.1843
+    white: 0.0000
+
+  # #808080
+  # 128,128,128
+  - id: COLOR_CSS_GREY
+    red:   0.5020
+    green: 0.5020
+    blue:  0.5020
+    white: 0.0000
+
+  # #f0fff0
+  # 240,255,240
+  - id: COLOR_CSS_HONEYDEW
+    red:   0.9412
+    green: 1.0000
+    blue:  0.9412
+    white: 0.0000
+
+  # #ff69b4
+  # 255,105,180
+  - id: COLOR_CSS_HOTPINK
+    red:   1.0000
+    green: 0.4118
+    blue:  0.7059
+    white: 0.0000
+
+  # #cd5c5c
+  # 205,92,92
+  - id: COLOR_CSS_INDIANRED
+    red:   0.8039
+    green: 0.3608
+    blue:  0.3608
+    white: 0.0000
+
+  # #4b0082
+  # 75,0,130
+  - id: COLOR_CSS_INDIGO
+    red:   0.2941
+    green: 0.0000
+    blue:  0.5098
+    white: 0.0000
+
+  # #fffff0
+  # 255,255,240
+  - id: COLOR_CSS_IVORY
+    red:   1.0000
+    green: 1.0000
+    blue:  0.9412
+    white: 0.0000
+
+  # #f0e68c
+  # 240,230,140
+  - id: COLOR_CSS_KHAKI
+    red:   0.9412
+    green: 0.9020
+    blue:  0.5490
+    white: 0.0000
+
+  # #e6e6fa
+  # 230,230,250
+  - id: COLOR_CSS_LAVENDER
+    red:   0.9020
+    green: 0.9020
+    blue:  0.9804
+    white: 0.0000
+
+  # #fff0f5
+  # 255,240,245
+  - id: COLOR_CSS_LAVENDERBLUSH
+    red:   1.0000
+    green: 0.9412
+    blue:  0.9608
+    white: 0.0000
+
+  # #7cfc00
+  # 124,252,0
+  - id: COLOR_CSS_LAWNGREEN
+    red:   0.4863
+    green: 0.9882
+    blue:  0.0000
+    white: 0.0000
+
+  # #fffacd
+  # 255,250,205
+  - id: COLOR_CSS_LEMONCHIFFON
+    red:   1.0000
+    green: 0.9804
+    blue:  0.8039
+    white: 0.0000
+
+  # #add8e6
+  # 173,216,230
+  - id: COLOR_CSS_LIGHTBLUE
+    red:   0.6784
+    green: 0.8471
+    blue:  0.9020
+    white: 0.0000
+
+  # #f08080
+  # 240,128,128
+  - id: COLOR_CSS_LIGHTCORAL
+    red:   0.9412
+    green: 0.5020
+    blue:  0.5020
+    white: 0.0000
+
+  # #e0ffff
+  # 224,255,255
+  - id: COLOR_CSS_LIGHTCYAN
+    red:   0.8784
+    green: 1.0000
+    blue:  1.0000
+    white: 0.0000
+
+  # #fafad2
+  # 250,250,210
+  - id: COLOR_CSS_LIGHTGOLDENRODYELLOW
+    red:   0.9804
+    green: 0.9804
+    blue:  0.8235
+    white: 0.0000
+
+  # #d3d3d3
+  # 211,211,211
+  - id: COLOR_CSS_LIGHTGRAY
+    red:   0.8275
+    green: 0.8275
+    blue:  0.8275
+    white: 0.0000
+
+  # #90ee90
+  # 144,238,144
+  - id: COLOR_CSS_LIGHTGREEN
+    red:   0.5647
+    green: 0.9333
+    blue:  0.5647
+    white: 0.0000
+
+  # #d3d3d3
+  # 211,211,211
+  - id: COLOR_CSS_LIGHTGREY
+    red:   0.8275
+    green: 0.8275
+    blue:  0.8275
+    white: 0.0000
+
+  # #ffb6c1
+  # 255,182,193
+  - id: COLOR_CSS_LIGHTPINK
+    red:   1.0000
+    green: 0.7137
+    blue:  0.7569
+    white: 0.0000
+
+  # #ffa07a
+  # 255,160,122
+  - id: COLOR_CSS_LIGHTSALMON
+    red:   1.0000
+    green: 0.6275
+    blue:  0.4784
+    white: 0.0000
+
+  # #20b2aa
+  # 32,178,170
+  - id: COLOR_CSS_LIGHTSEAGREEN
+    red:   0.1255
+    green: 0.6980
+    blue:  0.6667
+    white: 0.0000
+
+  # #87cefa
+  # 135,206,250
+  - id: COLOR_CSS_LIGHTSKYBLUE
+    red:   0.5294
+    green: 0.8078
+    blue:  0.9804
+    white: 0.0000
+
+  # #778899
+  # 119,136,153
+  - id: COLOR_CSS_LIGHTSLATEGRAY
+    red:   0.4667
+    green: 0.5333
+    blue:  0.6000
+    white: 0.0000
+
+  # #778899
+  # 119,136,153
+  - id: COLOR_CSS_LIGHTSLATEGREY
+    red:   0.4667
+    green: 0.5333
+    blue:  0.6000
+    white: 0.0000
+
+  # #b0c4de
+  # 176,196,222
+  - id: COLOR_CSS_LIGHTSTEELBLUE
+    red:   0.6902
+    green: 0.7686
+    blue:  0.8706
+    white: 0.0000
+
+  # #ffffe0
+  # 255,255,224
+  - id: COLOR_CSS_LIGHTYELLOW
+    red:   1.0000
+    green: 1.0000
+    blue:  0.8784
+    white: 0.0000
+
+  # #00ff00
+  # 0,255,0
+  - id: COLOR_CSS_LIME
+    red:   0.0000
+    green: 1.0000
+    blue:  0.0000
+    white: 0.0000
+
+  # #32cd32
+  # 50,205,50
+  - id: COLOR_CSS_LIMEGREEN
+    red:   0.1961
+    green: 0.8039
+    blue:  0.1961
+    white: 0.0000
+
+  # #faf0e6
+  # 250,240,230
+  - id: COLOR_CSS_LINEN
+    red:   0.9804
+    green: 0.9412
+    blue:  0.9020
+    white: 0.0000
+
+  # #ff00ff
+  # 255,0,255
+  - id: COLOR_CSS_MAGENTA
+    red:   1.0000
+    green: 0.0000
+    blue:  1.0000
+    white: 0.0000
+
+  # #800000
+  # 128,0,0
+  - id: COLOR_CSS_MAROON
+    red:   0.5020
+    green: 0.0000
+    blue:  0.0000
+    white: 0.0000
+
+  # #66cdaa
+  # 102,205,170
+  - id: COLOR_CSS_MEDIUMAQUAMARINE
+    red:   0.4000
+    green: 0.8039
+    blue:  0.6667
+    white: 0.0000
+
+  # #0000cd
+  # 0,0,205
+  - id: COLOR_CSS_MEDIUMBLUE
+    red:   0.0000
+    green: 0.0000
+    blue:  0.8039
+    white: 0.0000
+
+  # #ba55d3
+  # 186,85,211
+  - id: COLOR_CSS_MEDIUMORCHID
+    red:   0.7294
+    green: 0.3333
+    blue:  0.8275
+    white: 0.0000
+
+  # #9370db
+  # 147,112,219
+  - id: COLOR_CSS_MEDIUMPURPLE
+    red:   0.5765
+    green: 0.4392
+    blue:  0.8588
+    white: 0.0000
+
+  # #3cb371
+  # 60,179,113
+  - id: COLOR_CSS_MEDIUMSEAGREEN
+    red:   0.2353
+    green: 0.7020
+    blue:  0.4431
+    white: 0.0000
+
+  # #7b68ee
+  # 123,104,238
+  - id: COLOR_CSS_MEDIUMSLATEBLUE
+    red:   0.4824
+    green: 0.4078
+    blue:  0.9333
+    white: 0.0000
+
+  # #00fa9a
+  # 0,250,154
+  - id: COLOR_CSS_MEDIUMSPRINGGREEN
+    red:   0.0000
+    green: 0.9804
+    blue:  0.6039
+    white: 0.0000
+
+  # #48d1cc
+  # 72,209,204
+  - id: COLOR_CSS_MEDIUMTURQUOISE
+    red:   0.2824
+    green: 0.8196
+    blue:  0.8000
+    white: 0.0000
+
+  # #c71585
+  # 199,21,133
+  - id: COLOR_CSS_MEDIUMVIOLETRED
+    red:   0.7804
+    green: 0.0824
+    blue:  0.5216
+    white: 0.0000
+
+  # #191970
+  # 25,25,112
+  - id: COLOR_CSS_MIDNIGHTBLUE
+    red:   0.0980
+    green: 0.0980
+    blue:  0.4392
+    white: 0.0000
+
+  # #f5fffa
+  # 245,255,250
+  - id: COLOR_CSS_MINTCREAM
+    red:   0.9608
+    green: 1.0000
+    blue:  0.9804
+    white: 0.0000
+
+  # #ffe4e1
+  # 255,228,225
+  - id: COLOR_CSS_MISTYROSE
+    red:   1.0000
+    green: 0.8941
+    blue:  0.8824
+    white: 0.0000
+
+  # #ffe4b5
+  # 255,228,181
+  - id: COLOR_CSS_MOCCASIN
+    red:   1.0000
+    green: 0.8941
+    blue:  0.7098
+    white: 0.0000
+
+  # #ffdead
+  # 255,222,173
+  - id: COLOR_CSS_NAVAJOWHITE
+    red:   1.0000
+    green: 0.8706
+    blue:  0.6784
+    white: 0.0000
+
+  # #000080
+  # 0,0,128
+  - id: COLOR_CSS_NAVY
+    red:   0.0000
+    green: 0.0000
+    blue:  0.5020
+    white: 0.0000
+
+  # #fdf5e6
+  # 253,245,230
+  - id: COLOR_CSS_OLDLACE
+    red:   0.9922
+    green: 0.9608
+    blue:  0.9020
+    white: 0.0000
+
+  # #808000
+  # 128,128,0
+  - id: COLOR_CSS_OLIVE
+    red:   0.5020
+    green: 0.5020
+    blue:  0.0000
+    white: 0.0000
+
+  # #6b8e23
+  # 107,142,35
+  - id: COLOR_CSS_OLIVEDRAB
+    red:   0.4196
+    green: 0.5569
+    blue:  0.1373
+    white: 0.0000
+
+  # #ffa500
+  # 255,165,0
+  - id: COLOR_CSS_ORANGE
+    red:   1.0000
+    green: 0.6471
+    blue:  0.0000
+    white: 0.0000
+
+  # #ff4500
+  # 255,69,0
+  - id: COLOR_CSS_ORANGERED
+    red:   1.0000
+    green: 0.2706
+    blue:  0.0000
+    white: 0.0000
+
+  # #da70d6
+  # 218,112,214
+  - id: COLOR_CSS_ORCHID
+    red:   0.8549
+    green: 0.4392
+    blue:  0.8392
+    white: 0.0000
+
+  # #eee8aa
+  # 238,232,170
+  - id: COLOR_CSS_PALEGOLDENROD
+    red:   0.9333
+    green: 0.9098
+    blue:  0.6667
+    white: 0.0000
+
+  # #98fb98
+  # 152,251,152
+  - id: COLOR_CSS_PALEGREEN
+    red:   0.5961
+    green: 0.9843
+    blue:  0.5961
+    white: 0.0000
+
+  # #afeeee
+  # 175,238,238
+  - id: COLOR_CSS_PALETURQUOISE
+    red:   0.6863
+    green: 0.9333
+    blue:  0.9333
+    white: 0.0000
+
+  # #db7093
+  # 219,112,147
+  - id: COLOR_CSS_PALEVIOLETRED
+    red:   0.8588
+    green: 0.4392
+    blue:  0.5765
+    white: 0.0000
+
+  # #ffefd5
+  # 255,239,213
+  - id: COLOR_CSS_PAPAYAWHIP
+    red:   1.0000
+    green: 0.9373
+    blue:  0.8353
+    white: 0.0000
+
+  # #ffdab9
+  # 255,218,185
+  - id: COLOR_CSS_PEACHPUFF
+    red:   1.0000
+    green: 0.8549
+    blue:  0.7255
+    white: 0.0000
+
+  # #cd853f
+  # 205,133,63
+  - id: COLOR_CSS_PERU
+    red:   0.8039
+    green: 0.5216
+    blue:  0.2471
+    white: 0.0000
+
+  # #ffc0cb
+  # 255,192,203
+  - id: COLOR_CSS_PINK
+    red:   1.0000
+    green: 0.7529
+    blue:  0.7961
+    white: 0.0000
+
+  # #dda0dd
+  # 221,160,221
+  - id: COLOR_CSS_PLUM
+    red:   0.8667
+    green: 0.6275
+    blue:  0.8667
+    white: 0.0000
+
+  # #b0e0e6
+  # 176,224,230
+  - id: COLOR_CSS_POWDERBLUE
+    red:   0.6902
+    green: 0.8784
+    blue:  0.9020
+    white: 0.0000
+
+  # #800080
+  # 128,0,128
+  - id: COLOR_CSS_PURPLE
+    red:   0.5020
+    green: 0.0000
+    blue:  0.5020
+    white: 0.0000
+
+  # #ff0000
+  # 255,0,0
+  - id: COLOR_CSS_RED
+    red:   1.0000
+    green: 0.0000
+    blue:  0.0000
+    white: 0.0000
+
+  # #bc8f8f
+  # 188,143,143
+  - id: COLOR_CSS_ROSYBROWN
+    red:   0.7373
+    green: 0.5608
+    blue:  0.5608
+    white: 0.0000
+
+  # #4169e1
+  # 65,105,225
+  - id: COLOR_CSS_ROYALBLUE
+    red:   0.2549
+    green: 0.4118
+    blue:  0.8824
+    white: 0.0000
+
+  # #8b4513
+  # 139,69,19
+  - id: COLOR_CSS_SADDLEBROWN
+    red:   0.5451
+    green: 0.2706
+    blue:  0.0745
+    white: 0.0000
+
+  # #fa8072
+  # 250,128,114
+  - id: COLOR_CSS_SALMON
+    red:   0.9804
+    green: 0.5020
+    blue:  0.4471
+    white: 0.0000
+
+  # #f4a460
+  # 244,164,96
+  - id: COLOR_CSS_SANDYBROWN
+    red:   0.9569
+    green: 0.6431
+    blue:  0.3765
+    white: 0.0000
+
+  # #2e8b57
+  # 46,139,87
+  - id: COLOR_CSS_SEAGREEN
+    red:   0.1804
+    green: 0.5451
+    blue:  0.3412
+    white: 0.0000
+
+  # #fff5ee
+  # 255,245,238
+  - id: COLOR_CSS_SEASHELL
+    red:   1.0000
+    green: 0.9608
+    blue:  0.9333
+    white: 0.0000
+
+  # #a0522d
+  # 160,82,45
+  - id: COLOR_CSS_SIENNA
+    red:   0.6275
+    green: 0.3216
+    blue:  0.1765
+    white: 0.0000
+
+  # #c0c0c0
+  # 192,192,192
+  - id: COLOR_CSS_SILVER
+    red:   0.7529
+    green: 0.7529
+    blue:  0.7529
+    white: 0.0000
+
+  # #87ceeb
+  # 135,206,235
+  - id: COLOR_CSS_SKYBLUE
+    red:   0.5294
+    green: 0.8078
+    blue:  0.9216
+    white: 0.0000
+
+  # #6a5acd
+  # 106,90,205
+  - id: COLOR_CSS_SLATEBLUE
+    red:   0.4157
+    green: 0.3529
+    blue:  0.8039
+    white: 0.0000
+
+  # #708090
+  # 112,128,144
+  - id: COLOR_CSS_SLATEGRAY
+    red:   0.4392
+    green: 0.5020
+    blue:  0.5647
+    white: 0.0000
+
+  # #708090
+  # 112,128,144
+  - id: COLOR_CSS_SLATEGREY
+    red:   0.4392
+    green: 0.5020
+    blue:  0.5647
+    white: 0.0000
+
+  # #fffafa
+  # 255,250,250
+  - id: COLOR_CSS_SNOW
+    red:   1.0000
+    green: 0.9804
+    blue:  0.9804
+    white: 0.0000
+
+  # #00ff7f
+  # 0,255,127
+  - id: COLOR_CSS_SPRINGGREEN
+    red:   0.0000
+    green: 1.0000
+    blue:  0.4980
+    white: 0.0000
+
+  # #4682b4
+  # 70,130,180
+  - id: COLOR_CSS_STEELBLUE
+    red:   0.2745
+    green: 0.5098
+    blue:  0.7059
+    white: 0.0000
+
+  # #d2b48c
+  # 210,180,140
+  - id: COLOR_CSS_TAN
+    red:   0.8235
+    green: 0.7059
+    blue:  0.5490
+    white: 0.0000
+
+  # #008080
+  # 0,128,128
+  - id: COLOR_CSS_TEAL
+    red:   0.0000
+    green: 0.5020
+    blue:  0.5020
+    white: 0.0000
+
+  # #d8bfd8
+  # 216,191,216
+  - id: COLOR_CSS_THISTLE
+    red:   0.8471
+    green: 0.7490
+    blue:  0.8471
+    white: 0.0000
+
+  # #ff6347
+  # 255,99,71
+  - id: COLOR_CSS_TOMATO
+    red:   1.0000
+    green: 0.3882
+    blue:  0.2784
+    white: 0.0000
+
+  # #40e0d0
+  # 64,224,208
+  - id: COLOR_CSS_TURQUOISE
+    red:   0.2510
+    green: 0.8784
+    blue:  0.8157
+    white: 0.0000
+
+  # #ee82ee
+  # 238,130,238
+  - id: COLOR_CSS_VIOLET
+    red:   0.9333
+    green: 0.5098
+    blue:  0.9333
+    white: 0.0000
+
+  # #f5deb3
+  # 245,222,179
+  - id: COLOR_CSS_WHEAT
+    red:   0.9608
+    green: 0.8706
+    blue:  0.7020
+    white: 0.0000
+
+  # #ffffff
+  # 255,255,255
+  - id: COLOR_CSS_WHITE
+    red:   1.0000
+    green: 1.0000
+    blue:  1.0000
+    white: 0.0000
+
+  # #f5f5f5
+  # 245,245,245
+  - id: COLOR_CSS_WHITESMOKE
+    red:   0.9608
+    green: 0.9608
+    blue:  0.9608
+    white: 0.0000
+
+  # #ffff00
+  # 255,255,0
+  - id: COLOR_CSS_YELLOW
+    red:   1.0000
+    green: 1.0000
+    blue:  0.0000
+    white: 0.0000
+
+  # #9acd32
+  # 154,205,50
+  - id: COLOR_CSS_YELLOWGREEN
+    red:   0.6039
+    green: 0.8039
+    blue:  0.1961
+    white: 0.0000

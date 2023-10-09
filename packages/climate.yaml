@@ -1,22 +1,86 @@
+---
 # Inspired by https://github.com/downthedeck/hassio-config/blob/master/packages/klimaat.yaml
 # Not all modes are supported, as above uses Toon integration
 # https://www.home-assistant.io/integrations/generic_thermostat/
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
 
-sensor:
-  - platform: season
-    type: astronomical
-
 binary_sensor:
-  - platform: workday
-    name: Workday
-    country: GB
-  - platform: workday
-    name: Workday tomorrow
-    country: GB
-    days_offset: 1
+  - platform: group
+    # Openings that should prevent the heating from coming on
+    name: Climate Openings
+    device_class: opening
+    entities:
+      # - binary_sensor.back_door
+      # - binary_sensor.front_door
+      # - binary_sensor.patio_door
+      - binary_sensor.ensuite_window
+      - binary_sensor.master_bedroom_window
+      - binary_sensor.guest_bedroom_window
+      - binary_sensor.study_window
+      - binary_sensor.craft_room_window
+      - binary_sensor.bathroom_window
+      - binary_sensor.dining_table_window
+      - binary_sensor.kitchen_window
+      # - binary_sensor.utility_room_window
+
+group:
+  call_for_heat:
+    # Add zones here. Essentially a glorified OR condition
+    name: Call For Heat - Group
+    entities:
+      - input_boolean.call_for_rad_heat
+      - input_boolean.call_for_guest_heat
+
+input_boolean:
+  # Inputs from external thermostats, such as household generic or a single room
+  call_for_rad_heat:
+    name: Call for heat - General
+    icon: mdi:radiator
+  call_for_guest_heat:
+    name: Call for heat - Guest Room
+    icon: mdi:radiator
 
 automation:
+  - alias: "Call for heat - demand"
+    description: >-
+      Turn on boiler relay if there's a call for heat
+      and all the openings are shut
+    trigger:
+      platform: time_pattern
+      seconds: 30
+    condition:
+      - condition: state
+        entity_id: group.call_for_heat
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.climate_openings
+        state: 'off'
+        for:
+          minutes: 5
+    action:
+      - service: homeassistant.turn_on
+        entity_id: switch.boiler_valve_controls_relay_2
+
+  - alias: "Call for heat - no demand"
+    description: Turn off boiler relay if demand for heat ceases
+    trigger:
+      platform: time_pattern
+      seconds: 30
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: group.call_for_heat
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.climate_openings
+          state: 'on'
+          for:
+            minutes: 5
+    action:
+      - service: homeassistant.turn_off
+        entity_id: switch.boiler_valve_controls_relay_2
+
   - alias: "Climate - Away"
     trigger:
       - platform: state
@@ -27,11 +91,7 @@ automation:
     action:
       - service: climate.set_preset_mode
         data:
-          entity_id: climate.house
-          preset_mode: "away"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
+          entity_id: all
           preset_mode: "away"
       - service: logbook.log
         data_template:
@@ -47,16 +107,10 @@ automation:
       - condition: state
         entity_id: group.people
         state: "home"
-      - condition: template
-        value_template: '{{ states("sensor.season") != "summer" }}'
     action:
       - service: climate.set_preset_mode
         data:
           entity_id: climate.house
-          preset_mode: "none"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
           preset_mode: "none"
       - service: logbook.log
         data_template:
@@ -69,19 +123,10 @@ automation:
       - platform: state
         entity_id: group.people
         to: "home"
-    condition:
-      - condition: template
-        value_template: '{{ states("sensor.season") != "summer" }}'
-      - condition: time
-        after: "14:00:00"
     action:
       - service: climate.set_preset_mode
         data:
-          entity_id: climate.house
-          preset_mode: "none"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
+          entity_id: all
           preset_mode: "none"
       - service: logbook.log
         data_template:
@@ -98,15 +143,14 @@ automation:
       - condition: state
         entity_id: binary_sensor.workday_tomorrow
         state: "on"
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: climate.set_temperature
         data:
           entity_id: climate.house
           temperature: 17
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "Away"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -121,15 +165,14 @@ automation:
       - condition: state
         entity_id: binary_sensor.workday_tomorrow
         state: "off"
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: climate.set_temperature
         data:
           entity_id: climate.house
           temperature: 17
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "Away"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -144,15 +187,14 @@ automation:
       - condition: state
         entity_id: binary_sensor.workday
         state: "on"
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: climate.set_temperature
         data:
           entity_id: climate.house
           temperature: 20
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -167,15 +209,14 @@ automation:
       - condition: state
         entity_id: binary_sensor.workday
         state: "off"
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
     action:
       - service: climate.set_temperature
         data:
           entity_id: climate.house
           temperature: 20
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
       - service: logbook.log
         data_template:
           name: EVENT

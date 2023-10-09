@@ -1,24 +1,18 @@
+---
 ######################################################################################################
-###Script to send notifications to Twitter as @thegordonhome.
+### Script to send notifications to Mastodon as @viewpoint@botsin.space
 ######################################################################################################
 
-#sequence:
-# - service: notify.twitter_thegordonhome
-#   data_template:
-#     message: >-
-#       {{ tweet }} #IOT #SmartHome
+# sequence:
+#  - service: notify.mastodon_viewpoint
+#    data_template:
+#      message: >-
+#        {{ tweet }} #IOT #SmartHome
 
 
 tweet_engine_image:
-   sequence:
-#    - service: mqtt.publish
-#      data_template:
-#        topic: 'ifttt/message'
-#        payload: >-
-#          {{ tweet }}
-#        retain: true
-
-    - service: notify.twitter_thegordonhome
+  sequence:
+    - service: notify.mastodon_viewpoint
       data_template:
         message: >-
           {{ tweet }} #IOT #SmartHome
@@ -27,15 +21,8 @@ tweet_engine_image:
             {{ image }}
 
 tweet_engine:
-   sequence:
-#    - service: mqtt.publish
-#      data_template:
-#        topic: 'ifttt/message'
-#        payload: >-
-#          {{ tweet }}
-#        retain: true
-
-    - service: notify.twitter_thegordonhome
+  sequence:
+    - service: notify.mastodon_viewpoint
       data_template:
         message: >-
           {{ tweet }} #IOT #SmartHome

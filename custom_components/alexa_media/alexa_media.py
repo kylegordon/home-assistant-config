@@ -1,15 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#  SPDX-License-Identifier: Apache-2.0
 """
 Alexa Devices Base Class.
+
+SPDX-License-Identifier: Apache-2.0
 
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
 """
 
 import logging
-from typing import Dict, Text  # noqa pylint: disable=unused-import
 
 from alexapy import AlexaAPI, hide_email
 
@@ -22,7 +20,6 @@ class AlexaMedia:
     """Implementation of Alexa Media Base object."""
 
     def __init__(self, device, login) -> None:
-        # pylint: disable=unexpected-keyword-arg
         """Initialize the Alexa device."""
 
         # Class info

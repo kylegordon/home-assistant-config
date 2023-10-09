@@ -1,0 +1,83 @@
+---
+packages:
+  common: !include common.yaml
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP32
+  board: esp32dev
+
+# Enable logging
+logger:
+
+captive_portal:
+
+web_server:
+  port: 80
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
+
+esp32_ble_tracker:
+  scan_parameters:
+    active: true
+    interval: 160ms
+
+  on_ble_advertise:
+    # https://esphome.io/components/esp32_ble_tracker.html#on-ble-advertise-trigger
+    # - mac_address: 11:22:33:44:55:66
+    #   then:
+    - lambda: |-
+        ESP_LOGD("ble_adv", "New BLE device");
+        ESP_LOGD("ble_adv", "  address: %s", x.address_str().c_str());
+        ESP_LOGD("ble_adv", "  name: %s", x.get_name().c_str());
+        ESP_LOGD("ble_adv", "  Advertised service UUIDs:");
+        for (auto uuid : x.get_service_uuids()) {
+            ESP_LOGD("ble_adv", "    - %s", uuid.to_string().c_str());
+        }
+        ESP_LOGD("ble_adv", "  Advertised service data:");
+        for (auto data : x.get_service_datas()) {
+            ESP_LOGD("ble_adv", "    - %s: (length %i)", data.uuid.to_string().c_str(), data.data.size());
+        }
+        ESP_LOGD("ble_adv", "  Advertised manufacturer data:");
+        for (auto data : x.get_manufacturer_datas()) {
+            ESP_LOGD("ble_adv", "    - %s: (length %i)", data.uuid.to_string().c_str(), data.data.size());
+        }
+
+bluetooth_proxy:
+  active: true
+
+text_sensor:
+  # https://esphome.io/components/text_sensor/ble_scanner.html
+  - platform: ble_scanner
+    name: "BLE Devices Scanner"
+
+sensor:
+  # https://esphome.io/components/sensor/xiaomi_ble.html#lywsd03mmc
+  - platform: pvvx_mithermometer
+    mac_address: "A4:C1:38:D0:BF:A7"
+    temperature:
+      name: "Study BLE Temperature"
+    humidity:
+      name: "Study BLE Humidity"
+    battery_level:
+      name: "Study BLE Battery-Level"
+    battery_voltage:
+      name: "Study BLE Battery-Voltage"
+    signal_strength:
+      name: "Study BLE Signal"
+
+binary_sensor:
+  - platform: ble_presence
+    mac_address: B0:F1:D8:EA:D0:36
+    name: "iPad - PC1408"
+  - platform: ble_presence
+    ibeacon_uuid: 53ACB924-F814-EA4C-9BCC-73CD97F6F5B6
+    name: "Nothing Phone (1)"
+
+#   - platform: ble_presence
+#     mac_address: !env_var BT_BEACON_02
+#     name: "jinou_beacon_02"
