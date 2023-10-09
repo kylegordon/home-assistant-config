@@ -15,7 +15,7 @@ action:
     data:
       title: "Aurora Alert"
       message: "Alert! The Aurora Borealis might be visible right now!"
-  - service: notify.mobile_app_nothing_phone
+  - service: notify.mobile_app_nothing_phone_1
     data:
       title: "Aurora Alert"
       message: "Alert! The Aurora Borealis might be visible right now!"

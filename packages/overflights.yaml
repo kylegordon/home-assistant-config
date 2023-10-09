@@ -1,16 +1,4 @@
 ---
-sensor:
-  - platform: opensky
-    name: opensky_home
-    radius: 5
-
-  - platform: opensky
-    name: opensky_uplawmoor
-    radius: 5
-    altitude: 5000
-    latitude: 55.765
-    longitude: -4.496
-
 mqtt:
   sensor:
     - name: flightradar_home

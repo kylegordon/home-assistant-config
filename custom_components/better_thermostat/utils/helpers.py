@@ -459,6 +459,8 @@ async def find_valve_entity(self, entity_id):
     """
     entity_registry = er.async_get(self.hass)
     reg_entity = entity_registry.async_get(entity_id)
+    if reg_entity is None:
+        return None
     entity_entries = async_entries_for_config_entry(
         entity_registry, reg_entity.config_entry_id
     )
@@ -475,6 +477,26 @@ async def find_valve_entity(self, entity_id):
     _LOGGER.debug(
         f"better thermostat: Could not find valve position entity for {entity_id}"
     )
+    return None
+
+
+async def find_battery_entity(self, entity_id):
+    entity_registry = er.async_get(self.hass)
+
+    entity_info = entity_registry.entities.get(entity_id)
+
+    if entity_info is None:
+        return None
+
+    device_id = entity_info.device_id
+
+    for entity in entity_registry.entities.values():
+        if entity.device_id == device_id and (
+            entity.device_class == "battery"
+            or entity.original_device_class == "battery"
+        ):
+            return entity.entity_id
+
     return None
 
 
@@ -499,6 +521,8 @@ async def find_local_calibration_entity(self, entity_id):
     """
     entity_registry = er.async_get(self.hass)
     reg_entity = entity_registry.async_get(entity_id)
+    if reg_entity is None:
+        return None
     entity_entries = async_entries_for_config_entry(
         entity_registry, reg_entity.config_entry_id
     )
