@@ -1,12 +1,15 @@
+---
 # Inspired by https://github.com/bruhautomation/BRUH2-Home-Assistant-Configuration
 
 homeassistant:
 
   auth_providers:
+    - type: homeassistant
     - type: trusted_networks
       trusted_networks:
         - 172.24.32.0/24
         - 172.24.34.0/24
+        - 172.18.0.0/24
         - 10.8.0.18/32
         - 127.0.0.1
     - type: legacy_api_password
@@ -26,9 +29,14 @@ homeassistant:
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
+  country: GB
+  currency: GBP
 
   # Includes
   packages: !include_dir_named packages
+
+  # media_dirs:
+  #   cctv_clips: /media/frigate/clips
 
   customize:
     script.restart_ha:
@@ -58,7 +66,7 @@ homeassistant:
       assumed_state: false
     light.arc_lamp:
       assumed_state: false
-    light.utility_room:
+    light.front_hall:
       assumed_state: false
     group.bedside_lights:
         icon: mdi:hotel
@@ -73,8 +81,9 @@ homeassistant:
     sensor.monthly_energy:
       friendly_name: Monthly energy usage
 
-# Enables the frontend
-frontend:
+# The default_config meta-component provides a host of other configs options, some listed at
+# https://www.home-assistant.io/integrations/default_config/
+default_config:
 
 # Enable the config panel
 config:
@@ -82,157 +91,41 @@ config:
 recorder: !include recorder.yaml
 
 http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.18.0.0/24
+    - 127.0.0.1
+    - ::1
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
-
-system_health:
-
-zeroconf:
+    - http://viewpoint.house
 
 stream:
 
-konnected:
-  access_token: !secret konnected_key
-  devices:
-    - id: bcddc2fdd1b2
-    - id: dc4f22199839
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Ensuite window'
-        - zone: 2
-          type: window
-          name: 'Craft room window'
-        - zone: 3
-          type: window
-          name: 'Master bedroom window'
-        - zone: 4
-          type: window
-          name: 'Guest bedroom window'
-        - zone: 5
-          type: window
-          name: 'Study window'
-    - id: dc4f22195dec
-      binary_sensors:
-        - zone: 1
-          type: window
-          name: 'Kitchen window'
-        - zone: 2
-          type: door
-          name: 'Back door'
-        - zone: 3
-          type: door
-          name: 'Patio door'
-        - zone: 4
-          type: window
-          name: 'Bathroom window'
-        - zone: 5
-          type: window
-          name: 'Dining table window'
-
 alarm_control_panel:
     - platform: manual
-
-weather:
-  - platform: openweathermap
-    mode: daily
-    api_key: !secret openweathermap_api_key
-
-deconz:
-  host: 172.24.32.13
-  port: 8100
-
-google:
-  client_id: !secret google_oauth_client_id
-  client_secret: !secret google_oauth_client_secret
-  track_new_calendar: False
-
-# Checks for available updates
-updater:
+      name: Home Alarm
+      code_arm_required: false
+      code: !secret alarm_code
 
 influxdb:
   host: 172.24.32.13
-
-# Discover some devices automatically
-discovery:
-
-spotify:
-  client_id: !secret spotify_client_id
-  client_secret: !secret spotify_client_secret
-
-rfxtrx:
-  # Remember this is mapped in the docker-compose file
-  device: /dev/ttyUSB0
-  devices:
-    ### Lights ###
-    #0a140029f0dd3c0e010060:
-    #  name: Living Room
-    #0a140017f090a201010070:
-    #  # Dimmable CFL Remote Left
-    #  name: Utility Room
-    0a140001f0dd3c01010070:
-      # White Remote A1
-      # name: Christmas Star
-    0a140075f0dd3c10000060:
-      # Black Remote D4
-    0a14000bf0dd3c0f010070:
-      # name: Lava Lamp
-    0a140031f0dd3c0d010070:
-      # name: Craft Room bookcase
-    0a140037f0dd3c0b010060:
-      # name: Christmas Tree
-    0a14003cf0dd3c0a010060:
-      # name: Craft room fairy lights
-    0710080041020000:
-      # name: Star Burst
-    0710080041030000:
-      # name: Energenie 4 way
-    0710080041040000:
-      # name: Energenie 4 way
-    0a140041f0dd3c09010070:
-      # name: Arc Lamp
-    0a14005ff0dd3c05010060:
-      # name: Energenie 4 way
-    ### Switches ###
-    0710080041010000:
-      # name: Cordless phone
-    ### Binary Sensors ###
-    0b1100d800b8196e0a010f70:
-      # name: Outside Driveway Motion
-      device_class: motion
-    0b11000000b82b560a000060:
-      # name: Outside Front Motion
-      device_class: motion
-    #0a1400002c22a70a010060:
-    #  name: Utility Room Door
-    #  device_class: opening
-    ### Sensors ###
-    ## RFXcom ##
-    # Old 115a0100e452000000046600006462cb3e79:
-    115a0102e20200000003e500000000d02979:
-      # name: Electricity
-
-#hue:
-#  bridges:
-#    #- host: hue1.vpn.glasgownet.com
-#    - host: 172.24.32.12
-#      filename: phue-00178817a562.conf
-
-#zwave:
-#  usb_path: /dev/zwave
-#  debug: false
+  port: 8086
+  ssl: false
+  api_version: 2
+  organization: !secret influxdb_organization
+  bucket: !secret influxdb_bucket
+  token: !secret influxdb_token
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
 person: !include persons.yaml
+proximity: !include proximity.yaml
 
 wake_on_lan:
 
 notify: !include notify.yaml
-
-# Enables support for tracking state changes over time.
-history:
 
 # View all events in a logbook
 logbook:
@@ -254,12 +147,12 @@ emulated_hue:
   # https://www.home-assistant.io/components/emulated_hue/
   listen_port: 80
   expose_by_default: false
-  exposed_domains:
-    - switch
-    - light
-    - group
-    - input_boolean
-    - media_player
+  #  exposed_domains:
+  #  - switch
+  #  - light
+  #  - group
+  #  - input_boolean
+  #  - media_player
   entities:
     group.lightswitch_relays:
       hidden: false
@@ -269,7 +162,7 @@ emulated_hue:
       hidden: false
     group.outside_lights:
       hidden: false
-    group.hall:
+    light.hall:
       hidden: false
     group.living_room_lights:
       hidden: false
@@ -287,23 +180,15 @@ emulated_hue:
       hidden: false
     light.craft_room:
       hidden: false
-    light.craft_room_bookcase:
-      hidden: false
     light.craft_room_desk_level:
       hidden: false
     light.master_bedroom:
       hidden: false
     light.sideboard:
       hidden: false
-    light.uplighter:
-      hidden: false
-    light.sofa_overhead:
-      hidden: false
-    light.dining_table_overhead:
+    light.living_room:
       hidden: false
     light.star_burst:
-      hidden: false
-    light.arc_lamp:
       hidden: false
     light.lava_lamp:
       hidden: false
@@ -319,14 +204,23 @@ emulated_hue:
       hidden: false
     input_boolean.goodnight_process:
       hidden: false
+    input_boolean.lockup_process:
+      hidden: false
+    input_boolean.open_tin_hut_process:
+      hidden: false
     input_boolean.night_view:
+      hidden: false
+    script.alexa_turn_on_the_lights:
+      hidden: false
+    script.alexa_turn_off_the_lights:
       hidden: false
 
 ############
 # Includes #
 ############
 # automation: !include automation.yaml
-#script: !include scripts.yaml
+# script: !include scripts.yaml
+mqtt: !include mqtt.yaml
 sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
@@ -334,11 +228,9 @@ switch: !include switches.yaml
 media_player: !include media_players.yaml
 device_tracker: !include device_trackers.yaml
 group: !include groups.yaml
-camera: !include cameras.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
-#image_processing: !include openalpr.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
@@ -349,89 +241,60 @@ input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
 
-mqtt:
-  broker: 172.24.32.13
-  port: 1883
-  client_id: home-assistant-1
-  discovery: true
-  discovery_prefix: "homeassistant"
-  keepalive: 60
-  protocol: 3.1
-  birth_message:
-    topic: 'hass/status'
-    payload: 'online'
-    qos: 1
-    retain: true
-  will_message:
-    topic: 'hass/status'
-    payload: 'offline'
-    qos: 1
-    retain: true
-
 utility_meter:
+  quarter_hourly_energy:
+    source: sensor.energy_spent
+    cycle: quarter-hourly
+  hourly_energy:
+    source: sensor.energy_spent
+    cycle: hourly
   daily_energy:
     source: sensor.energy_spent
     cycle: daily
   monthly_energy:
     source: sensor.energy_spent
     cycle: monthly
-
-alexa_media:
-  accounts:
-    email: !secret alexa_email
-    password: !secret alexa_password
-    url: "amazon.co.uk"
+  quarter_hourly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: quarter-hourly
+  hourly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: hourly
+  daily_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: daily
+  monthly_energy_tv:
+    source: sensor.energy_spent_tv
+    cycle: monthly
 
 smartir:
-
-octoprint:
-  host: !secret octoprint_host
-  port: 88
-  api_key: !secret octoprint_key
-  bed: true
-  number_of_tools: 1
-
-mobile_app:
-
-speedtestdotnet:
-  scan_interval:
-    minutes: 5
-  monitored_conditions:
-    - ping
-    - download
-    - upload
-
-nzbget:
-  host: 172.24.32.13
-  username: !secret nzbget_username
-  password: !secret nzbget_password
 
 panel_iframe:
   esphome:
     title: "ESPHome"
-    url: "http://homeauto.vpn.glasgownet.com:6052"
+    url: "https://esphome.viewpoint.house"
     icon: mdi:car-esp
-  unifi:
-    title: "Unifi CCTV"
-    url: "http://homeauto.vpn.glasgownet.com:7080"
+  zigbee2mqtt:
+    title: "Z2M"
+    url: "https://z2m.viewpoint.house"
+    icon: mdi:antenna
+  cctv:
+    title: "CCTV"
+    url: "https://cctv.viewpoint.house"
     icon: mdi:cctv
   sonarr:
-    title: "Sonarr TV"
-    url: "http://homeauto.vpn.glasgownet.com:8989/sonarr"
+    title: "TV Shows"
+    url: "https://tv.viewpoint.house"
     icon: mdi:television-classic
   radarr:
-    title: "Radar Movies"
-    url: "http://homeauto.vpn.glasgownet.com:7878/radarr"
+    title: "Movies"
+    url: "https://movies.viewpoint.house"
     icon: mdi:movie-open
   lazylibrarian:
-    title: "LazyLibrarian Books"
-    url: "http://homeauto.vpn.glasgownet.com:5299"
+    title: "Books"
+    url: "https://books.viewpoint.house"
     icon: mdi:book-open-page-variant
-  airsonic:
-    title: "AirSonic Music"
-    url: "http://homeauto.vpn.glasgownet.com:4040/index"
-    icon: mdi:music-circle-outline
-  nzbget:
-    title: "NZBGet Downloader"
-    url: "http://homeauto.vpn.glasgownet.com:6789"
-    icon: mdi:cloud-download-outline
+  homepage:
+    title: "Home Page"
+    url: "https://home.viewpoint.house"
+    icon: mdi:home

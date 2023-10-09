@@ -8,10 +8,10 @@ all_on:
   ## Turn on Hall switches and lights
   - service: switch.turn_on
     data:
-      entity_id: group.hall
+      entity_id: light.hall
   - service: light.turn_on
     data:
-      entity_id: group.hall
+      entity_id: light.hall
 
 
   ## Turn on outside lights. PIR will also be triggered on arrival, starting the timer.
@@ -20,4 +20,3 @@ all_on:
       entity_id: group.outside_lights
 
   - service: alarm_control_panel.alarm_disarm
-

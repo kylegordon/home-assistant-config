@@ -1,0 +1,96 @@
+---
+automation:
+  - alias: Master Bedroom light toggle
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    trigger:
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: masterbedroom_switch
+          click_type: single
+    action:
+      - service: switch.turn_on
+        entity_id: switch.master_bedroom_switch_relay
+      - service: light.toggle
+        entity_id: light.master_bedroom
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling master bedroom light"
+
+  - alias: Master Bedroom light double toggle
+    trigger:
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: masterbedroom_switch
+          click_type: double
+    action:
+      - service: switch.turn_on
+        entity_id: switch.master_bedroom_lightswitch_relay
+      - service: light.toggle
+        entity_id: light.master_bedroom
+      - service: light.toggle
+        entity_id: light.ensuite
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Double master bedroom light"
+
+  - alias: "Bedtime lights off"
+    trigger:
+      - platform: time
+        at: '01:00:00'
+    condition:
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
+    action:
+      - service: light.turn_off
+        entity_id:
+          - group.bedside_lights
+          - light.twig_lights
+
+  - alias: Bedside light toggle
+    trigger:
+      - platform: event
+        event_type: esphome.button_pressed
+        event_data:
+          device_name: masterbedroom_switch
+          click_type: triple
+    action:
+      - service: light.toggle
+        entity_id: group.bedside_lights
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Toggling bedside lights"
+
+  - alias: "Bedtime lights on"
+    trigger:
+      - platform: time
+        at: '21:00:00'
+    condition:
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: group.bedside_lights
+        data:
+          brightness_pct: 75
+          color_temp: 400
+          transition: 30
+
+  - alias: "Off wakup lights"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        above: 500
+    action:
+      - service: light.turn_off
+        data:
+          entity_id:
+            - light.master_bedroom
+            - light.bedside_charlotte
+            - light.bedside_kyle

@@ -1,6 +1,0 @@
-substitutions:
-  device_name: dishwasher
-  device_description: Dishwasher Power Plug
-  friendly_name: Dishwasher Power Plug
-
-<<: !include common/teckin_sp23_common.yaml
