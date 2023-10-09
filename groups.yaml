@@ -4,7 +4,6 @@ default_view:
   entities:
     - group.people_status
     - group.modes
-    - sensor.electricity_energy_usage
     - sensor.house_average_temperature
     - sensor.house_average_humidity
     - calendar.next_bin
@@ -183,8 +182,8 @@ outside:
   name: Outside
   entities:
     - sun.sun
-    - binary_sensor.outside_front_motion
-    - binary_sensor.outside_driveway_motion
+    - binary_sensor.back_door_pir
+    - binary_sensor.driveway_pir
     - binary_sensor.front_door_motion
     - group.climate
     - group.outside_lights
@@ -205,6 +204,7 @@ outside_lights:
     - light.mini_deck_floodlight
     - light.decking_lights
     - light.front_door_dome
+    - light.car_port
 
 climate:
   name: Climate

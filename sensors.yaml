@@ -65,6 +65,11 @@
   name: energy_spent_tv
   unit_prefix: k
   round: 2
+- platform: integration
+  source: sensor.shower_power_plug_power
+  name: energy_spent_shower
+  unit_prefix: k
+  round: 2
 
 - platform: min_max
   name: Average External Light Level

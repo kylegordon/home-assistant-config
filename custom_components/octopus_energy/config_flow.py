@@ -1,19 +1,20 @@
-import re
+
 import voluptuous as vol
 import logging
-
 
 from homeassistant.util.dt import (utcnow)
 from homeassistant.config_entries import (ConfigFlow, OptionsFlow)
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
 
+from .target_rates.config import validate_target_rate_config
 from .const import (
   DOMAIN,
   
   CONFIG_MAIN_API_KEY,
   CONFIG_MAIN_ACCOUNT_ID,
   CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION,
+  CONFIG_MAIN_LIVE_CONSUMPTION_REFRESH_IN_MINUTES,
   CONFIG_MAIN_CALORIFIC_VALUE,
   CONFIG_MAIN_ELECTRICITY_PRICE_CAP,
   CONFIG_MAIN_CLEAR_ELECTRICITY_PRICE_CAP,
@@ -28,15 +29,12 @@ from .const import (
   CONFIG_TARGET_MPAN,
   CONFIG_TARGET_OFFSET,
   CONFIG_TARGET_ROLLING_TARGET,
+  CONFIG_TARGET_LAST_RATES,
+  CONFIG_TARGET_INVERT_TARGET_RATES,
 
   DATA_SCHEMA_ACCOUNT,
   DATA_CLIENT,
   DATA_ACCOUNT_ID,
-
-  REGEX_TIME,
-  REGEX_ENTITY_NAME,
-  REGEX_HOURS,
-  REGEX_OFFSET_PARTS,
 )
 
 from .api_client import OctopusEnergyApiClient
@@ -45,38 +43,22 @@ from .utils import get_active_tariff_code
 
 _LOGGER = logging.getLogger(__name__)
 
-def validate_target_rate_sensor(data):
-  errors = {}
+def get_target_rate_meters(account_info, now):
+  meters = {}
+  if account_info is not None and len(account_info["electricity_meter_points"]) > 0:
+    for point in account_info["electricity_meter_points"]:
+      active_tariff_code = get_active_tariff_code(now, point["agreements"])
 
-  matches = re.search(REGEX_ENTITY_NAME, data[CONFIG_TARGET_NAME])
-  if matches == None:
-    errors[CONFIG_TARGET_NAME] = "invalid_target_name"
+      is_export = False
+      for meter in point["meters"]:
+        if meter["is_export"] == True:
+          is_export = True
+          break
 
-  # For some reason float type isn't working properly - reporting user input malformed
-  matches = re.search(REGEX_HOURS, data[CONFIG_TARGET_HOURS])
-  if matches == None:
-    errors[CONFIG_TARGET_HOURS] = "invalid_target_hours"
-  else:
-    data[CONFIG_TARGET_HOURS] = float(data[CONFIG_TARGET_HOURS])
-    if data[CONFIG_TARGET_HOURS] % 0.5 != 0:
-      errors[CONFIG_TARGET_HOURS] = "invalid_target_hours"
+      if active_tariff_code is not None:
+        meters[point["mpan"]] = f'{point["mpan"]} ({"Export" if is_export == True else "Import"})'
 
-  if CONFIG_TARGET_START_TIME in data:
-    matches = re.search(REGEX_TIME, data[CONFIG_TARGET_START_TIME])
-    if matches == None:
-      errors[CONFIG_TARGET_START_TIME] = "invalid_target_time"
-
-  if CONFIG_TARGET_END_TIME in data:
-    matches = re.search(REGEX_TIME, data[CONFIG_TARGET_END_TIME])
-    if matches == None:
-      errors[CONFIG_TARGET_END_TIME] = "invalid_target_time"
-
-  if CONFIG_TARGET_OFFSET in data:
-    matches = re.search(REGEX_OFFSET_PARTS, data[CONFIG_TARGET_OFFSET])
-    if matches == None:
-      errors[CONFIG_TARGET_OFFSET] = "invalid_offset"
-
-  return errors
+  return meters
 
 class OctopusEnergyConfigFlow(ConfigFlow, domain=DOMAIN): 
   """Config flow."""
@@ -97,7 +79,7 @@ class OctopusEnergyConfigFlow(ConfigFlow, domain=DOMAIN):
 
     client = OctopusEnergyApiClient(user_input[CONFIG_MAIN_API_KEY], electricity_price_cap, gas_price_cap)
     account_info = await client.async_get_account(user_input[CONFIG_MAIN_ACCOUNT_ID])
-    if (account_info == None):
+    if (account_info is None):
       errors[CONFIG_MAIN_ACCOUNT_ID] = "account_not_found"
       return self.async_show_form(
         step_id="user", data_schema=DATA_SCHEMA_ACCOUNT, errors=errors
@@ -113,13 +95,8 @@ class OctopusEnergyConfigFlow(ConfigFlow, domain=DOMAIN):
     client = self.hass.data[DOMAIN][DATA_CLIENT]
     account_info = await client.async_get_account(self.hass.data[DOMAIN][DATA_ACCOUNT_ID])
 
-    meters = []
     now = utcnow()
-    if account_info is not None and len(account_info["electricity_meter_points"]) > 0:
-      for point in account_info["electricity_meter_points"]:
-        active_tariff_code = get_active_tariff_code(now, point["agreements"])
-        if active_tariff_code != None:
-          meters.append(point["mpan"])
+    meters = get_target_rate_meters(account_info, now)
 
     return vol.Schema({
       vol.Required(CONFIG_TARGET_NAME): str,
@@ -135,12 +112,17 @@ class OctopusEnergyConfigFlow(ConfigFlow, domain=DOMAIN):
       vol.Optional(CONFIG_TARGET_END_TIME): str,
       vol.Optional(CONFIG_TARGET_OFFSET): str,
       vol.Optional(CONFIG_TARGET_ROLLING_TARGET, default=False): bool,
+      vol.Optional(CONFIG_TARGET_LAST_RATES, default=False): bool,
+      vol.Optional(CONFIG_TARGET_INVERT_TARGET_RATES, default=False): bool,
     })
 
   async def async_step_target_rate(self, user_input):
     """Setup a target based on the provided user input"""
-    
-    errors = validate_target_rate_sensor(user_input)
+    client = self.hass.data[DOMAIN][DATA_CLIENT]
+    account_info = await client.async_get_account(self.hass.data[DOMAIN][DATA_ACCOUNT_ID])
+
+    now = utcnow()
+    errors = validate_target_rate_config(user_input, account_info, now)
 
     if len(errors) < 1:
       # Setup our targets sensor
@@ -200,13 +182,8 @@ class OptionsFlowHandler(OptionsFlow):
     if account_info is None:
       errors[CONFIG_TARGET_MPAN] = "account_not_found"
 
-    meters = []
     now = utcnow()
-    if account_info is not None and len(account_info["electricity_meter_points"]) > 0:
-      for point in account_info["electricity_meter_points"]:
-        active_tariff_code = get_active_tariff_code(now, point["agreements"])
-        if active_tariff_code != None:
-          meters.append(point["mpan"])
+    meters = get_target_rate_meters(account_info, now)
 
     if (CONFIG_TARGET_MPAN not in config):
       config[CONFIG_TARGET_MPAN] = meters[0]
@@ -227,6 +204,14 @@ class OptionsFlowHandler(OptionsFlow):
     is_rolling_target = True
     if (CONFIG_TARGET_ROLLING_TARGET in config):
       is_rolling_target = config[CONFIG_TARGET_ROLLING_TARGET]
+
+    find_last_rates = False
+    if (CONFIG_TARGET_LAST_RATES in config):
+      find_last_rates = config[CONFIG_TARGET_LAST_RATES]
+
+    invert_target_rates = False
+    if (CONFIG_TARGET_INVERT_TARGET_RATES in config):
+      invert_target_rates = config[CONFIG_TARGET_INVERT_TARGET_RATES]
     
     return self.async_show_form(
       step_id="target_rate",
@@ -244,6 +229,8 @@ class OptionsFlowHandler(OptionsFlow):
         end_time_key: str,
         offset_key: str,
         vol.Optional(CONFIG_TARGET_ROLLING_TARGET, default=is_rolling_target): bool,
+        vol.Optional(CONFIG_TARGET_LAST_RATES, default=find_last_rates): bool,
+        vol.Optional(CONFIG_TARGET_INVERT_TARGET_RATES, default=invert_target_rates): bool,
       }),
       errors=errors
     )
@@ -259,6 +246,10 @@ class OptionsFlowHandler(OptionsFlow):
       supports_live_consumption = False
       if CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION in config:
         supports_live_consumption = config[CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION]
+
+      live_consumption_refresh_in_minutes = 1
+      if CONFIG_MAIN_LIVE_CONSUMPTION_REFRESH_IN_MINUTES in config:
+        live_consumption_refresh_in_minutes = config[CONFIG_MAIN_LIVE_CONSUMPTION_REFRESH_IN_MINUTES]
       
       calorific_value = 40
       if CONFIG_MAIN_CALORIFIC_VALUE in config:
@@ -276,6 +267,7 @@ class OptionsFlowHandler(OptionsFlow):
         step_id="user", data_schema=vol.Schema({
           vol.Required(CONFIG_MAIN_API_KEY, default=config[CONFIG_MAIN_API_KEY]): str,
           vol.Required(CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION, default=supports_live_consumption): bool,
+          vol.Required(CONFIG_MAIN_LIVE_CONSUMPTION_REFRESH_IN_MINUTES, default=live_consumption_refresh_in_minutes): cv.positive_int,
           vol.Required(CONFIG_MAIN_CALORIFIC_VALUE, default=calorific_value): cv.positive_float,
           electricity_price_cap_key: cv.positive_float,
           vol.Required(CONFIG_MAIN_CLEAR_ELECTRICITY_PRICE_CAP): bool,
@@ -316,7 +308,11 @@ class OptionsFlowHandler(OptionsFlow):
       config = dict(self._entry.data)
       config.update(user_input)
 
-      errors = validate_target_rate_sensor(config)
+      client = self.hass.data[DOMAIN][DATA_CLIENT]
+      account_info = await client.async_get_account(self.hass.data[DOMAIN][DATA_ACCOUNT_ID])
+
+      now = utcnow()
+      errors = validate_target_rate_config(user_input, account_info, now)
 
       if (len(errors) > 0):
         return await self.__async_setup_target_rate_schema(config, errors)

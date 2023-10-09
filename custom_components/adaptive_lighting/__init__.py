@@ -6,7 +6,6 @@ from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import CONF_SOURCE
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.reload import async_setup_reload_service
 import voluptuous as vol
 
 from .const import (
@@ -36,10 +35,13 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
+async def reload_configuration_yaml(event: dict, hass: HomeAssistant):
+    """Reload configuration.yaml."""
+    await hass.services.async_call("homeassistant", "check_config", {})
+
+
 async def async_setup(hass: HomeAssistant, config: dict[str, Any]):
     """Import integration from config."""
-    # This will reload any changes the user made to any YAML configurations.
-    await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
 
     if DOMAIN in config:
         for entry in config[DOMAIN]:
@@ -54,6 +56,10 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]):
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     """Set up the component."""
     data = hass.data.setdefault(DOMAIN, {})
+
+    # This will reload any changes the user made to any YAML configurations.
+    # Called during 'quick reload' or hass.reload_config_entry
+    hass.bus.async_listen("hass.config.entry_updated", reload_configuration_yaml)
 
     undo_listener = config_entry.add_update_listener(async_update_options)
     data[config_entry.entry_id] = {UNDO_UPDATE_LISTENER: undo_listener}
@@ -83,8 +89,7 @@ async def async_unload_entry(hass, config_entry: ConfigEntry) -> bool:
     if len(data) == 1 and ATTR_TURN_ON_OFF_LISTENER in data:
         # no more config_entries
         turn_on_off_listener = data.pop(ATTR_TURN_ON_OFF_LISTENER)
-        turn_on_off_listener.remove_listener()
-        turn_on_off_listener.remove_listener2()
+        turn_on_off_listener.disable()
 
     if not data:
         hass.data.pop(DOMAIN)

@@ -1,0 +1,19 @@
+---
+output:
+  - id: buzzer_output
+    platform: gpio
+    pin: $warning_beep_pin
+
+light:
+  - id: warning_beep
+    name: Warning Beep
+    platform: binary
+    output: buzzer_output
+    effects:
+      - strobe:
+          colors:
+            - state: true
+              duration: $warning_beep_pulse_time
+            - state: false
+              duration: $warning_beep_pulse_time
+    internal: $warning_beep_internal_only

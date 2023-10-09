@@ -6,10 +6,12 @@ on:
   pull_request:
     paths:
       - 'esphome/**'
+      - '.github/workflows/esphome**'
   push:
     branches: [main]
     paths:
       - 'esphome/**'
+      - '.github/workflows/esphome**'
   schedule:
     - cron: 0 12 * * *
 
@@ -21,7 +23,7 @@ jobs:
       file: ${{ steps.set-files.outputs.file }}  # generate output name file by using inner step output
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Get list of files
         id: set-files  # Give it an id to handle to get step outputs in the outputs key above
         run: echo "::set-output name=file::$(ls esphome/*.yaml | jq -R -s -c 'split("\n")[:-1]')"
@@ -36,7 +38,7 @@ jobs:
         file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: ESPHome Version
         uses: "docker://esphome/esphome:stable"
         with:
@@ -46,8 +48,11 @@ jobs:
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
-      - run: echo Compiling ${{matrix.file}}
-      - run: docker run --rm -v "${PWD}":/config esphome/esphome:stable compile ${{matrix.file}}
+      - name: Compile all ESPHome ${{matrix.file}}
+        uses: esphome/build-action@v1
+        with:
+          version: stable
+          yaml_file: ${{matrix.file}}
 
   loop-beta:
     name: Test ESPHome Beta firmware
@@ -58,7 +63,7 @@ jobs:
         file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: ESPHome Version
         uses: "docker://esphome/esphome:beta"
         with:
@@ -68,8 +73,11 @@ jobs:
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
-      - run: echo Compiling ${{matrix.file}}
-      - run: docker run --rm -v "${PWD}":/config esphome/esphome:beta compile ${{matrix.file}}
+      - name: Compile all ESPHome ${{matrix.file}}
+        uses: esphome/build-action@v1
+        with:
+          version: beta
+          yaml_file: ${{matrix.file}}
 
   loop-dev:
     name: Test ESPHome Dev firmware
@@ -80,7 +88,7 @@ jobs:
         file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: ESPHome Version
         uses: "docker://esphome/esphome:dev"
         with:
@@ -90,8 +98,11 @@ jobs:
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
-      - run: echo Compiling ${{matrix.file}}
-      - run: docker run --rm -v "${PWD}":/config esphome/esphome:dev compile ${{matrix.file}}
+      - name: Compile all ESPHome ${{matrix.file}}
+        uses: esphome/build-action@v1
+        with:
+          version: dev
+          yaml_file: ${{matrix.file}}
 
   # This is used by branch protections
   final:
@@ -100,4 +111,4 @@ jobs:
     needs: [loop-stable, loop-beta, loop-dev]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
