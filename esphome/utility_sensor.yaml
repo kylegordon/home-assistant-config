@@ -1,6 +1,0 @@
-substitutions:
-  device_name: utility_room_sensor
-  device_description: Utility Room Sensor
-  friendly_name: Utility Room Sensor
-
-<<: !include common/esp8266_dht_sensor_common.yaml

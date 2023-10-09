@@ -1,15 +1,14 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#  SPDX-License-Identifier: Apache-2.0
 """
 Alexa Services.
+
+SPDX-License-Identifier: Apache-2.0
 
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
 """
 
 import logging
-from typing import Callable, Dict, Text
+from typing import Callable
 
 from alexapy import AlexaAPI, AlexapyLoginError, hide_email
 from alexapy.errors import AlexapyConnectionError
@@ -50,10 +49,10 @@ LAST_CALL_UPDATE_SCHEMA = vol.Schema(
 class AlexaMediaServices:
     """Class that holds our services that should be published to hass."""
 
-    def __init__(self, hass, functions: Dict[Text, Callable]):
+    def __init__(self, hass, functions: dict[str, Callable]):
         """Initialize with self.hass."""
         self.hass = hass
-        self.functions: Dict[Text, Callable] = functions
+        self.functions: dict[str, Callable] = functions
 
     async def register(self):
         """Register services to hass."""
@@ -76,10 +75,12 @@ class AlexaMediaServices:
     async def unregister(self):
         """Register services to hass."""
         self.hass.services.async_remove(
-            DOMAIN, SERVICE_UPDATE_LAST_CALLED,
+            DOMAIN,
+            SERVICE_UPDATE_LAST_CALLED,
         )
         self.hass.services.async_remove(
-            DOMAIN, SERVICE_CLEAR_HISTORY,
+            DOMAIN,
+            SERVICE_CLEAR_HISTORY,
         )
         self.hass.services.async_remove(DOMAIN, SERVICE_FORCE_LOGOUT)
 
@@ -157,8 +158,8 @@ class AlexaMediaServices:
     async def last_call_handler(self, call):
         """Handle last call service request.
 
-        Args:
-        call.ATTR_EMAIL: List of case-sensitive Alexa email addresses. If None
+        Args
+        call: List of case-sensitive Alexa email addresses. If None
                             all accounts are updated.
 
         """

@@ -1,0 +1,21 @@
+---
+alias: Aurora Alert
+trigger:
+  platform: numeric_state
+  entity_id: sensor.aurora_visibility
+  above: 1
+action:
+  - service: notify.alexa_media_everywhere
+    data:
+      message: "Alert! The Aurora Borealis might be visible right now!"
+      data:
+        type: announce
+        # method: all
+  - service: notify.email_kyle
+    data:
+      title: "Aurora Alert"
+      message: "Alert! The Aurora Borealis might be visible right now!"
+  - service: notify.mobile_app_nothing_phone_1
+    data:
+      title: "Aurora Alert"
+      message: "Alert! The Aurora Borealis might be visible right now!"

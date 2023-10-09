@@ -9,4 +9,3 @@ kyle_phone_finder:
       name: Lost Phone
       message: Ringing Kyle's Phone
   - service: shell_command.kyle_finder
-

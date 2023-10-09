@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: esp32-ble-tracker-1
+  device_description: ESP32 BLE Tracker 1
+  friendly_name: ESP32 BLE Tracker 1
+
+<<: !include common/esp32-ble-tracker.yaml
