@@ -11,7 +11,7 @@
 - platform: ping
   hosts:
     charlotte_phone: 172.24.32.144
-    kyle_phone: 172.24.32.135
+#    kyle_phone: 172.24.32.135
 # - platform: owntracks
 #   max_gps_accuracy: 250
 
@@ -34,3 +34,5 @@
   community: !secret snmp_community
   baseoid: 1.3.6.1.2.1.4.22.1.2
   track_new_devices: false
+
+- platform: bluetooth_le_tracker

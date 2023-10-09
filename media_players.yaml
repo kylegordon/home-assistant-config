@@ -11,7 +11,6 @@
     data:
       mac: 6c:3b:e5:25:8b:29
       broadcast_address: 172.24.32.255
-- platform: openhome
 
 - platform: smartir
   name: "Living Room Television"

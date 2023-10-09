@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from json import JSONDecodeError
 import logging
 import time
-from typing import Optional, Text
+from typing import Optional
 
 from alexapy import (
     AlexaAPI,
@@ -182,6 +182,7 @@ async def async_setup(hass, config, discovery_info=None):
 
 # @retry_async(limit=5, delay=5, catch_exceptions=True)
 async def async_setup_entry(hass, config_entry):
+    # noqa: MC0001
     """Set up Alexa Media Player as config entry."""
 
     async def close_alexa_media(event=None) -> None:
@@ -192,6 +193,7 @@ async def async_setup_entry(hass, config_entry):
                 await close_connections(hass, email)
 
     async def complete_startup(event=None) -> None:
+        # pylint: disable=unused-argument
         """Run final tasks after startup."""
         _LOGGER.debug("Completing remaining startup tasks.")
         await asyncio.sleep(10)
@@ -263,6 +265,7 @@ async def async_setup_entry(hass, config_entry):
                 "switch": {},
                 "guard": [],
                 "light": [],
+                "binary_sensor": [],
                 "temperature": [],
             },
             "entities": {
@@ -270,6 +273,7 @@ async def async_setup_entry(hass, config_entry):
                 "switch": {},
                 "sensor": {},
                 "light": [],
+                "binary_sensor": [],
                 "alarm_control_panel": {},
             },
             "excluded": {},
@@ -313,6 +317,7 @@ async def async_setup_entry(hass, config_entry):
         ),
     )
     hass.data[DATA_ALEXAMEDIA]["accounts"][email]["login_obj"] = login
+    hass.data[DATA_ALEXAMEDIA]["accounts"][email]["last_push_activity"] = 0
     if not hass.data[DATA_ALEXAMEDIA]["accounts"][email]["second_account_index"]:
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, close_alexa_media)
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, complete_startup)
@@ -329,9 +334,11 @@ async def async_setup_entry(hass, config_entry):
 
 
 async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
+    # pylint: disable=too-many-statements,too-many-locals
     """Set up a alexa api based on host parameter."""
 
     async def async_update_data() -> Optional[AlexaEntityData]:
+        # noqa pylint: disable=too-many-branches
         """Fetch data from API endpoint.
 
         This is the place to pre-process the data to lookup tables
@@ -397,9 +404,19 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             if temp and temp.enabled:
                 entities_to_monitor.add(temp.alexa_entity_id)
 
+            temp = sensor.get("Air_Quality")
+            if temp and temp.enabled:
+                entities_to_monitor.add(temp.alexa_entity_id)
+
         for light in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"]["light"]:
             if light.enabled:
                 entities_to_monitor.add(light.alexa_entity_id)
+
+        for binary_sensor in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
+            "binary_sensor"
+        ]:
+            if binary_sensor.enabled:
+                entities_to_monitor.add(binary_sensor.alexa_entity_id)
 
         for guard in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
             "alarm_control_panel"
@@ -439,8 +456,8 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
 
                     # First run is a special case. Get the state of all entities(including disabled)
                     # This ensures all entities have state during startup without needing to request coordinator refresh
-                    for typeOfEntity, entities in alexa_entities.items():
-                        if typeOfEntity == "guard" or extended_entity_discovery:
+                    for type_of_entity, entities in alexa_entities.items():
+                        if type_of_entity == "guard" or extended_entity_discovery:
                             for entity in entities:
                                 entities_to_monitor.add(entity.get("id"))
                     entity_state = await get_entity_data(
@@ -476,7 +493,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                 )
             return
         except BaseException as err:
-            raise UpdateFailed(f"Error communicating with API: {err}")
+            raise UpdateFailed(f"Error communicating with API: {err}") from err
 
         new_alexa_clients = []  # list of newly discovered device names
         exclude_filter = []
@@ -524,13 +541,13 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                 _LOGGER.debug("Excluding %s for lacking capability", dev_name)
                 continue
 
-            if "bluetoothStates" in bluetooth:
+            if bluetooth is not None and "bluetoothStates" in bluetooth:
                 for b_state in bluetooth["bluetoothStates"]:
                     if serial == b_state["deviceSerialNumber"]:
                         device["bluetooth_state"] = b_state
                         break
 
-            if "devicePreferences" in preferences:
+            if preferences is not None and "devicePreferences" in preferences:
                 for dev in preferences["devicePreferences"]:
                     if dev["deviceSerialNumber"] == serial:
                         device["locale"] = dev["locale"]
@@ -543,7 +560,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                         )
                         break
 
-            if "doNotDisturbDeviceStatusList" in dnd:
+            if dnd is not None and "doNotDisturbDeviceStatusList" in dnd:
                 for dev in dnd["doNotDisturbDeviceStatusList"]:
                     if dev["deviceSerialNumber"] == serial:
                         device["dnd"] = dev["enabled"]
@@ -620,7 +637,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         for device_entry in dr.async_entries_for_config_entry(
             device_registry, config_entry.entry_id
         ):
-            for (_, identifier) in device_entry.identifiers:
+            for _, identifier in device_entry.identifiers:
                 if identifier in hass.data[DATA_ALEXAMEDIA]["accounts"][email][
                     "devices"
                 ]["media_player"].keys() or identifier in map(
@@ -656,46 +673,53 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
     async def process_notifications(login_obj, raw_notifications=None):
         """Process raw notifications json."""
         if not raw_notifications:
+            await asyncio.sleep(4)
             raw_notifications = await AlexaAPI.get_notifications(login_obj)
         email: str = login_obj.email
         previous = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get(
             "notifications", {}
         )
         notifications = {"process_timestamp": dt.utcnow()}
-        for notification in raw_notifications:
-            n_dev_id = notification.get("deviceSerialNumber")
-            if n_dev_id is None:
-                # skip notifications untied to a device for now
-                # https://github.com/custom-components/alexa_media_player/issues/633#issuecomment-610705651
-                continue
-            n_type = notification.get("type")
-            if n_type is None:
-                continue
-            if n_type == "MusicAlarm":
-                n_type = "Alarm"
-            n_id = notification["notificationIndex"]
-            if n_type == "Alarm":
-                n_date = notification.get("originalDate")
-                n_time = notification.get("originalTime")
-                notification["date_time"] = (
-                    f"{n_date} {n_time}" if n_date and n_time else None
-                )
-                previous_alarm = previous.get(n_dev_id, {}).get("Alarm", {}).get(n_id)
-                if previous_alarm and alarm_just_dismissed(
-                    notification,
-                    previous_alarm.get("status"),
-                    previous_alarm.get("version"),
-                ):
-                    hass.bus.async_fire(
-                        "alexa_media_alarm_dismissal_event",
-                        event_data={"device": {"id": n_dev_id}, "event": notification},
+        if raw_notifications is not None:
+            for notification in raw_notifications:
+                n_dev_id = notification.get("deviceSerialNumber")
+                if n_dev_id is None:
+                    # skip notifications untied to a device for now
+                    # https://github.com/custom-components/alexa_media_player/issues/633#issuecomment-610705651
+                    continue
+                n_type = notification.get("type")
+                if n_type is None:
+                    continue
+                if n_type == "MusicAlarm":
+                    n_type = "Alarm"
+                n_id = notification["notificationIndex"]
+                if n_type == "Alarm":
+                    n_date = notification.get("originalDate")
+                    n_time = notification.get("originalTime")
+                    notification["date_time"] = (
+                        f"{n_date} {n_time}" if n_date and n_time else None
                     )
+                    previous_alarm = (
+                        previous.get(n_dev_id, {}).get("Alarm", {}).get(n_id)
+                    )
+                    if previous_alarm and alarm_just_dismissed(
+                        notification,
+                        previous_alarm.get("status"),
+                        previous_alarm.get("version"),
+                    ):
+                        hass.bus.async_fire(
+                            "alexa_media_alarm_dismissal_event",
+                            event_data={
+                                "device": {"id": n_dev_id},
+                                "event": notification,
+                            },
+                        )
 
-            if n_dev_id not in notifications:
-                notifications[n_dev_id] = {}
-            if n_type not in notifications[n_dev_id]:
-                notifications[n_dev_id][n_type] = {}
-            notifications[n_dev_id][n_type][n_id] = notification
+                if n_dev_id not in notifications:
+                    notifications[n_dev_id] = {}
+                if n_type not in notifications[n_dev_id]:
+                    notifications[n_dev_id][n_type] = {}
+                notifications[n_dev_id][n_type][n_id] = notification
         hass.data[DATA_ALEXAMEDIA]["accounts"][email]["notifications"] = notifications
         _LOGGER.debug(
             "%s: Updated %s notifications for %s devices at %s",
@@ -758,7 +782,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             "media_player"
         ][device_serial]
 
-        if "bluetoothStates" in bluetooth:
+        if bluetooth is not None and "bluetoothStates" in bluetooth:
             for b_state in bluetooth["bluetoothStates"]:
                 if device_serial == b_state["deviceSerialNumber"]:
                     # _LOGGER.debug("%s: setting value for: %s to %s",
@@ -781,7 +805,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         """Update the dnd state on ws dnd combo event."""
         dnd = await AlexaAPI.get_dnd_state(login_obj)
 
-        if "doNotDisturbDeviceStatusList" in dnd:
+        if dnd is not None and "doNotDisturbDeviceStatusList" in dnd:
             async_dispatcher_send(
                 hass,
                 f"{DOMAIN}_{hide_email(email)}"[0:32],
@@ -833,6 +857,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         return websocket
 
     async def ws_handler(message_obj):
+        # pylint: disable=too-many-branches
         """Handle websocket messages.
 
         This allows push notifications from Alexa to update last_called
@@ -857,7 +882,6 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         ]
         coord = hass.data[DATA_ALEXAMEDIA]["accounts"][email]["coordinator"]
         if command and json_payload:
-
             _LOGGER.debug(
                 "%s: Received websocket command: %s : %s",
                 hide_email(email),
@@ -885,23 +909,36 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             else:
                 serial = None
             if command == "PUSH_ACTIVITY":
-                #  Last_Alexa Updated
-                last_called = {
-                    "serialNumber": serial,
-                    "timestamp": json_payload["timestamp"],
-                }
-                try:
-                    await coord.async_request_refresh()
-                    if serial and serial in existing_serials:
-                        await update_last_called(login_obj, last_called)
-                    async_dispatcher_send(
-                        hass,
-                        f"{DOMAIN}_{hide_email(email)}"[0:32],
-                        {"push_activity": json_payload},
-                    )
-                except (AlexapyConnectionError):
-                    # Catch case where activities doesn't report valid json
-                    pass
+                if (
+                    datetime.now().timestamp() * 1000
+                    - hass.data[DATA_ALEXAMEDIA]["accounts"][email][
+                        "last_push_activity"
+                    ]
+                    > 100
+                ):
+                    #  Last_Alexa Updated
+                    last_called = {
+                        "serialNumber": serial,
+                        "timestamp": json_payload["timestamp"],
+                    }
+                    try:
+                        await coord.async_request_refresh()
+                        if serial and serial in existing_serials:
+                            await update_last_called(login_obj, last_called)
+                        async_dispatcher_send(
+                            hass,
+                            f"{DOMAIN}_{hide_email(email)}"[0:32],
+                            {"push_activity": json_payload},
+                        )
+                    except AlexapyConnectionError:
+                        # Catch case where activities doesn't report valid json
+                        pass
+                else:
+                    # Duplicate PUSH_ACTIVITY message
+                    _LOGGER.debug("Skipped processing of double PUSH_ACTIVITY message")
+                hass.data[DATA_ALEXAMEDIA]["accounts"][email]["last_push_activity"] = (
+                    datetime.now().timestamp() * 1000
+                )
             elif command in (
                 "PUSH_AUDIO_PLAYER_STATE",
                 "PUSH_MEDIA_CHANGE",

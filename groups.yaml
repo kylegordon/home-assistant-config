@@ -4,10 +4,8 @@ default_view:
   entities:
     - group.people_status
     - group.modes
-    - sensor.electricity_energy_usage
     - sensor.house_average_temperature
     - sensor.house_average_humidity
-    - calendar.holiday_mode
     - calendar.next_bin
     - sensor.next_bin
     - sensor.tmo
@@ -27,8 +25,7 @@ kitchen:
   entities:
     - sensor.kitchen_temperature
     - sensor.kitchen_esp8266_signal_level
-    - binary_sensor.kitchen_motion
-    - sensor.kitchen_motion
+    - binary_sensor.kitchen_motion_occupancy
     - light.kitchen_cabinets
     - light.kitchen
     - media_player.kitchen
@@ -41,8 +38,8 @@ front_hall:
     - sensor.front_hall_sensor_humidity
     - sensor.front_hall_sensor_signal_level
     - sensor.front_hall_lightlevel
-    - binary_sensor.front_hall_motion
-    - binary_sensor.front_hall_door
+    - binary_sensor.front_hall_motion_occupancy
+    - binary_sensor.front_hall_door_contact
 
 living_room:
   name: Living Room
@@ -51,8 +48,7 @@ living_room:
     - media_player.living_room_kodi
     - media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
     - switch.tellybox
-    - binary_sensor.living_room_motion
-    - sensor.living_room_motion
+    - binary_sensor.living_room_motion_occupancy
     - sensor.living_room_temperature
     - sensor.living_room_pressure
     - sensor.living_room_humidity
@@ -60,8 +56,8 @@ living_room:
 living_room_lights:
   name: Living Room Lights
   entities:
-    - light.uplighter
-    - light.sofa_overhead
+    - light.living_room_1
+    - light.living_room_2
     - light.edison_lamp
     - light.lava_lamp
     - light.star_burst
@@ -95,7 +91,7 @@ ensuite:
   name: Ensuite
   entities:
     - sensor.ensuite_lightlevel
-    - binary_sensor.ensuite_motion
+    - binary_sensor.ensuite_motion_occupancy
     - light.ensuite_entrance
     - light.ensuite_towels
     - light.ensuite_shower
@@ -117,9 +113,9 @@ bedroom_2:
   name: Guest bedroom
   entities:
     - light.guest_bedroom
-    - sensor.guest_room_temperature
-    - sensor.guest_room_pressure
-    - sensor.guest_room_humidity
+    - sensor.guest_room_multi_sensor_temperature
+    - sensor.guest_room_multi_sensor_pressure
+    - sensor.guest_room_multi_sensor_humidity
 
 bedroom_3:
   name: Study
@@ -160,8 +156,8 @@ study_lighting:
 hall:
   name: Hall lights
   entities:
-    - light.hall_bathroom
-    - light.hall_bedrooms
+    - light.hallway_bathroom
+    - light.hallway_bedrooms
 
 bathroom:
   name: Bathroom
@@ -171,23 +167,23 @@ bathroom:
 hall_view:
   name: Hall
   entities:
-    - group.hall
-    - binary_sensor.hall_rooms_motion
+    - light.hall
+    - binary_sensor.hall_rooms_motion_occupancy
     - sensor.hall_rooms_motion
-    - binary_sensor.hall_door_motion
-    - binary_sensor.boot_room_motion
+    - binary_sensor.hall_door_motion_occupancy
+    - binary_sensor.boot_room_motion_occupancy
     - sensor.hall_door_motion
-    - sensor.hall_temperature
-    - sensor.hall_humidity
-    - sensor.hall_pressure
+    - sensor.hallway_multi_sensor_temperature
+    - sensor.hallway_multi_sensor_humidity
+    - sensor.hallway_multi_sensor_pressure
     - binary_sensor.boot_room_door
 
 outside:
   name: Outside
   entities:
     - sun.sun
-    - binary_sensor.outside_front_motion
-    - binary_sensor.outside_driveway_motion
+    - binary_sensor.back_door_pir
+    - binary_sensor.driveway_pir
     - binary_sensor.front_door_motion
     - group.climate
     - group.outside_lights
@@ -207,6 +203,8 @@ outside_lights:
     - light.back_floodlights
     - light.mini_deck_floodlight
     - light.decking_lights
+    - light.front_door_dome
+    - light.car_port
 
 climate:
   name: Climate

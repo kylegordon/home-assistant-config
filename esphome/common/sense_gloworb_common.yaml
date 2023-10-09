@@ -1,3 +1,4 @@
+---
 packages:
   common: !include common.yaml
 
@@ -26,6 +27,11 @@ output:
     pin: D4
     inverted: true
 
+e131:
+  method: multicast  # default: register E1.31 to Multicast group
+
+wled:
+
 light:
   # ... and then make a light out of it.
   - platform: monochromatic
@@ -39,8 +45,21 @@ light:
     num_leds: 12
     name: "${friendly_name} Ring"
     effects:
+      - e131:
+          universe: 1
+          channels: RGB
+      - wled:
       - strobe:
       - flicker:
+      - pulse:
+      - pulse:
+          name: "Fast Pulse"
+          transition_length: 0.5s
+          update_interval: 0.5s
+      - pulse:
+          name: "Slow Pulse"
+          # transition_length: 1s      # defaults to 1s
+          update_interval: 2s
       - addressable_rainbow:
       - addressable_color_wipe:
       - addressable_scan:
@@ -53,16 +72,16 @@ light:
 interval:
   - interval: 500ms
     then:
-    - if:
-        condition:
-          not:
-            wifi.connected:
-        then:
-          - light.turn_on:
-              id: blue_led_light
-              brightness: 50%
-              transition_length: 0s
-          - delay: 250ms
-          - light.turn_off:
-              id: blue_led_light
-              transition_length: 250ms
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 50%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 250ms
