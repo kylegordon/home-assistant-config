@@ -1,3 +1,0 @@
-deconz_helper:
-    module: deconz_helper
-    class: DeconzHelper

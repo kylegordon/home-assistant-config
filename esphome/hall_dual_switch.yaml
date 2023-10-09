@@ -3,4 +3,4 @@ substitutions:
   device_description: Hall Dual Lightswitch
   friendly_name: Hall Dual Switch
 
-<<: !include common/sonoff_dual_touch_switch_common.yaml
+<<: !include common/sonoff_t2_r2_touch_switch_common.yaml

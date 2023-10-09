@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: tin_hut_shelf_lights_bench
+  device_description: Tin Hut Shelf Light Bench
+  friendly_name: Tin Hut Shelf Lights Bench
+
+<<: !include common/h801_common.yaml
