@@ -1,6 +1,0 @@
-substitutions:
-  device_name: shower_pump
-  device_description: Shower Pump Power Plug
-  friendly_name: Shower Pump Power Plug
-
-<<: !include common/teckin_sp23_common.yaml
