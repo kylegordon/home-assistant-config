@@ -1,3 +1,4 @@
+---
 - platform: generic_thermostat
   name: House
   heater: input_boolean.call_for_rad_heat
