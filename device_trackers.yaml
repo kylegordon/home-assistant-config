@@ -1,3 +1,4 @@
+---
 # Don't enable router tracking of Owntracks devices
 # If loss of wifi, user will be reported as 'away'
 # but Owntracks will not have reported a location.
