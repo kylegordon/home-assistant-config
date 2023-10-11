@@ -3,9 +3,10 @@ substitutions:
   device_name: tin_hut_shelf_lights_left
   device_description: Tin Hut Shelf Light Left
   friendly_name: Tin Hut Shelf Lights Left
+  type: rgbww
   red: GPIO15
-  green: GPIO13
-  blue: GPIO12
+  green: GPIO12
+  blue: GPIO13
   cold_white: GPIO14
   warm_white: GPIO04
 
