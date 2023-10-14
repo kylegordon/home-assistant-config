@@ -45,7 +45,7 @@ output:
 
 # RGB, RGBW, RGBWW also available
 light:
-  - platform: ${type}
+  - platform: rgbww
     name: ${friendly_name}
     red: pwm_r
     green: pwm_g
