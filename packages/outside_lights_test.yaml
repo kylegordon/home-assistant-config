@@ -1,0 +1,35 @@
+---
+switch:
+  - platform: template
+    switches:
+      outside_rgb_white_channels:
+        unique_id: outside_rgb_white_channels
+        value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | int > 0
+                            or state_attr('light.decking_lights', 'rgbww_color')[4] | int > 0 %}
+                          true
+                        {% else %}
+                          false
+                        {% endif %}"
+        turn_on:
+          service: light.turn_on
+          # Set the white channel values to maximum
+          data:
+            entity_id: light.decking_lights
+            rgbww_color:
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"
+              - 255
+              - 255
+        turn_off:
+          service: light.turn_on
+          # Set the white channel values to zero
+          data:
+            entity_id: light.decking_lights
+            rgbww_color:
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"
+              - 0
+              - 0
+
