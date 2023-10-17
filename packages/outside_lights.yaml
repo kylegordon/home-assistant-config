@@ -3,8 +3,10 @@ switch:
   - platform: template
     switches:
       outside_rgb_white_channels:
+        friendly_name: Outside White Channels
         unique_id: outside_rgb_white_channels
         # yamllint disable-line rule:line-length
+        icon_template: mdi:lightbulb-group
         value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | int > 0
                             or state_attr('light.decking_lights', 'rgbww_color')[4] | int > 0 %}
                           true
