@@ -4,8 +4,9 @@ switch:
     switches:
       outside_rgb_white_channels:
         unique_id: outside_rgb_white_channels
+        # yamllint disable-line rule:line-length
         value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | int > 0
-                            or state_attr('light.decking_lights', 'rgbww_color')[4] | int > 0 %}
+                            or state_attr('light.decking_lights', 'rgbww_color')[4] | int > 0 %}  # yamllint disable-line rule:line-length
                           true
                         {% else %}
                           false
@@ -16,9 +17,9 @@ switch:
           data:
             entity_id: light.decking_lights
             rgbww_color:
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
               - 255
               - 255
         turn_off:
@@ -27,9 +28,9 @@ switch:
           data:
             entity_id: light.decking_lights
             rgbww_color:
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
               - 0
               - 0
 
@@ -108,9 +109,9 @@ automation:
         data:
           entity_id: light.decking_lights
           rgbww_color:
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
             - 255
             - 255
       # If this evaluates to false, the action will stop here.
@@ -148,8 +149,8 @@ automation:
         data:
           entity_id: light.decking_lights
           rgbww_color:
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
             - 0
             - 0
