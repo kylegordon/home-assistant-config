@@ -1,11 +1,4 @@
-# Don't enable router tracking of Owntracks devices
-# If loss of wifi, user will be reported as 'away'
-# but Owntracks will not have reported a location.
-
-# Monitor access point clients
-# Remember OpenWRT SNMP only returns ARP table data
-# Populate it with a periodic fping -g 172.24.32.0/24 on each device
-
+---
 - platform: snmp
   host: 172.24.32.14
   community: !secret snmp_community
