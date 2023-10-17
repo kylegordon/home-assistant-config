@@ -1,6 +1,10 @@
+---
 substitutions:
   device_name: kitchen_cabinets
   device_description: Kitchen cabinets
   friendly_name: Kitchen cabinets
+  red: GPIO15
+  green: GPIO13
+  blue: GPIO12
 
-<<: !include common/h801_common.yaml
+<<: !include common/h801_rgb_common.yaml
