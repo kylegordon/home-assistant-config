@@ -1,0 +1,11 @@
+---
+substitutions:
+  project_name: localbytes.plug-pm
+  package_import_url: github://kylegordon/home-assistant-config/esphome/common/localbytes-plug-pm-common.yaml@main
+  binary_sensor_pin: GPIO3
+  switch_pin: GPIO14
+  sensor_sel_pin: GPIO12
+  sensor_cf_pin: GPIO4
+  sensor_cf1_pin: GPIO5
+  output_pin: GPIO13
+  status_led_pin: GPIO0

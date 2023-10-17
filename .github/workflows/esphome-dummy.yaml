@@ -8,10 +8,12 @@ on:
   pull_request:
     paths-ignore:
       - 'esphome/**'
+      - '.github/workflows/esphome**'
   push:
     branches: [main]
     paths-ignore:
       - 'esphome/**'
+      - '.github/workflows/esphome**'
   schedule:
     - cron: 0 12 * * *
 

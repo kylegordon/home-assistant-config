@@ -28,12 +28,14 @@ ATTR_UPDATED_AT = "updated_at"
 
 # config flow
 CONF_LOCAL_KEY = "local_key"
+CONF_ENABLE_DEBUG = "enable_debug"
 CONF_PROTOCOL_VERSION = "protocol_version"
 CONF_DPS_STRINGS = "dps_strings"
 CONF_MODEL = "model"
 CONF_PRODUCT_KEY = "product_key"
 CONF_PRODUCT_NAME = "product_name"
 CONF_USER_ID = "user_id"
+CONF_ENABLE_ADD_ENTITIES = "add_entities"
 
 
 CONF_ACTION = "action"

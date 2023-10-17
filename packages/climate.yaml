@@ -5,21 +5,14 @@
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
 
 binary_sensor:
-  - platform: workday
-    name: Workday
-    country: GB
-  - platform: workday
-    name: Workday tomorrow
-    country: GB
-    days_offset: 1
   - platform: group
     # Openings that should prevent the heating from coming on
     name: Climate Openings
     device_class: opening
     entities:
-      - binary_sensor.back_door
-      - binary_sensor.front_door
-      - binary_sensor.patio_door
+      # - binary_sensor.back_door
+      # - binary_sensor.front_door
+      # - binary_sensor.patio_door
       - binary_sensor.ensuite_window
       - binary_sensor.master_bedroom_window
       - binary_sensor.guest_bedroom_window
@@ -28,7 +21,7 @@ binary_sensor:
       - binary_sensor.bathroom_window
       - binary_sensor.dining_table_window
       - binary_sensor.kitchen_window
-      - binary_sensor.utility_room_window
+      # - binary_sensor.utility_room_window
 
 group:
   call_for_heat:
@@ -98,11 +91,7 @@ automation:
     action:
       - service: climate.set_preset_mode
         data:
-          entity_id: climate.house
-          preset_mode: "away"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
+          entity_id: all
           preset_mode: "away"
       - service: logbook.log
         data_template:
@@ -123,10 +112,6 @@ automation:
         data:
           entity_id: climate.house
           preset_mode: "none"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -141,11 +126,7 @@ automation:
     action:
       - service: climate.set_preset_mode
         data:
-          entity_id: climate.house
-          preset_mode: "none"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
+          entity_id: all
           preset_mode: "none"
       - service: logbook.log
         data_template:
@@ -170,10 +151,6 @@ automation:
         data:
           entity_id: climate.house
           temperature: 17
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "away"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -196,10 +173,6 @@ automation:
         data:
           entity_id: climate.house
           temperature: 17
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "Away"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -222,10 +195,6 @@ automation:
         data:
           entity_id: climate.house
           temperature: 20
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
       - service: logbook.log
         data_template:
           name: EVENT
@@ -248,10 +217,6 @@ automation:
         data:
           entity_id: climate.house
           temperature: 20
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
       - service: logbook.log
         data_template:
           name: EVENT

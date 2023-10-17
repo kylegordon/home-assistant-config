@@ -27,9 +27,9 @@ automation:
   - alias: Control Blinds
     trigger:
       - platform: mqtt
-        topic: zigbee2mqtt/zigbee2mqtt/Blinds Remote 2/action
+        topic: "zigbee2mqtt/Blind Remote 2/action"
       - platform: mqtt
-        topic: "zigbee2mqtt/zigbee2mqtt/Blinds Remote 2/action"
+        topic: "zigbee2mqtt/Blind Remote 1/action"
 
     action:
       - variables:

@@ -27,10 +27,14 @@ output:
     inverted: true
   - platform: esp8266_pwm
     id: warm
+    min_power: 0.05
+    zero_means_zero: true
     pin: D2
     inverted: false
   - platform: esp8266_pwm
     id: cold
+    min_power: 0.05
+    zero_means_zero: true
     pin: D3
     inverted: false
 

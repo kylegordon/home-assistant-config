@@ -1,0 +1,7 @@
+---
+substitutions:
+  name: "konnected_1"
+  friendly_name: "Konnected Alarm Panel 1"
+
+<<: !include common/alarm-panel-esp8266.yaml
+<<: !include common/packages/core-esp8266.yaml

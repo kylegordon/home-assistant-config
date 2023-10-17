@@ -4,7 +4,7 @@ automation:
     initial_state: true
     trigger:
       - platform: state
-        entity_id: binary_sensor.garage_motion
+        entity_id: binary_sensor.garage_motion_occupancy
         to: 'on'
         from: 'off'
     action:
@@ -14,7 +14,7 @@ automation:
   - alias: Garage motion - 10 minute timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.garage_motion
+        entity_id: binary_sensor.garage_motion_occupancy
         to: 'off'
         for:
           minutes: 10
