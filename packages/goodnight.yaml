@@ -13,6 +13,7 @@ input_boolean:
 
 automation:
   - alias: Goodnight process
+    id: goodnight_process
     trigger:
       - platform: state
         entity_id: input_boolean.goodnight_process
