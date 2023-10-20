@@ -1,3 +1,4 @@
+---
 restart_ha:
   sequence:
   - service: logbook.log
