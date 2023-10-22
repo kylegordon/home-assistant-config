@@ -1,3 +1,4 @@
+---
 alias: "Away"
 trigger:
   - platform: state

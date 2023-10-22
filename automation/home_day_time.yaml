@@ -1,3 +1,4 @@
+---
 alias: "Home Day Time"
 trigger:
   - platform: state

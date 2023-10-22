@@ -1,3 +1,4 @@
+---
 alias: "Chicken things"
 trigger:
 #  - platform: numeric_state

@@ -1,3 +1,4 @@
+---
 alias: Mark Person as just arrived
 trigger:
   - platform: state
