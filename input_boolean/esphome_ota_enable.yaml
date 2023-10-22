@@ -1,3 +1,4 @@
+---
 name: ESPHome OTA Mode
 icon: mdi:AccessPointPlus
 initial: false
