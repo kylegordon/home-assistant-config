@@ -1,3 +1,4 @@
+---
 automation:
   - alias: "UPS Not OK"
     trigger:
