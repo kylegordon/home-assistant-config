@@ -1,3 +1,4 @@
+---
 rest_command:
   new_version_github_issue:
     url: https://api.github.com/repos/kylegordon/home-assistant-config/issues
