@@ -1,3 +1,4 @@
+---
 alias: "Home in the dark"
 trigger:
   - platform: state

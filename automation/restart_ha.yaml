@@ -1,3 +1,4 @@
+---
 alias: "Restart HA"
 trigger:
   platform: state

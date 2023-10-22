@@ -1,3 +1,4 @@
+---
 alias: 'Bin notification'
 trigger:
   - platform: template

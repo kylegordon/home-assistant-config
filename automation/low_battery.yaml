@@ -1,3 +1,4 @@
+---
 alias: "Low battery RGB lamp"
 trigger:
   - platform: numeric_state
