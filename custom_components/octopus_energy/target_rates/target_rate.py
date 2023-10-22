@@ -1,6 +1,5 @@
 import logging
 
-import re
 import voluptuous as vol
 
 from homeassistant.core import HomeAssistant, callback
@@ -13,6 +12,7 @@ from homeassistant.helpers.update_coordinator import (
 from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
 )
+from homeassistant.helpers.restore_state import RestoreEntity
 
 from homeassistant.helpers import translation
 
@@ -29,10 +29,6 @@ from ..const import (
   CONFIG_TARGET_OFFSET,
   DATA_ACCOUNT,
   DOMAIN,
-  
-  REGEX_HOURS,
-  REGEX_TIME,
-  REGEX_OFFSET_PARTS,
 )
 
 from . import (
@@ -41,18 +37,18 @@ from . import (
   get_target_rate_info
 )
 
-from .config import validate_target_rate_config
+from ..config.target_rates import validate_target_rate_config
 from ..target_rates.repairs import check_for_errors
 
 _LOGGER = logging.getLogger(__name__)
 
-class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity):
+class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity, RestoreEntity):
   """Sensor for calculating when a target should be turned on or off."""
 
   def __init__(self, hass: HomeAssistant, coordinator, config, is_export):
     """Init sensor."""
     # Pass coordinator to base class
-    super().__init__(coordinator)
+    CoordinatorEntity.__init__(self, coordinator)
 
     self._state = None
     self._config = config
@@ -120,15 +116,7 @@ class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity):
       
       if all_rates_in_past:
         if self.coordinator is not None and self.coordinator.data is not None:
-          all_rates = self.coordinator.data
-          
-          # Retrieve our rates. For backwards compatibility, if CONFIG_TARGET_MPAN is not set, then pick the first set
-          if CONFIG_TARGET_MPAN not in self._config:
-            _LOGGER.debug(f"'CONFIG_TARGET_MPAN' not set.'{len(all_rates)}' rates available. Retrieving the first rate.")
-            all_rates = next(iter(all_rates.values()))
-          else:
-            _LOGGER.debug(f"Retrieving rates for '{self._config[CONFIG_TARGET_MPAN]}'")
-            all_rates = all_rates.get(self._config[CONFIG_TARGET_MPAN])
+          all_rates = self.coordinator.data.rates
         else:
           _LOGGER.debug(f"Rate data missing. Setting to empty array")
           all_rates = []
@@ -207,6 +195,20 @@ class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity):
     self._state = active_result["is_active"]
 
     return self._state
+  
+  async def async_added_to_hass(self):
+    """Call when entity about to be added to hass."""
+    # If not None, we got an initial value.
+    await super().async_added_to_hass()
+    state = await self.async_get_last_state()
+    
+    if state is not None and self._state is None:
+      self._state = state.state
+      self._attributes = {}
+      for x in state.attributes.keys():
+        self._attributes[x] = state.attributes[x]
+    
+      _LOGGER.debug(f'Restored OctopusEnergyTargetRate state: {self._state}')
 
   @callback
   async def async_update_config(self, target_start_time=None, target_end_time=None, target_hours=None, target_offset=None):

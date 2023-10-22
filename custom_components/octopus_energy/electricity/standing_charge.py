@@ -3,7 +3,8 @@ import logging
 from homeassistant.core import HomeAssistant
 
 from homeassistant.components.sensor import (
-    SensorDeviceClass
+  RestoreSensor,
+  SensorDeviceClass,
 )
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
@@ -13,7 +14,7 @@ from .base import (OctopusEnergyElectricitySensor)
 
 _LOGGER = logging.getLogger(__name__)
 
-class OctopusEnergyElectricityCurrentStandingCharge(CoordinatorEntity, OctopusEnergyElectricitySensor):
+class OctopusEnergyElectricityCurrentStandingCharge(CoordinatorEntity, OctopusEnergyElectricitySensor, RestoreSensor):
   """Sensor for displaying the current standing charge."""
 
   def __init__(self, hass: HomeAssistant, coordinator, tariff_code, meter, point):
@@ -61,7 +62,7 @@ class OctopusEnergyElectricityCurrentStandingCharge(CoordinatorEntity, OctopusEn
     """Retrieve the latest electricity standing charge"""
     _LOGGER.debug('Updating OctopusEnergyElectricityCurrentStandingCharge')
 
-    standard_charge_result = self.coordinator.data[self._mpan] if self.coordinator is not None and self.coordinator.data is not None and self._mpan in self.coordinator.data else None
+    standard_charge_result = self.coordinator.data.standing_charge if self.coordinator is not None and self.coordinator.data is not None else None
     
     if standard_charge_result is not None:
       self._latest_date = standard_charge_result["valid_from"]
