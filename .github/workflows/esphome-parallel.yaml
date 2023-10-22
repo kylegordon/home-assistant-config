@@ -1,8 +1,7 @@
 ---
 name: ESPHome
 
-# yamllint disable-line rule:truthy
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
     paths:
       - 'esphome/**'
@@ -20,14 +19,16 @@ jobs:
     name: Discover ESPHome files
     runs-on: ubuntu-latest
     outputs:
-      file: ${{ steps.set-files.outputs.file }}  # generate output name file by using inner step output
+      # Generate output name file by using inner step output
+      file: ${{ steps.set-files.outputs.file }}
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v4
       - name: Get list of files
-        id: set-files  # Give it an id to handle to get step outputs in the outputs key above
-        run: echo "::set-output name=file::$(ls esphome/*.yaml | jq -R -s -c 'split("\n")[:-1]')"
-        # Define step output named file base on ls command transformed to JSON thanks to jq
+        # ID is referenced by outputs above
+        id: set-files
+        # Use jq to create a named file list
+        run: echo "::set-output name=file::$(ls esphome/*.yaml | jq -R -s -c 'split("\n")[:-1]')"  # yamllint disable-line rule:line-length
 
   loop-stable:
     name: Test ESPHome Stable firmware
@@ -35,7 +36,8 @@ jobs:
     needs: [files]  # Depends on previous job
     strategy:
       matrix:
-        file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
+        # List matrix strategy from files dynamically
+        file: ${{fromJson(needs.files.outputs.file)}}
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v4
@@ -44,7 +46,7 @@ jobs:
         with:
           args: "version"
       - name: Copy stub files into configuration folder
-        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
+        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}  # yamllint disable-line rule:line-length
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
@@ -60,7 +62,8 @@ jobs:
     needs: [files]  # Depends on previous job
     strategy:
       matrix:
-        file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
+        # List matrix strategy from files dynamically
+        file: ${{fromJson(needs.files.outputs.file)}}
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v4
@@ -69,7 +72,7 @@ jobs:
         with:
           args: "version"
       - name: Copy stub files into configuration folder
-        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
+        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}  # yamllint disable-line rule:line-length
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
@@ -85,7 +88,8 @@ jobs:
     needs: [files]  # Depends on previous job
     strategy:
       matrix:
-        file: ${{fromJson(needs.files.outputs.file)}}  # List matrix strategy from files dynamically
+        # List matrix strategy from files dynamically
+        file: ${{fromJson(needs.files.outputs.file)}}
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v4
@@ -94,7 +98,7 @@ jobs:
         with:
           args: "version"
       - name: Copy stub files into configuration folder
-        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}
+        if: ${{ steps.esphome-test-required.outputs.ESPHOME_CHANGES != 'false' }}  # yamllint disable-line rule:line-length
         run: |
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
