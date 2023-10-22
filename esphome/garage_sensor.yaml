@@ -1,3 +1,4 @@
+---
 substitutions:
   device_name: garage_sensor
   device_description: Garage Temperature Sensor

@@ -1,3 +1,4 @@
+---
 # Use ESPHome-Flasher, as esptool.py doesn't seem to do some sort of magic with the bootloader.
 # See https://github.com/esphome/issues/issues/598
 

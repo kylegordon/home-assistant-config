@@ -1,3 +1,4 @@
+---
 substitutions:
   device_name: hall_single_switch
   device_description: Hall Single Lightswitch
