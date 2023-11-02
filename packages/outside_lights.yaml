@@ -5,7 +5,6 @@ switch:
       outside_rgb_white_channels:
         friendly_name: Outside White Channels
         unique_id: outside_rgb_white_channels
-        # yamllint disable-line rule:line-length
         icon_template: mdi:lightbulb-group
         value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
                             or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
@@ -101,14 +100,14 @@ automation:
             "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
             "Did you hear that? I can't see a thing. Turning on the outside lights"
             ] | random + " https://amzn.to/2CR5mbQ" }}
-      - service: light.turn_on
+      - service: homeassistant.turn_on
         entity_id:
           - light.driveway_floodlights
           - light.mini_deck_floodlight
           - light.driveway_floodlights
           - light.back_floodlights
           - light.mini_deck_floodlight
-          - light.outside_rgb_white_channels
+          - switch.outside_rgb_white_channels
       # If this evaluates to false, the action will stop here.
       - condition: template
         value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
@@ -131,7 +130,7 @@ automation:
         for:
           seconds: 300
     action:
-      - service: light.turn_off
+      - service: homeassistant.turn_off
         entity_id:
           - light.driveway_floodlights
           - light.mini_deck_floodlight
@@ -139,4 +138,4 @@ automation:
           - light.driveway_floodlights
           - light.back_floodlights
           - light.mini_deck_floodlight
-          - light.outside_rgb_white_channels
+          - switch.outside_rgb_white_channels
