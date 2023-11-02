@@ -6,8 +6,8 @@ switch:
         friendly_name: Outside White Channels
         unique_id: outside_rgb_white_channels
         icon_template: mdi:lightbulb-group
-        value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | int > 0
-                            or state_attr('light.decking_lights', 'rgbww_color')[4] | int > 0 %}
+        value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
+                            or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
                           true
                         {% else %}
                           false
