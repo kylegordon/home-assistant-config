@@ -78,7 +78,7 @@
   name: House Average Temperature
   type: mean
   entity_ids:
-    - sensor.front_hall_ble_humidity
+    - sensor.front_hall_ble_temperature
     - sensor.kitchen_temperature
     - sensor.craft_room_multi_sensor_temperature
     - sensor.living_room_multi_sensor_temperature
