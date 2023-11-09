@@ -9,7 +9,7 @@ trigger:
       minutes: 5
 condition:
   - condition: template
-    value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
+    value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"  # yamllint disable-line rule:line-length
   - condition: state
     entity_id: binary_sensor.guest_mode
     state: "off"

@@ -1,11 +1,11 @@
 ---
 alias: "Going to bed - no guests"
 trigger:
-    # Guest bedroom
+  # Guest bedroom
   - platform: mqtt
     topic: devices/60019485412a/button/event
     payload: 'TRIPLE'
-    # Master bedroom
+  # Master bedroom
   - platform: mqtt
     topic: devices/60019485376d/button/event
     payload: 'TRIPLE'
@@ -16,27 +16,27 @@ condition:
     state: 'off'
 
 action:
-- service: logbook.log
-  data_template:
-    name: EVENT
-    message: "Going to bed triggered."
+  - service: logbook.log
+    data_template:
+      name: EVENT
+      message: "Going to bed triggered."
 
-## Turn off main bedroom lights and switches
-- service: switch.turn_off
-  data:
-    entity_id: group.bedroom_1
-- service: light.turn_off
-  data:
-    entity_id: light.master_bedroom
+  ## Turn off main bedroom lights and switches
+  - service: switch.turn_off
+    data:
+      entity_id: group.bedroom_1
+  - service: light.turn_off
+    data:
+      entity_id: light.master_bedroom
 
-- service: homeassistant.turn_off
-  entity_id:
-    - group.living_room
-    - group.outside_lights
-    - group.front_hall
-    - group.kitchen
-    - light.hall
-    - light.twig_lights
-    - group.bedroom_2
-    - group.bedroom_3
-    - group.bedroom_4
+  - service: homeassistant.turn_off
+    entity_id:
+      - group.living_room
+      - group.outside_lights
+      - group.front_hall
+      - group.kitchen
+      - light.hall
+      - light.twig_lights
+      - group.bedroom_2
+      - group.bedroom_3
+      - group.bedroom_4

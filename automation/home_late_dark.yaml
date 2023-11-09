@@ -13,7 +13,7 @@ condition:
     after: '22:00:00'
     before: '05:00:00'
   - condition: template
-    value_template: "{% if states('sensor.kyle_status') != 'sleeping' and states('sensor.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
+    value_template: "{% if states('sensor.kyle_status') != 'sleeping' and states('sensor.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"  # yamllint disable-line rule:line-length
 action:
   - service: logbook.log
     data_template:

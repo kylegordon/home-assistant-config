@@ -11,7 +11,7 @@ condition:
     value_template: '{{ state.attributes.elevation }}'
     above: 30
   - condition: template
-    value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
+    value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"  # yamllint disable-line rule:line-length
 action:
   - service: notify.email_kyle
     data:
