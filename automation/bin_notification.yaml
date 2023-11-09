@@ -2,7 +2,7 @@
 alias: 'Bin notification'
 trigger:
   - platform: template
-    value_template: '{{ states.sensor.date.state == strptime(states.calendar.garbage_collection.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")}}'
+    value_template: '{{ states.sensor.date.state == strptime(states.calendar.garbage_collection.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")}}'  # yamllint disable-line rule:line-length
   - platform: time
     at: '17:00:00'
 condition:
@@ -18,7 +18,7 @@ condition:
           - mon
 
 action:
-- service: persistent_notification.create
-  data:
-    message: "Next bin: {{ states.calendar.garbage_collection.attributes.message }}. "
-    title: "Bin Reminder"
+  - service: persistent_notification.create
+    data:
+      message: "Next bin: {{ states.calendar.garbage_collection.attributes.message }}. "  # yamllint disable-line rule:line-length
+      title: "Bin Reminder"
