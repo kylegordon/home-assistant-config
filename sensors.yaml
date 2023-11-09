@@ -28,11 +28,6 @@
 #   origin: device_tracker.charlotte_thea
 #   destination: zone.home
 
-- platform: bulb_energy
-  postcode: "G78 3AX"
-  payplan: "monthly"  # or legacyPrepay or smartPayg
-  eco7: false
-
 - platform: template
   sensors:
     next_bin:
@@ -80,6 +75,7 @@
   name: House Average Temperature
   type: mean
   entity_ids:
+    - sensor.front_hall_ble_temperature
     - sensor.kitchen_temperature
     - sensor.craft_room_multi_sensor_temperature
     - sensor.living_room_multi_sensor_temperature
@@ -87,13 +83,14 @@
     - sensor.nook_multi_sensor_temperature
     - sensor.hallway_multi_sensor_temperature
     - sensor.study_multi_sensor_temperature
+    - sensor.study_ble_temperature
     - sensor.bathroom_multi_sensor_temperature
 
 - platform: min_max
   name: House Average Humidity
   type: median
   entity_ids:
-    - sensor.front_hall_multi_sensor_humidity
+    - sensor.front_hall_ble_humidity
     - sensor.craft_room_multi_sensor_humidity
     - sensor.guest_room_multi_sensor_humidity
     - sensor.living_room_multi_sensor_humidity
@@ -101,6 +98,7 @@
     - sensor.nook_multi_sensor_humidity
     - sensor.hallway_multi_sensor_humidity
     - sensor.study_multi_sensor_humidity
+    - sensor.study_ble_humidity
     - sensor.bathroom_multi_sensor_humidity
 
 - platform: time_date
@@ -162,8 +160,8 @@
     front_hall:
       friendly_name: Front Hall
       unique_id: front_hall_thermal_comfort
-      temperature_sensor: sensor.front_hall_multi_sensor_temperature
-      humidity_sensor: sensor.front_hall_multi_sensor_humidity
+      temperature_sensor: sensor.front_hall_ble_temperature
+      humidity_sensor: sensor.front_hall_ble_humidity
     craft_room:
       friendly_name: Craft Room
       unique_id: craft_room_thermal_comfort
