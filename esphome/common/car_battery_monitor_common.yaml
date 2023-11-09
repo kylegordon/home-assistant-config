@@ -1,3 +1,5 @@
+---
+# yamllint disable-line rule:line-length
 # Inspired by https://www.reddit.com/r/homeautomation/comments/qiywpf/monitoring_a_car_battery_from_charged_over_first/
 packages:
   common: !include common.yaml
@@ -81,7 +83,7 @@ interval:
   - interval: 5000ms
     id: no_wifi
     then:
-    - if:
+      - if:
         condition:
           not:
             wifi.connected:
@@ -98,7 +100,7 @@ interval:
   - interval: 5000ms
     id: no_api
     then:
-    - if:
+      - if:
         condition:
           not:
             api.connected:
@@ -124,7 +126,7 @@ interval:
   - interval: 5000ms
     id: ota_indicator_led
     then:
-    - if:
+      - if:
         condition:
           binary_sensor.is_on: esphome_ota_enable
         then:
