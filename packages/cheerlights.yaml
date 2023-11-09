@@ -130,8 +130,8 @@ automation:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"  # yamllint disable-line rule:line-length
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"  # yamllint disable-line rule:line-length
 
   - alias: Cheerlights - Tin Hut
     id: cheerlights_tin_hut
@@ -139,9 +139,6 @@ automation:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
-      #- condition: numeric_state
-      #  entity_id: sensor.average_external_light_level
-      #  below: 300
       - condition: time
         after: '16:00:00'
         before: '23:00:00'
@@ -158,8 +155,8 @@ automation:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"  # yamllint disable-line rule:line-length
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"  # yamllint disable-line rule:line-length
 
   - alias: Cheerlights - off
     id: cheerlights_off
@@ -176,6 +173,6 @@ automation:
           - light.decking_lights
           - light.under_bed_lights
           - light.glow_orbs
-          #- light.tin_hut_shelving
+          - light.tin_hut_shelving
         data:
           transition: 10
