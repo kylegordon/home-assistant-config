@@ -1,9 +1,10 @@
+---
 low_battery:
   sequence:
-  - event: LOGBOOK_ENTRY
-    event_data:
-      name: EVENT
-      message: "Low battery Event"
-  - service: notify.notify
-    data:
-      message: "{% if states('sensor.kyle_oneplus_one_battery') < '6'%}Low battery detected! Kyle's battery is at {{states('sensor.kyle_oneplus_one_battery')}}%{% else %} {% endif %} {% if states('sensor.charlotte_phone_battery') < '6'%}Low battery detected! Charlotte's battery is at {{states('sensor.charlotte_phone_battery')}}%{% else %} {% endif %}"
+    - event: LOGBOOK_ENTRY
+      event_data:
+        name: EVENT
+        message: "Low battery Event"
+    - service: notify.notify
+      data:
+        message: "{% if states('sensor.kyle_oneplus_one_battery') < '6'%}Low battery detected! Kyle's battery is at {{states('sensor.kyle_oneplus_one_battery')}}%{% else %} {% endif %} {% if states('sensor.charlotte_phone_battery') < '6'%}Low battery detected! Charlotte's battery is at {{states('sensor.charlotte_phone_battery')}}%{% else %} {% endif %}"  # yamllint disable-line rule:line-length
