@@ -1,0 +1,68 @@
+---
+packages:
+  common: !include common.yaml
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: esp01_1m
+
+# Enable logging
+logger:
+
+captive_portal:
+
+web_server:
+  port: 80
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
+# RGB
+output:
+  - platform: esp8266_pwm
+    pin: ${blue}
+    frequency: 1000 Hz
+    id: pwm_b
+  - platform: esp8266_pwm
+    pin: ${green}
+    frequency: 1000 Hz
+    id: pwm_g
+  - platform: esp8266_pwm
+    pin: ${red}
+    frequency: 1000 Hz
+    id: pwm_r
+
+# RGB, RGBW, RGBWW also available
+light:
+  - platform: rgb
+    name: ${friendly_name}
+    red: pwm_r
+    green: pwm_g
+    blue: pwm_b
+    id: thelight
+    effects:
+      - random:
+      - strobe:
+      - flicker:
+          alpha: 50%  # The percentage that the last color value should affect the light. More or less the “forget-factor” of an exponential moving average. Defaults to 95%.
+          intensity: 50%  # The intensity of the flickering, basically the maximum amplitude of the random offsets. Defaults to 1.5%.
+      - lambda:
+          name: Throb
+          update_interval: 1s
+          lambda: |-
+            static int state = 0;
+            auto call = id(thelight).turn_on();
+            // Transtion of 1000ms = 1s
+            call.set_transition_length(1000);
+            if (state == 0) {
+              call.set_brightness(1.0);
+            } else {
+              call.set_brightness(0.01);
+            }
+            call.perform();
+            state += 1;
+            if (state == 2)
+              state = 0;
