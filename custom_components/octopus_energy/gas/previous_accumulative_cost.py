@@ -7,25 +7,29 @@ from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
 )
 from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorStateClass
+  RestoreSensor,
+  SensorDeviceClass,
+  SensorStateClass
 )
+
+from homeassistant.util.dt import (now)
+
 from . import (
   calculate_gas_consumption_and_cost,
 )
 
 from .base import (OctopusEnergyGasSensor)
 
-from ..statistics.cost import async_import_external_statistics_from_cost
+from ..statistics.cost import async_import_external_statistics_from_cost, get_gas_cost_statistic_unique_id
 
 _LOGGER = logging.getLogger(__name__)
   
-class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyGasSensor):
+class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyGasSensor, RestoreSensor):
   """Sensor for displaying the previous days accumulative gas cost."""
 
   def __init__(self, hass: HomeAssistant, coordinator, tariff_code, meter, point, calorific_value):
     """Init sensor."""
-    super().__init__(coordinator)
+    CoordinatorEntity.__init__(self, coordinator)
     OctopusEnergyGasSensor.__init__(self, hass, meter, point)
     
     self._hass = hass
@@ -102,6 +106,7 @@ class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyG
     consumption_data = self.coordinator.data["consumption"] if self.coordinator is not None and self.coordinator.data is not None and "consumption" in self.coordinator.data else None
     rate_data = self.coordinator.data["rates"] if self.coordinator is not None and self.coordinator.data is not None and "rates" in self.coordinator.data else None
     standing_charge = self.coordinator.data["standing_charge"] if self.coordinator is not None and self.coordinator.data is not None and "standing_charge" in self.coordinator.data else None
+    current = now()
 
     consumption_and_cost = calculate_gas_consumption_and_cost(
       consumption_data,
@@ -110,17 +115,16 @@ class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyG
       self._last_reset,
       self._tariff_code,
       self._native_consumption_units,
-      self._calorific_value,
-      # During BST, two records are returned before the rest of the data is available
-      3
+      self._calorific_value
     )
 
     if (consumption_and_cost is not None):
       _LOGGER.debug(f"Calculated previous gas consumption cost for '{self._mprn}/{self._serial_number}'...")
 
       await async_import_external_statistics_from_cost(
+        current,
         self._hass,
-        f"gas_{self._serial_number}_{self._mprn}_previous_accumulative_cost",
+        get_gas_cost_statistic_unique_id(self._serial_number, self._mprn),
         self.name,
         consumption_and_cost["charges"],
         rate_data,
