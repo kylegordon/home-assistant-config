@@ -12,7 +12,8 @@ automation:
       - condition: and
         conditions:
           - condition: template
-            value_template: '{{ states.proximity.kyle.attributes.dir_of_travel  == "towards" }}'
+            value_template: >
+              {{ states.proximity.kyle.attributes.dir_of_travel == "towards" }}
           - condition: state
             entity_id: device_tracker.kyle_phone
             state: moving
