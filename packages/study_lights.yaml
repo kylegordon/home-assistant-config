@@ -1,7 +1,8 @@
 ---
 automation:
   - alias: Study light toggle
-    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    # Can be improved, examples at
+    # https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -19,7 +20,8 @@ automation:
           message: "Toggling study light"
 
   - alias: Study monitor light toggle
-    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    # Can be improved, examples at
+    # https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -43,11 +45,11 @@ automation:
         id: "tradfri_wireless_dimmer"
         event: 2002
     action:
-    - service: light.turn_on
-      data:
-        entity_id: light.study_light
-        transition: 1
-        brightness_step_pct: 10
+      - service: light.turn_on
+        data:
+          entity_id: light.study_light
+          transition: 1
+          brightness_step_pct: 10
 
   - alias: 'Decrease brightness of lamp from dimmer'
     initial_state: 'on'
