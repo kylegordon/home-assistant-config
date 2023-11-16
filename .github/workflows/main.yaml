@@ -1,5 +1,5 @@
 ---
-name: Home Assistant CI
+name: Home Assistant
 
 # yamllint disable-line rule:truthy
 on:
@@ -13,17 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Running YAMLlint
-        uses: ibiqlik/action-yamllint@v1
+        uses: ibiqlik/action-yamllint@v3
         continue-on-error: false
         with:
           config_file: .github/yamllint-config.yml
   remarklint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Running Remark lint
         uses: "docker://pipelinecomponents/remark-lint:latest"
         continue-on-error: false
@@ -34,7 +34,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Copy stub files into configuration folder
         run: |
           cp -R travis_secrets.yaml secrets.yaml
@@ -55,7 +55,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Copy stub files into configuration folder
         run: |
           cp -R travis_secrets.yaml secrets.yaml
@@ -76,7 +76,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Copy stub files into configuration folder
         run: |
           cp -R travis_secrets.yaml secrets.yaml

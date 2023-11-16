@@ -6,7 +6,6 @@ input_number:
     unit_of_measurement: lx
     min: 0
     max: 500
-    initial: 100
     step: 1
   blinds_evening:
     name: Evening Blinds
@@ -14,7 +13,6 @@ input_number:
     unit_of_measurement: lx
     min: 0
     max: 500
-    initial: 100
     step: 1
 
 cover:
@@ -28,34 +26,29 @@ cover:
 automation:
   - alias: Control Blinds
     trigger:
-      - platform: event
-        event_type: deconz_event
-        event_data:
-          id: tradfri_open_close_switch
+      - platform: mqtt
+        topic: "zigbee2mqtt/Blind Remote 2/action"
+      - platform: mqtt
+        topic: "zigbee2mqtt/Blind Remote 1/action"
+
     action:
       - variables:
-          event: "{{ trigger.event.data.event }}"
+          command: "{{ trigger.payload }}"
       - choose:
           - conditions:
-              - "{{ event == 1002 }}"
+              - '{{ command == "open" }}'
             sequence:
               - service: cover.open_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ event == 2002 }}"
+              - '{{ command == "close" }}'
             sequence:
               - service: cover.close_cover
                 target:
                   entity_id: cover.patio_blinds
           - conditions:
-              - "{{ event == 1003 }}"
-            sequence:
-              - service: cover.stop_cover
-                target:
-                  entity_id: cover.patio_blinds
-          - conditions:
-              - "{{ event == 2003 }}"
+              - '{{ command == "stop" }}'
             sequence:
               - service: cover.stop_cover
                 target:
@@ -69,8 +62,10 @@ automation:
         for:
           minutes: 10
     action:
-      service: cover.close_cover
-      entity_id: cover.patio_blinds
+      - service: cover.close_cover
+        entity_id:
+          - cover.patio_blinds
+          - cover.front_hall_blind
 
   - alias: Open blinds when bright
     trigger:
@@ -80,5 +75,7 @@ automation:
         for:
           minutes: 10
     action:
-      service: cover.open_cover
-      entity_id: cover.patio_blinds
+      - service: cover.open_cover
+        entity_id:
+          - cover.patio_blinds
+          - cover.front_hall_blind

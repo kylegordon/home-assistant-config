@@ -1,5 +1,0 @@
-- platform: openalpr_local
-  region: eu
-  confidence: 80.0
-  source:
-    - entity_id: camera.driveway

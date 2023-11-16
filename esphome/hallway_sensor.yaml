@@ -1,6 +1,0 @@
-substitutions:
-  device_name: hallway_sensor
-  device_description: Hallway Sensor
-  friendly_name: Hallway Sensor
-
-<<: !include common/esp8266_dht_sensor_common.yaml
