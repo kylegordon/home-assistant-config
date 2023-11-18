@@ -205,6 +205,7 @@ outside_lights:
     - light.decking_lights
     - light.front_door_dome
     - light.car_port
+    - switch.outside_rgb_white_channels
 
 climate:
   name: Climate
