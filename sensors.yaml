@@ -88,6 +88,7 @@
     - sensor.study_multi_sensor_temperature
     - sensor.study_ble_temperature
     - sensor.bathroom_multi_sensor_temperature
+    - sensor.ensuite_ble_temperature
 
 - platform: min_max
   name: House Average Humidity
