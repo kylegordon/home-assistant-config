@@ -66,7 +66,9 @@
           "weather": "Din vejrentitet for at få udendørstemperaturen",
           "heat_auto_swapped": "Hvis auto betyder varme til din TRV, og du ønsker at bytte den",
           "child_lock": "Ignorer alle input på TRV som en børnesikring",
-          "homaticip": "Hvis du bruger HomaticIP, bør du aktivere dette for at bremse anmodningerne for at forhindre arbejdscyklus"
+          "homaticip": "Hvis du bruger HomaticIP, bør du aktivere dette for at bremse anmodningerne for at forhindre arbejdscyklus",
+          "name": "Navn",
+          "thermostat": "Den rigtige termostat"
         }
       },
       "advanced": {
@@ -76,19 +78,27 @@
           "child_lock": "Ignorer alle input på TRV som en børnesikring",
           "homaticip": "Hvis du bruger HomaticIP, bør du aktivere dette for at bremse anmodningerne for at forhindre arbejdscyklus",
           "valve_maintenance": "Hvis din termostat ikke har nogen egen vedligeholdelsestilstand, kan du bruge denne",
-          "calibration": "Den slags kalibrering du vil bruge"
+          "calibration": "Den slags kalibrering du vil bruge",
+          "protect_overheating": "Overophedningsbeskyttelse?",
+          "calibration_mode": "Kalibreringstilstand",
+          "no_off_system_mode": "Hvis din TRV ikke kan håndtere den slukkede tilstand, kan du aktivere denne for at bruge måltemperatur 5°C i stedet"
+        },
+        "data_description": {
+          "protect_overheating": "Nogle TRV'er lukker ikke ventilen helt, når temperaturen er nået. Eller radiatoren har meget hvilevarme. Dette kan forårsage overophedning. Denne mulighed kan forhindre dette.",
+          "calibration_mode": "Den slags, hvordan kalibreringen skal beregnes\n***Normal***: I denne tilstand er TRV's interne temperaturføler fikseret af den eksterne temperaturføler.\n***Aggressiv***: I denne tilstand er TRV's interne temperaturføler fikseret af den eksterne temperaturføler, men indstillet meget lavere/højere for at få et hurtigere løft.\n***AI-tidsbaseret***: I denne tilstand er TRV's interne temperatursensor fastsat af den eksterne temperatursensor, men værdien beregnes af en brugerdefineret algoritme for at forbedre TRV's interne algoritme.",
+          "calibration": "Hvordan kalibreringen skal anvendes på TRV (Target temp or offset)\n***Måltemperaturbaseret***: Anvend kalibreringen til måltemperaturen.\n***Offset-baseret***: Anvend kalibreringen til offset."
         }
       }
     }
   },
   "issues": {
     "missing_entity": {
-      "title": "BT: {name} - related entity is missing",
+      "title": "BT: {name} - relateret enhed mangler",
       "fix_flow": {
         "step": {
           "confirm": {
-            "title": "The related entity {entity} is missing",
-            "description": "The reason for this is that the entity ({entity}) is not available in your Home Assistant.\n\nYou can fix this by checking if the batterie of the device is full or reconnect it to HA. Make sure that the entity is back in HA before you continue."
+            "title": "Den relaterede {entity} mangler",
+            "description": "Årsagen til dette er, at entiteten ({entity}) ikke er tilgængelig i din Home Assistant.\n\nDu kan rette op på dette ved at kontrollere, om enhedens batteri er fuld, eller tilslutte den til HA igen. Sørg for, at entiteten er tilbage i HA, før du fortsætter."
           }
         }
       }
