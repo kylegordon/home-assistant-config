@@ -254,3 +254,17 @@ automation:
           name: EVENT
           message: >
             Warming the house up for a lazy morning.
+
+  - alias: Better Thermostat Night mode
+    description: "Set TRVs to night mode"
+    use_blueprint:
+      path: homeassistant/better_thermostat_night_mode.yaml
+      input:
+        thermostat_target:
+          entity_id:
+            - climate.craft_room
+            - climate.guest_bedroom
+            - climate.hallway
+            - climate.living_room
+            - climate.study
+        night_times_schedule: schedule.thermostat_schedule
