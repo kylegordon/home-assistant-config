@@ -24,7 +24,7 @@ blueprint:
     night_temp:
       name: Night Temperature
       description: The target temperature at night
-      default: 18
+      default: 17
       selector:
         number:
           min: 5
