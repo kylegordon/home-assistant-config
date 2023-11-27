@@ -158,6 +158,7 @@ automation:
   #           Warming the house up for a lazy morning.
 
   - alias: Better Thermostat Night mode
+    id: better_thermostat_night_mode
     description: "Set TRVs to night mode. The schedule is night hours."
     use_blueprint:
       path: homeassistant/better_thermostat_night_mode.yaml
