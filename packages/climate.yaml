@@ -170,4 +170,4 @@ automation:
             - climate.hallway
             - climate.living_room
             - climate.study
-        night_times_schedule: schedule.thermostat_schedule
+        night_times_schedule: schedule.thermostat_night_schedule
