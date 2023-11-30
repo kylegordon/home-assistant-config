@@ -1,0 +1,8 @@
+---
+substitutions:
+  device_name: tin_hut_lights
+  device_description: Tin hut lights
+  friendly_name: Tin hut lights
+  ha_entity: light.tin_hut
+
+<<: !include common/shelly_1_detached_toggle_switch_common.yaml
