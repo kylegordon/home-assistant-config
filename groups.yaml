@@ -198,10 +198,10 @@ outside:
 outside_lights:
   name: Outside Lights
   entities:
-    - light.front_door_floodlights
+    - light.front_floodlights
     - light.driveway_floodlights
     - light.back_floodlights
-    - light.mini_deck_floodlight
+    - light.garden_steps_floodlight
     - light.decking_lights
     - light.front_door_dome
     - light.car_port
