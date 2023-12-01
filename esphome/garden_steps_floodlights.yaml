@@ -4,4 +4,4 @@ substitutions:
   device_description: Garden steps floodlight
   friendly_name: Garden steps floodlight
 
-<<: !include common/shelly_1_detached_push_button_common.yaml
+<<: !include common/shelly_1_no_button_common.yaml
