@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: garden_steps_floodlight
+  device_description: Garden steps floodlight
+  friendly_name: Garden steps floodlight
+
+<<: !include common/shelly_1_no_button_common.yaml

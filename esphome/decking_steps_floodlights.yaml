@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: decking_steps_floodlights
+  device_description: Decking steps floodlights
+  friendly_name: Decking steps floodlights
+
+<<: !include common/sonoff_basic_switch_common.yaml

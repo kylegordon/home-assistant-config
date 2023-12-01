@@ -103,10 +103,9 @@ automation:
       - service: homeassistant.turn_on
         entity_id:
           - light.driveway_floodlights
-          - light.mini_deck_floodlight
-          - light.driveway_floodlights
+          - light.garden_steps_floodlight
+          - light.front_floodlights
           - light.back_floodlights
-          - light.mini_deck_floodlight
           - switch.outside_rgb_white_channels
       # If this evaluates to false, the action will stop here.
       - condition: template
@@ -133,9 +132,7 @@ automation:
       - service: homeassistant.turn_off
         entity_id:
           - light.driveway_floodlights
-          - light.mini_deck_floodlight
-          - light.front_door_floodlights
-          - light.driveway_floodlights
+          - light.garden_steps_floodlight
+          - light.front_floodlights
           - light.back_floodlights
-          - light.mini_deck_floodlight
           - switch.outside_rgb_white_channels
