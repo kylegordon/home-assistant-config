@@ -1,7 +1,0 @@
----
-substitutions:
-  device_name: front_floodlights
-  device_description: Front floodlights
-  friendly_name: Front floodlights
-
-<<: !include common/shelly_1_detached_push_button_common.yaml
