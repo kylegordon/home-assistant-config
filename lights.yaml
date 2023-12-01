@@ -16,7 +16,7 @@
 
 - platform: switch
   name: "Garden Steps Floodlight"
-  entity_id: switch.garden steps_floodlight_relay
+  entity_id: switch.garden_steps_floodlight_relay
 
 - platform: switch
   name: "Edison Lamp"
