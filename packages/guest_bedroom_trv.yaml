@@ -1,3 +1,4 @@
+---
 timer:
   guest_trv_sync:
     duration: "00:01:00"
@@ -11,4 +12,3 @@ automation:
         max_update_timer_id: timer.guest_trv_sync
         temp_sensor_id: sensor.guest_room_multi_sensor_temperature
         ally_device: 7133d762ca5a8fc8d651233b92a425ac
-
