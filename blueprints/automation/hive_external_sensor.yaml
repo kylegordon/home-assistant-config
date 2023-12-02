@@ -11,8 +11,8 @@ blueprint:
       selector:
         device:
           entity:
-          - domain:
-            - climate
+            - domain:
+              - climate
           multiple: false
     temp_sensor_id:
       name: Temperature Sensor
@@ -21,9 +21,9 @@ blueprint:
       selector:
         entity:
           domain:
-          - sensor
+            - sensor
           device_class:
-          - temperature
+            - temperature
           multiple: false
     max_update_timer_id:
       name: Timer entity
@@ -34,7 +34,7 @@ blueprint:
       selector:
         entity:
           domain:
-          - timer
+            - timer
           multiple: false
 variables:
   device: !input ally_device
@@ -59,12 +59,12 @@ variables:
       script.noop
     {% endif %}
 trigger:
-- platform: state
-  entity_id: !input temp_sensor_id
-- platform: event
-  event_type: timer.finished
-  event_data:
-    entity_id: !input max_update_timer_id
+  - platform: state
+    entity_id: !input temp_sensor_id
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: !input max_update_timer_id
 condition:
   - condition: and
     conditions:
