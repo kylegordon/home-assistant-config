@@ -1,0 +1,107 @@
+---
+blueprint:
+  domain: automation
+  name: Danfoss Ally Ext Temp Z2M v2
+  description: >
+    Update Danfoss Ally TRV external temperature with min/max refresh rate, via zigbee2mqtt.
+  input:
+    ally_device:
+      name: Ally TRV Device
+      description: Temperature reading will be sent to this device.
+      selector:
+        device:
+          entity:
+          - domain:
+            - climate
+          multiple: false
+    temp_sensor_id:
+      name: Temperature Sensor
+      description: >
+        External sensor from which the temperature will be read. Expects data format 12.3.
+      selector:
+        entity:
+          domain:
+          - sensor
+          device_class:
+          - temperature
+          multiple: false
+    max_update_timer_id:
+      name: Timer entity
+      description: >
+       Timer that will trigger at maximum update interval if source sensor has not
+       changed. Sets automatically to 30min for covered, 3h for uncovered. Use separate
+       timer for each automation.
+      selector:
+        entity:
+          domain:
+          - timer
+          multiple: false
+variables:
+  device: !input ally_device
+  temp_sensor_id: !input temp_sensor_id
+  radiator_covered_state: >
+    {{ states( device_entities(device) | select('match', '.*radiator_covered$')
+    | first) }}
+  min_update_minutes: |
+    {% if radiator_covered_state == 'off' %}
+      30
+    {% elif radiator_covered_state == 'on' %}
+      5
+    {% else %}
+      script.noop
+    {% endif %}
+  max_update_minutes: |
+    {% if radiator_covered_state == 'off' %}
+      180
+    {% elif radiator_covered_state == 'on' %}
+      30
+    {% else %}
+      script.noop
+    {% endif %}
+trigger:
+- platform: state
+  entity_id: !input temp_sensor_id
+- platform: event
+  event_type: timer.finished
+  event_data:
+    entity_id: !input max_update_timer_id
+condition:
+  - condition: and
+    conditions:
+      - condition: template
+        value_template: "{{ states(temp_sensor_id) is not none }}"
+      - condition: template
+        value_template: "{{ states(temp_sensor_id) | float(0) > 0 }}"
+      - condition: or
+        conditions:
+          - condition: and
+            conditions:
+              - condition: template
+                value_template: >-
+                  {% set number_entity = device_entities(device) |
+                  select('search', 'number.*_external_measured_room_sensor') |
+                  list | first %} {{ ((states(number_entity) | float(0) -
+                  states(temp_sensor_id) | float * 100) | round(0)) | abs >=10
+                  }}
+              - condition: template
+                value_template: >-
+                  {% set last_trigger = state_attr(this.entity_id,
+                  'last_triggered') %} {{ last_trigger is none or now() -
+                  last_trigger > timedelta(seconds=min_update_minutes * 60) }}
+          - condition: state
+            entity_id: !input max_update_timer_id
+            state: idle
+action:
+  - service: mqtt.publish
+    data:
+      topic: >-
+        zigbee2mqtt/{{ device_attr(device, 'name')
+        }}/set/external_measured_room_sensor
+      payload_template: '{{ (states(temp_sensor_id) | float * 100) | round(0) }}'
+  - service: timer.start
+    target:
+      entity_id: !input max_update_timer_id
+    data:
+      duration: '{{ max_update_minutes * 60 }}'
+mode: single
+max_exceeded: silent
