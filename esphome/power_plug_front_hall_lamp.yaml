@@ -4,8 +4,8 @@ packages:
   common: !include common/power_plug_common.yaml
 
 substitutions:
-  device_name: power_plug_server
-  device_description: Server Power Plug
-  friendly_name: Server Power Plug
+  device_name: power_plug_front_hall_lamp
+  device_description: Front Hall Lamp Power Plug
+  friendly_name: Front Hall Lamp Power Plug
   default_state: "RESTORE_DEFAULT_ON"
   main_icon: power-socket-uk

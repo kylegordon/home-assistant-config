@@ -8,6 +8,7 @@ from homeassistant.components.event import (
 from homeassistant.helpers.restore_state import RestoreEntity
 
 from .base import (OctopusEnergyGasSensor)
+from ..utils.attributes import dict_to_typed_dict
 from ..const import EVENT_GAS_NEXT_DAY_RATES
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,14 +36,6 @@ class OctopusEnergyGasNextDayRates(OctopusEnergyGasSensor, EventEntity, RestoreE
   def name(self):
     """Name of the sensor."""
     return f"Gas {self._serial_number} {self._mprn} Next Day Rates"
-  
-  @property
-  def entity_registry_enabled_default(self) -> bool:
-    """Return if the entity should be enabled when first added.
-
-    This only applies when fist added to the entity registry.
-    """
-    return False
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -51,10 +44,8 @@ class OctopusEnergyGasNextDayRates(OctopusEnergyGasSensor, EventEntity, RestoreE
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = state.state
-      self._attributes = {}
-      for x in state.attributes.keys():
-        self._attributes[x] = state.attributes[x]
+      self._state = None if state.state == "unknown" else state.state
+      self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored OctopusEnergyGasNextDayRates state: {self._state}')
 
