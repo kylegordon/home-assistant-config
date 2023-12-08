@@ -102,11 +102,7 @@ automation:
             ] | random + " https://amzn.to/2CR5mbQ" }}
       - service: homeassistant.turn_on
         entity_id:
-          - light.driveway_floodlights
-          - light.garden_steps_floodlight
-          - light.front_floodlights
-          - light.back_floodlights
-          - switch.outside_rgb_white_channels
+          - group.outside_lights
       # If this evaluates to false, the action will stop here.
       - condition: template
         value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
@@ -131,8 +127,4 @@ automation:
     action:
       - service: homeassistant.turn_off
         entity_id:
-          - light.driveway_floodlights
-          - light.garden_steps_floodlight
-          - light.front_floodlights
-          - light.back_floodlights
-          - switch.outside_rgb_white_channels
+          - group.outside_lights
