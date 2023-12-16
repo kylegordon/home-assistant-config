@@ -29,7 +29,6 @@ group:
     name: Call For Heat - Group
     entities:
       - input_boolean.call_for_rad_heat
-      - input_boolean.call_for_guest_heat
       - binary_sensor.craft_room_trv_heat_required
       - binary_sensor.study_trv_heat_required
       - binary_sensor.living_room_trv_heat_required
