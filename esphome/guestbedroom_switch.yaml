@@ -1,6 +1,8 @@
+---
 substitutions:
   device_name: guestbedroom_switch
   device_description: Guest Bedroom Lightswitch
   friendly_name: Guest Bedroom Switch
+  default_state: "RESTORE_DEFAULT_ON"
 
 <<: !include common/sonoff_touch_switch_common.yaml
