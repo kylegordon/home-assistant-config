@@ -3,5 +3,6 @@ substitutions:
   device_name: front_floodlights
   device_description: Front floodlights
   friendly_name: Front floodlights
+  default_state: "RESTORE_DEFAULT_ON"
 
 <<: !include common/shelly_1_no_button_common.yaml
