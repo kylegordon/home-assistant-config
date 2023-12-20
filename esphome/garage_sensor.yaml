@@ -38,7 +38,7 @@ button:
     name: "${friendly_name} Restart"
 
 dallas:
-  - pin: GPIO2
+  - pin: D4
 
 sensor:
   - platform: wifi_signal
