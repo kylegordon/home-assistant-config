@@ -91,6 +91,14 @@
     - sensor.ensuite_ble_temperature
 
 - platform: min_max
+  name: Rest of House Average Temperature
+  type: mean
+  entity_ids:
+    - sensor.master_bedroom_multi_sensor_temperature
+    - sensor.bathroom_multi_sensor_temperature
+    - sensor.ensuite_ble_temperature
+
+- platform: min_max
   name: House Average Humidity
   type: median
   entity_ids:
@@ -137,7 +145,7 @@
       value_template: "{{state_attr('weather.openweathermap', 'forecast')[12].temperature}}"
 
     house_target_temperature:
-      value_template: "{{state_attr('climate.house', 'temperature')}}"
+      value_template: "{{state_attr('climate.rest_of_house', 'temperature')}}"
 
 - platform: thermal_comfort
   sensors:
