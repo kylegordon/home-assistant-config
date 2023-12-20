@@ -56,7 +56,7 @@ sensor:
 
   - platform: homeassistant
     id: house_average_temperature
-    entity_id: sensor.house_average_temperature
+    entity_id: sensor.rest_of_house_average_temperature
     internal: true
 
   - platform: homeassistant

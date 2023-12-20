@@ -4,7 +4,7 @@ default_view:
   entities:
     - group.people_status
     - group.modes
-    - sensor.house_average_temperature
+    - sensor.rest_of_house_average_temperature
     - sensor.house_average_humidity
     - calendar.next_bin
     - sensor.next_bin
@@ -16,7 +16,7 @@ default_view:
 environment_summary:
   name: Environment Summary
   entities:
-    - climate.house
+    - climate.rest_of_house
     - climate.hot_water
     - sensor.house_average_humidity
 
@@ -210,8 +210,8 @@ outside_lights:
 climate:
   name: Climate
   entities:
-    - climate.house
-    - sensor.house_average_temperature
+    - climate.rest_of_house
+    - sensor.rest_of_house_average_temperature
     - sensor.house_average_humidity
     - sensor.weather_station_rainfall
     - sensor.weather_station_wind_direction
