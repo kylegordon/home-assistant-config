@@ -58,7 +58,7 @@ packages:
       # WARNING BEEP
       # Enables a 'Warning Beep' entity, intended to be used with a piezo buzzer. This is
       # implemented using a light entity with strobe effect to create a repeated beeping sound.
-      - packages/warning-beep.yaml
+      # - packages/warning-beep.yaml
 
       ####
       # STATUS LED
