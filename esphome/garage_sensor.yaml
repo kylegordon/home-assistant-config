@@ -61,7 +61,8 @@ output:
   # Register the blue LED as a dimmable output ....
   - platform: esp8266_pwm
     id: blue_led
-    pin: D4
+    pin: D5  # Nothing is really connected to D5.
+    # The built-in blue LED is connected to D4, but I stupidly picked that for I2C and don't want to change it.
     inverted: true
 
 light:
