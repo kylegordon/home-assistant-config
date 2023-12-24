@@ -35,9 +35,9 @@ substitutions:
   # CONNECTION MAPPINGS
   warning_beep_pin: $out
 
-packages:
-  remote_package:
-    url: http://github.com/konnected-io/konnected-esphome
-    ref: master
-    refresh: 5min
-    file: packages/core-esp8266.yaml
+# packages:
+#   remote_package:
+#     url: http://github.com/konnected-io/konnected-esphome
+#     ref: master
+#     refresh: 5min
+#     file: packages/core-esp8266.yaml
