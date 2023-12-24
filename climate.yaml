@@ -1,5 +1,6 @@
 - platform: generic_thermostat
-  name: House
+  unique_id: rest_of_house_thermostat
+  name: Rest of House
   heater: input_boolean.call_for_rad_heat
   target_sensor: sensor.rest_of_house_average_temperature
   min_temp: 10
@@ -9,6 +10,7 @@
   hot_tolerance: 0.2
 
 - platform: generic_thermostat
+  unique_id: hot_water_thermostat
   name: Hot Water
   heater: switch.boiler_valve_controls_relay_1
   target_sensor: sensor.hot_tank_temperature
