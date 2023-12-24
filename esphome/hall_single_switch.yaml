@@ -1,6 +1,8 @@
+---
 substitutions:
   device_name: hall_single_switch
   device_description: Hall Single Lightswitch
   friendly_name: Hall Single Switch
+  default_state: "RESTORE_DEFAULT_ON"
 
 <<: !include common/sonoff_touch_switch_common.yaml
