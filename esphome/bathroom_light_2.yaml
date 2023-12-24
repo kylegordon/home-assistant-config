@@ -1,6 +1,8 @@
+---
 substitutions:
   device_name: bathroom_2
   device_description: Bathroom Light 2
   friendly_name: Bathroom Light 2
+  default_state: "RESTORE_DEFAULT_ON"
 
 <<: !include common/bathroom_pwm_common.yaml

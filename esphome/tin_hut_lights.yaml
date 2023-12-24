@@ -4,5 +4,6 @@ substitutions:
   device_description: Tin hut lights
   friendly_name: Tin hut lights
   ha_entity: light.tin_hut
+  default_state: "DISABLED"
 
 <<: !include common/shelly_1_detached_toggle_switch_common.yaml
