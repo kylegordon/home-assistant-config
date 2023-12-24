@@ -68,6 +68,7 @@
 
 - platform: min_max
   name: Average External Light Level
+  unique_id: average_external_light_level
   type: median
   entity_ids:
     - sensor.lux_meter_1_level
@@ -76,6 +77,7 @@
 
 - platform: min_max
   name: House Average Temperature
+  unique_id: house_average_temperature
   type: mean
   entity_ids:
     - sensor.front_hall_ble_temperature
@@ -92,6 +94,7 @@
 
 - platform: min_max
   name: Rest of House Average Temperature
+  unique_id: rest_of_house_average_temperature
   type: mean
   entity_ids:
     - sensor.master_bedroom_multi_sensor_temperature
@@ -100,6 +103,7 @@
 
 - platform: min_max
   name: House Average Humidity
+  unique_id: house_average_humidity
   type: median
   entity_ids:
     - sensor.front_hall_ble_humidity
