@@ -1,6 +1,8 @@
+---
 substitutions:
   device_name: craftroom_switch
   device_description: Craft Room Lightswitch
   friendly_name: Craft Room Switch
+  default_state: "RESTORE_DEFAULT_ON"
 
 <<: !include common/sonoff_touch_switch_common.yaml

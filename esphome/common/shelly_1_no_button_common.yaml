@@ -27,4 +27,4 @@ switch:
     name: ${friendly_name} Relay
     pin: GPIO4
     id: shelly_relay
-    restore_mode: restore_default_off
+    restore_mode: "${default_state}"
