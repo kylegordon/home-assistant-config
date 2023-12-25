@@ -16,7 +16,7 @@ default_view:
 environment_summary:
   name: Environment Summary
   entities:
-    - climate.rest_of_house
+    - climate.rest_of_house_thermostat
     - climate.hot_water
     - sensor.house_average_humidity
 
@@ -210,7 +210,7 @@ outside_lights:
 climate:
   name: Climate
   entities:
-    - climate.rest_of_house
+    - climate.rest_of_house_thermostat
     - sensor.rest_of_house_average_temperature
     - sensor.house_average_humidity
     - sensor.weather_station_rainfall
