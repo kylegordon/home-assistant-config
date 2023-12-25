@@ -149,7 +149,7 @@
       value_template: "{{state_attr('weather.openweathermap', 'forecast')[12].temperature}}"
 
     house_target_temperature:
-      value_template: "{{state_attr('climate.rest_of_house', 'temperature')}}"
+      value_template: "{{state_attr('climate.rest_of_house_thermostat', 'temperature')}}"
 
 - platform: thermal_comfort
   sensors:
