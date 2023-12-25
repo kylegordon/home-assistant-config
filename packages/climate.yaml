@@ -115,7 +115,7 @@ automation:
     action:
       - service: climate.set_preset_mode
         data:
-          entity_id: climate.house
+          entity_id: climate.rest_of_house_thermostat
           preset_mode: "none"
       - service: logbook.log
         data_template:
@@ -154,7 +154,7 @@ automation:
     action:
       - service: climate.set_temperature
         data:
-          entity_id: climate.house
+          entity_id: climate.rest_of_house_thermostat
           temperature: 17
       - service: logbook.log
         data_template:
@@ -176,7 +176,7 @@ automation:
     action:
       - service: climate.set_temperature
         data:
-          entity_id: climate.house
+          entity_id: climate.rest_of_house_thermostat
           temperature: 17
       - service: logbook.log
         data_template:
@@ -198,7 +198,7 @@ automation:
     action:
       - service: climate.set_temperature
         data:
-          entity_id: climate.house
+          entity_id: climate.rest_of_house_thermostat
           temperature: 20
       - service: logbook.log
         data_template:
@@ -220,7 +220,7 @@ automation:
     action:
       - service: climate.set_temperature
         data:
-          entity_id: climate.house
+          entity_id: climate.rest_of_house_thermostat
           temperature: 20
       - service: logbook.log
         data_template:
