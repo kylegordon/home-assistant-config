@@ -3,5 +3,6 @@ substitutions:
   device_name: decking_steps_floodlights
   device_description: Decking steps floodlights
   friendly_name: Decking steps floodlights
+  default_state: "RESTORE_DEFAULT_ON"
 
 <<: !include common/sonoff_basic_switch_common.yaml
