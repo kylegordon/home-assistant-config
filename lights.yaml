@@ -4,7 +4,7 @@
   entity_id: switch.garage_lights_relay
 
 - platform: switch
-  name: "Front Door Floodlights"
+  name: "Front Floodlights"
   entity_id: switch.front_floodlights_relay
 
 - platform: switch
@@ -16,8 +16,8 @@
   entity_id: switch.back_floodlights_relay
 
 - platform: switch
-  name: "Mini Deck Floodlight"
-  entity_id: switch.mini_deck_floodlight_relay
+  name: "Garden Steps Floodlight"
+  entity_id: switch.garden_steps_floodlight_relay
 
 - platform: switch
   name: "Edison Lamp"
@@ -64,10 +64,3 @@
 - platform: switch
   name: Octoprint Lighting
   entity_id: switch.octoprint_relay_1
-
-  #- platform: group
-  #name: Tin Hut Shelving
-  #entities:
-  #  - light.tin_hut_shelf_lights_left
-  #  - light.tin_hut_shelf_lights_right
-  #  - light.tin_hut_shelf_lights_bench

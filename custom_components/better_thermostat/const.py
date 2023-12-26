@@ -26,6 +26,7 @@ except (FileNotFoundError, KeyError, json.JSONDecodeError) as e:
 
 
 CONF_HEATER = "thermostat"
+CONF_COOLER = "cooler"
 CONF_SENSOR = "temperature_sensor"
 CONF_HUMIDITY = "humidity_sensor"
 CONF_SENSOR_WINDOW = "window_sensors"
@@ -33,6 +34,7 @@ CONF_TARGET_TEMP = "target_temp"
 CONF_WEATHER = "weather"
 CONF_OFF_TEMPERATURE = "off_temperature"
 CONF_WINDOW_TIMEOUT = "window_off_delay"
+CONF_WINDOW_TIMEOUT_AFTER = "window_off_delay_after"
 CONF_OUTDOOR_SENSOR = "outdoor_sensor"
 CONF_VALVE_MAINTENANCE = "valve_maintenance"
 CONF_MIN_TEMP = "min_temp"
@@ -50,6 +52,7 @@ CONF_MODEL = "model"
 CONF_HOMATICIP = "homaticip"
 CONF_INTEGRATION = "integration"
 CONF_NO_SYSTEM_MODE_OFF = "no_off_system_mode"
+CONF_TOLERANCE = "tolerance"
 SUPPORT_FLAGS = SUPPORT_TARGET_TEMPERATURE
 
 ATTR_STATE_WINDOW_OPEN = "window_open"

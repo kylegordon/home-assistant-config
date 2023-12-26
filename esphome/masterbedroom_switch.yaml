@@ -3,5 +3,6 @@ substitutions:
   device_name: masterbedroom_switch
   device_description: Master Bedroom Lightswitch
   friendly_name: Master Bedroom Switch
+  default_state: "RESTORE_DEFAULT_ON"
 
 <<: !include common/sonoff_touch_switch_common.yaml
