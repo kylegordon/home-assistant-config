@@ -4,7 +4,7 @@ default_view:
   entities:
     - group.people_status
     - group.modes
-    - sensor.house_average_temperature
+    - sensor.rest_of_house_average_temperature
     - sensor.house_average_humidity
     - calendar.next_bin
     - sensor.next_bin
@@ -16,7 +16,7 @@ default_view:
 environment_summary:
   name: Environment Summary
   entities:
-    - climate.house
+    - climate.rest_of_house_thermostat
     - climate.hot_water
     - sensor.house_average_humidity
 
@@ -198,19 +198,20 @@ outside:
 outside_lights:
   name: Outside Lights
   entities:
-    - light.front_door_floodlights
+    - light.front_floodlights
     - light.driveway_floodlights
     - light.back_floodlights
-    - light.mini_deck_floodlight
+    - light.garden_steps_floodlight
     - light.decking_lights
     - light.front_door_dome
     - light.car_port
+    - switch.outside_rgb_white_channels
 
 climate:
   name: Climate
   entities:
-    - climate.house
-    - sensor.house_average_temperature
+    - climate.rest_of_house_thermostat
+    - sensor.rest_of_house_average_temperature
     - sensor.house_average_humidity
     - sensor.weather_station_rainfall
     - sensor.weather_station_wind_direction

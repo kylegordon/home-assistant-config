@@ -1,12 +1,21 @@
 import logging
 import voluptuous as vol
+
 from collections import OrderedDict
+from homeassistant import config_entries
+from homeassistant.const import CONF_NAME
+from homeassistant.core import callback
+from homeassistant.helpers import selector
+from homeassistant.components.climate.const import HVACMode
+from homeassistant.helpers import config_validation as cv
+
 
 from .utils.bridge import load_adapter
 
 from .utils.helpers import get_device_model, get_trv_intigration
 
 from .const import (
+    CONF_COOLER,
     CONF_PROTECT_OVERHEATING,
     CONF_CALIBRATION,
     CONF_CHILD_LOCK,
@@ -23,17 +32,12 @@ from .const import (
     CONF_VALVE_MAINTENANCE,
     CONF_WEATHER,
     CONF_WINDOW_TIMEOUT,
+    CONF_WINDOW_TIMEOUT_AFTER,
     CONF_CALIBRATION_MODE,
+    CONF_TOLERANCE,
     CalibrationMode,
     CalibrationType,
 )
-from homeassistant import config_entries
-from homeassistant.const import CONF_NAME
-from homeassistant.core import callback
-from homeassistant.helpers import selector
-from homeassistant.components.climate.const import HVACMode
-from homeassistant.helpers import config_validation as cv
-
 
 from . import DOMAIN  # pylint:disable=unused-import
 
@@ -86,7 +90,7 @@ CALIBRATION_MODE_SELECTOR = selector.SelectSelector(
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    VERSION = 5
+    VERSION = 6
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
     def __init__(self):
@@ -250,6 +254,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self.data[CONF_OUTDOOR_SENSOR] = None
             if CONF_WEATHER not in self.data:
                 self.data[CONF_WEATHER] = None
+            if CONF_COOLER not in self.data:
+                self.data[CONF_COOLER] = None
 
             if CONF_WINDOW_TIMEOUT in self.data:
                 self.data[CONF_WINDOW_TIMEOUT] = (
@@ -262,6 +268,18 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 )
             else:
                 self.data[CONF_WINDOW_TIMEOUT] = 0
+
+            if CONF_WINDOW_TIMEOUT_AFTER in self.data:
+                self.data[CONF_WINDOW_TIMEOUT_AFTER] = (
+                    int(
+                        cv.time_period_dict(
+                            user_input.get(CONF_WINDOW_TIMEOUT_AFTER, None)
+                        ).total_seconds()
+                    )
+                    or 0
+                )
+            else:
+                self.data[CONF_WINDOW_TIMEOUT_AFTER] = 0
 
             if "base" not in errors:
                 for trv in self.heater_entity_id:
@@ -286,6 +304,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Optional(CONF_NAME, default=user_input.get(CONF_NAME, "")): str,
                     vol.Required(CONF_HEATER): selector.EntitySelector(
                         selector.EntitySelectorConfig(domain="climate", multiple=True)
+                    ),
+                    vol.Optional(CONF_COOLER): selector.EntitySelector(
+                        selector.EntitySelectorConfig(domain="climate", multiple=False)
                     ),
                     vol.Required(CONF_SENSOR): selector.EntitySelector(
                         selector.EntitySelectorConfig(
@@ -324,9 +345,15 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                     vol.Optional(CONF_WINDOW_TIMEOUT): selector.DurationSelector(),
                     vol.Optional(
+                        CONF_WINDOW_TIMEOUT_AFTER
+                    ): selector.DurationSelector(),
+                    vol.Optional(
                         CONF_OFF_TEMPERATURE,
                         default=user_input.get(CONF_OFF_TEMPERATURE, 20),
                     ): int,
+                    vol.Optional(
+                        CONF_TOLERANCE, default=user_input.get(CONF_TOLERANCE, 0.0)
+                    ): vol.All(vol.Coerce(float), vol.Range(min=0)),
                 }
             ),
             errors=errors,
@@ -510,8 +537,24 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             else:
                 self.updated_config[CONF_WINDOW_TIMEOUT] = 0
 
+            if CONF_WINDOW_TIMEOUT_AFTER in self.updated_config:
+                self.updated_config[CONF_WINDOW_TIMEOUT_AFTER] = (
+                    int(
+                        cv.time_period_dict(
+                            user_input.get(CONF_WINDOW_TIMEOUT_AFTER, None)
+                        ).total_seconds()
+                    )
+                    or 0
+                )
+            else:
+                self.updated_config[CONF_WINDOW_TIMEOUT_AFTER] = 0
+
             self.updated_config[CONF_OFF_TEMPERATURE] = user_input.get(
                 CONF_OFF_TEMPERATURE
+            )
+
+            self.updated_config[CONF_TOLERANCE] = float(
+                user_input.get(CONF_TOLERANCE, 0.0)
             )
 
             for trv in self.updated_config[CONF_HEATER]:
@@ -613,12 +656,33 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             )
         ] = selector.DurationSelector()
 
+        _timeout = self.config_entry.data.get(CONF_WINDOW_TIMEOUT_AFTER, 0)
+        _timeout = str(cv.time_period_seconds(_timeout))
+        _timeout = {
+            "hours": int(_timeout.split(":", maxsplit=1)[0]),
+            "minutes": int(_timeout.split(":")[1]),
+            "seconds": int(_timeout.split(":")[2]),
+        }
+        fields[
+            vol.Optional(
+                CONF_WINDOW_TIMEOUT_AFTER,
+                default=_timeout,
+                description={"suggested_value": _timeout},
+            )
+        ] = selector.DurationSelector()
+
         fields[
             vol.Optional(
                 CONF_OFF_TEMPERATURE,
                 default=self.config_entry.data.get(CONF_OFF_TEMPERATURE, 5),
             )
         ] = int
+
+        fields[
+            vol.Optional(
+                CONF_TOLERANCE, default=self.config_entry.data.get(CONF_TOLERANCE, 0.0)
+            )
+        ] = vol.All(vol.Coerce(float), vol.Range(min=0))
 
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(fields), last_step=False

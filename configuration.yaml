@@ -48,7 +48,7 @@ homeassistant:
       icon: mdi:water-percent
     sensor.house_average_humidity:
       icon: mdi:water-percent
-    sensor.house_average_temperature:
+    sensor.rest_of_house_average_temperature:
       icon: mdi:thermometer
     sensor.next_bin:
       icon: mdi:delete-empty

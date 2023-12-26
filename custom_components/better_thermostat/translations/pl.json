@@ -66,7 +66,9 @@
           "weather": "Twoja jednostka pogodowa, aby uzyskać temperaturę zewnętrzną",
           "heat_auto_swapped": "Jeżeli tryb auto oznacza grzanie dla Twojego TRV i chcesz to zmienić",
           "child_lock": "Ignoruj wszystkie wejścia w TRV jak np. Blokada dziecięca",
-          "homaticip": "Jeżeli używasz HomaticIP, powinienieś włączyć tę opcję żeby spowolnić żądania"
+          "homaticip": "Jeżeli używasz HomaticIP, powinienieś włączyć tę opcję żeby spowolnić żądania",
+          "name": "Nazwa",
+          "thermostat": "Prawdziwy termostat"
         }
       },
       "advanced": {
@@ -76,19 +78,27 @@
           "child_lock": "Ignoruj wszystkie wejścia w TRV jak np. Blokada dziecięca",
           "homaticip": "Jeżeli używasz HomaticIP, powinieneś włączyć tę opcję, żeby spowolnić żądania spowolnienia cyklu pracy",
           "valve_maintenance": "Jeżeli Twój termostat nie ma trybu konserwacji, możesz użyć tej opcji.",
-          "calibration": "Rodzaj kalibracji, której chcesz użyć"
+          "calibration": "Rodzaj kalibracji, której chcesz użyć",
+          "protect_overheating": "Zabezpieczenie przed przegrzaniem?",
+          "calibration_mode": "Tryb kalibracji",
+          "no_off_system_mode": "Jeśli Twój TRV nie obsługuje trybu wyłączenia, możesz go włączyć, aby zamiast tego używać temperatury docelowej 5°C"
+        },
+        "data_description": {
+          "protect_overheating": "Niektóre TRV całkowicie zamykają zawór po osiągnięciu temperatury. Lub grzejnik ma dużo ciepła resztkowego. Może to spowodować przegrzanie. Ta opcja może temu zapobiec.",
+          "calibration_mode": "Rodzaj sposobu obliczania kalibracji\n***Normalny***: W tym trybie wewnętrzny czujnik temperatury TRV jest zależny od zewnętrznego czujnika temperatury.\n***Agresywny***: W tym trybie wewnętrzny czujnik temperatury TRV jest ustalany przez zewnętrzny czujnik temperatury, ale jest ustawiony znacznie niżej/wyżej, aby uzyskać szybsze przyspieszenie.\n***AI Time Based***: W tym trybie wewnętrzny czujnik temperatury TRV jest ustalany przez zewnętrzny czujnik temperatury, ale wartość jest obliczana przez niestandardowy algorytm w celu ulepszenia wewnętrznego algorytmu TRV.",
+          "calibration": "Jak kalibracja powinna być zastosowana w TRV (temperatura docelowa lub przesunięcie)\n***Target Temperature Based***: Zastosuj kalibrację do temperatury docelowej.\n***Oparte na przesunięciu***: Zastosuj kalibrację do przesunięcia."
         }
       }
     }
   },
   "issues": {
     "missing_entity": {
-      "title": "BT: {name} - related entity is missing",
+      "title": "BT: {name} - brak podmiotu powiązanego",
       "fix_flow": {
         "step": {
           "confirm": {
-            "title": "The related entity {entity} is missing",
-            "description": "The reason for this is that the entity ({entity}) is not available in your Home Assistant.\n\nYou can fix this by checking if the batterie of the device is full or reconnect it to HA. Make sure that the entity is back in HA before you continue."
+            "title": "Brak {entity} powiązanej",
+            "description": "Powodem tego jest to, że podmiot ({entity}) nie jest dostępny w Twoim Home Assistant.\n\nMożesz to naprawić, sprawdzając, czy bateria urządzenia jest pełna lub ponownie podłączając je do HA. Zanim przejdziesz dalej, upewnij się, że jednostka wróciła do HA."
           }
         }
       }

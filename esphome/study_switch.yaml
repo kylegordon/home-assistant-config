@@ -3,5 +3,7 @@ substitutions:
   device_name: study_switch
   device_description: Study Lightswitch
   friendly_name: Study Switch
+  default_state: "RESTORE_DEFAULT_ON"
+
 
 <<: !include common/sonoff_touch_switch_common.yaml
