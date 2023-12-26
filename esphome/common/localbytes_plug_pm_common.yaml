@@ -1,7 +1,7 @@
 ---
 substitutions:
   project_name: localbytes.plug-pm
-  package_import_url: github://kylegordon/home-assistant-config/esphome/common/localbytes-plug-pm-common.yaml@main
+  package_import_url: github://kylegordon/home-assistant-config/esphome/common/localbytes-plug-pm-common.yaml@main # yamllint disable-line rule:line-length
   binary_sensor_pin: GPIO3
   switch_pin: GPIO14
   sensor_sel_pin: GPIO12
