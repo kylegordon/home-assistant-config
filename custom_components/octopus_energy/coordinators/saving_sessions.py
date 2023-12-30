@@ -17,20 +17,21 @@ from ..const import (
   DATA_SAVING_SESSIONS_COORDINATOR,
   EVENT_ALL_SAVING_SESSIONS,
   EVENT_NEW_SAVING_SESSION,
+  REFRESH_RATE_IN_MINUTES_OCTOPLUS_SAVING_SESSIONS,
 )
 
-from ..api_client import OctopusEnergyApiClient
+from ..api_client import ApiException, OctopusEnergyApiClient
 from ..api_client.saving_sessions import SavingSession
+from . import BaseCoordinatorResult
 
 _LOGGER = logging.getLogger(__name__)
 
-class SavingSessionsCoordinatorResult:
-  last_retrieved: datetime
+class SavingSessionsCoordinatorResult(BaseCoordinatorResult):
   available_events: list[SavingSession]
   joined_events: list[SavingSession]
 
-  def __init__(self, last_retrieved: datetime, available_events: list[SavingSession], joined_events: list[SavingSession]):
-    self.last_retrieved = last_retrieved
+  def __init__(self, last_retrieved: datetime, request_attempts: int, available_events: list[SavingSession], joined_events: list[SavingSession]):
+    super().__init__(last_retrieved, request_attempts, REFRESH_RATE_IN_MINUTES_OCTOPLUS_SAVING_SESSIONS)
     self.available_events = available_events
     self.joined_events = joined_events
 
@@ -55,7 +56,7 @@ async def async_refresh_saving_sessions(
     existing_saving_sessions_result: SavingSessionsCoordinatorResult,
     fire_event: Callable[[str, "dict[str, Any]"], None],
 ) -> SavingSessionsCoordinatorResult:
-  if existing_saving_sessions_result is None or (existing_saving_sessions_result.last_retrieved + timedelta(minutes=30)) < current or current.minute % 30 == 0:
+  if existing_saving_sessions_result is None or current >= existing_saving_sessions_result.next_refresh:
     try:
       result = await client.async_get_saving_sessions(account_id)
       available_events = filter_available_events(current, result.available_events, result.joined_events)
@@ -80,6 +81,23 @@ async def async_refresh_saving_sessions(
             "event_octopoints_per_kwh": available_event.octopoints
           })
 
+      joined_events = []
+      for ev in result.joined_events:
+        # Find original event so we can retrieve the octopoints per kwh
+        original_event = None
+        for available_event in result.available_events:
+          if (available_event.id == ev.id):
+            original_event = available_event
+            break
+
+        joined_events.append({
+          "id": ev.id,
+          "start": ev.start,
+          "end": ev.end,
+          "rewarded_octopoints": ev.octopoints,
+          "octopoints_per_kwh": original_event.octopoints if original_event is not None else None
+        })
+
       fire_event(EVENT_ALL_SAVING_SESSIONS, { 
         "account_id": account_id,
         "available_events": list(map(lambda ev: {
@@ -89,17 +107,35 @@ async def async_refresh_saving_sessions(
           "end": ev.end,
           "octopoints_per_kwh": ev.octopoints
         }, available_events)),
-        "joined_events": list(map(lambda ev: {
-          "id": ev.id,
-          "start": ev.start,
-          "end": ev.end,
-          "rewarded_octopoints": ev.octopoints
-        }, result.joined_events)), 
+        "joined_events": joined_events, 
       })
 
-      return SavingSessionsCoordinatorResult(current, available_events, result.joined_events)
-    except:
-      _LOGGER.debug('Failed to retrieve saving session information')
+      return SavingSessionsCoordinatorResult(current, 1, available_events, result.joined_events)
+    except Exception as e:
+      if isinstance(e, ApiException) == False:
+        _LOGGER.error(e)
+        raise
+      
+      result = None
+      if (existing_saving_sessions_result is not None):
+        result = SavingSessionsCoordinatorResult(
+          existing_saving_sessions_result.last_retrieved,
+          existing_saving_sessions_result.request_attempts + 1,
+          existing_saving_sessions_result.available_events,
+          existing_saving_sessions_result.joined_events
+        )
+        _LOGGER.warning(f"Failed to retrieve saving sessions - using cached data. Next attempt at {result.next_refresh}")
+      else:
+        result = SavingSessionsCoordinatorResult(
+          # We want to force into our fallback mode
+          current - timedelta(minutes=REFRESH_RATE_IN_MINUTES_OCTOPLUS_SAVING_SESSIONS),
+          2,
+          [],
+          []
+        )
+        _LOGGER.warning(f"Failed to retrieve saving sessions. Next attempt at {result.next_refresh}")
+      
+      return result
   
   return existing_saving_sessions_result
 
