@@ -270,6 +270,7 @@ async def async_setup_entry(hass, config_entry):
                 "light": [],
                 "binary_sensor": [],
                 "temperature": [],
+                "smart_switch": [],
             },
             "entities": {
                 "media_player": {},
@@ -278,6 +279,7 @@ async def async_setup_entry(hass, config_entry):
                 "light": [],
                 "binary_sensor": [],
                 "alarm_control_panel": {},
+                "smart_switch": [],
             },
             "excluded": {},
             "new_devices": True,
@@ -750,7 +752,8 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         """
         if not last_called or not (last_called and last_called.get("summary")):
             try:
-                last_called = await AlexaAPI.get_last_device_serial(login_obj)
+                async with async_timeout.timeout(10):
+                    last_called = await AlexaAPI.get_last_device_serial(login_obj)
             except TypeError:
                 _LOGGER.debug(
                     "%s: Error updating last_called: %s",
