@@ -27,4 +27,8 @@ automation:
       - service: light.turn_off
         entity_id:
           - light.living_room
+      - condition: state
+        entity_id: input_boolean.tv_lights_lockout
+        state: 'on'
+      - service: light.turn_off
           - light.dining_nook
