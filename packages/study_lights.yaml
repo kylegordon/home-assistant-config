@@ -43,7 +43,7 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.study_light
+          entity_id: light.study
           transition: 1
           brightness_step_pct: 10
 
@@ -56,6 +56,6 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.study_light
+          entity_id: light.study
           transition: 1
           brightness_step_pct: -10
