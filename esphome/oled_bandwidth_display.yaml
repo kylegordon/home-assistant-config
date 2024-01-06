@@ -54,6 +54,7 @@ font:
     size: 14
 
 i2c:
+  frequency: 800kHz
   sda: GPIO4
   scl: GPIO5
   scan: false
