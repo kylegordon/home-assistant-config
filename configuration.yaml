@@ -241,6 +241,8 @@ input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
 
+hwam_stove: !include hwam_stove.yaml
+
 utility_meter:
   quarter_hourly_energy:
     source: sensor.energy_spent

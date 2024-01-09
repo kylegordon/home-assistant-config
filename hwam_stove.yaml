@@ -1,0 +1,27 @@
+---
+living_room:
+  host: 172.24.32.50  # Not yet determined
+  monitored_variables:
+    - algorithm
+    - burn_level
+    - date_time
+    - firmware_version
+    - maintainance_alarms
+    - new_fire_wood_estimate
+    - night_being_time
+    - night_end_time
+    - night_lowering
+    - operation_mode
+    - oxygen_level
+    - phase
+    - refill_alarm
+    - remote_refill_alarm
+    - remote_version
+    - room_temperature
+    - safety_alarms
+    - stove_temperature
+    - time_to_new_fire_wood
+    - updating
+    - valve1_position
+    - valve2_position
+    - valve3_position
