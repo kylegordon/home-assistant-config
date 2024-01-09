@@ -1,4 +1,7 @@
 ---
+# From https://github.com/mvn23/hwam_stove
+# See also Lovelace UI from https://github.com/peterczarlarsen-ha/hwam
+
 living_room:
   host: 172.24.32.50  # Not yet determined
   monitored_variables:
