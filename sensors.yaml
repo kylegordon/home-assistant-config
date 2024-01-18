@@ -117,6 +117,15 @@
     - sensor.study_ble_humidity
     - sensor.bathroom_multi_sensor_humidity
 
+- platform: min_max
+  name: Study Temperature
+  unique_id: study_average_temperature
+  type: median
+  entity_ids:
+    - sensor.study_ble_temperature
+    - sensor.study_multi_sensor_temperature
+
+
 - platform: time_date
   display_options:
     - 'time'
