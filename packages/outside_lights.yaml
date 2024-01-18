@@ -36,6 +36,36 @@ switch:
               - 0
 
 automation:
+  - alias: Outdoor motion detected
+    id: outdoor_motion_detected
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.back_door_pir
+          - binary_sensor.driveway_pir
+          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.back_door_person_occupancy
+          - binary_sensor.gates_person_occupancy
+          - binary_sensor.front_door_person_occupancy
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "above_horizon"
+    action:
+      - service: script.tweet_engine
+        data_template:
+          tweet: >
+            {{ [
+            "Motion detected outside!",
+            "Something moved outside and triggered a sensor."
+            ] | random + " https://amzn.to/2CR5mbQ" }}
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Motion outside!"
+          message: >
+            Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+
   - alias: "Outside night lights on"
     id: outside_night_lights_on
     trigger:
@@ -100,6 +130,12 @@ automation:
             "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
             "Did you hear that? I can't see a thing. Turning on the outside lights"
             ] | random + " https://amzn.to/2CR5mbQ" }}
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Motion outside!"
+          message: >
+            Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Turning on outside lights
       - service: homeassistant.turn_on
         entity_id:
           - group.outside_lights
