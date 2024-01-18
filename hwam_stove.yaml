@@ -11,7 +11,7 @@ living_room:
     - firmware_version
     - maintainance_alarms
     - new_fire_wood_estimate
-    - night_being_time
+    - night_begin_time
     - night_end_time
     - night_lowering
     - operation_mode
