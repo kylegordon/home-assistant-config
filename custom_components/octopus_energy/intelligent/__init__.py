@@ -16,15 +16,15 @@ mock_intelligent_data_key = "MOCK_INTELLIGENT_DATA"
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_mock_intelligent_data(hass):
-  mock_data = hass.data[DOMAIN][mock_intelligent_data_key] if mock_intelligent_data_key in hass.data[DOMAIN] else None
+async def async_mock_intelligent_data(hass, account_id: str):
+  mock_data = hass.data[DOMAIN][account_id][mock_intelligent_data_key] if mock_intelligent_data_key in hass.data[DOMAIN][account_id] else None
   if mock_data is None:
     store = storage.Store(hass, "1", "octopus_energy.mock_intelligent_responses")
-    hass.data[DOMAIN][mock_intelligent_data_key] = await store.async_load() is not None
+    hass.data[DOMAIN][account_id][mock_intelligent_data_key] = await store.async_load() is not None
   
-  _LOGGER.debug(f'MOCK_INTELLIGENT_DATA: {hass.data[DOMAIN][mock_intelligent_data_key]}')
+  _LOGGER.debug(f'MOCK_INTELLIGENT_DATA: {hass.data[DOMAIN][account_id][mock_intelligent_data_key]}')
 
-  return hass.data[DOMAIN][mock_intelligent_data_key]
+  return hass.data[DOMAIN][account_id][mock_intelligent_data_key]
 
 def mock_intelligent_dispatches() -> IntelligentDispatches:
   planned: list[IntelligentDispatchItem] = []
@@ -74,6 +74,7 @@ def mock_intelligent_settings():
 def mock_intelligent_device():
   return {
     "krakenflexDeviceId": "1",
+    "provider": FULLY_SUPPORTED_INTELLIGENT_PROVIDERS[0],
 		"vehicleMake": "Tesla",
 		"vehicleModel": "Model Y",
     "vehicleBatterySizeInKwh": 75.0,
@@ -85,7 +86,8 @@ def mock_intelligent_device():
 def is_intelligent_tariff(tariff_code: str):
   parts = get_tariff_parts(tariff_code.upper())
 
-  return parts is not None and "INTELLI" in parts.product_code
+  # Need to ignore Octopus Intelligent Go tariffs
+  return parts is not None and ("INTELLI-BB-VAR" in parts.product_code or "INTELLI-VAR" in parts.product_code)
 
 def has_intelligent_tariff(current: datetime, account_info):
   if account_info is not None and len(account_info["electricity_meter_points"]) > 0:
@@ -98,7 +100,7 @@ def has_intelligent_tariff(current: datetime, account_info):
 
 def __get_dispatch(rate, dispatches: list[IntelligentDispatchItem], expected_source: str):
   for dispatch in dispatches:
-    if (expected_source is None or dispatch.source == expected_source) and dispatch.start <= rate["valid_from"] and dispatch.end >= rate["valid_to"]:
+    if (expected_source is None or dispatch.source == expected_source) and dispatch.start <= rate["start"] and dispatch.end >= rate["end"]:
       return dispatch
     
   return None
@@ -114,8 +116,8 @@ def adjust_intelligent_rates(rates, planned_dispatches: list[IntelligentDispatch
 
     if __get_dispatch(rate, planned_dispatches, "smart-charge") is not None or __get_dispatch(rate, completed_dispatches, None) is not None:
       adjusted_rates.append({
-        "valid_from": rate["valid_from"],
-        "valid_to": rate["valid_to"],
+        "start": rate["start"],
+        "end": rate["end"],
         "value_inc_vat": off_peak_rate["value_inc_vat"],
         "is_capped": rate["is_capped"] if "is_capped" in rate else False,
         "is_intelligent_adjusted": True
@@ -157,7 +159,7 @@ def dictionary_list_to_dispatches(dispatches: list):
         IntelligentDispatchItem(
           parse_datetime(dispatch["start"]),
           parse_datetime(dispatch["end"]),
-          int(dispatch["charge_in_kwh"]),
+          float(dispatch["charge_in_kwh"]) if "charge_in_kwh" in dispatch and dispatch["charge_in_kwh"] is not None else None,
           dispatch["source"] if "source" in dispatch else "",
           dispatch["location"] if "location" in dispatch else ""
         )
@@ -178,3 +180,48 @@ def dispatches_to_dictionary_list(dispatches: list[IntelligentDispatchItem]):
       })
 
   return items
+
+class IntelligentFeatures:
+  bump_charge_supported: bool
+  charge_limit_supported: bool
+  planned_dispatches_supported: bool
+  ready_time_supported: bool
+  smart_charge_supported: bool
+
+  def __init__(self,
+               bump_charge_supported: bool,
+               charge_limit_supported: bool,
+               planned_dispatches_supported: bool,
+               ready_time_supported: bool,
+               smart_charge_supported: bool):
+    self.bump_charge_supported = bump_charge_supported
+    self.charge_limit_supported = charge_limit_supported
+    self.planned_dispatches_supported = planned_dispatches_supported
+    self.ready_time_supported = ready_time_supported
+    self.smart_charge_supported = smart_charge_supported
+
+FULLY_SUPPORTED_INTELLIGENT_PROVIDERS = [
+  "DAIKIN",
+  "ECOBEE",
+  "ENERGIZER",
+  "ENPHASE",
+  "ENODE",
+  "GIVENERGY",
+  "HUAWEI",
+  "JEDLIX",
+  "MYENERGI",
+  "OCPP_WALLBOX",
+  "SENSI",
+  "SMARTCAR",
+  "TESLA",
+  "SMART_PEAR",
+]
+
+def get_intelligent_features(provider: str) -> IntelligentFeatures:
+  if provider is not None and provider.upper() in FULLY_SUPPORTED_INTELLIGENT_PROVIDERS:
+    return IntelligentFeatures(True, True, True, True, True)
+  elif provider == "OHME":
+    return IntelligentFeatures(False, False, False, False, False)
+
+  _LOGGER.warning(f"Unexpected intelligent provider '{provider}'")
+  return IntelligentFeatures(False, False, False, False, False)
