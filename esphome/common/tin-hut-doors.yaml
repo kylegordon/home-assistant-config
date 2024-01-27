@@ -1,4 +1,12 @@
 ---
+
+
+### TODO
+
+## Display On/Off when doors moving
+## Restore last state of display
+
+
 esphome:
   name: $device_name
   comment: $device_description
@@ -80,6 +88,7 @@ i2c:
 
 display:
   - platform: ssd1306_i2c
+    id: oled
     model: "SH1106 128x64"
     # reset_pin: D0
     address: 0x3C
@@ -187,6 +196,18 @@ switch:
     on_turn_on:
       - delay: $active_switch_duration
       - switch.turn_off: cover_switch
+  - platform: template
+    name: "Display On/Off"
+    id: display_on_off
+    internal: false
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+    turn_on_action:
+      - lambda: |-
+          id(oled).turn_on();
+    turn_off_action:
+      - lambda: |-
+          id(oled).turn_off();
 
 cover:
   - platform: template
