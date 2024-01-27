@@ -4,10 +4,16 @@ homeassistant:
   customize:
     input_boolean.open_tin_hut_process:
       hidden: false
+    input_boolean.lockup_process:
+      hidden: false
 
 input_boolean:
   openup_process:
     name: Open tin hut process
+    icon: mdi:sleep
+    initial: false
+  lockup_process:
+    name: Lockup process
     icon: mdi:sleep
     initial: false
   tin_hut_occupied:
@@ -72,3 +78,26 @@ automation:
           entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
       - service: input_boolean.turn_off
         entity_id: input_boolean.open_tin_hut_process
+
+  - alias: Lockup process
+    trigger:
+      - platform: state
+        entity_id: input_boolean.lockup_process
+        to: 'on'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Triggering lockup process"
+          entity_id: input_boolean.lockup_process
+          domain: input_boolean
+      - service: homeassistant.turn_off
+        entity_id:
+          - switch.tin_hut_lights_relay
+          - input_boolean.tin_hut_occupied
+      - service: media_player.turn_off
+        data: {}
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.lockup_process
