@@ -12,13 +12,13 @@ substitutions:
   cover_device_class: garage
 
   # switch config
-  cover_switch_pin: GPIO2  # gpio pin that trigger the door opening/closing/stop
+  cover_switch_pin: D1  # gpio pin that trigger the door opening/closing/stop
   active_switch_duration: 100ms  # amount of time relay is closed
   $push_interval: "1500"  # safe time between relay activations in ms
 
   # endstop config
-  open_endstop_pin: GPIO5  # gpio pin for open endstop sensor
-  close_endstop_pin: GPIO19  # gpio pin for close endstop sensor
+  open_endstop_pin: D7  # gpio pin for open endstop sensor
+  close_endstop_pin: D6  # gpio pin for close endstop sensor
   debounce_time: 30ms  # debounce time for open/close endstops
 
 packages:
