@@ -3,8 +3,8 @@ substitutions:
   # device config
   device_name: tin-hut-door-right
   friendly_name: Tin Hut Door Right
-  platform: ESP32
-  board: nodemcu-32s
+  platform: ESP8266
+  board: d1_mini
 
   # cover config
   open_duration: "30000"  # ms

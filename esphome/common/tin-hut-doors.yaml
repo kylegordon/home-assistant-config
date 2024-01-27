@@ -1,6 +1,9 @@
 ---
 esphome:
   name: $device_name
+  comment: $device_description
+  device_description: $device_description
+  friendly_name: $friendly_name
   platform: $platform
   board: $board
   on_boot:
