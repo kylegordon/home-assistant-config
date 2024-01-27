@@ -29,7 +29,7 @@ packages:
 # Enable logging
 logger:
   level: INFO
-   # level: DEBUG
+  # level: DEBUG
 
 # debug switch for logging
 # switch:
