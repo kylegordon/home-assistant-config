@@ -139,12 +139,9 @@ automation:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
-      #- condition: numeric_state
-      #  entity_id: sensor.average_external_light_level
-      #  below: 300
-      - condition: time
-        after: '16:00:00'
-        before: '23:00:00'
+      - condition: state
+        entity_id: binary_sensor.tin_hut_occupied
+        state: "on"
     action:
       - service: light.turn_on
         # Adjust the RGB values, and keep existing white channels
@@ -160,6 +157,7 @@ automation:
             - "{{ states('sensor.cheerlights_blue') }}"
             - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
             - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
+          # ^^ not sure wtf is going on and why garage shelving is tracking outside lights # FIXME
 
   - alias: Cheerlights - off
     id: cheerlights_off
@@ -177,5 +175,21 @@ automation:
           - light.under_bed_lights
           - light.glow_orbs
           #- light.tin_hut_shelving
+        data:
+          transition: 10
+
+  - alias: Cheerlights - Tin Hut Off
+    id: cheerlights_tin_hut_off
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        from: "on"
+        to: "off"
+    action:
+      - service: homeassistant.turn_off
+        entity_id:
+          - light.tin_hut_shelf_lights_bench
+          - light.tin_hut_shelf_lights_left
+          - light.tin_hut_shelf_lights_right
         data:
           transition: 10
