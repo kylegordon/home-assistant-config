@@ -1,38 +1,41 @@
-from homeassistant.util.dt import (now)
 import logging
+from custom_components.octopus_energy.coordinators.current_consumption import CurrentConsumptionCoordinatorResult
 
 from homeassistant.core import HomeAssistant
+from homeassistant.util.dt import (now)
 
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity
 )
 from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorStateClass
+  RestoreSensor,
+  SensorDeviceClass,
+  SensorStateClass
 )
 from homeassistant.const import (
-    ENERGY_KILO_WATT_HOUR
+    UnitOfEnergy
 )
 
 from .base import (OctopusEnergyGasSensor)
+from ..utils.attributes import dict_to_typed_dict
 
 from ..utils.consumption import (get_current_consumption_delta, get_total_consumption)
 
 _LOGGER = logging.getLogger(__name__)
 
-class OctopusEnergyCurrentGasConsumption(CoordinatorEntity, OctopusEnergyGasSensor):
+class OctopusEnergyCurrentGasConsumption(CoordinatorEntity, OctopusEnergyGasSensor, RestoreSensor):
   """Sensor for displaying the current gas consumption."""
 
   def __init__(self, hass: HomeAssistant, coordinator, meter, point):
     """Init sensor."""
-    super().__init__(coordinator)
+    CoordinatorEntity.__init__(self, coordinator)
     OctopusEnergyGasSensor.__init__(self, hass, meter, point)
 
     self._state = None
     self._latest_date = None
     self._previous_total_consumption = None
     self._attributes = {
-      "last_updated_timestamp": None
+      "last_evaluated": None
     }
 
   @property
@@ -56,9 +59,9 @@ class OctopusEnergyCurrentGasConsumption(CoordinatorEntity, OctopusEnergyGasSens
     return SensorStateClass.TOTAL
 
   @property
-  def unit_of_measurement(self):
+  def native_unit_of_measurement(self):
     """The unit of measurement of sensor"""
-    return ENERGY_KILO_WATT_HOUR
+    return UnitOfEnergy.KILO_WATT_HOUR
 
   @property
   def icon(self):
@@ -76,24 +79,28 @@ class OctopusEnergyCurrentGasConsumption(CoordinatorEntity, OctopusEnergyGasSens
     return self._latest_date
   
   @property
-  def state(self):
+  def native_value(self):
     """The current consumption for the meter."""
     _LOGGER.debug('Updating OctopusEnergyCurrentGasConsumption')
-    consumption_result = self.coordinator.data if self.coordinator is not None else None
+    consumption_result: CurrentConsumptionCoordinatorResult = self.coordinator.data if self.coordinator is not None and self.coordinator.data is not None else None
+    consumption_data = consumption_result.data if consumption_result is not None else None
 
     current_date = now()
-    if (consumption_result is not None):
-      total_consumption = get_total_consumption(consumption_result)
+    if (consumption_data is not None):
+      total_consumption = get_total_consumption(consumption_data)
       self._state = get_current_consumption_delta(current_date,
                                                   total_consumption,
-                                                  self._attributes["last_updated_timestamp"] if self._attributes["last_updated_timestamp"] is not None else current_date,
+                                                  self._attributes["last_evaluated"] if "last_evaluated" in self._attributes and self._attributes["last_evaluated"] is not None else current_date,
                                                   self._previous_total_consumption)
       if (self._state is not None):
         self._latest_date = current_date
-        self._attributes["last_updated_timestamp"] = current_date
+        self._attributes["last_evaluated"] = current_date
+        self._attributes["data_last_retrieved"] = consumption_result.last_retrieved
 
       # Store the total consumption ready for the next run
       self._previous_total_consumption = total_consumption
+      
+      _LOGGER.debug(f'state: {self._state}; total_consumption: {total_consumption}; previous_total_consumption: {self._previous_total_consumption}; consumption_data: {consumption_data}')
     
     return self._state
 
@@ -104,6 +111,14 @@ class OctopusEnergyCurrentGasConsumption(CoordinatorEntity, OctopusEnergyGasSens
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = state.state
+      self._state = None if state.state == "unknown" else state.state
+      self._attributes = dict_to_typed_dict(state.attributes)
+
+      if "last_updated_timestamp" in self._attributes:
+        del self._attributes["last_updated_timestamp"]
+        
+      # With this included, was causing issues with statistics. Why other sensors are not effected...
+      if "last_reset" in self._attributes:
+        del self._attributes["last_reset"]
     
       _LOGGER.debug(f'Restored OctopusEnergyCurrentGasConsumption state: {self._state}')

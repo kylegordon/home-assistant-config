@@ -52,7 +52,7 @@ homeassistant:
         icon: mdi:water-percent
     sensor.house_average_humidity:
         icon: mdi:water-percent
-    sensor.house_average_temperature:
+    sensor.rest_of_house_average_temperature:
         icon: mdi:thermometer
     sensor.next_bin:
       icon: mdi:delete-empty
@@ -240,6 +240,8 @@ scene: !include_dir_list scenes
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
+
+hwam_stove: !include hwam_stove.yaml
 
 utility_meter:
   quarter_hourly_energy:

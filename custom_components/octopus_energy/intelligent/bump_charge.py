@@ -8,20 +8,23 @@ from homeassistant.helpers.update_coordinator import (
 )
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.util.dt import (utcnow)
+from homeassistant.helpers.restore_state import RestoreEntity
 
 from .base import OctopusEnergyIntelligentSensor
 from ..api_client import OctopusEnergyApiClient
 from . import is_in_bump_charge
+from ..coordinators.intelligent_dispatches import IntelligentDispatchesCoordinatorResult
+from ..utils.attributes import dict_to_typed_dict
 
 _LOGGER = logging.getLogger(__name__)
 
-class OctopusEnergyIntelligentBumpCharge(CoordinatorEntity, SwitchEntity, OctopusEnergyIntelligentSensor):
+class OctopusEnergyIntelligentBumpCharge(CoordinatorEntity, SwitchEntity, OctopusEnergyIntelligentSensor, RestoreEntity):
   """Switch for turning intelligent bump charge on and off."""
 
   def __init__(self, hass: HomeAssistant, coordinator, client: OctopusEnergyApiClient, device, account_id: str):
     """Init sensor."""
     # Pass coordinator to base class
-    super().__init__(coordinator)
+    CoordinatorEntity.__init__(self, coordinator)
     OctopusEnergyIntelligentSensor.__init__(self, device)
 
     self._state = False
@@ -34,12 +37,12 @@ class OctopusEnergyIntelligentBumpCharge(CoordinatorEntity, SwitchEntity, Octopu
   @property
   def unique_id(self):
     """The id of the sensor."""
-    return f"octopus_energy_intelligent_bump_charge"
+    return f"octopus_energy_{self._account_id}_intelligent_bump_charge"
     
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Octopus Energy Intelligent Bump Charge"
+    return f"Octopus Energy {self._account_id} Intelligent Bump Charge"
 
   @property
   def icon(self):
@@ -54,10 +57,16 @@ class OctopusEnergyIntelligentBumpCharge(CoordinatorEntity, SwitchEntity, Octopu
   @property
   def is_on(self):
     """Determine if the bump charge is on."""
-    if self.coordinator is None or self.coordinator.data is None or (self._last_updated is not None and "last_updated" in self.coordinator.data and self._last_updated > self.coordinator.data["last_updated"]):
+    result: IntelligentDispatchesCoordinatorResult = self.coordinator.data if self.coordinator is not None else None
+    if result is None or (self._last_updated is not None and self._last_updated > result.last_retrieved):
       return self._state
+    
+    if result is not None:
+      self._attributes["data_last_retrieved"] = result.last_retrieved
 
-    self._state = is_in_bump_charge(utcnow(), self.coordinator.data["planned"])
+    current_date = utcnow()
+    self._state = is_in_bump_charge(current_date, result.dispatches.planned if result.dispatches is not None else [])
+    self._attributes["last_evaluated"] = current_date
     
     return self._state
 
@@ -78,3 +87,18 @@ class OctopusEnergyIntelligentBumpCharge(CoordinatorEntity, SwitchEntity, Octopu
     self._state = False
     self._last_updated = utcnow()
     self.async_write_ha_state()
+
+  async def async_added_to_hass(self):
+    """Call when entity about to be added to hass."""
+    # If not None, we got an initial value.
+    await super().async_added_to_hass()
+    state = await self.async_get_last_state()
+
+    if state is not None:
+      self._state = None if state.state == "unknown" else state.state
+      self._attributes = dict_to_typed_dict(state.attributes)
+    
+    if (self._state is None):
+      self._state = False
+    
+    _LOGGER.debug(f'Restored OctopusEnergyIntelligentBumpCharge state: {self._state}')
