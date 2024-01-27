@@ -1,6 +1,8 @@
+---
 substitutions:
   device_name: garage_lights
   device_description: Garage lights
   friendly_name: Garage lights
+  default_state: "DISABLED"
 
-<<: !include common/sonoff_basic_switch_common.yaml
+<<: !include common/shelly_1_detached_push_button_common.yaml

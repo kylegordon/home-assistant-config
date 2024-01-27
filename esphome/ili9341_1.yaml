@@ -11,7 +11,7 @@ packages:
   common: !include common/common.yaml
   colors: !include common/colours.yaml
 
-substitutions:  # substitute your own values in this section
+substitutions:
   device_name: ili9341
   device_description: ILI9341 Display
   friendly_name: ILI9341 Display
@@ -28,7 +28,8 @@ substitutions:  # substitute your own values in this section
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP32
+
+esp32:
   board: nodemcu-32s
 
 captive_portal:
@@ -141,7 +142,7 @@ sensor:
 
   - platform: homeassistant
     id: house_average_temperature
-    entity_id: sensor.house_average_temperature
+    entity_id: sensor.rest_of_house_average_temperature
     internal: true
 
   - platform: homeassistant
@@ -230,10 +231,24 @@ image:
     file: "delete-empty.png"
     type: RGB24
 
+touchscreen:
+  platform: xpt2046
+  id: toucharea
+  cs_pin: GPIO12
+  interrupt_pin: GPIO16
+  # on_touch:
+  #   - lambda: |-
+  #       ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
+  #           id(toucharea).x,
+  #           id(toucharea).y,
+  #           id(toucharea).x_raw,
+  #           id(toucharea).y_raw
+  #           );
+
 display:
   - id: my_display
-    platform: ili9341
-    model: "TFT 2.4"
+    platform: ili9xxx
+    model: ili9341
     cs_pin: GPIO5
     dc_pin: GPIO27
     reset_pin: GPIO33
