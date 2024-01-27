@@ -1,4 +1,7 @@
 ---
+packages:
+  common: !include common.yaml
+
 esphome:
   name: $device_name
   comment: $device_description
@@ -29,6 +32,7 @@ esphome:
           {
             // last dir not know, so let cover restore last state
           }
+
 globals:
   - id: last_dir
     type: esphome::cover::CoverOperation
@@ -50,6 +54,32 @@ globals:
     type: uint32_t
     restore_value: no
     initial_value: $close_duration
+
+# Enable logging
+logger:
+
+web_server:
+
+captive_portal:
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/London
+
+# D0 == GPIO16 == Optional internal PullDOWN
+# D1 == GPIO5 == Optional internal Pullup
+# D2 == GPIO4 == Optional internal Pullup
+# D3 == GPIO0 == Optional internal Pullup
+# D4 == GPIO2 == Optional internal Pullup
+# D5 == GPIO14 == Optional internal Pullup
+# D6 == GPIO12 == Optional internal Pullup
+# D7 == GPIO13 == Optional internal Pullup
+# D8 == GPIO15 == Optional internal Pullup
 
 binary_sensor:
   - platform: gpio
