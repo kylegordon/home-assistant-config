@@ -34,7 +34,7 @@ automation:
     initial_state: true
     trigger:
       - platform: state
-        entity_id: binary_sensor.boot_room_motion
+        entity_id: binary_sensor.boot_room_motion_occupancy
         to: 'on'
         from: 'off'
     # Sensor attached to wrong door at the moment...
@@ -83,7 +83,7 @@ automation:
     initial_state: true
     trigger:
       - platform: state
-        entity_id: binary_sensor.boot_room_motion
+        entity_id: binary_sensor.boot_room_motion_occupancy
         to: 'on'
         from: 'off'
     # Sensor attached to wrong door at the moment...
@@ -114,7 +114,7 @@ automation:
   - alias: Boot room motion - 2 minute timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.boot_room_motion
+        entity_id: binary_sensor.boot_room_motion_occupancy
         to: 'off'
         for:
           minutes: 2
@@ -136,7 +136,7 @@ automation:
   - alias: Boot room motion - 10 minute timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.boot_room_motion
+        entity_id: binary_sensor.boot_room_motion_occupancy
         to: 'off'
         for:
           minutes: 10

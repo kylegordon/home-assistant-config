@@ -120,6 +120,7 @@ switch:
     id: sonoff_touch_relay
     name: "${friendly_name} Relay"
     pin: GPIO12
+    restore_mode: "${default_state}"
 
 output:
   # Register the blue LED as a dimmable output ....

@@ -5,21 +5,14 @@
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
 
 binary_sensor:
-  - platform: workday
-    name: Workday
-    country: GB
-  - platform: workday
-    name: Workday tomorrow
-    country: GB
-    days_offset: 1
   - platform: group
     # Openings that should prevent the heating from coming on
     name: Climate Openings
     device_class: opening
     entities:
-      - binary_sensor.back_door
-      - binary_sensor.front_door
-      - binary_sensor.patio_door
+      # - binary_sensor.back_door
+      # - binary_sensor.front_door
+      # - binary_sensor.patio_door
       - binary_sensor.ensuite_window
       - binary_sensor.master_bedroom_window
       - binary_sensor.guest_bedroom_window
@@ -28,7 +21,7 @@ binary_sensor:
       - binary_sensor.bathroom_window
       - binary_sensor.dining_table_window
       - binary_sensor.kitchen_window
-      - binary_sensor.utility_room_window
+      # - binary_sensor.utility_room_window
 
 group:
   call_for_heat:
@@ -36,16 +29,28 @@ group:
     name: Call For Heat - Group
     entities:
       - input_boolean.call_for_rad_heat
-      - input_boolean.call_for_guest_heat
+      - binary_sensor.craft_room_trv_heat_required
+      - binary_sensor.study_trv_heat_required
+      - binary_sensor.living_room_trv_heat_required
+      - binary_sensor.hallway_trv_heat_required
+      - binary_sensor.guest_room_trv_heat_required
 
 input_boolean:
   # Inputs from external thermostats, such as household generic or a single room
   call_for_rad_heat:
     name: Call for heat - General
     icon: mdi:radiator
-  call_for_guest_heat:
-    name: Call for heat - Guest Room
-    icon: mdi:radiator
+
+# input:
+#   night_temp:
+#     name: Night Temperature
+#     description: The target temperature at night
+#     default: 18
+#     selector:
+#       number:
+#         min: 5
+#         max: 35
+#         unit_of_measurement: °C
 
 automation:
   - alias: "Call for heat - demand"
@@ -88,172 +93,95 @@ automation:
       - service: homeassistant.turn_off
         entity_id: switch.boiler_valve_controls_relay_2
 
-  - alias: "Climate - Away"
-    trigger:
-      - platform: state
-        entity_id: group.people
-        to: "not_home"
-        for:
-          minutes: 15
-    action:
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.house
-          preset_mode: "away"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "away"
-      - service: logbook.log
-        data_template:
-          name: EVENT
-          message: >
-            Setting heating and hot water thermostat to away mode
+  # - alias: "Climate - Night Schedule"
+  #   trigger:
+  #     - platform: state
+  #       entity_id: !input night_times_schedule
+  #       from: "on"
+  #       to: "off"
+  #     - platform: state
+  #       entity_id: !input night_times_schedule
+  #       from: "off"
+  #       to: "on"
+  #   condition: []
+  #   action:
+  #     - if:
+  #         - condition: state
+  #           entity_id: !input night_times_schedule
+  #           state: "on"
+  #       then:
+  #         # Set night target temperatures
+  #         - service: better_thermostat.set_temp_target_temperature
+  #           data:
+  #             temperature: input.night_temp
+  #           target:
+  #             - climate.craft_room
+  #             - climate.guest_bedroom
+  #             - climate.hallway
+  #             - climate.living_room
+  #             - climate.study
+  #       else:
+  #         # Restore daytime target temperatures
+  #         - service: better_thermostat.restore_saved_target_temperature
+  #           data: {}
+  #           target:
+  #             - climate.craft_room
+  #             - climate.guest_bedroom
+  #             - climate.hallway
+  #             - climate.living_room
+  #             - climate.study
 
-  - alias: "Climate - Comfort"
-    trigger:
-      - platform: time
-        at: "19:00:00"
-    condition:
-      - condition: state
-        entity_id: group.people
-        state: "home"
-    action:
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.house
-          preset_mode: "none"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
-      - service: logbook.log
-        data_template:
-          name: EVENT
-          message: >
-            Setting heating and hot water thermostat to normal mode
+  # - alias: "Climate - Lazy Morning"
+  #   trigger:
+  #     - platform: time
+  #       at: "07:30:00"
+  #   condition:
+  #     - condition: state
+  #       entity_id: binary_sensor.workday
+  #       state: "off"
+  #     - condition: state
+  #       entity_id: binary_sensor.home_occupied
+  #       state: "on"
+  #   action:
+  #     - service: climate.set_temperature
+  #       data:
+  #         entity_id: climate.house
+  #         temperature: 20
+  #     - service: logbook.log
+  #       data_template:
+  #         name: EVENT
+  #         message: >
+  #           Warming the house up for a lazy morning.
 
-  - alias: "Climate - home"
-    trigger:
-      - platform: state
-        entity_id: group.people
-        to: "home"
-    action:
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.house
-          preset_mode: "none"
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
-      - service: logbook.log
-        data_template:
-          name: EVENT
-          message: >
-            Setting heating and hot water thermostat to normal mode
+  - alias: Better Thermostat Night mode
+    id: better_thermostat_night_mode
+    description: "Set TRVs to night mode. The schedule is night hours."
+    use_blueprint:
+      path: homeassistant/better_thermostat_night_mode.yaml
+      input:
+        thermostat_target:
+          entity_id:
+            - climate.craft_room
+            - climate.guest_bedroom
+            - climate.hallway
+            - climate.living_room
+            - climate.study
+            - climate.rest_of_house
+        night_times_schedule: schedule.thermostat_night_schedule
 
-
-  - alias: "Climate - Sleep (tomorrow workday)"
-    trigger:
-      - platform: time
-        at: "21:00:00"
-    condition:
-      - condition: state
-        entity_id: binary_sensor.workday_tomorrow
-        state: "on"
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
-    action:
-      - service: climate.set_temperature
-        data:
-          entity_id: climate.house
-          temperature: 17
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "away"
-      - service: logbook.log
-        data_template:
-          name: EVENT
-          message: >
-            Setting heating low for sleeping
-
-  - alias: "Climate - Sleep (tomorrow not workday)"
-    trigger:
-      - platform: time
-        at: "23:00:00"
-    condition:
-      - condition: state
-        entity_id: binary_sensor.workday_tomorrow
-        state: "off"
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
-    action:
-      - service: climate.set_temperature
-        data:
-          entity_id: climate.house
-          temperature: 17
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "Away"
-      - service: logbook.log
-        data_template:
-          name: EVENT
-          message: >
-            Setting heating low for sleeping
-
-  - alias: "Climate - Weekday Morning"
-    trigger:
-      - platform: time
-        at: "06:30:00"
-    condition:
-      - condition: state
-        entity_id: binary_sensor.workday
-        state: "on"
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
-    action:
-      - service: climate.set_temperature
-        data:
-          entity_id: climate.house
-          temperature: 20
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
-      - service: logbook.log
-        data_template:
-          name: EVENT
-          message: >
-            Warming the house up for a weekday morning.
-
-  - alias: "Climate - Lazy Morning"
-    trigger:
-      - platform: time
-        at: "07:30:00"
-    condition:
-      - condition: state
-        entity_id: binary_sensor.workday
-        state: "off"
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
-    action:
-      - service: climate.set_temperature
-        data:
-          entity_id: climate.house
-          temperature: 20
-      - service: climate.set_preset_mode
-        data:
-          entity_id: climate.hot_water
-          preset_mode: "none"
-      - service: logbook.log
-        data_template:
-          name: EVENT
-          message: >
-            Warming the house up for a lazy morning.
+  - alias: Better Thermostat Away mode
+    id: better_thermostat_away_mode
+    description: "Set TRVs to away mode when house is unoccupied."
+    use_blueprint:
+      path: homeassistant/better_thermostat_away_mode.yaml
+      input:
+        thermostat_target:
+          entity_id:
+            - climate.craft_room
+            - climate.guest_bedroom
+            - climate.hallway
+            - climate.living_room
+            - climate.study
+            - climate.rest_of_house
+        occupancy_sensor: binary_sensor.home_occupied
+        away_times_schedule: schedule.thermostat_away_schedule
