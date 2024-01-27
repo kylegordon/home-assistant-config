@@ -10,8 +10,40 @@ input_boolean:
     name: Open tin hut process
     icon: mdi:sleep
     initial: false
+  tin_hut_occupied:
+    name: Tin Hut Occupied
+    icon: mdi:account-alert
+    initial: false
+
+binary_sensor:
+  - platform: template
+    sensors:
+      # This will eventually be replaced a sensor that collates multiple sensors
+      tin_hut_occupied:
+        friendly_name: Tin Hut Occupied
+        value_template: "{{
+          is_state('input_boolean.tin_hut_occupied', 'on')
+          }}"
 
 automation:
+  - alias: Tin Hut Occupied
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        to: 'on'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: input_boolean.tin_hut_occupied
+
+  - alias: Tin Hut Not Occupied
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        to: 'off'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: input_boolean.tin_hut_occupied
+
   - alias: Open tin hut process
     trigger:
       - platform: state
@@ -27,6 +59,7 @@ automation:
       - service: homeassistant.turn_on
         entity_id:
           - switch.tin_hut_lights_relay
+          - input_boolean.tin_hut_occupied
       - service: openhome.invoke_pin
         data:
           pin: 1
