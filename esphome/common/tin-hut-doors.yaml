@@ -32,7 +32,7 @@ esphome:
             id(last_dir) = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).publish_state();
           }
-          else // door neither closed nor open 
+          else // door neither closed nor open
           {
             // last dir not know, so let cover restore last state
           }
@@ -40,23 +40,23 @@ esphome:
 globals:
   - id: last_dir
     type: esphome::cover::CoverOperation
-    restore_value: yes
+    restore_value: true
     initial_value: esphome::cover::COVER_OPERATION_IDLE
   - id: target_action
     type: int
-    restore_value: no
-    initial_value: "3" # Idle: 0, Open: 1, Close: 2, None: 3
+    restore_value: false
+    initial_value: "3"  # Idle: 0, Open: 1, Close: 2, None: 3
   - id: push_interval
     type: int
-    restore_value: no
+    restore_value: false
     initial_value: $push_interval
   - id: open_duration
     type: uint32_t
-    restore_value: no
+    restore_value: false
     initial_value: $open_duration
   - id: close_duration
     type: uint32_t
-    restore_value: no
+    restore_value: false
     initial_value: $close_duration
 
 # Enable logging
@@ -153,7 +153,7 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
-        - lambda: |-          
+        - lambda: |-
             // set state as closing. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_CLOSING;
@@ -273,7 +273,7 @@ cover:
     open_action:
       - logger.log:
           format: "Open Action - CO:%u PO:%f LD:%u"
-          args: [ id(garage_door).current_operation, id(garage_door).position, id(last_dir) ]
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN)
@@ -283,7 +283,7 @@ cover:
     close_action:
       - logger.log:
           format: "Close Action - CO:%u PO:%f LD:%u"
-          args: [ id(garage_door).current_operation, id(garage_door).position, id(last_dir) ]
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_CLOSED)
@@ -293,7 +293,7 @@ cover:
     stop_action:
       - logger.log:
           format: "Stop Action - CO:%u PO:%f LD:%u"
-          args: [ id(garage_door).current_operation, id(garage_door).position, id(last_dir) ]
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN && id(garage_door).position != COVER_CLOSED)
