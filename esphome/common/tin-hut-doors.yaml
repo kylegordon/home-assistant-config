@@ -1,11 +1,7 @@
 ---
-packages:
-  common: !include common.yaml
-
 esphome:
   name: $device_name
   comment: $device_description
-  device_description: $device_description
   friendly_name: $friendly_name
   platform: $platform
   board: $board
@@ -71,6 +67,49 @@ time:
     id: esptime
     timezone: Europe/London
 
+font:
+  - file: 'slkscr.ttf'
+    id: font1
+    size: 8
+
+i2c:
+  frequency: 800kHz
+  sda: D2
+  scl: D5
+  scan: true
+
+display:
+  - platform: ssd1306_i2c
+    model: "SH1106 128x64"
+    # reset_pin: D0
+    address: 0x3C
+    lambda: |-
+      static int yorigin = 0;
+      static int lineheight = 9;
+
+      //it.line(0, 0, 128, 0); // Top line
+      //it.line(0, 0, 0, 128); // Left line
+      //it.line(127, 0, 127, 64); // Right line
+      //it.line(0, 63, 127, 63); // Bottom line
+
+      int y = yorigin;
+      // Print "viewpoint.house" in top center.
+      it.printf(64, y, id(font1), TextAlign::TOP_CENTER, "Viewpoint.House");
+      y = y+lineheight;
+      it.line(25, y-1, it.get_width()-25, y-1);
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "IP: %s", id(ip_address).state.c_str());
+      y = y+lineheight;
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "HA: %s", id(connection_status).state ? "Connected" : "Disconnected");
+      y = y+lineheight;
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Relay state: %s", id(cover_switch).state ? "Open" : "Closed");
+      y = y+lineheight;
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Lower Sensor: %s", id(close_endstop).state ? "Open" : "Closed");
+      y = y+lineheight;
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Upper Sensor: %s", id(open_endstop).state ? "Open" : "Closed");
+
+      // Print time in HH:MM format
+      it.strftime(0, 60, id(font1), TextAlign::BASELINE_LEFT, "%H:%M", id(esptime).now());
+
 # D0 == GPIO16 == Optional internal PullDOWN
 # D1 == GPIO5 == Optional internal Pullup
 # D2 == GPIO4 == Optional internal Pullup
@@ -89,7 +128,7 @@ binary_sensor:
       inverted: true
     name: "Open Endstop Sensor"
     id: open_endstop
-    internal: true
+    internal: false
     filters:
       - delayed_on_off: $debounce_time
     on_press:
@@ -117,7 +156,7 @@ binary_sensor:
       inverted: true
     name: "Close Endstop Sensor"
     id: close_endstop
-    internal: true
+    internal: false
     filters:
       - delayed_on_off: $debounce_time
     on_press:
@@ -143,7 +182,7 @@ switch:
     pin: $cover_switch_pin
     name: "Cover Switch"
     id: cover_switch
-    internal: true
+    internal: false
     restore_mode: ALWAYS_OFF
     on_turn_on:
       - delay: $active_switch_duration
@@ -151,7 +190,7 @@ switch:
 
 cover:
   - platform: template
-    name: $device_name
+    name: $friendly_name
     id: garage_door
     device_class: $cover_device_class
     optimistic: false
