@@ -6,7 +6,6 @@
 ## Display On/Off when doors moving
 ## Restore last state of display
 
-
 esphome:
   name: $device_name
   comment: $device_description
