@@ -75,7 +75,7 @@ time:
     timezone: Europe/London
 
 font:
-  - file: 'slkscr.ttf'
+  - file: 'common/fonts/slkscr.ttf'
     id: font1
     size: 8
 

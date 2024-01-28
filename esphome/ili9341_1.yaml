@@ -221,6 +221,7 @@ display:
   - id: my_display
     platform: ili9xxx
     model: ili9341
+    data_rate: 80Mhz
     cs_pin: GPIO5
     dc_pin: GPIO27
     reset_pin: GPIO33
