@@ -39,18 +39,20 @@ async def async_setup_entry(
         if config_entry.title is not None
         else config_entry.data.get(CONF_NAME)
     )
-    if frequency in ["weekly", "even-weeks", "odd-weeks", "every-n-weeks"]:
-        async_add_devices([WeeklyCollection(config_entry)], True)
-    elif frequency == "every-n-days":
-        async_add_devices([DailyCollection(config_entry)], True)
-    elif frequency == "monthly":
-        async_add_devices([MonthlyCollection(config_entry)], True)
-    elif frequency == "annual":
-        async_add_devices([AnnualCollection(config_entry)], True)
-    elif frequency == "group":
-        async_add_devices([GroupCollection(config_entry)], True)
-    elif frequency == "blank":
-        async_add_devices([BlankCollection(config_entry)], True)
+    _frequency_function = {
+        "weekly": WeeklyCollection,
+        "even-weeks": WeeklyCollection,
+        "odd-weeks": WeeklyCollection,
+        "every-n-weeks": WeeklyCollection,
+        "every-n-days": DailyCollection,
+        "monthly": MonthlyCollection,
+        "annual": AnnualCollection,
+        "group": GroupCollection,
+        "blank": BlankCollection,
+    }
+    if frequency in _frequency_function:
+        add_devices = _frequency_function[frequency]
+        async_add_devices([add_devices(config_entry)], True)
     else:
         _LOGGER.error("(%s) Unknown frequency %s", name, frequency)
         raise ValueError
@@ -94,16 +96,13 @@ class GarbageCollection(RestoreEntity):
         self._hidden = config.get(ATTR_HIDDEN, False)
         self._manual = config.get(const.CONF_MANUAL)
         first_month = config.get(const.CONF_FIRST_MONTH, const.DEFAULT_FIRST_MONTH)
+        months = [m["value"] for m in const.MONTH_OPTIONS]
         self._first_month: int = (
-            const.MONTH_OPTIONS.index(first_month) + 1
-            if first_month in const.MONTH_OPTIONS
-            else 1
+            months.index(first_month) + 1 if first_month in months else 1
         )
         last_month = config.get(const.CONF_LAST_MONTH, const.DEFAULT_LAST_MONTH)
         self._last_month: int = (
-            const.MONTH_OPTIONS.index(last_month) + 1
-            if last_month in const.MONTH_OPTIONS
-            else 12
+            months.index(last_month) + 1 if last_month in months else 12
         )
         self._verbose_state = config.get(const.CONF_VERBOSE_STATE)
         self._icon_normal = config.get(const.CONF_ICON_NORMAL)
@@ -141,11 +140,21 @@ class GarbageCollection(RestoreEntity):
         if (state := await self.async_get_last_state()) is not None:
             self._last_updated = None  # Unblock update - after options change
             self._attr_state = state.state
-            self._days = state.attributes[const.ATTR_DAYS]
-            next_date = helpers.parse_datetime(state.attributes[const.ATTR_NEXT_DATE])
+            self._days = (
+                state.attributes[const.ATTR_DAYS]
+                if const.ATTR_DAYS in state.attributes
+                else None
+            )
+            next_date = (
+                helpers.parse_datetime(state.attributes[const.ATTR_NEXT_DATE])
+                if const.ATTR_NEXT_DATE in state.attributes
+                else None
+            )
             self._next_date = None if next_date is None else next_date.date()
-            self.last_collection = helpers.parse_datetime(
-                state.attributes[const.ATTR_LAST_COLLECTION]
+            self.last_collection = (
+                helpers.parse_datetime(state.attributes[const.ATTR_LAST_COLLECTION])
+                if const.ATTR_LAST_COLLECTION in state.attributes
+                else None
             )
 
         # Create device
@@ -310,19 +319,20 @@ class GarbageCollection(RestoreEntity):
         if not self.date_inside(day):
             year = day.year
             month = day.month
+            months = [m["label"] for m in const.MONTH_OPTIONS]
             if self._first_month <= self._last_month < month:
                 _LOGGER.debug(
                     "(%s) %s outside the range, lookig from %s next year",
                     self._attr_name,
                     day,
-                    const.MONTH_OPTIONS[self._first_month - 1],
+                    months[self._first_month - 1],
                 )
                 return date(year + 1, self._first_month, 1)
             _LOGGER.debug(
                 "(%s) %s outside the range, searching from %s",
                 self._attr_name,
                 day,
-                const.MONTH_OPTIONS[self._first_month - 1],
+                months[self._first_month - 1],
             )
             return date(year, self._first_month, 1)
         return day
@@ -463,6 +473,8 @@ class GarbageCollection(RestoreEntity):
                     self._attr_icon = self._icon_tomorrow
         else:
             self._days = None
+            self._attr_state = None
+            self._attr_icon = self._icon_normal
 
 
 class WeeklyCollection(GarbageCollection):

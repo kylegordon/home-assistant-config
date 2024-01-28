@@ -1,4 +1,6 @@
+---
 alias: "Media playing at night"
+id: media_playing_night
 trigger:
   - platform: state
     entity_id: media_player.living_room_kodi
@@ -8,7 +10,7 @@ condition:
     entity_id: sensor.average_external_light_level
     below: 1000
   - condition: state
-    entity_id: binary_sensor.kitchen_motion
+    entity_id: binary_sensor.kitchen_motion_occupancy
     state: "off"
 action:
   - service: light.turn_off

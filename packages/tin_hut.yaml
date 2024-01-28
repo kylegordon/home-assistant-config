@@ -1,0 +1,103 @@
+---
+homeassistant:
+  ## This doesn't seem to work. It needs to be surfaced in configuration.yaml
+  customize:
+    input_boolean.open_tin_hut_process:
+      hidden: false
+    input_boolean.lockup_process:
+      hidden: false
+
+input_boolean:
+  openup_process:
+    name: Open tin hut process
+    icon: mdi:sleep
+    initial: false
+  lockup_process:
+    name: Lockup process
+    icon: mdi:sleep
+    initial: false
+  tin_hut_occupied:
+    name: Tin Hut Occupied
+    icon: mdi:account-alert
+    initial: false
+
+binary_sensor:
+  - platform: template
+    sensors:
+      # This will eventually be replaced a sensor that collates multiple sensors
+      tin_hut_occupied:
+        friendly_name: Tin Hut Occupied
+        value_template: "{{
+          is_state('input_boolean.tin_hut_occupied', 'on')
+          }}"
+
+automation:
+  - alias: Tin Hut Occupied
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        to: 'on'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: input_boolean.tin_hut_occupied
+
+  - alias: Tin Hut Not Occupied
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        to: 'off'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: input_boolean.tin_hut_occupied
+
+  - alias: Open tin hut process
+    trigger:
+      - platform: state
+        entity_id: input_boolean.open_tin_hut_process
+        to: 'on'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Triggering openup process"
+          entity_id: input_boolean.open_tin_hut_process
+          domain: input_boolean
+      - service: homeassistant.turn_on
+        entity_id:
+          - switch.tin_hut_lights_relay
+          - input_boolean.tin_hut_occupied
+      - service: openhome.invoke_pin
+        data:
+          pin: 1
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: media_player.volume_set
+        data:
+          volume_level: 0.4
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.open_tin_hut_process
+
+  - alias: Lockup process
+    trigger:
+      - platform: state
+        entity_id: input_boolean.lockup_process
+        to: 'on'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Triggering lockup process"
+          entity_id: input_boolean.lockup_process
+          domain: input_boolean
+      - service: homeassistant.turn_off
+        entity_id:
+          - switch.tin_hut_lights_relay
+          - input_boolean.tin_hut_occupied
+      - service: media_player.turn_off
+        data: {}
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.lockup_process

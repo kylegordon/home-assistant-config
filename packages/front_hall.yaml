@@ -1,17 +1,27 @@
 ---
+input_number:
+  front_hall_light_level_trigger:
+    name: Front hall light level trigger
+    icon: mdi:sun-angle-outline
+    unit_of_measurement: lx
+    min: 0
+    max: 10000
+    step: 1
+
 automation:
-  - alias: Front hall light on
+  - alias: Front hall motion
+    id: front_hall_motion
     trigger:
       - platform: state
         entity_id:
-          - binary_sensor.front_hall_door
-          - binary_sensor.front_hall_motion
+          - binary_sensor.front_hall_door_contact
+          - binary_sensor.front_hall_motion_occupancy
         to: 'on'
         from: 'off'
     condition:
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
-        below: 1000
+        below: input_number.front_hall_light_level_trigger
       - condition: state
         entity_id: binary_sensor.home_occupied
         state: "on"
@@ -28,9 +38,10 @@ automation:
             - light.front_hall
 
   - alias: Front hall - 2 minute timeout
+    id: front_hall_motion_2_minute
     trigger:
       - platform: state
-        entity_id: binary_sensor.front_hall_motion
+        entity_id: binary_sensor.front_hall_motion_occupancy
         to: 'off'
         for:
           minutes: 2
@@ -49,9 +60,10 @@ automation:
         entity_id: light.front_hall
 
   - alias: Front hall - 10 minute timeout
+    id: front_hall_motion_10_minute
     trigger:
       - platform: state
-        entity_id: binary_sensor.front_hall_motion
+        entity_id: binary_sensor.front_hall_motion_occupancy
         to: 'off'
         for:
           minutes: 10

@@ -1,17 +1,35 @@
+---
+# yamllint disable rule:line-length
+
+## See also https://uk.banggood.com/Waveshare-7_5-Inch-E-ink-Screen-Module-800480-e-Paper-Display-SPI-Interface-7_5inch-e-Paper-HAT-(B)-For-Raspberry-Pi-p-1365284.html
+## https://community.home-assistant.io/t/weatherstation-compass-needle/359176/16
+## https://github.com/ofilis/esp32display/blob/main/esp32display.yaml
+## https://github.com/tejasitraj/esphome-tiny-display/blob/main/display-trial.yaml
+### Source glyph codes from https://pictogrammers.github.io/@mdi/font/5.3.45/
+
 packages:
   common: !include common/common.yaml
   colors: !include common/colours.yaml
-
 
 substitutions:
   device_name: ili9341
   device_description: ILI9341 Display
   friendly_name: ILI9341 Display
+  internal_temp_sensor: sensor.house_average_temperature  # entity from Home Assistant
+  outside_temp_sensor: sensor.openweathermap_temperature  # entity from Home Assistant
+  weather_entity: weather.openweathermap  # entity from Home Assistant
+  todays_forecast_high_entity: sensor.todays_forecast_high  # entity from Home Assistant
+  todays_forecast_low_entity: sensor.todays_forecast_low  # entity from Home Assistant
+  todays_forecast_condition_entity: sensor.openweathermap_forecast_condition
+  tomorrows_forecast_high_entity: sensor.tomorrows_forecast_high
+  tomorrows_forecast_low_entity: sensor.tomorrows_forecast_low
+  tomorrows_forecast_condition_entity: sensor.openweathermap_forecast_condition
 
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP32
+
+esp32:
   board: nodemcu-32s
 
 captive_portal:
@@ -26,21 +44,62 @@ time:
     timezone: Europe/London
 
 font:
-  - file: 'slkscr.ttf'
-    id: font1
+  - file: 'common/fonts/slkscr.ttf'
+    id: slkscr8
     size: 8
 
-  - file: 'BebasNeue-Regular.ttf'
-    id: font2
-    size: 20
+  # - file: 'common/fonts/BebasNeue-Regular.ttf'
+  #   id: bebasneueregular20
+  #   size: 20
 
-  - file: 'arial.ttf'
-    id: font3
+  - file: 'common/fonts/arial.ttf'
+    id: arial14
     size: 14
 
-  - file: 'BebasNeue-Regular.ttf'
+  - file: 'common/fonts/BebasNeue-Regular.ttf'
     id: fontlarge
     size: 64
+
+  - file: 'common/fonts/SourceSansPro-Light.ttf'
+    id: font1
+    size: 14
+  - file: 'common/fonts/SourceSansPro-SemiBold.ttf'
+    id: font2
+    size: 26
+  - file: 'common/fonts/materialdesignicons-webfont.ttf'
+    id: mdiwebfont35
+    size: 35
+    glyphs:
+      - "\U000F0F55"  # mdi:home-thermometer-outline
+      - "\U000F0A7A"  # "trash-can-outline"
+  - file: 'common/fonts/materialdesignicons-webfont.ttf'
+    id: mdiwebfont60
+    size: 60
+    glyphs:
+      - "\U000F0F55"  # mdi:home-thermometer-outline
+      - "\U000F0A7A"  # "trash-can-outline"
+  - file: 'common/fonts/materialdesignicons-webfont.ttf'
+    id: mdiwebfont70
+    size: 70
+    glyphs:
+      - "\U000F0594"  # "clear-night"
+      - "\U000F0590"  # "cloudy"
+      - "\U000F0591"  # "fog"
+      - "\U000F0592"  # "hail"
+      - "\U000F0593"  # "lightning"
+      - "\U000F067E"  # "lightning-rainy"
+      - "\U000F0595"  # "partlycloudy"
+      - "\U000F0596"  # "pouring"
+      - "\U000F0597"  # "rainy"
+      - "\U000F0598"  # "snowy"
+      - "\U000F067F"  # "snowy-rainy"
+      - "\U000F0599"  # "sunny"
+      - "\U000F059D"  # "windy"
+      - "\U000F059E"  # "windy-variant"
+      - "\U000F0A7A"  # "trash-can-outline"
+  - file: 'common/fonts/SourceSansPro-Bold.ttf'
+    id: font5
+    size: 60
 
 sensor:
   - platform: homeassistant
@@ -55,7 +114,7 @@ sensor:
 
   - platform: homeassistant
     id: house_average_temperature
-    entity_id: sensor.house_average_temperature
+    entity_id: sensor.rest_of_house_average_temperature
     internal: true
 
   - platform: homeassistant
@@ -63,10 +122,56 @@ sensor:
     entity_id: sensor.house_target_temperature
     internal: true
 
+  - platform: homeassistant
+    id: inside_temperature
+    entity_id: $internal_temp_sensor
+    internal: true
+
+  - platform: homeassistant
+    id: outside_temperature
+    entity_id: $outside_temp_sensor
+    internal: true
+
+  - platform: homeassistant
+    id: todays_forecast_high
+    entity_id: $todays_forecast_high_entity
+    internal: true
+
+  - platform: homeassistant
+    id: todays_forecast_low
+    entity_id: $todays_forecast_low_entity
+    internal: true
+
+  - platform: homeassistant
+    id: tomorrows_forecast_high
+    entity_id: $tomorrows_forecast_high_entity
+    internal: true
+
+  - platform: homeassistant
+    id: tomorrows_forecast_low
+    entity_id: $tomorrows_forecast_low_entity
+    internal: true
+
 text_sensor:
   - platform: homeassistant
     id: next_bin
     entity_id: sensor.next_bin
+    internal: true
+
+  - platform: homeassistant
+    id: weather_state
+    name: "Current Weather Icon"
+    entity_id: $weather_entity
+    internal: true
+
+  - platform: homeassistant
+    id: tomorrows_forecast_condition
+    entity_id: $tomorrows_forecast_condition_entity
+    internal: true
+
+  - platform: homeassistant
+    id: todays_forecast_condition
+    entity_id: $todays_forecast_condition_entity
     internal: true
 
 spi:
@@ -80,6 +185,18 @@ color:
     red: 100%
     green: 3%
     blue: 5%
+  - id: my_white
+    red: 100%
+    green: 100%
+    blue: 100%
+  - id: my_background
+    red: 60%
+    green: 20%
+    blue: 80%
+  - id: my_golden
+    red: 93%
+    green: 80%
+    blue: 38%
 
 image:
   - id: bin
@@ -91,63 +208,122 @@ touchscreen:
   id: toucharea
   cs_pin: GPIO12
   interrupt_pin: GPIO16
-  on_touch:
-    - lambda: |-
-        ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
-            id(toucharea).x,
-            id(toucharea).y,
-            id(toucharea).x_raw,
-            id(toucharea).y_raw
-            );
+  # on_touch:
+  #   - lambda: |-
+  #       ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%d",
+  #           id(toucharea).x,
+  #           id(toucharea).y,
+  #           id(toucharea).x_raw,
+  #           id(toucharea).y_raw
+  #           );
 
 display:
   - id: my_display
-    platform: ili9341
-    model: "TFT 2.4"
+    platform: ili9xxx
+    model: ili9341
+    data_rate: 80Mhz
     cs_pin: GPIO5
     dc_pin: GPIO27
     reset_pin: GPIO33
     rotation: 270
     pages:
-      - id: viewpoint
-        lambda: |-
-          // Print "Viewpoint" in top center.
-          it.printf(32, 0, id(font1), TextAlign::TOP_CENTER, "Viewpoint");
 
+      - id: weather
+        lambda: |-
+          it.filled_rectangle(0,  0, it.get_width(), it.get_height(), id(my_background));
+          it.strftime(10, 10, id(font2), id(my_white), TextAlign::TOP_LEFT, "%A %d %b", id(esptime).now());
           // Print time in HH:MM format
-          it.strftime(it.get_width(), 26, id(fontlarge), TextAlign::CENTER_RIGHT, "%H:%M:%S", id(esptime).now());
+          it.strftime(10, 40, id(font5), id(my_white), TextAlign::TOP_LEFT, "%H:%M", id(esptime).now());
 
-          // it.rectangle(0,0,318,238,COLOR_CSS_WHITE);
-          // it.rectangle(1,1,316,236,COLOR_CSS_WHITE);
-          // it.horizontal_line(2,50,316,COLOR_CSS_BLUE);
-          // it.horizontal_line(2,51,316,COLOR_CSS_BLUE);
+          std::map<std::string, std::string> weather_icon_map
+            {
+              {"clear-night", "\U000F0594"},
+              {"cloudy", "\U000F0590"},
+              {"fog", "\U000F0591"},
+              {"hail", "\U000F0592"},
+              {"lightning", "\U000F0593"},
+              {"lightning-rainy", "\U000F067E"},
+              {"partlycloudy", "\U000F0595"},
+              {"pouring", "\U000F0596"},
+              {"rainy", "\U000F0597"},
+              {"snowy", "\U000F0598"},
+              {"snowy-rainy", "\U000F067F"},
+              {"sunny", "\U000F0599"},
+              {"windy", "\U000F059D"},
+              {"windy-variant", "\U000F059E"},
+            };
 
-      - id: temperatures
-        lambda: |-
-          it.printf(0, 0, id(fontlarge), TextAlign::BASELINE_LEFT , "Climate");
-          // %.1f substitutes to 1 decimal place
+          if (id(weather_state).has_state()) {
+            it.printf(220, 15, id(mdiwebfont70), id(my_golden), TextAlign::TOP_LEFT, weather_icon_map[id(weather_state).state.c_str()].c_str());
+          }
+          if (id(outside_temperature).has_state()) {
+            it.printf(215, 80, id(font2), id(my_golden), TextAlign::TOP_LEFT, "%7.1f°", id(outside_temperature).state);
+          }
+
+          auto time = id(esptime).now();
+          if (time.hour > 16) {
+            it.printf(175, 135, id(font1), id(my_white), TextAlign::TOP_LEFT, "Tomorrows Forecast:");
+            if (id(tomorrows_forecast_condition).has_state()) {
+              it.printf(175, 155, id(mdiwebfont70), id(my_white), TextAlign::TOP_LEFT, weather_icon_map[id(tomorrows_forecast_condition).state.c_str()].c_str());
+            }
+            if (id(tomorrows_forecast_high).has_state()) {
+              it.printf(230, 160, id(font2), id(my_white), TextAlign::TOP_LEFT, "%7.1f°", id(tomorrows_forecast_high).state);
+            }
+            if (id(tomorrows_forecast_low).has_state()) {
+              it.printf(230, 190, id(font2), id(my_white), TextAlign::TOP_LEFT, "%7.1f°", id(tomorrows_forecast_low).state);
+            }
+          } else {
+            it.printf(175, 135, id(font1), id(my_white), TextAlign::TOP_LEFT, "Todays Forecast:");
+            if (id(todays_forecast_condition).has_state()) {
+              it.printf(175, 155, id(mdiwebfont70), id(my_white), TextAlign::TOP_LEFT, weather_icon_map[id(todays_forecast_condition).state.c_str()].c_str());
+            }
+            if (id(todays_forecast_high).has_state()) {
+              it.printf(230, 160, id(font2), id(my_white), TextAlign::TOP_LEFT, "%7.1f°", id(todays_forecast_high).state);
+            }
+            if (id(todays_forecast_low).has_state()) {
+              it.printf(230, 190, id(font2), id(my_white), TextAlign::TOP_LEFT, "%7.1f°", id(todays_forecast_low).state);
+            }
+          }
+          it.printf(65, 135, id(mdiwebfont35), id(my_golden), TextAlign::TOP_LEFT, "\U000F0F55");
+          if (id(inside_temperature).has_state()) {
+            it.printf(40, 165, id(font2), id(my_golden), TextAlign::TOP_LEFT, "%7.1f°", id(inside_temperature).state);
+          }
+          it.line(50, 197, 115, 197, id(my_golden));
           if (id(house_target_temperature).has_state()) {
-            it.printf(0, 128, id(fontlarge), TextAlign::BASELINE_LEFT , "Target: %.1f°C", id(house_target_temperature).state);
+            it.printf(40, 195, id(font2), id(my_golden), TextAlign::TOP_LEFT , "%7.1f°", id(house_target_temperature).state);
           }
 
-          if (id(house_average_temperature).has_state()) {
-            it.printf(0, 192, id(fontlarge), TextAlign::BASELINE_LEFT , "Actual: %.1f°C", id(house_average_temperature).state);
-          }
+      # - id: temperatures
+      #   lambda: |-
+      #     it.printf(0, 0, id(fontlarge), TextAlign::BASELINE_LEFT , "Climate");
+      #     // %.1f substitutes to 1 decimal place
+      #     if (id(house_target_temperature).has_state()) {
+      #       it.printf(0, 128, id(fontlarge), TextAlign::BASELINE_LEFT , "Target: %.1f°C", id(house_target_temperature).state);
+      #     }
+      #     if (id(house_average_temperature).has_state()) {
+      #       it.printf(0, 192, id(fontlarge), TextAlign::BASELINE_LEFT , "Actual: %.1f°C", id(house_average_temperature).state);
+      #     }
 
       - id: nextbin
         lambda: |-
+          std::map<std::string, std::string> bin_icon_map
+            {
+              {"green", "\U000F0A7A"},
+            };
           if (id(next_bin).has_state()) {
-            // it.printf(0, 200, id(fontlarge), TextAlign::BASELINE_LEFT , id(next_bin).state);
-            // it.printf(0, 220, id(fontlarge), "Hello World Again!");
-            it.printf(0, 220, id(fontlarge), TextAlign::BASELINE_LEFT, "Bin: %s", id(next_bin).state.c_str());
+            // Original it.printf(0, 100, id(fontlarge), id(my_white), TextAlign::BASELINE_LEFT, bin_icon_map[id(next_bin).state.c_str()].c_str());
+            // it.printf(0, 100, id(mdiwebfont70), TextAlign::BASELINE_LEFT, bin_icon_map[id(next_bin).state.c_str()].c_str());
+            // it.printf(0, 100, id(mdiwebfont70), TextAlign::BASELINE_LEFT, "\U000F0F55" );
+            it.printf(0, 100, id(mdiwebfont70), id(my_golden), TextAlign::BASELINE_LEFT, "\U000F0A7A");
+            it.printf(0, 220, id(fontlarge), id(my_golden), TextAlign::BASELINE_LEFT, "Bin: %s", id(next_bin).state.c_str());
           }
 
-      - id: circle
-        lambda: |-
-          it.filled_circle(it.get_width() / 2, it.get_height() / 3, 30, COLOR_CSS_RED);
+      # - id: circle
+      #   lambda: |-
+      #     it.filled_circle(it.get_width() / 2, it.get_height() / 3, 30, COLOR_CSS_RED);
 
 interval:
-  - interval: 3s
+  - interval: 10s
     then:
       - display.page.show_next: my_display
       - component.update: my_display
