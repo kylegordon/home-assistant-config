@@ -1,6 +1,10 @@
 import logging
 from datetime import datetime
 
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
@@ -162,6 +166,8 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionCubicMeters(CoordinatorEnti
     if result is not None:
       self._attributes["data_last_retrieved"] = result.last_retrieved
 
+    super()._handle_coordinator_update()
+
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
     # If not None, we got an initial value.
@@ -169,7 +175,7 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionCubicMeters(CoordinatorEnti
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) else state.state
       self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored OctopusEnergyPreviousAccumulativeGasConsumption state: {self._state}')
