@@ -1,7 +1,11 @@
 import logging
 from datetime import datetime
 
-from homeassistant.core import HomeAssistant
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
+from homeassistant.core import HomeAssistant, callback
 
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
@@ -88,6 +92,10 @@ class OctopusEnergyPreviousAccumulativeElectricityCostOffPeak(CoordinatorEntity,
 
   @property
   def native_value(self):
+    return self._state
+  
+  @callback
+  def _handle_coordinator_update(self) -> None:
     """Retrieve the previously calculated state"""
     result: PreviousConsumptionCoordinatorResult = self.coordinator.data if self.coordinator is not None and self.coordinator.data is not None else None
     consumption_data = result.consumption if result is not None else None
@@ -115,7 +123,7 @@ class OctopusEnergyPreviousAccumulativeElectricityCostOffPeak(CoordinatorEntity,
     if result is not None:
       self._attributes["data_last_retrieved"] = result.last_retrieved
 
-    return self._state
+    super()._handle_coordinator_update()
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -124,7 +132,7 @@ class OctopusEnergyPreviousAccumulativeElectricityCostOffPeak(CoordinatorEntity,
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) else state.state
       self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored OctopusEnergyPreviousAccumulativeElectricityCostOffPeak state: {self._state}')

@@ -1,6 +1,10 @@
 import logging
 
-from homeassistant.core import HomeAssistant
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import generate_entity_id
 
 from homeassistant.util.dt import (now, utcnow)
@@ -72,6 +76,10 @@ class OctopusEnergyIntelligentDispatching(CoordinatorEntity, BinarySensorEntity,
 
   @property
   def is_on(self):
+    return self._state
+  
+  @callback
+  def _handle_coordinator_update(self) -> None:
     """Determine if OE is currently dispatching energy."""
     result: IntelligentDispatchesCoordinatorResult = self.coordinator.data if self.coordinator is not None else None
     rates = self._rates_coordinator.data.rates if self._rates_coordinator is not None and self._rates_coordinator.data is not None else None
@@ -86,8 +94,8 @@ class OctopusEnergyIntelligentDispatching(CoordinatorEntity, BinarySensorEntity,
       "data_last_retrieved": result.last_retrieved if result is not None else None,
       "last_evaluated": current_date 
     }
-    
-    return self._state
+
+    super()._handle_coordinator_update()
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -96,7 +104,7 @@ class OctopusEnergyIntelligentDispatching(CoordinatorEntity, BinarySensorEntity,
     state = await self.async_get_last_state()
 
     if state is not None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) or state.state is None else state.state.lower() == 'on'
       self._attributes = dict_to_typed_dict(state.attributes)
     
     if (self._state is None):

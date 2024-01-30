@@ -3,6 +3,10 @@ from datetime import timedelta
 
 import voluptuous as vol
 
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import generate_entity_id
 
@@ -104,6 +108,10 @@ class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity, RestoreEnti
   
   @property
   def is_on(self):
+    return self._state
+  
+  @callback
+  def _handle_coordinator_update(self) -> None:
     """Determines if the target rate sensor is active."""
     if CONFIG_TARGET_OFFSET in self._config:
       offset = self._config[CONFIG_TARGET_OFFSET]
@@ -215,7 +223,7 @@ class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity, RestoreEnti
     self._state = active_result["is_active"]
 
     _LOGGER.debug(f"calculated: {self._state}")
-    return self._state
+    super()._handle_coordinator_update()
   
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -224,7 +232,7 @@ class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity, RestoreEnti
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) or state.state is None else state.state.lower() == 'on'
       self._attributes = dict_to_typed_dict(
         state.attributes,
         [CONFIG_TARGET_OLD_NAME, CONFIG_TARGET_OLD_HOURS, CONFIG_TARGET_OLD_TYPE, CONFIG_TARGET_OLD_START_TIME, CONFIG_TARGET_OLD_END_TIME, CONFIG_TARGET_OLD_MPAN]
