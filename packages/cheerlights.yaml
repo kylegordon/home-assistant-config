@@ -136,8 +136,12 @@ automation:
   - alias: Cheerlights - Tin Hut
     id: cheerlights_tin_hut
     trigger:
-      platform: mqtt
-      topic: cheerlightsRGB
+      - platform: mqtt
+        topic: cheerlightsRGB
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        from: "off"
+        to: "on"
     condition:
       - condition: state
         entity_id: binary_sensor.tin_hut_occupied
