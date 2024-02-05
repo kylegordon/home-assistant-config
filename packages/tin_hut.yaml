@@ -79,7 +79,7 @@ automation:
       - service: input_boolean.turn_off
         entity_id: input_boolean.open_tin_hut_process
 
-  - alias: Lockup process
+  - alias: Close tin hut process
     trigger:
       - platform: state
         entity_id: input_boolean.lockup_process
