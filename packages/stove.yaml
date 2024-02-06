@@ -38,6 +38,7 @@ sensor:
 
 automation:
   - alias: More wood
+    unique_id: time_to_new_fire_wood
     trigger:
       - platform: state
         entity_id: binary_sensor.refill_alarm_living_room
