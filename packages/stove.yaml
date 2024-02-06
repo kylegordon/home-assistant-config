@@ -62,3 +62,10 @@ automation:
           title: "More wood needed!"
           message: >
             The stove is running low on wood. Refuel now.
+      - service: script.tweet_engine
+        data_template:
+          tweet: >
+            {{ [
+            "The stove is running low on fuel!",
+            "Time to get wood..."
+            ] | random + " https://amzn.to/3HO2IDZ" }}
