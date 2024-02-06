@@ -1,6 +1,7 @@
 ---
 sensor:
   - platform: template
+    sensors:
     stove_sensor:
       friendly_name: Hwam Stove
       icon_template: >
