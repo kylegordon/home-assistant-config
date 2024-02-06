@@ -57,3 +57,8 @@ automation:
             type: announce
             # method: all
           message: "The stove requires more wood."
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "More wood needed!"
+          message: >
+            The stove is running low on wood. Refuel now.
