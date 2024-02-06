@@ -3,6 +3,7 @@ substitutions:
   # device config
   device_name: tin-hut-door-left
   friendly_name: Tin Hut Door Left
+  device_description: Tin Hut Left Hand Door Controller
   platform: ESP8266
   board: d1_mini
 
