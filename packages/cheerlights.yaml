@@ -161,9 +161,9 @@ automation:
             - "{{ states('sensor.cheerlights_blue') }}"
             - 0
             - 0
-            #- "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
-            #- "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
-          # ^^ not sure wtf is going on and why garage shelving is tracking outside lights # FIXME
+            # - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
+            # - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
+            # ^^ not sure wtf is going on and why garage shelving is tracking outside lights # FIXME
 
   - alias: Cheerlights - off
     id: cheerlights_off
