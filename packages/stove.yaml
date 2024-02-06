@@ -1,0 +1,59 @@
+---
+sensor:
+  - platform: template
+    stove_sensor:
+      friendly_name: Hwam Stove
+      icon_template: >
+        {%- set phase = states.sensor.phase_living_room.state %}
+        {%- set refuel = states.binary_sensor.refill_alarm_living_room.state %}
+        {%- if phase == 'Burn' %}
+          mdi:fire
+        {%- elif phase == 'Standby' %}
+          mdi:power
+        {%- elif phase == 'Ignition' %}
+          mdi:circle-outline
+        {%- elif refuel == 'on' %}
+          mdi:autorenew
+        {%- else -%}
+          mdi:blur
+        {%- endif %}
+      value_template: >
+        {%- set phase = states.sensor.phase_living_room.state %}
+        {%- set temp = states.sensor.stove_temperature_living_room.state %}
+        {%- set timer = states.sensor.time_to_new_fire_wood_living_room.state %}
+        {%- set refuel = states.binary_sensor.refill_alarm_living_room.state %}
+        {%- if phase == 'Burn' %}
+          {{ temp }} °C
+        {%- elif phase == 'Standby' %}
+          Standby
+        {%- elif phase == 'Ignition' %}
+          Start
+        {%- elif refuel == 'on' %}
+          Refuel now!
+        {%- else -%}
+          Refuel in
+          {{ timer }}
+        {%- endif %}
+
+automation:
+  - alias: More wood
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.refill_alarm_living_room
+        from: "off"
+        to: "on"
+    condition:
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: sensor.time_of_day
+            state: "Night"
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.living_room
+          data:
+            type: announce
+            # method: all
+          message: "The stove requires more wood."
