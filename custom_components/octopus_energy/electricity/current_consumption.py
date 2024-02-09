@@ -1,7 +1,11 @@
-from homeassistant.util.dt import (now)
 import logging
 
-from homeassistant.core import HomeAssistant
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.util.dt import (now)
 
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity
@@ -12,12 +16,14 @@ from homeassistant.components.sensor import (
   SensorStateClass,
 )
 from homeassistant.const import (
-    ENERGY_KILO_WATT_HOUR
+    UnitOfEnergy
 )
 
+from ..coordinators.current_consumption import CurrentConsumptionCoordinatorResult
 from .base import (OctopusEnergyElectricitySensor)
+from ..utils.attributes import dict_to_typed_dict
 
-from ..utils.consumption import (get_current_consumption_delta, get_total_consumption)
+from ..utils.consumption import (calculate_current_consumption, get_current_consumption_delta, get_total_consumption)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,7 +39,7 @@ class OctopusEnergyCurrentElectricityConsumption(CoordinatorEntity, OctopusEnerg
     self._latest_date = None
     self._previous_total_consumption = None
     self._attributes = {
-      "last_updated_timestamp": None
+      "last_evaluated": None
     }
 
   @property
@@ -57,9 +63,9 @@ class OctopusEnergyCurrentElectricityConsumption(CoordinatorEntity, OctopusEnerg
     return SensorStateClass.TOTAL
 
   @property
-  def unit_of_measurement(self):
+  def native_unit_of_measurement(self):
     """The unit of measurement of sensor"""
-    return ENERGY_KILO_WATT_HOUR
+    return UnitOfEnergy.KILO_WATT_HOUR
 
   @property
   def icon(self):
@@ -77,26 +83,31 @@ class OctopusEnergyCurrentElectricityConsumption(CoordinatorEntity, OctopusEnerg
     return self._latest_date
   
   @property
-  def state(self):
-    """Retrieve the latest electricity consumption"""
-    _LOGGER.debug('Updating OctopusEnergyCurrentElectricityConsumption')
-    consumption_result = self.coordinator.data if self.coordinator is not None else None
-
-    current_date = now()
-    if (consumption_result is not None):
-      total_consumption = get_total_consumption(consumption_result)
-      self._state = get_current_consumption_delta(current_date,
-                                                  total_consumption,
-                                                  self._attributes["last_updated_timestamp"] if self._attributes["last_updated_timestamp"] is not None else current_date,
-                                                  self._previous_total_consumption)
-      if (self._state is not None):
-        self._latest_date = current_date
-        self._attributes["last_updated_timestamp"] = current_date
-
-      # Store the total consumption ready for the next run
-      self._previous_total_consumption = total_consumption
-    
+  def native_value(self):
     return self._state
+  
+  @callback
+  def _handle_coordinator_update(self) -> None:
+    """Retrieve the latest electricity consumption"""
+    consumption_result: CurrentConsumptionCoordinatorResult = self.coordinator.data if self.coordinator is not None and self.coordinator.data is not None else None
+    current_date = now()
+    
+    result = calculate_current_consumption(
+      current_date,
+      consumption_result,
+      self._state,
+      self._attributes["last_evaluated"] if "last_evaluated" in self._attributes and self._attributes["last_evaluated"] is not None else current_date,
+      self._previous_total_consumption
+    )
+
+    self._state = result.state
+    self._latest_date = result.last_evaluated
+    self._previous_total_consumption = result.total_consumption
+    self._attributes["last_evaluated"] = result.last_evaluated
+    self._attributes["data_last_retrieved"] = result.data_last_retrieved
+
+    _LOGGER.debug('Updated OctopusEnergyCurrentElectricityConsumption')
+    super()._handle_coordinator_update()
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -105,6 +116,14 @@ class OctopusEnergyCurrentElectricityConsumption(CoordinatorEntity, OctopusEnerg
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) else state.state
+      self._attributes = dict_to_typed_dict(state.attributes)
+
+      if "last_updated_timestamp" in self._attributes:
+        del self._attributes["last_updated_timestamp"]
+        
+      # With this included, was causing issues with statistics. Why other sensors are not effected...
+      if "last_reset" in self._attributes:
+        del self._attributes["last_reset"]
     
       _LOGGER.debug(f'Restored OctopusEnergyCurrentElectricityConsumption state: {self._state}')
