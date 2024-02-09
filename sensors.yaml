@@ -67,7 +67,7 @@
           mdi:circle-outline
         {%- elif refuel == 'on' %}
           mdi:autorenew
-        {%- else -%} 
+        {%- else -%}
           mdi:blur
         {%- endif %}
       value_template: >
@@ -83,12 +83,10 @@
           Start
         {%- elif refuel == 'on' %}
           Refuel now!
-        {%- else -%} 
+        {%- else -%}
           Refuel in
           {{ timer }}
         {%- endif %}
-
-
 
 - platform: integration
   source: sensor.elec2_cm119_160_db_92_instantaneous_power
