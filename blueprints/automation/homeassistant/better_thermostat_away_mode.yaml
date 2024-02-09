@@ -1,15 +1,15 @@
 ---
 blueprint:
-  name: Better Thermostat Night mode
-  description: Set BT Thermostats to night mode if Schedule event is active.
+  name: Better Thermostat Away mode
+  description: Set BT Thermostats to Away mode if house is unoccupied.
   domain: automation
-  source_url: https://github.com/KartoffelToby/better_thermostat/blob/master/blueprints/night_mode.yaml
+  # source_url: https://github.com/KartoffelToby/better_thermostat/blob/master/blueprints/away_mode.yaml
   input:
-    night_times_schedule:
-      name: Schedule helper
+    occupancy_sensor:
+      name: Occupancy
       selector:
         entity:
-          domain: schedule
+          domain: binary_sensor
 
     thermostat_target:
       name: Thermostats
@@ -21,10 +21,10 @@ blueprint:
             integration: better_thermostat
             domain: climate
 
-    night_temp:
-      name: Night Temperature
-      description: The target temperature at night
-      default: 17
+    away_temp:
+      name: Away Temperature
+      description: The target temperature when away
+      default: 15
       selector:
         number:
           min: 5
@@ -36,23 +36,25 @@ max_exceeded: silent
 
 trigger:
   - platform: state
-    entity_id: !input night_times_schedule
+    entity_id: !input occupancy_sensor
     from: "on"
     to: "off"
+    for:
+      minutes: 5
   - platform: state
-    entity_id: !input night_times_schedule
+    entity_id: !input occupancy_sensor
     from: "off"
     to: "on"
 condition: []
 action:
   - if:
       - condition: state
-        entity_id: !input night_times_schedule
-        state: "on"
+        entity_id: !input occupancy_sensor
+        state: "off"
     then:
       - service: better_thermostat.set_temp_target_temperature
         data:
-          temperature: !input night_temp
+          temperature: !input away_temp
         target: !input thermostat_target
     else:
       - service: better_thermostat.restore_saved_target_temperature
