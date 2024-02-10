@@ -2,6 +2,7 @@
 substitutions:
   device_name: garage_lights
   device_description: Garage lights
+  friendly_name: Garage Lights
   friendly_name: Garage lights
   default_state: "DISABLED"
 
