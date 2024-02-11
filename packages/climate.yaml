@@ -184,4 +184,3 @@ automation:
             - climate.study
             - climate.rest_of_house
         occupancy_sensor: binary_sensor.home_occupied
-        away_times_schedule: schedule.thermostat_away_schedule

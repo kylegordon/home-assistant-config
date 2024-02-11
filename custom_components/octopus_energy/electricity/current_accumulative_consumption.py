@@ -1,11 +1,11 @@
 import logging
-from custom_components.octopus_energy.coordinators.current_consumption import CurrentConsumptionCoordinatorResult
 
-from homeassistant.core import HomeAssistant
-
-from homeassistant.helpers.update_coordinator import (
-  CoordinatorEntity
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
 )
+from homeassistant.core import HomeAssistant, callback
+
 from homeassistant.components.sensor import (
   RestoreSensor,
   SensorDeviceClass,
@@ -17,6 +17,8 @@ from homeassistant.const import (
 
 from homeassistant.util.dt import (now)
 
+from ..coordinators import MultiCoordinatorEntity
+from ..coordinators.current_consumption import CurrentConsumptionCoordinatorResult
 from .base import (OctopusEnergyElectricitySensor)
 from ..utils.attributes import dict_to_typed_dict
 
@@ -24,12 +26,12 @@ from . import calculate_electricity_consumption_and_cost
 
 _LOGGER = logging.getLogger(__name__)
 
-class OctopusEnergyCurrentAccumulativeElectricityConsumption(CoordinatorEntity, OctopusEnergyElectricitySensor, RestoreSensor):
+class OctopusEnergyCurrentAccumulativeElectricityConsumption(MultiCoordinatorEntity, OctopusEnergyElectricitySensor, RestoreSensor):
   """Sensor for displaying the current accumulative electricity consumption."""
 
   def __init__(self, hass: HomeAssistant, coordinator, rates_coordinator, standing_charge_coordinator, tariff_code, meter, point):
     """Init sensor."""
-    CoordinatorEntity.__init__(self, coordinator)
+    MultiCoordinatorEntity.__init__(self, coordinator, [rates_coordinator, standing_charge_coordinator])
     OctopusEnergyElectricitySensor.__init__(self, hass, meter, point)
 
     self._state = None
@@ -81,6 +83,10 @@ class OctopusEnergyCurrentAccumulativeElectricityConsumption(CoordinatorEntity, 
   
   @property
   def native_value(self):
+    return self._state
+  
+  @callback
+  def _handle_coordinator_update(self) -> None:
     """Retrieve the current days accumulative consumption"""
     current = now()
     consumption_result: CurrentConsumptionCoordinatorResult = self.coordinator.data if self.coordinator is not None and self.coordinator.data is not None else None
@@ -118,7 +124,7 @@ class OctopusEnergyCurrentAccumulativeElectricityConsumption(CoordinatorEntity, 
         }, consumption_and_cost["charges"]))
       }
 
-    return self._state
+    super()._handle_coordinator_update()
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -127,7 +133,7 @@ class OctopusEnergyCurrentAccumulativeElectricityConsumption(CoordinatorEntity, 
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) else state.state
       self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored OctopusEnergyCurrentAccumulativeElectricityConsumption state: {self._state}')

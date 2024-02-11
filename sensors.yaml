@@ -33,8 +33,6 @@
       value_template: >
         {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
 
-- platform: template
-  sensors:
     next_bin:
       # value_template: "{{ states.calendar.next_bin.attributes.message }}"
       # value_template: "{{ states.calendar.family_calendar.attributes.message|replace(' bin','') }}"
@@ -55,6 +53,40 @@
       friendly_name: 'Charlotte'
       # entity_id: input_select.charlotte_status_dropdown
       unique_id: input_select.charlotte_status_dropdown
+
+    stove_sensor:
+      friendly_name: Hwam Stove
+      icon_template: >
+        {%- set phase = states.sensor.phase_living_room.state %}
+        {%- set refuel = states.binary_sensor.refill_alarm_living_room.state %}
+        {%- if phase == 'Burn' %}
+          mdi:fire
+        {%- elif phase == 'Standby' %}
+          mdi:power
+        {%- elif phase == 'Ignition' %}
+          mdi:circle-outline
+        {%- elif refuel == 'on' %}
+          mdi:autorenew
+        {%- else -%}
+          mdi:blur
+        {%- endif %}
+      value_template: >
+        {%- set phase = states.sensor.phase_living_room.state %}
+        {%- set temp = states.sensor.stove_temperature_living_room.state %}
+        {%- set timer = states.sensor.time_to_new_fire_wood_living_room.state %}
+        {%- set refuel = states.binary_sensor.refill_alarm_living_room.state %}
+        {%- if phase == 'Burn' %}
+          {{ temp }} °C
+        {%- elif phase == 'Standby' %}
+          Standby
+        {%- elif phase == 'Ignition' %}
+          Start
+        {%- elif refuel == 'on' %}
+          Refuel now!
+        {%- else -%}
+          Refuel in
+          {{ timer }}
+        {%- endif %}
 
 - platform: integration
   source: sensor.elec2_cm119_160_db_92_instantaneous_power
