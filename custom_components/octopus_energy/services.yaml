@@ -30,3 +30,54 @@ update_target_config:
         The optional offset to apply to the target rate when it starts
       selector:
         text:
+purge_invalid_external_statistic_ids:
+  name: Purge invalid external statistics
+  description: Removes external statistics for all meters that don't have an active tariff
+refresh_previous_consumption_data:
+  name: Refresh previous consumption data
+  description: Refreshes the previous consumption data for a given entity from a given date.
+  target:
+    entity:
+      integration: octopus_energy
+      domain: sensor
+  fields:
+    start_date:
+      name: Date
+      description: The date the data should be loaded from.
+      required: true
+      selector:
+        date:
+join_octoplus_saving_session_event:
+  name: Join Octoplus saving session event
+  description: Joins a given Octoplus saving session event.
+  target:
+    entity:
+      integration: octopus_energy
+      domain: event
+  fields:
+    event_code:
+      name: Event code
+      description: The code of the event that is to be joined.
+      selector:
+        text:
+spin_wheel_of_fortune:
+  name: Spin wheel of fortune
+  description: Spins the wheel of fortune for a given energy type
+  target:
+    entity:
+      integration: octopus_energy
+      domain: sensor
+
+update_cost_tracker:
+  name: Update cost tracker
+  description: Updates cost tracker information.
+  target:
+    entity:
+      integration: octopus_energy
+      domain: sensor
+  fields:
+    is_tracking_enabled:
+      name: Is tracking enabled
+      description: Determines if the cost tracker should be enabled or disabled.
+      selector:
+        boolean:

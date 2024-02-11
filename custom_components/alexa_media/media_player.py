@@ -8,35 +8,26 @@ https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers
 """
 import asyncio
 import logging
+import os
 import re
+import subprocess
 from typing import List, Optional
+import urllib.request
 
 from homeassistant import util
-from homeassistant.components.media_player.const import (
-    MEDIA_TYPE_MUSIC,
-    SUPPORT_NEXT_TRACK,
-    SUPPORT_PAUSE,
-    SUPPORT_PLAY,
-    SUPPORT_PLAY_MEDIA,
-    SUPPORT_PREVIOUS_TRACK,
-    SUPPORT_SELECT_SOURCE,
-    SUPPORT_SHUFFLE_SET,
-    SUPPORT_STOP,
-    SUPPORT_TURN_OFF,
-    SUPPORT_TURN_ON,
-    SUPPORT_VOLUME_MUTE,
-    SUPPORT_VOLUME_SET,
+from homeassistant.components import media_source
+from homeassistant.components.media_player import (
+    ATTR_MEDIA_ANNOUNCE,
+    async_process_play_media_url,
 )
+
 from homeassistant.const import (
     CONF_EMAIL,
     CONF_NAME,
     CONF_PASSWORD,
-    STATE_IDLE,
-    STATE_PAUSED,
-    STATE_PLAYING,
-    STATE_STANDBY,
     STATE_UNAVAILABLE,
 )
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
@@ -44,8 +35,10 @@ from homeassistant.helpers.event import async_call_later
 from homeassistant.util import slugify
 
 from . import (
+    CONF_PUBLIC_URL,
     CONF_QUEUE_DELAY,
     DATA_ALEXAMEDIA,
+    DEFAULT_PUBLIC_URL,
     DEFAULT_QUEUE_DELAY,
     DOMAIN as ALEXA_DOMAIN,
     hide_email,
@@ -57,39 +50,63 @@ from .const import (
     MIN_TIME_BETWEEN_FORCED_SCANS,
     MIN_TIME_BETWEEN_SCANS,
     PLAY_SCAN_INTERVAL,
+    UPLOAD_PATH,
 )
 from .helpers import _catch_login_errors, add_devices
 
 try:
     from homeassistant.components.media_player import (
         MediaPlayerEntity as MediaPlayerDevice,
+        MediaPlayerEntityFeature,
+        MediaPlayerState,
+        MediaType,
     )
 except ImportError:
     from homeassistant.components.media_player import MediaPlayerDevice
 
 SUPPORT_ALEXA = (
-    SUPPORT_PAUSE
-    | SUPPORT_PREVIOUS_TRACK
-    | SUPPORT_NEXT_TRACK
-    | SUPPORT_STOP
-    | SUPPORT_VOLUME_SET
-    | SUPPORT_PLAY
-    | SUPPORT_PLAY_MEDIA
-    | SUPPORT_TURN_OFF
-    | SUPPORT_TURN_ON
-    | SUPPORT_VOLUME_MUTE
-    | SUPPORT_PAUSE
-    | SUPPORT_SELECT_SOURCE
-    | SUPPORT_SHUFFLE_SET
+    MediaPlayerEntityFeature.PAUSE
+    | MediaPlayerEntityFeature.PREVIOUS_TRACK
+    | MediaPlayerEntityFeature.NEXT_TRACK
+    | MediaPlayerEntityFeature.STOP
+    | MediaPlayerEntityFeature.VOLUME_SET
+    | MediaPlayerEntityFeature.PLAY
+    | MediaPlayerEntityFeature.PLAY_MEDIA
+    | MediaPlayerEntityFeature.TURN_OFF
+    | MediaPlayerEntityFeature.TURN_ON
+    | MediaPlayerEntityFeature.VOLUME_MUTE
+    | MediaPlayerEntityFeature.SELECT_SOURCE
+    | MediaPlayerEntityFeature.SHUFFLE_SET  
 )
 _LOGGER = logging.getLogger(__name__)
 
 DEPENDENCIES = [ALEXA_DOMAIN]
 
 
+async def create_www_directory(hass: HomeAssistant):
+    """Create www directory."""
+    paths = [
+        hass.config.path("www"),  # http://homeassistant.local:8123/local
+        hass.config.path(
+            UPLOAD_PATH
+        ),  # http://homeassistant.local:8123/local/alexa_tts
+    ]
+
+    def mkdir() -> None:
+        """Create a directory."""
+        for path in paths:
+            if not os.path.exists(path):
+                _LOGGER.debug("Creating directory: %s", path)
+                os.makedirs(path, exist_ok=True)
+
+    await hass.async_add_executor_job(mkdir)
+
+
 # @retry_async(limit=5, delay=2, catch_exceptions=True)
 async def async_setup_platform(hass, config, add_devices_callback, discovery_info=None):
     """Set up the Alexa media player platform."""
+    await create_www_directory(hass)
+
     devices = []  # type: List[AlexaClient]
     account = None
     if config:
@@ -399,7 +416,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             if self.hass and self.async_schedule_update_ha_state:
                 email = self._login.email
                 force_refresh = not (
-                    self.hass.data[DATA_ALEXAMEDIA]["accounts"][email]["websocket"]
+                    self.hass.data[DATA_ALEXAMEDIA]["accounts"][email]["http2"]
                 )
                 self.async_schedule_update_ha_state(force_refresh=force_refresh)
         elif "bluetooth_change" in event:
@@ -460,7 +477,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                         self.async_write_ha_state()
                 await _refresh_if_no_audiopush(already_refreshed)
         elif "push_activity" in event:
-            if self.state in {STATE_IDLE, STATE_PAUSED, STATE_PLAYING}:
+            if self.state in {MediaPlayerState.IDLE, MediaPlayerState.PAUSED, MediaPlayerState.PLAYING}:
                 _LOGGER.debug(
                     "%s: %s checking for potential state update due to push activity on %s",
                     hide_email(self._login.email),
@@ -587,7 +604,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                                 and self.hass.data[DATA_ALEXAMEDIA]["accounts"][
                                     self._login.email
                                 ]["entities"]["media_player"][x].state
-                                == STATE_PLAYING
+                                == MediaPlayerState.PLAYING
                             ),
                             self._parent_clusters,
                         )
@@ -748,7 +765,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                         await self.alexa_api.set_bluetooth(devices["address"])
                     self._source = source
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 
@@ -865,12 +882,12 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
         if not self.available:
             return STATE_UNAVAILABLE
         if self._media_player_state == "PLAYING":
-            return STATE_PLAYING
+            return MediaPlayerState.PLAYING
         if self._media_player_state == "PAUSED":
-            return STATE_PAUSED
+            return MediaPlayerState.PAUSED
         if self._media_player_state == "IDLE":
-            return STATE_IDLE
-        return STATE_STANDBY
+            return MediaPlayerState.IDLE
+        return MediaPlayerState.STANDBY
 
     def update(self):
         """Get the latest details on a media player synchronously."""
@@ -915,15 +932,15 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
         await self.refresh(  # pylint: disable=unexpected-keyword-arg
             device, no_throttle=True
         )
-        websocket_enabled = (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"].get(email, {}).get("websocket")
+        push_enabled = (
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"].get(email, {}).get("http2")
         )
         if (
-            self.state in [STATE_PLAYING]
+            self.state in [MediaPlayerState.PLAYING]
             and
             #  only enable polling if websocket not connected
             (
-                not websocket_enabled
+                not push_enabled
                 or not seen_commands
                 or not (
                     "PUSH_AUDIO_PLAYER_STATE" in seen_commands
@@ -948,11 +965,11 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                 async_call_later(
                     self.hass,
                     PLAY_SCAN_INTERVAL,
-                    lambda _: self.async_schedule_update_ha_state(force_refresh=True),
+                    self.async_schedule_update_ha_state,
                 )
         elif self._should_poll:  # Not playing, one last poll
             self._should_poll = False
-            if not websocket_enabled:
+            if not push_enabled:
                 _LOGGER.debug(
                     "%s: Disabling polling and scheduling last update in"
                     " 300 seconds for %s",
@@ -962,7 +979,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                 async_call_later(
                     self.hass,
                     300,
-                    lambda _: self.async_schedule_update_ha_state(force_refresh=True),
+                    self.async_schedule_update_ha_state,
                 )
             else:
                 _LOGGER.debug(
@@ -976,9 +993,9 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
     @property
     def media_content_type(self):
         """Return the content type of current playing media."""
-        if self.state in [STATE_PLAYING, STATE_PAUSED]:
-            return MEDIA_TYPE_MUSIC
-        return STATE_STANDBY
+        if self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED]:
+            return MediaType.MUSIC
+        return MediaPlayerState.STANDBY
 
     @property
     def media_artist(self):
@@ -1085,7 +1102,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             await self.alexa_api.set_volume(volume)
         self._media_vol_level = volume
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 
@@ -1133,14 +1150,14 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                 else:
                     await self.alexa_api.set_volume(50)
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 
     @_catch_login_errors
     async def async_media_play(self):
         """Send play command."""
-        if not (self.state in [STATE_PLAYING, STATE_PAUSED] and self.available):
+        if not (self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED] and self.available):
             return
         if self._playing_parent:
             await self._playing_parent.async_media_play()
@@ -1150,14 +1167,14 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             else:
                 await self.alexa_api.play()
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 
     @_catch_login_errors
     async def async_media_pause(self):
         """Send pause command."""
-        if not (self.state in [STATE_PLAYING, STATE_PAUSED] and self.available):
+        if not (self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED] and self.available):
             return
         if self._playing_parent:
             await self._playing_parent.async_media_pause()
@@ -1167,7 +1184,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             else:
                 await self.alexa_api.pause()
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 
@@ -1196,7 +1213,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                     ][CONF_QUEUE_DELAY],
                 )
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 
@@ -1224,7 +1241,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
     @_catch_login_errors
     async def async_media_next_track(self):
         """Send next track command."""
-        if not (self.state in [STATE_PLAYING, STATE_PAUSED] and self.available):
+        if not (self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED] and self.available):
             return
         if self._playing_parent:
             await self._playing_parent.async_media_next_track()
@@ -1234,14 +1251,14 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             else:
                 await self.alexa_api.next()
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 
     @_catch_login_errors
     async def async_media_previous_track(self):
         """Send previous track command."""
-        if not (self.state in [STATE_PLAYING, STATE_PAUSED] and self.available):
+        if not (self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED] and self.available):
             return
         if self._playing_parent:
             await self._playing_parent.async_media_previous_track()
@@ -1251,7 +1268,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             else:
                 await self.alexa_api.previous()
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 
@@ -1315,24 +1332,90 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             )
 
     @_catch_login_errors
+    async def async_play_tts_cloud_say(self, public_url, media_id, **kwargs):
+        file_name = media_id
+        if media_source.is_media_source_id(media_id):
+            media = await media_source.async_resolve_media(
+                self.hass, media_id, self.entity_id
+            )
+            file_name = media.url[media.url.rindex("/") : media.url.rindex(".")]
+            media_id = async_process_play_media_url(self.hass, media.url)
+
+        if kwargs.get(ATTR_MEDIA_ANNOUNCE):
+            input_file_path = self.hass.config.path(
+                f"{UPLOAD_PATH}{file_name}_input.mp3"
+            )
+            output_file_name = f"{file_name}_output.mp3"
+            output_file_path = self.hass.config.path(f"{UPLOAD_PATH}{output_file_name}")
+
+            # file might already exist -> the same tts is cached from previous calls
+            if not os.path.exists(output_file_path):
+                await self.hass.async_add_executor_job(
+                    urllib.request.urlretrieve, media_id, input_file_path
+                )
+                command = [
+                    "ffmpeg",
+                    "-i",
+                    input_file_path,
+                    "-ac",
+                    "2",
+                    "-codec:a",
+                    "libmp3lame",
+                    "-b:a",
+                    "48k",
+                    "-ar",
+                    "24000",
+                    output_file_path,
+                ]
+                if subprocess.run(command, check=True).returncode != 0:
+                    _LOGGER.error(
+                        "%s: %s:ffmpeg command FAILED converting %s to %s",
+                        hide_email(self._login.email),
+                        self,
+                        input_file_path,
+                        output_file_path,
+                    )
+
+            _LOGGER.debug(
+                "%s: %s:Playing %slocal/alexa_tts%s",
+                hide_email(self._login.email),
+                self,
+                public_url,
+                output_file_name,
+            )
+            await self.async_send_tts(
+                f"<audio src='{public_url}local/alexa_tts{output_file_name}' />"
+            )
+        else:
+            await self.async_send_tts(
+                "To send TTS, please set Announce=true. Music can't be played this way."
+            )
+            _LOGGER.warning(
+                "To send TTS, please set Announce=true. Music can't be played this way."
+            )
+
+    @_catch_login_errors
     async def async_play_media(self, media_type, media_id, enqueue=None, **kwargs):
         # pylint: disable=unused-argument,too-many-branches
         """Send the play_media command to the media player."""
         queue_delay = self.hass.data[DATA_ALEXAMEDIA]["accounts"][self.email][
             "options"
         ].get(CONF_QUEUE_DELAY, DEFAULT_QUEUE_DELAY)
+        public_url = self.hass.data[DATA_ALEXAMEDIA]["accounts"][self.email][
+            "options"
+        ].get(CONF_PUBLIC_URL, DEFAULT_PUBLIC_URL)
         if media_type == "music":
-            await self.async_send_tts(
-                "Sorry, text to speech can only be called"
-                " with the notify.alexa_media service."
-                " Please see the alexa_media wiki for details."
-            )
-            _LOGGER.warning(
-                "Sorry, text to speech can only be called"
-                " with the notify.alexa_media service."
-                " Please see the alexa_media wiki for details."
-                "https://github.com/custom-components/alexa_media_player/wiki/Configuration%3A-Notification-Component#use-the-notifyalexa_media-service"
-            )
+            if public_url:
+                await self.async_play_tts_cloud_say(public_url, media_id, **kwargs)
+            else:
+                await self.async_send_tts(
+                    "To send TTS, set public url in integration configuration"
+                )
+                _LOGGER.warning(
+                    "To send TTS, set public url in integration configuration"
+                    " Please see the alexa_media wiki for details."
+                    "https://github.com/alandtse/alexa_media_player/wiki/Configuration%3A-Notification-Component#use-the-notifyalexa_media-service"
+                )
         elif media_type == "sequence":
             _LOGGER.debug(
                 "%s: %s:Running sequence %s with queue_delay %s",
@@ -1486,7 +1569,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                     **kwargs,
                 )
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["websocket"]
+            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
         ):
             await self.async_update()
 

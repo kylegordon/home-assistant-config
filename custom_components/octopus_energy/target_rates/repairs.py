@@ -3,7 +3,7 @@ from datetime import datetime
 from homeassistant.helpers import issue_registry as ir
 
 from ..const import CONFIG_TARGET_NAME, DOMAIN
-from .config import validate_target_rate_config
+from ..config.target_rates import validate_target_rate_config
 
 def check_for_errors(hass, config, account_info, now: datetime):
   if account_info is not None:
@@ -18,7 +18,7 @@ def check_for_errors(hass, config, account_info, now: datetime):
         repair_key,
         is_fixable=False,
         severity=ir.IssueSeverity.ERROR,
-        learn_more_url="https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/repairs/invalid_target_rate.md",
+        learn_more_url="https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/repairs/invalid_target_rate",
         translation_key="invalid_target_rate",
         translation_placeholders={ "name": target_rate_name },
       )

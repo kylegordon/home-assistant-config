@@ -1,5 +1,6 @@
 import logging
 from datetime import (datetime, timedelta)
+from custom_components.octopus_energy.const import DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.components.recorder import get_instance
 from homeassistant.components.recorder.models import StatisticData
@@ -7,12 +8,12 @@ from homeassistant.components.recorder.statistics import (
     statistics_during_period
 )
 
-from ..utils import get_off_peak_cost
+from ..utils import get_active_tariff_code, get_off_peak_cost
 
 _LOGGER = logging.getLogger(__name__)
 
-def build_consumption_statistics(consumptions, rates, consumption_key: str, latest_total_sum: float, latest_peak_sum: float, latest_off_peak_sum: float):
-  last_reset = consumptions[0]["from"].replace(minute=0, second=0, microsecond=0)
+def build_consumption_statistics(current: datetime, consumptions, rates, consumption_key: str, latest_total_sum: float, latest_peak_sum: float, latest_off_peak_sum: float):
+  last_reset = consumptions[0]["start"].replace(minute=0, second=0, microsecond=0)
   sums = {
     "total": latest_total_sum,
     "peak": latest_peak_sum,
@@ -27,17 +28,17 @@ def build_consumption_statistics(consumptions, rates, consumption_key: str, late
   total_statistics = []
   off_peak_statistics = []
   peak_statistics = []
-  off_peak_cost = get_off_peak_cost(rates)
+  off_peak_cost = get_off_peak_cost(current, rates)
 
   _LOGGER.debug(f'total_sum: {latest_total_sum}; latest_peak_sum: {latest_peak_sum}; latest_off_peak_sum: {latest_off_peak_sum}; last_reset: {last_reset}; off_peak_cost: {off_peak_cost}')
 
   for index in range(len(consumptions)):
     consumption = consumptions[index]
-    consumption_from = consumption["from"]
-    consumption_to = consumption["to"]
+    consumption_from = consumption["start"]
+    consumption_to = consumption["end"]
 
     try:
-      rate = next(r for r in rates if r["valid_from"] == consumption_from and r["valid_to"] == consumption_to)
+      rate = next(r for r in rates if r["start"] == consumption_from and r["end"] == consumption_to)
     except StopIteration:
       raise Exception(f"Failed to find rate for consumption between {consumption_from} and {consumption_to}")
     
@@ -48,7 +49,7 @@ def build_consumption_statistics(consumptions, rates, consumption_key: str, late
       sums["peak"] += consumption[consumption_key]
       states["peak"] += consumption[consumption_key]
     
-    start = consumption["from"].replace(minute=0, second=0, microsecond=0)
+    start = consumption["start"].replace(minute=0, second=0, microsecond=0)
     sums["total"] += consumption[consumption_key]
     states["total"] += consumption[consumption_key]
 
@@ -88,8 +89,8 @@ def build_consumption_statistics(consumptions, rates, consumption_key: str, late
     "off_peak": off_peak_statistics
   }
 
-def build_cost_statistics(consumptions, rates, consumption_key: str, latest_total_sum: float, latest_peak_sum: float, latest_off_peak_sum: float):
-  last_reset = consumptions[0]["from"].replace(minute=0, second=0, microsecond=0)
+def build_cost_statistics(current: datetime, consumptions, rates, consumption_key: str, latest_total_sum: float, latest_peak_sum: float, latest_off_peak_sum: float):
+  last_reset = consumptions[0]["start"].replace(minute=0, second=0, microsecond=0)
   sums = {
     "total": latest_total_sum,
     "peak": latest_peak_sum,
@@ -104,18 +105,18 @@ def build_cost_statistics(consumptions, rates, consumption_key: str, latest_tota
   total_statistics = []
   off_peak_statistics = []
   peak_statistics = []
-  off_peak_cost = get_off_peak_cost(rates)
+  off_peak_cost = get_off_peak_cost(current, rates)
 
   _LOGGER.debug(f'total_sum: {latest_total_sum}; latest_peak_sum: {latest_peak_sum}; latest_off_peak_sum: {latest_off_peak_sum}; last_reset: {last_reset}; off_peak_cost: {off_peak_cost}')
 
   for index in range(len(consumptions)):
     consumption = consumptions[index]
-    consumption_from = consumption["from"]
-    consumption_to = consumption["to"]
-    start = consumption["from"].replace(minute=0, second=0, microsecond=0)
+    consumption_from = consumption["start"]
+    consumption_to = consumption["end"]
+    start = consumption["start"].replace(minute=0, second=0, microsecond=0)
 
     try:
-      rate = next(r for r in rates if r["valid_from"] == consumption_from and r["valid_to"] == consumption_to)
+      rate = next(r for r in rates if r["start"] == consumption_from and r["end"] == consumption_to)
     except StopIteration:
       raise Exception(f"Failed to find rate for consumption between {consumption_from} and {consumption_to}")
     
@@ -179,3 +180,36 @@ async def async_get_last_sum(hass: HomeAssistant, latest_date: datetime, statist
   total_sum = last_total_stat[statistic_id][-1]["sum"] if statistic_id in last_total_stat and len(last_total_stat[statistic_id]) > 0 else 0
 
   return total_sum
+
+def get_statistic_ids_to_remove(now, account_info):
+  external_statistic_ids_to_remove = []
+
+  if (account_info is None):
+    return external_statistic_ids_to_remove
+
+  if len(account_info["electricity_meter_points"]) > 0:
+    for point in account_info["electricity_meter_points"]:
+      # We only care about points that have active agreements
+      electricity_tariff_code = get_active_tariff_code(now, point["agreements"])
+      if electricity_tariff_code is None:
+        for meter in point["meters"]:
+          external_statistic_ids_to_remove.append(f"{DOMAIN}:electricity_{meter['serial_number']}_{point['mpan']}{'_export' if meter['is_export'] == True else ''}_previous_accumulative_consumption")
+          external_statistic_ids_to_remove.append(f"{DOMAIN}:electricity_{meter['serial_number']}_{point['mpan']}{'_export' if meter['is_export'] == True else ''}_previous_accumulative_cost")
+          external_statistic_ids_to_remove.append(f"{DOMAIN}:electricity_{meter['serial_number']}_{point['mpan']}_previous_accumulative_cost")
+          _LOGGER.info(f'Skipping electricity meter due to no active agreement; mpan: {point["mpan"]}; serial number: {meter["serial_number"]}')
+  else:
+    _LOGGER.info('No electricity meters available')
+
+  if len(account_info["gas_meter_points"]) > 0:
+    for point in account_info["gas_meter_points"]:
+      # We only care about points that have active agreements
+      gas_tariff_code = get_active_tariff_code(now, point["agreements"])
+      if gas_tariff_code is None:
+        for meter in point["meters"]:
+          external_statistic_ids_to_remove.append(f"{DOMAIN}:gas_{meter['serial_number']}_{point['mprn']}_previous_accumulative_consumption")
+          external_statistic_ids_to_remove.append(f"{DOMAIN}:gas_{meter['serial_number']}_{point['mprn']}_previous_accumulative_cost")
+          _LOGGER.info(f'Skipping gas meter due to no active agreement; mprn: {point["mprn"]}; serial number: {meter["serial_number"]}')
+  else:
+    _LOGGER.info('No gas meters available')
+
+  return external_statistic_ids_to_remove
