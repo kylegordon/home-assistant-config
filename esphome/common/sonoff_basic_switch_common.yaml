@@ -1,13 +1,15 @@
+---
 packages:
   common: !include common.yaml
 
 esphome:
   name: ${device_name}
   comment: ${device_description}
+  friendly_name: ${friendly_name}
   platform: ESP8266
   board: esp8285
 
-captive_portal:
+# captive_portal:
 
 # Enable logging
 logger:
@@ -31,6 +33,7 @@ switch:
     name: "${friendly_name} Relay"
     pin: GPIO12
     id: relay
+    restore_mode: "${default_state}"
 
 light:
   - platform: status_led

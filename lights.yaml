@@ -3,7 +3,7 @@
   entity_id: switch.garage_lights_relay
 
 - platform: switch
-  name: "Front Door Floodlights"
+  name: "Front Floodlights"
   entity_id: switch.front_floodlights_relay
 
 - platform: switch
@@ -15,8 +15,8 @@
   entity_id: switch.back_floodlights_relay
 
 - platform: switch
-  name: "Mini Deck Floodlight"
-  entity_id: switch.mini_deck_floodlight_relay
+  name: "Garden Steps Floodlight"
+  entity_id: switch.garden_steps_floodlight_relay
 
 - platform: switch
   name: "Edison Lamp"
@@ -49,6 +49,10 @@
 - platform: switch
   name: "Candle Arch"
   entity_id: switch.candle_arch
+
+- platform: switch
+  name: "Outside Decorations"
+  entity_id: switch.outside_decorations
 
 - platform: group
   name: Decking Lights

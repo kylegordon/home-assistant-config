@@ -1,0 +1,31 @@
+---
+# Basic config
+packages:
+  common: !include common.yaml
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  friendly_name: ${friendly_name}
+  platform: ESP8266
+  board: esp01_1m
+
+captive_portal:
+
+# Enable logging
+logger:
+
+web_server:
+
+syslog:
+  ip_address: 172.24.32.13
+  port: 515
+
+# Shelly 1 detached switch config with multi click options and fallback in case of wifi or api fail
+
+switch:
+  - platform: gpio
+    name: ${friendly_name} Relay
+    pin: GPIO4
+    id: shelly_relay
+    restore_mode: "${default_state}"

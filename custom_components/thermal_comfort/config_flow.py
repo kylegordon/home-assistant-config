@@ -3,14 +3,16 @@ from __future__ import annotations
 
 import logging
 
+import voluptuous as vol
+
 from homeassistant import config_entries
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import CONF_NAME, Platform
 from homeassistant.core import HomeAssistant, State, callback
-from homeassistant.helpers import entity_registry
+from homeassistant.helpers import entity_registry as er
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_registry import EntityRegistry
-import voluptuous as vol
+from homeassistant.helpers.selector import selector
 
 from .const import DEFAULT_NAME, DOMAIN
 from .sensor import (
@@ -137,7 +139,8 @@ def get_sensors_by_device_class(
             "W",
             "kW",
             "VA",
-            "BTU/h" "Wh",
+            "BTU/h",
+            "Wh",
             "kWh",
             "MWh",
             "mA",
@@ -281,9 +284,7 @@ def get_sensors_by_device_class(
 
     def filter_thermal_comfort_ids(entity_id: str) -> bool:
         """Filter out device_ids containing our SensorType."""
-        return all(
-            sensor_type.to_shortform() not in entity_id for sensor_type in SensorType
-        )
+        return all(sensor_type not in entity_id for sensor_type in SensorType)
 
     filters_for_additional_sensors: list[callable] = [
         filter_useless_device_class,
@@ -300,7 +301,7 @@ def get_sensors_by_device_class(
     ]
 
     result.sort()
-    _LOGGER.debug(f"Results for {device_class} based on device class: {result}")
+    _LOGGER.debug("Results for %s based on device class: %s", device_class, result)
 
     if include_all:
         additional_sensors = _hass.states.async_all()
@@ -310,7 +311,7 @@ def get_sensors_by_device_class(
         additional_entity_ids = [state.entity_id for state in additional_sensors]
         additional_entity_ids = list(set(additional_entity_ids) - set(result))
         additional_entity_ids.sort()
-        _LOGGER.debug(f"Additional results: {additional_entity_ids}")
+        _LOGGER.debug("Additional results: %s", additional_entity_ids)
         result += additional_entity_ids
 
     result = list(
@@ -320,7 +321,7 @@ def get_sensors_by_device_class(
         )
     )
 
-    _LOGGER.debug(f"Results after cleaning own entities: {result}")
+    _LOGGER.debug("Results after cleaning own entities: %s", result)
 
     return result
 
@@ -355,12 +356,12 @@ def build_schema(
     :param step: for which step we should build schema
     :return: Configuration schema with default parameters
     """
-    entity_registry_instance = entity_registry.async_get(hass)
+    registry = er.async_get(hass)
     humidity_sensors = get_sensors_by_device_class(
-        entity_registry_instance, hass, SensorDeviceClass.HUMIDITY, show_advanced
+        registry, hass, SensorDeviceClass.HUMIDITY, show_advanced
     )
     temperature_sensors = get_sensors_by_device_class(
-        entity_registry_instance, hass, SensorDeviceClass.TEMPERATURE, show_advanced
+        registry, hass, SensorDeviceClass.TEMPERATURE, show_advanced
     )
 
     if not temperature_sensors or not humidity_sensors:
@@ -376,13 +377,25 @@ def build_schema(
                 default=get_value(
                     config_entry, CONF_TEMPERATURE_SENSOR, temperature_sensors[0]
                 ),
-            ): vol.In(temperature_sensors),
+            ): selector(
+                {
+                    "entity": {
+                        "include_entities": temperature_sensors,
+                    }
+                }
+            ),
             vol.Required(
                 CONF_HUMIDITY_SENSOR,
                 default=get_value(
                     config_entry, CONF_HUMIDITY_SENSOR, humidity_sensors[0]
                 ),
-            ): vol.In(humidity_sensors),
+            ): selector(
+                {
+                    "entity": {
+                        "include_entities": humidity_sensors,
+                    }
+                }
+            ),
         },
     )
     if show_advanced:
@@ -411,7 +424,7 @@ def build_schema(
                         default=list(SensorType),
                     ): cv.multi_select(
                         {
-                            sensor_type: sensor_type.to_title()
+                            sensor_type: sensor_type.to_name()
                             for sensor_type in SensorType
                         }
                     ),
@@ -451,6 +464,8 @@ def check_input(hass: HomeAssistant, user_input: dict) -> dict:
 class ThermalComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Configuration flow for setting up new thermal_comfort entry."""
 
+    VERSION = 2
+
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
@@ -463,16 +478,18 @@ class ThermalComfortConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             if not (errors := check_input(self.hass, user_input)):
-                er = entity_registry.async_get(self.hass)
+                registry = er.async_get(self.hass)
 
-                t_sensor = er.async_get(user_input[CONF_TEMPERATURE_SENSOR])
-                p_sensor = er.async_get(user_input[CONF_HUMIDITY_SENSOR])
-                _LOGGER.debug(f"Going to use t_sensor {t_sensor}")
-                _LOGGER.debug(f"Going to use p_sensor {p_sensor}")
+                t_sensor = registry.async_get(user_input[CONF_TEMPERATURE_SENSOR])
+                p_sensor = registry.async_get(user_input[CONF_HUMIDITY_SENSOR])
+                _LOGGER.debug("Going to use t_sensor %s", t_sensor)
+                _LOGGER.debug("Going to use p_sensor %s", p_sensor)
 
                 if t_sensor is not None and p_sensor is not None:
                     unique_id = f"{t_sensor.unique_id}-{p_sensor.unique_id}"
-                    await self.async_set_unique_id(unique_id)
+                    entry = await self.async_set_unique_id(unique_id)
+                    if entry is not None:
+                        _LOGGER.debug("An entry with the unique_id %s already exists: %s", unique_id, entry.data)
                     self._abort_if_unique_id_configured()
 
                 return self.async_create_entry(
@@ -512,7 +529,7 @@ class ThermalComfortOptionsFlow(config_entries.OptionsFlow):
 
         errors = {}
         if user_input is not None:
-            _LOGGER.debug(f"OptionsFlow: going to update configuration {user_input}")
+            _LOGGER.debug("OptionsFlow: going to update configuration %s", user_input)
             if not (errors := check_input(self.hass, user_input)):
                 return self.async_create_entry(title="", data=user_input)
 

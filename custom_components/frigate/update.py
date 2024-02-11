@@ -36,7 +36,7 @@ async def async_setup_entry(
 class FrigateContainerUpdate(FrigateEntity, UpdateEntity, CoordinatorEntity):  # type: ignore[misc]
     """Frigate container update."""
 
-    _attr_name = "Frigate Server"
+    _attr_name = "Server"
 
     def __init__(
         self,
@@ -85,7 +85,7 @@ class FrigateContainerUpdate(FrigateEntity, UpdateEntity, CoordinatorEntity):  #
 
         version = self.coordinator.data.get("service", {}).get("latest_version")
 
-        if not version or version == "unknown":
+        if not version or version == "unknown" or version == "disabled":
             return None
 
         return str(version)

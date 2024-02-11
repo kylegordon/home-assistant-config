@@ -8,8 +8,14 @@ https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers
 """
 from datetime import timedelta
 
-__version__ = "4.1.2"
-PROJECT_URL = "https://github.com/custom-components/alexa_media_player/"
+from homeassistant.const import (
+    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+    CONCENTRATION_PARTS_PER_MILLION,
+    PERCENTAGE,
+)
+
+__version__ = "4.9.0"
+PROJECT_URL = "https://github.com/alandtse/alexa_media_player/"
 ISSUE_URL = f"{PROJECT_URL}issues"
 NOTIFY_URL = f"{PROJECT_URL}wiki/Configuration%3A-Notification-Component#use-the-notifyalexa_media-service"
 
@@ -30,6 +36,7 @@ DEPENDENT_ALEXA_COMPONENTS = [
     "sensor",
     "alarm_control_panel",
     "light",
+    "binary_sensor",
 ]
 
 HTTP_COOKIE_HEADER = "# HTTP Cookie File"
@@ -39,6 +46,7 @@ CONF_HASS_URL = "hass_url"
 CONF_INCLUDE_DEVICES = "include_devices"
 CONF_EXCLUDE_DEVICES = "exclude_devices"
 CONF_QUEUE_DELAY = "queue_delay"
+CONF_PUBLIC_URL = "public_url"
 CONF_EXTENDED_ENTITY_DISCOVERY = "extended_entity_discovery"
 CONF_SECURITYCODE = "securitycode"
 CONF_OTPSECRET = "otp_secret"
@@ -52,6 +60,7 @@ EXCEPTION_TEMPLATE = "An exception of type {0} occurred. Arguments:\n{1!r}"
 
 DEFAULT_EXTENDED_ENTITY_DISCOVERY = False
 DEFAULT_QUEUE_DELAY = 1.5
+DEFAULT_PUBLIC_URL = ""
 SERVICE_CLEAR_HISTORY = "clear_history"
 SERVICE_UPDATE_LAST_CALLED = "update_last_called"
 SERVICE_FORCE_LOGOUT = "force_logout"
@@ -97,19 +106,32 @@ RECURRING_PATTERN_ISO_SET = {
 ATTR_MESSAGE = "message"
 ATTR_EMAIL = "email"
 ATTR_NUM_ENTRIES = "entries"
-STARTUP = """
+STARTUP = f"""
 -------------------------------------------------------------------
-{}
-Version: {}
+{DOMAIN}
+Version: {__version__}
 This is a custom component
 If you have any issues with this you need to open an issue here:
-{}
+{ISSUE_URL}
 -------------------------------------------------------------------
-""".format(
-    DOMAIN, __version__, ISSUE_URL
-)
+"""
 
 AUTH_CALLBACK_PATH = "/auth/alexamedia/callback"
 AUTH_CALLBACK_NAME = "auth:alexamedia:callback"
 AUTH_PROXY_PATH = "/auth/alexamedia/proxy"
 AUTH_PROXY_NAME = "auth:alexamedia:proxy"
+
+ALEXA_UNIT_CONVERSION = {
+    "Alexa.Unit.Percent": PERCENTAGE,
+    "Alexa.Unit.PartsPerMillion": CONCENTRATION_PARTS_PER_MILLION,
+    "Alexa.Unit.Density.MicroGramsPerCubicMeter": CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+}
+
+ALEXA_ICON_CONVERSION = {
+    "Alexa.AirQuality.CarbonMonoxide": "mdi:molecule-co",
+    "Alexa.AirQuality.Humidity": "mdi:water-percent",
+    "Alexa.AirQuality.IndoorAirQuality": "mdi:numeric",
+}
+ALEXA_ICON_DEFAULT = "mdi:molecule"
+
+UPLOAD_PATH = "www/alexa_tts"

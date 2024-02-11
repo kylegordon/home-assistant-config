@@ -1,3 +1,4 @@
+---
 automation:
   - alias: Alert when a critical device goes offline
     trigger:
@@ -6,24 +7,25 @@ automation:
           - sensor.kitchen_temperature
           - binary_sensor.front_hall_sensor_status
           - sensor.garage_temperature
-          - binary_sensor.hall_door_motion
-          - binary_sensor.hall_rooms_motion
-          - binary_sensor.ensuite_motion
-          - binary_sensor.living_room_motion
-          - binary_sensor.kitchen_motion
-          - binary_sensor.front_hall_motion
+          - binary_sensor.hallway_bathroom_occupancy
+          - binary_sensor.hallway_rooms_occupancy
+          - binary_sensor.ensuite_motion_occupancy
+          - binary_sensor.living_room_motion_occupancy
+          - binary_sensor.kitchen_motion_occupancy
+          - binary_sensor.front_hall_motion_occupancy
           - binary_sensor.front_door_motion
           - binary_sensor.washing_machine_power_plug_status
           - binary_sensor.dishwasher_power_plug_status
           - binary_sensor.shower_pump_power_plug_status
           - binary_sensor.tv_power_plug_status
           - binary_sensor.craft_room_window
-          - binary_sensor.ensuite_window
+          - binary_sensor.ensuite_window_vibration
+          - binary_sensor.ensuite_window_opening_contact
           - binary_sensor.guest_bedroom_window
           - binary_sensor.master_bedroom_window
           - binary_sensor.study_window
           - binary_sensor.garden_door
-          - binary_sensor.boot_room_motion
+          - binary_sensor.boot_room_motion_occupancy
           - binary_sensor.boot_room_door
           - binary_sensor.bathroom_window
           - binary_sensor.dining_table_window
@@ -46,10 +48,8 @@ automation:
           - light.guest_bedroom
           - light.master_bedroom
           - light.craft_room
-          - light.hall_bedrooms
-          - light.hall_entrance
-          - light.hall_bedrooms
-          - light.hall_bathroom
+          - light.hallway_bedrooms
+          - light.hallway_bathroom
           - light.kitchen_cabinets
           - light.kitchen
           - light.boot_room
@@ -58,7 +58,7 @@ automation:
           - sensor.living_room_multi_sensor_battery_level
           - sensor.master_bedroom_multi_sensor_battery_level
           - sensor.study_multi_sensor_battery_level
-          - sensor.hall_multi_sensor_battery_level
+          - sensor.hallway_multi_sensor_battery_level
           - sensor.dining_nook_multi_sensor_battery_level
           - sensor.bathroom_multi_sensor_battery_level
         to: 'unavailable'

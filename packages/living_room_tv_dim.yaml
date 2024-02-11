@@ -1,0 +1,36 @@
+---
+input_boolean:
+  tv_lights_lockout:
+    name: TV lights lockout
+    icon: mdi:lock
+
+automation:
+  - alias: Living Room TV dimmer
+    id: living_room_tv_dimmer
+    trigger:
+      - platform: state
+        entity_id: media_player.living_room_kodi
+        to: 'playing'
+    condition:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: light.living_room_1
+            state: 'on'
+          - condition: state
+            entity_id: light.living_room_2
+            state: 'on'
+          - condition: state
+            entity_id: light.dining_nook
+            state: 'on'
+    action:
+      - service: light.turn_off
+        entity_id:
+          - light.living_room
+      - condition: state
+        entity_id:
+          - input_boolean.tv_lights_lockout
+        state: 'off'
+      - service: light.turn_off
+        entity_id:
+          - light.dining_nook

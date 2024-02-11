@@ -1,5 +1,4 @@
-"""
-Custom integration to integrate thermal_comfort with Home Assistant.
+"""Custom integration to integrate thermal_comfort with Home Assistant.
 
 For more details about this integration, please refer to
 https://github.com/dolezsa/thermal_comfort
@@ -8,17 +7,21 @@ from __future__ import annotations
 
 import logging
 
-from homeassistant.config import async_hass_config_yaml, async_process_component_config
+import voluptuous as vol
+
+from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME, SERVICE_RELOAD
 from homeassistant.core import Event, HomeAssistant, ServiceCall
-from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import discovery
-from homeassistant.helpers.reload import async_reload_integration_platforms
+from homeassistant.exceptions import ConfigValidationError, ServiceValidationError
+from homeassistant.helpers import config_validation as cv, discovery
+from homeassistant.helpers.entity_registry import RegistryEntry, async_migrate_entries
+from homeassistant.helpers.reload import (
+    async_integration_yaml_config,
+    async_reload_integration_platforms,
+)
 from homeassistant.helpers.typing import ConfigType
-from homeassistant.loader import async_get_integration
 
-from .config import OPTIONS_SCHEMA
 from .config_flow import get_value
 from .const import DOMAIN, PLATFORMS, UPDATE_LISTENER
 from .sensor import (
@@ -28,6 +31,10 @@ from .sensor import (
     CONF_POLL,
     CONF_SCAN_INTERVAL,
     CONF_TEMPERATURE_SENSOR,
+    SENSOR_OPTIONS_SCHEMA,
+    SENSOR_SCHEMA,
+    LegacySensorType,
+    SensorType,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,7 +63,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # We have no unique_id yet, let's use backup.
         hass.config_entries.async_update_entry(entry, unique_id=entry.entry_id)
 
-    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    )
     update_listener = entry.add_update_listener(async_update_options)
     hass.data[DOMAIN][entry.entry_id][UPDATE_LISTENER] = update_listener
     return True
@@ -77,6 +86,52 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+    """Migrate old entry."""
+    _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+    if config_entry.version == 1:
+
+        def update_unique_id(entry: RegistryEntry):
+            """Update unique_id of changed sensor names."""
+            if LegacySensorType.THERMAL_PERCEPTION in entry.unique_id:
+                return {"new_unique_id": entry.unique_id.replace(LegacySensorType.THERMAL_PERCEPTION, SensorType.DEW_POINT_PERCEPTION)}
+            if LegacySensorType.SIMMER_INDEX in entry.unique_id:
+                return {"new_unique_id": entry.unique_id.replace(LegacySensorType.SIMMER_INDEX, SensorType.SUMMER_SIMMER_INDEX)}
+            if LegacySensorType.SIMMER_ZONE in entry.unique_id:
+                return {"new_unique_id": entry.unique_id.replace(LegacySensorType.SIMMER_ZONE, SensorType.SUMMER_SIMMER_PERCEPTION)}
+
+        await async_migrate_entries(hass, config_entry.entry_id, update_unique_id)
+        config_entry.version = 2
+
+    _LOGGER.info("Migration to version %s successful", config_entry.version)
+
+    return True
+
+
+OPTIONS_SCHEMA = vol.Schema({}).extend(
+    SENSOR_OPTIONS_SCHEMA.schema,
+    extra=vol.REMOVE_EXTRA,
+)
+
+COMBINED_SCHEMA = vol.Schema(
+    {
+        vol.Optional(SENSOR_DOMAIN): vol.All(
+            cv.ensure_list, [SENSOR_SCHEMA]
+        ),
+    }
+).extend(OPTIONS_SCHEMA.schema)
+
+CONFIG_SCHEMA = vol.Schema(
+    {
+        vol.Optional(DOMAIN): vol.All(
+            cv.ensure_list,
+            [COMBINED_SCHEMA],
+        )
+    },
+    extra=vol.ALLOW_EXTRA,
+)
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the thermal_comfort integration."""
     if DOMAIN in config:
@@ -85,22 +140,22 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     async def _reload_config(call: Event | ServiceCall) -> None:
         """Reload top-level + platforms."""
         try:
-            unprocessed_conf = await async_hass_config_yaml(hass)
-        except HomeAssistantError as err:
-            _LOGGER.error(err)
-            return
+            config_yaml = await async_integration_yaml_config(hass, DOMAIN, raise_on_failure=True)
+        except ConfigValidationError as ex:
+            raise ServiceValidationError(
+                str(ex),
+                translation_domain=ex.translation_domain,
+                translation_key=ex.translation_key,
+                translation_placeholders=ex.translation_placeholders,
+            ) from ex
 
-        conf = await async_process_component_config(
-            hass, unprocessed_conf, await async_get_integration(hass, DOMAIN)
-        )
-
-        if conf is None:
+        if config_yaml is None:
             return
 
         await async_reload_integration_platforms(hass, DOMAIN, PLATFORMS)
 
-        if DOMAIN in conf:
-            await _process_config(hass, conf)
+        if DOMAIN in config_yaml:
+            await _process_config(hass, config_yaml)
 
         hass.bus.async_fire(f"event_{DOMAIN}_reloaded", context=call.context)
 
