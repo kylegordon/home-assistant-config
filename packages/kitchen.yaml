@@ -8,8 +8,8 @@ input_number:
     max: 10000
     step: 1
 
-group:
-  kitchen_lights:
+light:
+  - platform: group
     name: Kitchen Lights
     entities:
       - light.kitchen_cabinets
