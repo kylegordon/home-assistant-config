@@ -8,8 +8,8 @@ substitutions:
   board: d1_mini
 
   # cover config
-  open_duration: "30000"  # ms
-  close_duration: "30000"  # ms
+  open_duration: "12000"  # ms
+  close_duration: "12000"  # ms
   cover_device_class: garage
 
   # switch config
