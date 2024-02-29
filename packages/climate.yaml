@@ -69,6 +69,9 @@ automation:
         state: 'off'
         for:
           minutes: 5
+      - condition: numeric_state
+        entity_id: sensor.stove_temperature_living_room
+        below: 100
     action:
       - service: homeassistant.turn_on
         entity_id: switch.boiler_valve_controls_relay_2
@@ -89,6 +92,9 @@ automation:
           state: 'on'
           for:
             minutes: 5
+        - condition: numeric_state
+          entity_id: sensor.stove_temperature_living_room
+          above: 100
     action:
       - service: homeassistant.turn_off
         entity_id: switch.boiler_valve_controls_relay_2
