@@ -157,7 +157,7 @@
     - sensor.ensuite_lywsd03mmc_humidity
 
 - platform: min_max
-  name: Study Temperature
+  name: Study Average Temperature
   unique_id: study_average_temperature
   type: median
   entity_ids:
