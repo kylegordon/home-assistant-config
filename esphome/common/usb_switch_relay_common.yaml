@@ -1,8 +1,5 @@
 ---
-# substitutions:
-#   name: usb_relay_3
-#   friendly_name: "USB Relay"
-#   default_state: "RESTORE_DEFAULT_OFF"
+# https://devices.esphome.io/devices/Sinilink-XY-WFUSB-USB-Switch-Relay
 
 packages:
   common: !include common.yaml
