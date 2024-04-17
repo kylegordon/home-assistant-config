@@ -3,14 +3,27 @@
 homeassistant:
   customize:
     input_boolean.vacuum_fronthall:
-      room_id: "1"
+      room_id: "8"
     input_boolean.vacuum_livingroom:
-      room_id: "4"
+      room_id: "6"
     input_boolean.vacuum_bootroom:
-      room_id: "3"
+      room_id: "1"
     input_boolean.vacuum_kitchen:
+      room_id: "10"
+    input_boolean.vacuum_hallway:
+      room_id: "5"
+    input_boolean.vacuum_bathroom:
+      room_id: "12"
+    input_boolean.vacuum_study:
+      room_id: "7"
+    input_boolean.vacuum_craftroom:
+      room_id: "4"
+    input_boolean.vacuum_guestroom:
+      room_id: "9"
+    input_boolean.vacuum_bedroom:
       room_id: "2"
-
+    input_boolean.vacuum_ensuite:
+      room_id: "3"
 
 input_boolean:
   vacuum_bootroom:
@@ -25,6 +38,26 @@ input_boolean:
   vacuum_kitchen:
     name: Kitchen
     icon: mdi:silverware-fork-knife
+  vacuum_hallway:
+    name: Hallway
+  vacuum_bathroom:
+    name: Bathroom
+    icon: mdi:toilet
+  vacuum_study:
+    name: Study
+    icon: mdi:book
+  vacuum_craftroom:
+    name: Craft Room
+    icon: mdi:book
+  vacuum_guestroom:
+    name: Guest Room
+    icon: mdi:bed
+  vacuum_bedroom:
+    name: Bedroom
+    icon: mdi:bed
+  vacuum_ensuite:
+    name: Ensuite
+    icon: mdi:toilet
 
 
 group:
@@ -35,6 +68,13 @@ group:
       - input_boolean.vacuum_fronthall
       - input_boolean.vacuum_kitchen
       - input_boolean.vacuum_livingroom
+      - input_boolean.vacuum_hallway
+      - input_boolean.vacuum_bathroom
+      - input_boolean.vacuum_study
+      - input_boolean.vacuum_craftroom
+      - input_boolean.vacuum_guestroom
+      - input_boolean.vacuum_bedroom
+      - input_boolean.vacuum_ensuite
 
 script:
   vacuum_clean_segments:
@@ -54,7 +94,7 @@ script:
     sequence:
     - service: mqtt.publish
       data:
-        topic: valetudo/confusedmeaslyraccoon/MapSegmentationCapability/clean/set
+        topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set
         payload_template: '{"segment_ids": {{segments}}}'
     mode: single
 
