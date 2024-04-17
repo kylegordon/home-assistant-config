@@ -79,22 +79,21 @@ group:
 script:
   vacuum_clean_segments:
     sequence:
-    - service: script.turn_on
-      target:
-        entity_id: script.vacuum_clean_segments_message
-      data:
-        variables:
-          segments: '{{expand("group.vacuum_rooms") | selectattr("state","eq","on")
-            | map(attribute="attributes.room_id") | list | to_json}}'
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("group.vacuum_rooms") | selectattr("state","eq","on")
+              | map(attribute="attributes.room_id") | list | to_json}}'
     mode: single
     alias: vacuum_clean_segments
     icon: mdi:arrow-right
   vacuum_clean_segments_message:
     alias: vacuum_clean_segments_message
     sequence:
-    - service: mqtt.publish
-      data:
-        topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set
-        payload_template: '{"segment_ids": {{segments}}}'
+      - service: mqtt.publish
+        data:
+          topic: valetudo/confusedmeaslyraccoon/MapSegmentationCapability/clean/set
+          payload_template: '{"segment_ids": {{segments}}}'
     mode: single
-
