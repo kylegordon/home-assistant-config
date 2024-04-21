@@ -41,16 +41,16 @@ sensor:
       App.register_component(opt3001);
       return {opt3001->sensor_status, opt3001->manufacturer_id_sensor, opt3001->device_id_sensor, opt3001->high_limit_sensor, opt3001->low_limit_sensor, opt3001->lux_sensor};
     sensors:
-    - name: "Sensor Status"
-    - name: "Manufacturer ID"
-    - name: "Device ID"
-    - name: "Lux High Limit"
-      unit_of_measurement: lx
-    - name: "Lux Low Limit"
-      unit_of_measurement: lx
-    - name: "Lux Level"
-      unit_of_measurement: lx
-      icon: mdi:sun-wireless-outline
+      - name: "Sensor Status"
+      - name: "Manufacturer ID"
+      - name: "Device ID"
+      - name: "Lux High Limit"
+        unit_of_measurement: lx
+      - name: "Lux Low Limit"
+        unit_of_measurement: lx
+      - name: "Lux Level"
+        unit_of_measurement: lx
+        icon: mdi:sun-wireless-outline
 
 output:
   # Register the blue LED as a dimmable output ....
@@ -70,16 +70,16 @@ light:
 interval:
   - interval: 500ms
     then:
-    - if:
-        condition:
-          not:
-            wifi.connected:
-        then:
-          - light.turn_on:
-              id: blue_led_light
-              brightness: 50%
-              transition_length: 0s
-          - delay: 250ms
-          - light.turn_off:
-              id: blue_led_light
-              transition_length: 250ms
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 50%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 250ms
