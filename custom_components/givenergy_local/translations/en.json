@@ -1,0 +1,16 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Connect to inverter",
+                "data": {
+                    "host": "Host",
+                    "num_batteries": "Number of batteries"
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Failed to connect to the inverter."
+        }
+    }
+}

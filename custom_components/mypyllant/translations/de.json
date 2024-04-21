@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "password": "Passwort",
+          "username": "Benutzername",
+          "country": "Land",
+          "brand": "Hersteller"
+        },
+        "title": "Login Information",
+        "description": "Aus der myVAILLANT App"
+      }
+    },
+    "error": {
+      "login_endpoint_invalid": "Kein Login möglich mit diesem Land und Hersteller",
+      "realm_invalid": "Für diesen Hersteller wird ein Land benötigt",
+      "authentication_failed": "Login fehlgeschlagen, stimmen Benutzername & Passwort?",
+      "unknown": "Unerwarteter Fehler, siehe Logs"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Intervall zwischen Updates in Sekunden (niedrige Werte führen zu 'Quota Exceeded' Fehlern)",
+          "update_interval_daily": "Intervall zwischen Energiedaten Updates in Sekunden (niedrige Werte führen zu 'Quota Exceeded' Fehlern)",
+          "refresh_delay": "Verzögerung bevor Daten nach einer Änderung aktualisiert werden",
+          "quick_veto_duration": "Standard Dauer in Stunden für Quick Veto",
+          "holiday_duration": "Standard Dauer in Tagen für Abwesenheitsmodus",
+          "time_program_overwrite": "Temperaturänderungen in der Zeitsteuerung speichern, statt Quick Veto",
+          "default_holiday_setpoint": "Standardtemperatur während Abwesenheitsmodus",
+          "country": "Land",
+          "brand": "Hersteller",
+          "fetch_rts": "Echtzeit-Statistiken abrufen (nicht auf jedem System unterstützt)",
+          "fetch_mpc": "Echtzeit-Stromverbrauch abrufen (nicht auf jedem System unterstützt)",
+          "fetch_ambisense_rooms": "Ambisense Raumthermostate abrufen"
+        }
+      }
+    }
+  }
+}
