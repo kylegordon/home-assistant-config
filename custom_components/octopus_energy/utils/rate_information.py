@@ -57,6 +57,7 @@ def get_current_rate_information(rates, now: datetime):
       "current_rate": {
         "start": applicable_rates[0]["start"],
         "end": applicable_rates[-1]["end"],
+        "tariff_code": current_rate["tariff_code"],
         "value_inc_vat": value_inc_vat_to_pounds(applicable_rates[0]["value_inc_vat"]),
         "is_capped": current_rate["is_capped"],
         "is_intelligent_adjusted": current_rate["is_intelligent_adjusted"] if "is_intelligent_adjusted" in current_rate else False
@@ -79,12 +80,15 @@ def get_previous_rate_information(rates, now: datetime):
     for period in reversed(rates):
       if now >= period["start"] and now <= period["end"]:
         current_rate = period
+        continue
 
       if current_rate is not None and current_rate["value_inc_vat"] != period["value_inc_vat"]:
         if len(applicable_rates) == 0 or period["value_inc_vat"] == applicable_rates[0]["value_inc_vat"]:
           applicable_rates.append(period)
         else:
           break
+      elif len(applicable_rates) > 0:
+        break
 
   applicable_rates.sort(key=get_from)
 
@@ -114,12 +118,15 @@ def get_next_rate_information(rates, now: datetime):
     for period in rates:
       if now >= period["start"] and now <= period["end"]:
         current_rate = period
+        continue
 
       if current_rate is not None and current_rate["value_inc_vat"] != period["value_inc_vat"]:
         if len(applicable_rates) == 0 or period["value_inc_vat"] == applicable_rates[0]["value_inc_vat"]:
           applicable_rates.append(period)
         else:
           break
+      elif len(applicable_rates) > 0:
+        break
 
   if len(applicable_rates) > 0 and current_rate is not None:
     return {
