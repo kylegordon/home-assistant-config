@@ -2,7 +2,9 @@
   unique_id: rest_of_house_thermostat
   name: Rest of House Thermostat
   heater: input_boolean.call_for_rad_heat
+  precision: 0.5
   target_sensor: sensor.rest_of_house_average_temperature
+  target_temp_step: 0.5
   min_temp: 10
   max_temp: 25
   away_temp: 15
