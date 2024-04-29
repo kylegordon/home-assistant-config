@@ -97,3 +97,13 @@ script:
           topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set
           payload_template: '{"segment_ids": {{segments}}}'
     mode: single
+  vacuum_clean_kithen:
+    alias: vacuum_clean_kitchen
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_kitchen") | map(attribute="attributes.room_id") | list | to_json }}'
