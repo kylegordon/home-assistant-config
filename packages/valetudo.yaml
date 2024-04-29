@@ -101,6 +101,9 @@ script:
     alias: vacuum_clean_fronthall
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the floor of the front hall!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -112,6 +115,9 @@ script:
     alias: vacuum_clean_livingroom
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the living room!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -123,6 +129,9 @@ script:
     alias: vacuum_clean_bootroom
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the boot room floor!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -134,6 +143,9 @@ script:
     alias: vacuum_clean_kitchen
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the kitchen floor!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -145,6 +157,9 @@ script:
     alias: vacuum_clean_hallway
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the hallway!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -156,6 +171,9 @@ script:
     alias: vacuum_clean_bathroom
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the bathroom!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -167,6 +185,9 @@ script:
     alias: vacuum_clean_study
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the study carpet!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -178,6 +199,9 @@ script:
     alias: vacuum_clean_craftroom
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the craft room carpet!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -189,6 +213,9 @@ script:
     alias: vacuum_clean_guestroom
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the guest room!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -200,6 +227,9 @@ script:
     alias: vacuum_clean_bedroom
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the bedroom!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
@@ -211,6 +241,9 @@ script:
     alias: vacuum_clean_ensuite
     mode: single
     sequence:
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the ensuite!"
       - service: script.turn_on
         target:
           entity_id: script.vacuum_clean_segments_message
