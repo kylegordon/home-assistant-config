@@ -217,4 +217,3 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_ensuite") | map(attribute="attributes.room_id") | list | to_json }}'
-      

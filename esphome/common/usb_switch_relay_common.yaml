@@ -47,7 +47,7 @@ output:
   - platform: gpio
     pin: GPIO14
     id: green_led
-    inverted: true # start on
+    inverted: true  # start on
 
   # Binary Output template to link relay and green LED states
   # LED is on when relay is off
