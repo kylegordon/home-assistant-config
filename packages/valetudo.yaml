@@ -1,5 +1,4 @@
 ---
-
 homeassistant:
   customize:
     input_boolean.vacuum_fronthall:
@@ -59,7 +58,6 @@ input_boolean:
     name: Ensuite
     icon: mdi:toilet
 
-
 group:
   vacuum_rooms:
     name: Vacuum Rooms
@@ -97,7 +95,42 @@ script:
           topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set
           payload_template: '{"segment_ids": {{segments}}}'
     mode: single
-  vacuum_clean_kithen:
+
+  # A series of script calls to clean rooms. Called from the scheduler component.
+  vacuum_clean_fronthall:
+    alias: vacuum_clean_fronthall
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_fronthall") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_livingroom:
+    alias: vacuum_clean_livingroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_livingroom") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_bootroom:
+    alias: vacuum_clean_bootroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bootroom") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_kitchen:
     alias: vacuum_clean_kitchen
     mode: single
     sequence:
@@ -107,3 +140,81 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_kitchen") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_hallway:
+    alias: vacuum_clean_hallway
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_hallway") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_bathroom:
+    alias: vacuum_clean_bathroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bathroom") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_study:
+    alias: vacuum_clean_study
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_study") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_craftroom:
+    alias: vacuum_clean_craftroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_craftroom") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_guestroom:
+    alias: vacuum_clean_guestroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_guestroom") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_bedroom:
+    alias: vacuum_clean_bedroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bedroom") | map(attribute="attributes.room_id") | list | to_json }}'
+
+  vacuum_clean_ensuite:
+    alias: vacuum_clean_ensuite
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_ensuite") | map(attribute="attributes.room_id") | list | to_json }}'
+      
