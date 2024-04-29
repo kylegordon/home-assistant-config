@@ -94,6 +94,6 @@ script:
     sequence:
       - service: mqtt.publish
         data:
-          topic: valetudo/confusedmeaslyraccoon/MapSegmentationCapability/clean/set
+          topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set
           payload_template: '{"segment_ids": {{segments}}}'
     mode: single
