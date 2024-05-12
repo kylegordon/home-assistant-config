@@ -1,4 +1,5 @@
 """Switch for the Adaptive Lighting integration."""
+
 from __future__ import annotations
 
 import asyncio
@@ -59,6 +60,7 @@ from homeassistant.const import (
     STATE_OFF,
     STATE_ON,
 )
+from homeassistant.const import __version__ as ha_version
 from homeassistant.core import (
     CALLBACK_TYPE,
     Context,
@@ -358,7 +360,8 @@ async def handle_change_switch_settings(
 
     # deep copy the defaults so we don't modify the original dicts
     switch._set_changeable_settings(data=data, defaults=deepcopy(defaults))
-    switch._update_time_interval_listener()
+    if switch.is_on:
+        switch._update_time_interval_listener()
 
     _LOGGER.debug(
         "Called 'adaptive_lighting.change_switch_settings' service with '%s'",
@@ -681,7 +684,7 @@ def _convert_attributes(attributes: dict[str, Any]) -> dict[str, Any]:
 
     if rgb is not None:
         attributes[ATTR_RGB_COLOR] = rgb
-        _LOGGER.debug(f"Converted {attributes} to rgb {rgb}")
+        _LOGGER.debug("Converted attributes %s to rgb %s", attributes, rgb)
     else:
         _LOGGER.debug("No suitable color conversion found for %s", attributes)
 
@@ -710,6 +713,10 @@ def _attributes_have_changed(
     adapt_color: bool,
     context: Context,
 ) -> bool:
+    # 2023-11-19: HA core no longer removes light domain attributes when off
+    # so we must protect for `None` here
+    # see https://github.com/home-assistant/core/pull/101946
+
     if adapt_color:
         old_attributes, new_attributes = _add_missing_attributes(
             old_attributes,
@@ -718,8 +725,8 @@ def _attributes_have_changed(
 
     if (
         adapt_brightness
-        and ATTR_BRIGHTNESS in old_attributes
-        and ATTR_BRIGHTNESS in new_attributes
+        and old_attributes.get(ATTR_BRIGHTNESS)
+        and new_attributes.get(ATTR_BRIGHTNESS)
     ):
         last_brightness = old_attributes[ATTR_BRIGHTNESS]
         current_brightness = new_attributes[ATTR_BRIGHTNESS]
@@ -736,8 +743,8 @@ def _attributes_have_changed(
 
     if (
         adapt_color
-        and ATTR_COLOR_TEMP_KELVIN in old_attributes
-        and ATTR_COLOR_TEMP_KELVIN in new_attributes
+        and old_attributes.get(ATTR_COLOR_TEMP_KELVIN)
+        and new_attributes.get(ATTR_COLOR_TEMP_KELVIN)
     ):
         last_color_temp = old_attributes[ATTR_COLOR_TEMP_KELVIN]
         current_color_temp = new_attributes[ATTR_COLOR_TEMP_KELVIN]
@@ -754,8 +761,8 @@ def _attributes_have_changed(
 
     if (
         adapt_color
-        and ATTR_RGB_COLOR in old_attributes
-        and ATTR_RGB_COLOR in new_attributes
+        and old_attributes.get(ATTR_RGB_COLOR)
+        and new_attributes.get(ATTR_RGB_COLOR)
     ):
         last_rgb_color = old_attributes[ATTR_RGB_COLOR]
         current_rgb_color = new_attributes[ATTR_RGB_COLOR]
@@ -943,9 +950,15 @@ class AdaptiveSwitch(SwitchEntity, RestoreEntity):
         if self.hass.is_running:
             await self._setup_listeners()
         else:
+            kw = {}
+            year, month = (int(x) for x in ha_version.split(".")[:2])
+            if (year, month) >= (2024, 4):
+                # Added in https://github.com/home-assistant/core/pull/113020
+                kw["run_immediately"] = False
             self.hass.bus.async_listen_once(
                 EVENT_HOMEASSISTANT_STARTED,
                 self._setup_listeners,
+                **kw,
             )
         last_state: State | None = await self.async_get_last_state()
         is_new_entry = last_state is None  # newly added to HA
@@ -1041,11 +1054,10 @@ class AdaptiveSwitch(SwitchEntity, RestoreEntity):
         try:
             # HACK: this is a private method in `Entity` which can change
             super()._call_on_remove_callbacks()
-        except AttributeError as err:
-            _LOGGER.error(
-                "%s: Caught AttributeError in `_call_on_remove_callbacks`: %s",
+        except AttributeError:
+            _LOGGER.exception(
+                "%s: Caught AttributeError in `_call_on_remove_callbacks`",
                 self._name,
-                err,
             )
 
     def _remove_interval_listener(self) -> None:
@@ -1653,10 +1665,12 @@ class AdaptiveLightingManager:
             self.hass.bus.async_listen(
                 EVENT_CALL_SERVICE,
                 self.turn_on_off_event_listener,
+                run_immediately=False,
             ),
             self.hass.bus.async_listen(
                 EVENT_STATE_CHANGED,
                 self.state_changed_event_listener,
+                run_immediately=False,
             ),
         ]
 
@@ -1816,7 +1830,7 @@ class AdaptiveLightingManager:
             single_switch_with_multiple_lights and switch_without_multi_light_intercept
         ):
             _LOGGER.warning(
-                "Single switch with multiple lights targeted, but"
+                "Single switch with multiple lights targeted (%s), but"
                 " `multi_light_intercept: true` is not set, so skipping intercept"
                 " for all lights.",
                 switch_to_eids,
@@ -2649,7 +2663,10 @@ class AdaptiveLightingManager:
             entity_id,
             service_data,
         )
-        if any(attr in service_data for attr in COLOR_ATTRS | BRIGHTNESS_ATTRS):
+        if any(
+            attr in service_data
+            for attr in COLOR_ATTRS | BRIGHTNESS_ATTRS | {ATTR_EFFECT}
+        ):
             self.mark_as_manual_control(entity_id)
             return True
         return False
