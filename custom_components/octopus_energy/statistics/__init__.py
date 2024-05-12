@@ -1,5 +1,6 @@
 import logging
 from datetime import (datetime, timedelta)
+from custom_components.octopus_energy.const import DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.components.recorder import get_instance
 from homeassistant.components.recorder.models import StatisticData
@@ -7,7 +8,6 @@ from homeassistant.components.recorder.statistics import (
     statistics_during_period
 )
 
-from ..const import DOMAIN
 from ..utils import get_active_tariff_code, get_off_peak_cost
 
 _LOGGER = logging.getLogger(__name__)
