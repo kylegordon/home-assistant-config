@@ -396,7 +396,7 @@ class BetterThermostat(ClimateEntity, RestoreEntity, ABC):
         _check = await check_all_entities(self)
         if _check is False:
             return
-        check_weather(self)
+        await check_weather(self)
         if self._last_call_for_heat != self.call_for_heat:
             self._last_call_for_heat = self.call_for_heat
             await self.async_update_ha_state(force_refresh=True)
@@ -1122,11 +1122,7 @@ class BetterThermostat(ClimateEntity, RestoreEntity, ABC):
     @property
     def hvac_action(self):
         """Return the current HVAC action"""
-        if (
-            self.attr_hvac_action is None
-            and self.bt_target_temp is not None
-            and self.cur_temp is not None
-        ):
+        if self.bt_target_temp is not None and self.cur_temp is not None:
             if self.hvac_mode == HVACMode.OFF:
                 self.attr_hvac_action = HVACAction.OFF
             elif self.bt_target_temp > self.cur_temp and self.window_open is False:
