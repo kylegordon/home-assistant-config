@@ -2,8 +2,8 @@
   "title": "Octopus Energy",
   "config": {
     "step": {
-      "user": {
-        "description": "Setup your basic account information. This can be found at https://octopus.energy/dashboard/developer/.",
+      "account": {
+        "description": "Setup your basic account information.",
         "data": {
           "api_key": "Api key",
           "account_id": "Your account Id (e.g. A-AAAA1111)",
@@ -18,13 +18,15 @@
           "gas_price_cap": "Optional gas price cap in pence"
         },
         "data_description": {
+          "account_id": "This can be found on your bill or at the top of https://octopus.energy/dashboard",
+          "api_key": "This can be found at https://octopus.energy/dashboard/developer/",
           "calorific_value": "This can be found on your gas statement and can change from time to time"
         }
       },
       "target_rate": {
-        "description": "Setup a target rate period. Continuous target will find the cheapest continuous period for your target hours. While intermittent will find the cheapest periods with potential gaps, which when combined will meet your target hours. Full documentation can be found at https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md",
+        "description": "Setup a target rate period. Continuous target will find the cheapest continuous period for your target hours. While intermittent will find the cheapest periods with potential gaps, which when combined will meet your target hours. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/setup/target_rate",
         "data": {
-          "entity_id": "The name of your target",
+          "name": "The name of your target",
           "hours": "The hours you require in decimal format.",
           "type": "The type of target you're after",
           "mpan": "The MPAN number of the meter to apply the target to",
@@ -34,6 +36,15 @@
           "rolling_target": "Re-evaluate multiple times a day",
           "last_rates": "Find last applicable rates",
           "target_invert_target_rates": "Invert targeted rates"
+        }
+      },
+      "cost_tracker": {
+        "description": "Track the cost for a given energy based sensor. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/setup/cost_tracker.",
+        "data": {
+          "name": "The name of your cost sensor",
+          "mpan": "The meter the cost rates should be associated with",
+          "target_entity_id": "The entity to track the costs for.",
+          "entity_accumulative_value": "Tracked entity state is accumulative"
         }
       }
     },
@@ -50,14 +61,15 @@
       "invalid_end_time_agile": "Target time not fit for agile tariffs. Please consult target rate documentation for more information."
     },
     "abort": {
-      "not_supported": "Configuration for target rates is not supported at the moment."
+      "not_supported": "Configuration for target rates is not supported at the moment.",
+      "account_not_found": "Account information is not found"
     }
   },
   "options": {
     "step": {
       "user": {
         "title": "Update Account Info",
-        "description": "Update your basic account information. This can be found at https://octopus.energy/dashboard/developer/.",
+        "description": "Update your basic account information.",
         "data": {
           "api_key": "Api key",
           "supports_live_consumption": "I have a Home Mini - https://octopus.energy/blog/octopus-home-mini/",
@@ -70,12 +82,13 @@
           "gas_price_cap": "Optional gas price cap in pence"
         },
         "data_description": {
+          "api_key": "This can be found at https://octopus.energy/dashboard/developer/",
           "calorific_value": "This can be found on your gas statement and can change from time to time"
         }
       },
       "target_rate": {
         "title": "Update Target Rate",
-        "description": "Update the settings for your target rate sensor, which can be used to help you save energy and money. Full documentation can be found at https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/setup_target_rate.md",
+        "description": "Update the settings for your target rate sensor, which can be used to help you save energy and money. Full documentation can be found at https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/setup/target_rate",
         "data": {
           "hours": "The hours you require in decimal format.",
           "mpan": "The MPAN number of the meter to apply the target to",
@@ -85,6 +98,15 @@
           "rolling_target": "Re-evaluate multiple times a day",
           "last_rates": "Find last applicable rates",
           "target_invert_target_rates": "Invert targeted rates"
+        }
+      },
+      "cost_tracker": {
+        "description": "Track the cost for a given energy based sensor",
+        "data": {
+          "name": "The name of your cost sensor",
+          "mpan": "The meter the cost rates should be associated with",
+          "target_entity_id": "The entity to track the costs for.",
+          "entity_accumulative_value": "Tracked entity state is accumulative"
         }
       }
     },
@@ -100,7 +122,8 @@
       "invalid_end_time_agile": "Target time not fit for agile tariffs. Please consult target rate documentation for more information."
     },
     "abort": {
-      "not_supported": "Configuration for target rates is not supported at the moment."
+      "not_supported": "Configuration for target rates is not supported at the moment.",
+      "account_not_found": "Account information is not found"
     }
   },
   "issues": {

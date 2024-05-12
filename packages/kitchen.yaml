@@ -8,6 +8,14 @@ input_number:
     max: 10000
     step: 1
 
+light:
+  - platform: group
+    name: Kitchen Lights
+    entities:
+      - light.kitchen_cabinets
+      - light.kitchen_worktop_lights
+      - light.kitchen
+
 automation:
   - alias: Kitchen motion
     trigger:
@@ -25,8 +33,7 @@ automation:
       - service: homeassistant.turn_on
         data_template:
           entity_id:
-            - light.kitchen_cabinets
-            - light.kitchen
+            - light.kitchen_lights
 
   - alias: Kitchen motion - 10 minute timeout
     trigger:
@@ -38,5 +45,4 @@ automation:
     action:
       service: homeassistant.turn_off
       entity_id:
-        - light.kitchen_cabinets
-        - light.kitchen
+        - light.kitchen_lights

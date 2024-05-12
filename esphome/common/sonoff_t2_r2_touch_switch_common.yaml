@@ -5,6 +5,7 @@ packages:
 esphome:
   name: ${device_name}
   comment: ${device_description}
+  friendly_name: ${friendly_name}
   platform: ESP8266
   board: esp01_1m
 
@@ -222,10 +223,12 @@ switch:
     id: sonoff_touch_relay_1
     name: "${friendly_name} Relay 1"
     pin: GPIO12
+    restore_mode: "${default_state}"
   - platform: gpio
     id: sonoff_touch_relay_2
     name: "${friendly_name} Relay 2"
     pin: GPIO5
+    restore_mode: "${default_state}"
 
 output:
   # Register the blue LED as a dimmable output ....

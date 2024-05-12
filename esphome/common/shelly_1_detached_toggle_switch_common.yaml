@@ -6,6 +6,7 @@ packages:
 esphome:
   name: ${device_name}
   comment: ${device_description}
+  friendly_name: ${friendly_name}
   platform: ESP8266
   board: esp01_1m
 
@@ -27,7 +28,7 @@ switch:
     name: ${friendly_name} Relay
     pin: GPIO4
     id: shelly_relay
-    restore_mode: ALWAYS_OFF
+    restore_mode: "${default_state}"
 
 binary_sensor:
   - platform: gpio
