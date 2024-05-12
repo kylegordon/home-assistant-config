@@ -37,10 +37,6 @@ class OctopusEnergyIntelligentChargeLimit(CoordinatorEntity, RestoreNumber, Octo
     self._attributes = {}
     self.entity_id = generate_entity_id("number.{}", self.unique_id, hass=hass)
 
-    self._attr_native_min_value = 10
-    self._attr_native_max_value = 100
-    self._attr_native_step = 5
-
   @property
   def unique_id(self):
     """The id of the sensor."""
@@ -109,7 +105,7 @@ class OctopusEnergyIntelligentChargeLimit(CoordinatorEntity, RestoreNumber, Octo
         (last_number_data := await self.async_get_last_number_data())
       ):
       
-      self._attributes = dict_to_typed_dict(last_state.attributes, ["min", "max", "step"])
+      self._attributes = dict_to_typed_dict(last_state.attributes)
       if last_state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN):
         self._state = last_number_data.native_value
           
