@@ -17,10 +17,12 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.helpers.restore_state import RestoreEntity
 
 from ..intelligent import (
-  dispatches_to_dictionary_list
+  dispatches_to_dictionary_list,
+  is_in_planned_dispatch
 )
 
-from ..utils import get_off_peak_times
+from ..utils import is_off_peak
+
 from .base import OctopusEnergyIntelligentSensor
 from ..coordinators.intelligent_dispatches import IntelligentDispatchesCoordinatorResult
 from ..utils.attributes import dict_to_typed_dict
@@ -47,11 +49,7 @@ class OctopusEnergyIntelligentDispatching(CoordinatorEntity, BinarySensorEntity,
       "last_evaluated": None,
       "provider": device["provider"],
       "vehicle_battery_size_in_kwh": device["vehicleBatterySizeInKwh"],
-      "charge_point_power_in_kw": device["chargePointPowerInKw"],
-      "current_start": None,
-      "current_end": None,
-      "next_start": None,
-      "next_end": None,
+      "charge_point_power_in_kw": device["chargePointPowerInKw"]
     }
 
     self.entity_id = generate_entity_id("binary_sensor.{}", self.unique_id, hass=hass)
@@ -88,36 +86,14 @@ class OctopusEnergyIntelligentDispatching(CoordinatorEntity, BinarySensorEntity,
 
     current_date = utcnow()
     planned_dispatches = result.dispatches.planned if result is not None and result.dispatches is not None and self._planned_dispatches_supported else []
-    
+    self._state = is_in_planned_dispatch(current_date, planned_dispatches) or is_off_peak(current_date, rates)
+
     self._attributes = {
       "planned_dispatches": dispatches_to_dictionary_list(planned_dispatches) if result is not None else [],
       "completed_dispatches": dispatches_to_dictionary_list(result.dispatches.completed if result is not None and result.dispatches is not None else []) if result is not None else [],
       "data_last_retrieved": result.last_retrieved if result is not None else None,
-      "last_evaluated": current_date,
-      "current_start": None,
-      "current_end": None,
-      "next_start": None,
-      "next_end": None,
+      "last_evaluated": current_date 
     }
-
-    off_peak_times = get_off_peak_times(current_date, rates, True)
-    is_dispatching = False
-    
-    if off_peak_times is not None and len(off_peak_times) > 0:
-      time = off_peak_times.pop(0)
-      if time.start <= current_date:
-        self._attributes["current_start"] = time.start
-        self._attributes["current_end"] = time.end
-        is_dispatching = True
-
-        if len(off_peak_times) > 0:
-          self._attributes["next_start"] = off_peak_times[0].start
-          self._attributes["next_end"] = off_peak_times[0].end
-      else:
-        self._attributes["next_start"] = time.start
-        self._attributes["next_end"] = time.end
-
-    self._state = is_dispatching
 
     super()._handle_coordinator_update()
 

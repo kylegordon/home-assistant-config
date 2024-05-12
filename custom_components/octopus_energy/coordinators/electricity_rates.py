@@ -25,7 +25,7 @@ from ..api_client import ApiException, OctopusEnergyApiClient
 from ..coordinators.intelligent_dispatches import IntelligentDispatchesCoordinatorResult
 from ..utils import private_rates_to_public_rates
 from . import BaseCoordinatorResult, get_electricity_meter_tariff_code, raise_rate_events
-from ..intelligent import adjust_intelligent_rates, is_intelligent_tariff
+from ..intelligent import adjust_intelligent_rates
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,21 +52,16 @@ async def async_refresh_electricity_rates_data(
     dispatches_result: IntelligentDispatchesCoordinatorResult,
     planned_dispatches_supported: bool,
     fire_event: Callable[[str, "dict[str, Any]"], None],
-    tariff_override = None
   ) -> ElectricityRatesCoordinatorResult: 
   if (account_info is not None):
     period_from = as_utc((current - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0))
     period_to = as_utc((current + timedelta(days=2)).replace(hour=0, minute=0, second=0, microsecond=0))
 
-    tariff_code = get_electricity_meter_tariff_code(current, account_info, target_mpan, target_serial_number) if tariff_override is None else tariff_override
+    tariff_code = get_electricity_meter_tariff_code(current, account_info, target_mpan, target_serial_number)
     if tariff_code is None:
       return None
-    
-    # We'll calculate the wrong value if we don't have our intelligent dispatches
-    if is_intelligent_tariff(tariff_code) and (dispatches_result is None or dispatches_result.dispatches is None):
-      return existing_rates_result
 
-    new_rates = None
+    new_rates: list = None
     if (existing_rates_result is None or current >= existing_rates_result.next_refresh):
       try:
         new_rates = await client.async_get_electricity_rates(tariff_code, is_smart_meter, period_from, period_to)
@@ -159,14 +154,7 @@ async def async_refresh_electricity_rates_data(
       )
   return existing_rates_result
 
-async def async_setup_electricity_rates_coordinator(hass,
-                                                    account_id: str,
-                                                    target_mpan: str,
-                                                    target_serial_number: str,
-                                                    is_smart_meter: bool,
-                                                    is_export_meter: bool,
-                                                    planned_dispatches_supported: bool,
-                                                    tariff_override = None):
+async def async_setup_electricity_rates_coordinator(hass, account_id: str, target_mpan: str, target_serial_number: str, is_smart_meter: bool, is_export_meter: bool, planned_dispatches_supported: bool):
   key = DATA_ELECTRICITY_RATES_KEY.format(target_mpan, target_serial_number)
 
   # Reset data rates as we might have new information
@@ -192,8 +180,7 @@ async def async_setup_electricity_rates_coordinator(hass,
       rates,
       dispatches,
       planned_dispatches_supported,
-      hass.bus.async_fire,
-      tariff_override
+      hass.bus.async_fire
     )
 
     return hass.data[DOMAIN][account_id][key]
