@@ -7,7 +7,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant, callback
 
-from homeassistant.util.dt import (now)
+from homeassistant.util.dt import (utcnow)
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
 )
@@ -27,11 +27,12 @@ _LOGGER = logging.getLogger(__name__)
 class OctopusEnergyGasCurrentRate(CoordinatorEntity, OctopusEnergyGasSensor, RestoreSensor):
   """Sensor for displaying the current rate."""
 
-  def __init__(self, hass: HomeAssistant, coordinator, meter, point, gas_price_cap):
+  def __init__(self, hass: HomeAssistant, coordinator, tariff_code, meter, point, gas_price_cap):
     """Init sensor."""
     CoordinatorEntity.__init__(self, coordinator)
     OctopusEnergyGasSensor.__init__(self, hass, meter, point)
 
+    self._tariff_code = tariff_code
     self._gas_price_cap = gas_price_cap
 
     self._state = None
@@ -41,7 +42,7 @@ class OctopusEnergyGasCurrentRate(CoordinatorEntity, OctopusEnergyGasSensor, Res
       "mprn": self._mprn,
       "serial_number": self._serial_number,
       "is_smart_meter": self._is_smart_meter,
-      "tariff": None,
+      "tariff": self._tariff_code,
       "start": None,
       "end": None,
       "is_capped": None,
@@ -89,9 +90,9 @@ class OctopusEnergyGasCurrentRate(CoordinatorEntity, OctopusEnergyGasSensor, Res
   @callback
   def _handle_coordinator_update(self) -> None:
     """Retrieve the current rate for the sensor."""
-    current = now()
+    current = utcnow()
     rates_result: GasRatesCoordinatorResult = self.coordinator.data if self.coordinator is not None and self.coordinator.data is not None else None
-    if (rates_result is not None):
+    if (rates_result is not None and (self._last_updated is None or self._last_updated < (current - timedelta(minutes=30)) or (current.minute % 30) == 0)):
       _LOGGER.debug(f"Updating OctopusEnergyGasCurrentRate for '{self._mprn}/{self._serial_number}'")
 
       rate_information = get_current_rate_information(rates_result.rates, current)
@@ -101,7 +102,7 @@ class OctopusEnergyGasCurrentRate(CoordinatorEntity, OctopusEnergyGasSensor, Res
           "mprn": self._mprn,
           "serial_number": self._serial_number,
           "is_smart_meter": self._is_smart_meter,
-          "tariff": rate_information["current_rate"]["tariff_code"],
+          "tariff": self._tariff_code,
           "start": rate_information["current_rate"]["start"],
           "end": rate_information["current_rate"]["end"],
           "is_capped": rate_information["current_rate"]["is_capped"],
@@ -113,7 +114,7 @@ class OctopusEnergyGasCurrentRate(CoordinatorEntity, OctopusEnergyGasSensor, Res
           "mprn": self._mprn,
           "serial_number": self._serial_number,
           "is_smart_meter": self._is_smart_meter,
-          "tariff": None,
+          "tariff": self._tariff_code,
           "start": None,
           "end": None,
           "is_capped": None,

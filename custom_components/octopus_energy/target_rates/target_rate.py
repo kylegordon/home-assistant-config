@@ -121,8 +121,7 @@ class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity, RestoreEnti
     account_result = self._hass.data[DOMAIN][self._account_id][DATA_ACCOUNT]
     account_info = account_result.account if account_result is not None else None
 
-    current_local_date = now()
-    check_for_errors(self._hass, self._config, account_info, current_local_date)
+    check_for_errors(self._hass, self._config, account_info, now())
 
     # Find the current rate. Rates change a maximum of once every 30 minutes.
     current_date = utcnow()
@@ -174,7 +173,7 @@ class OctopusEnergyTargetRate(CoordinatorEntity, BinarySensorEntity, RestoreEnti
           find_highest_rates = (self._is_export and invert_target_rates == False) or (self._is_export == False and invert_target_rates)
 
           applicable_rates = get_applicable_rates(
-            current_local_date,
+            current_date,
             start_time,
             end_time,
             all_rates,

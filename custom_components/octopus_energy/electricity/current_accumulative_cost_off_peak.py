@@ -29,7 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 class OctopusEnergyCurrentAccumulativeElectricityCostOffPeak(MultiCoordinatorEntity, OctopusEnergyElectricitySensor, RestoreSensor):
   """Sensor for displaying the current days accumulative electricity cost during off peak hours."""
 
-  def __init__(self, hass: HomeAssistant, coordinator, rates_coordinator, standing_charge_coordinator, meter, point):
+  def __init__(self, hass: HomeAssistant, coordinator, rates_coordinator, standing_charge_coordinator, tariff_code, meter, point):
     """Init sensor."""
     MultiCoordinatorEntity.__init__(self, coordinator, [rates_coordinator, standing_charge_coordinator])
     OctopusEnergyElectricitySensor.__init__(self, hass, meter, point)
@@ -37,6 +37,7 @@ class OctopusEnergyCurrentAccumulativeElectricityCostOffPeak(MultiCoordinatorEnt
     self._state = None
     self._last_reset = None
     
+    self._tariff_code = tariff_code
     self._rates_coordinator = rates_coordinator
     self._standing_charge_coordinator = standing_charge_coordinator
 
@@ -106,7 +107,8 @@ class OctopusEnergyCurrentAccumulativeElectricityCostOffPeak(MultiCoordinatorEnt
       consumption_data,
       rate_data,
       standing_charge,
-      None # We want to always recalculate
+      None, # We want to always recalculate
+      self._tariff_code
     )
 
     if (consumption_and_cost is not None):
@@ -128,9 +130,6 @@ class OctopusEnergyCurrentAccumulativeElectricityCostOffPeak(MultiCoordinatorEnt
     
     if state is not None and self._state is None:
       self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) else state.state
-      
-      # For some reason this sensor is having issues with HA recognising last_reset updating unless we update it like the following :shrug:
-      self._attributes = dict_to_typed_dict(state.attributes, ["last_reset"])
-      self._last_reset = datetime.fromisoformat(state.attributes["last_reset"]) if "last_reset" in state.attributes else None
+      self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored OctopusEnergyCurrentAccumulativeElectricityCostOffPeak state: {self._state}')
