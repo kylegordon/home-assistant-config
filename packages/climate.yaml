@@ -54,6 +54,7 @@ input_boolean:
 
 automation:
   - alias: "Call for heat - demand"
+    id: callforheatdemand
     description: >-
       Turn on boiler relay if there's a call for heat
       and all the openings are shut
@@ -69,14 +70,19 @@ automation:
         state: 'off'
         for:
           minutes: 5
-      - condition: numeric_state
-        entity_id: sensor.stove_temperature_living_room
-        below: 100
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.stove_temperature_living_room
+          below: 100
+        - condition: template
+          value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
     action:
       - service: homeassistant.turn_on
         entity_id: switch.boiler_valve_controls_relay_2
 
   - alias: "Call for heat - no demand"
+    id: callforheatnodemand
     description: Turn off boiler relay if demand for heat ceases
     trigger:
       platform: time_pattern

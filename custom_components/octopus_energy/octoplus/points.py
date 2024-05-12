@@ -1,13 +1,11 @@
 import logging
 from datetime import timedelta
-import math
 
 from homeassistant.const import (
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.exceptions import ServiceValidationError
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import generate_entity_id
 from homeassistant.util.dt import (utcnow)
 
@@ -16,7 +14,7 @@ from homeassistant.components.sensor import (
   SensorStateClass
 )
 
-from ..const import DOMAIN, REFRESH_RATE_IN_MINUTES_OCTOPLUS_POINTS
+from ..const import REFRESH_RATE_IN_MINUTES_OCTOPLUS_WHEEL_OF_FORTUNE
 from ..utils.requests import calculate_next_refresh
 from ..api_client import ApiException, OctopusEnergyApiClient, RequestException
 from ..utils.attributes import dict_to_typed_dict
@@ -73,9 +71,20 @@ class OctopusEnergyOctoplusPoints(RestoreSensor):
   async def async_update(self):
     now = utcnow()
     if self._next_refresh is None or now >= self._next_refresh:
-      await self.async_refresh_points()
+      try:
+        self._state = await self._client.async_get_octoplus_points()
+        self._last_evaluated = now
+        self._request_attempts = 1
+      except  Exception as e:
+        if isinstance(e, ApiException) == False:
+          raise
+        _LOGGER.warning(f"Failed to retrieve octopoints")
+        self._request_attempts = self._request_attempts + 1
+
+      self._next_refresh = calculate_next_refresh(self._last_evaluated, self._request_attempts, REFRESH_RATE_IN_MINUTES_OCTOPLUS_WHEEL_OF_FORTUNE)
     
-    self._attributes["last_evaluated"] = now
+    self._attributes["data_last_retrieved"] = self._last_evaluated
+    self._attributes["last_evaluated"] = self._last_evaluated
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -88,41 +97,3 @@ class OctopusEnergyOctoplusPoints(RestoreSensor):
       self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored OctopusEnergyOctoplusPoints state: {self._state}')
-
-  @callback
-  async def async_redeem_points_into_account_credit(self, points_to_redeem: int):
-    """Redeem points"""
-    redeemable_points = self._attributes["redeemable_points"] if "redeemable_points" in self._attributes else 0
-    if redeemable_points < 1:
-      raise ServiceValidationError(
-        translation_domain=DOMAIN,
-        translation_key="octoplus_points_no_points",
-      )
-    elif points_to_redeem > redeemable_points:
-      raise ServiceValidationError(
-        translation_domain=DOMAIN,
-        translation_key="octoplus_points_maximum_points",
-        translation_placeholders={ 
-          "redeemable_points": redeemable_points, 
-        },
-      )
-
-    result = await self._client.async_redeem_octoplus_points_into_account_credit(self._account_id, points_to_redeem)
-    if result.is_successful:
-      await self.async_refresh_points()
-
-  async def async_refresh_points(self):
-    now = utcnow()
-    try:
-      self._state = await self._client.async_get_octoplus_points()
-      self._attributes["redeemable_points"] = math.floor(self._state / 8) * 8 if self._state is not None else 0
-      self._last_evaluated = now
-      self._request_attempts = 1
-    except  Exception as e:
-      if isinstance(e, ApiException) == False:
-        raise
-      _LOGGER.warning(f"Failed to retrieve octopoints")
-      self._request_attempts = self._request_attempts + 1
-
-    self._next_refresh = calculate_next_refresh(self._last_evaluated, self._request_attempts, REFRESH_RATE_IN_MINUTES_OCTOPLUS_POINTS)
-    self._attributes["data_last_retrieved"] = self._last_evaluated
