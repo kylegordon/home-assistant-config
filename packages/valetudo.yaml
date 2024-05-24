@@ -24,6 +24,9 @@ homeassistant:
     input_boolean.vacuum_ensuite:
       room_id: "3"
 
+# Error handling
+# https://github.com/oncleben31/home-assistant-config/blob/31fc1c21af4338d865361d189a1dda9fe01f04c9/config/entities/sensors/vacuum_error.yaml#L3
+
 input_boolean:
   vacuum_bootroom:
     name: Boot Room
