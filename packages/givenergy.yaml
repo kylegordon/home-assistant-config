@@ -1,0 +1,58 @@
+---
+#template:
+sensor:
+  - platform: template
+    sensors:
+      battery_status:
+        friendly_name: "Battery status"
+        value_template: >
+          {%- set power_draw = states('sensor.battery_power') | int %}
+          {%- if power_draw < 0 %}
+            Charging
+          {%- elif power_draw == 0 %}
+            Balanced
+          {%- elif power_draw > 0 %}
+            Draining
+          {%- else -%}
+            Indeterminate
+          {%- endif %}
+        icon_template: >-
+          {%- set power_draw = states('sensor.battery_power') | int %}
+          {%- if power_draw < 0 %}
+            mdi:battery-charging
+          {%- elif power_draw > 0 %}
+            mdi:battery-minus
+          {%- else -%} 
+            mdi:battery
+          {%- endif %}
+
+      grid_all:
+        friendly_name: "Grid Usage"
+        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        unit_of_measurement: 'W'
+
+      pv_all:
+        friendly_name: "PV Usage"
+        value_template:  "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        unit_of_measurement: 'W'
+
+#sensor:
+  - platform: integration
+    source: sensor.grid_all
+    method: left
+    name: grid_daily_usage
+    unit_prefix: k
+    round: 2
+
+  - platform: integration
+    source: sensor.pv_all
+    method: left
+    name: pv_daily_usage
+    unit_prefix: k
+    round: 2
+
+#  - platform: template
+#    #name: grid_all                                                                                                                
+#    #friendly_name: "Grid Usage"
+#    value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+#    unit_of_measurement: 'W'
