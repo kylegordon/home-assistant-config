@@ -1,5 +1,4 @@
 ---
-#template:
 sensor:
   - platform: template
     sensors:
@@ -22,7 +21,7 @@ sensor:
             mdi:battery-charging
           {%- elif power_draw > 0 %}
             mdi:battery-minus
-          {%- else -%} 
+          {%- else -%}
             mdi:battery
           {%- endif %}
 
@@ -33,10 +32,9 @@ sensor:
 
       pv_all:
         friendly_name: "PV Usage"
-        value_template:  "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
         unit_of_measurement: 'W'
 
-#sensor:
   - platform: integration
     source: sensor.grid_all
     method: left
@@ -50,9 +48,3 @@ sensor:
     name: pv_daily_usage
     unit_prefix: k
     round: 2
-
-#  - platform: template
-#    #name: grid_all                                                                                                                
-#    #friendly_name: "Grid Usage"
-#    value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
-#    unit_of_measurement: 'W'
