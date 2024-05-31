@@ -1,5 +1,4 @@
 ---
-
 homeassistant:
   customize:
     input_boolean.vacuum_fronthall:
@@ -24,6 +23,9 @@ homeassistant:
       room_id: "2"
     input_boolean.vacuum_ensuite:
       room_id: "3"
+
+# Error handling
+# https://github.com/oncleben31/home-assistant-config/blob/31fc1c21af4338d865361d189a1dda9fe01f04c9/config/entities/sensors/vacuum_error.yaml#L3
 
 input_boolean:
   vacuum_bootroom:
@@ -58,7 +60,6 @@ input_boolean:
   vacuum_ensuite:
     name: Ensuite
     icon: mdi:toilet
-
 
 group:
   vacuum_rooms:
@@ -97,7 +98,63 @@ script:
           topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set
           payload_template: '{"segment_ids": {{segments}}}'
     mode: single
-  vacuum_clean_kithen:
+
+  # A series of script calls to clean rooms. Called from the scheduler component.
+  vacuum_clean_fronthall:
+    alias: vacuum_clean_fronthall
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_fronthall") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the floor of the front hall!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the front hall has started."
+
+  vacuum_clean_livingroom:
+    alias: vacuum_clean_livingroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_livingroom") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the living room!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the living room has started."
+
+  vacuum_clean_bootroom:
+    alias: vacuum_clean_bootroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bootroom") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the boot room floor!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the boot room has started."
+
+  vacuum_clean_kitchen:
     alias: vacuum_clean_kitchen
     mode: single
     sequence:
@@ -107,3 +164,136 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_kitchen") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the kitchen floor!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the kitchen has started."
+
+  vacuum_clean_hallway:
+    alias: vacuum_clean_hallway
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_hallway") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the hallway!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the hallway has started."
+
+  vacuum_clean_bathroom:
+    alias: vacuum_clean_bathroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bathroom") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the bathroom!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the bathroom has started."
+
+  vacuum_clean_study:
+    alias: vacuum_clean_study
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_study") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the study carpet!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the study has started."
+
+  vacuum_clean_craftroom:
+    alias: vacuum_clean_craftroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_craftroom") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the craft room carpet!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the craft room has started."
+
+  vacuum_clean_guestroom:
+    alias: vacuum_clean_guestroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_guestroom") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the guest room!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the guest room has started."
+
+  vacuum_clean_bedroom:
+    alias: vacuum_clean_bedroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bedroom") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the bedroom!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the bedroom has started."
+
+  vacuum_clean_ensuite:
+    alias: vacuum_clean_ensuite
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_ensuite") | map(attribute="attributes.room_id") | list | to_json }}'
+      - service: script.tweet_engine
+        data_template:
+          tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the ensuite!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the ensuite has started."
