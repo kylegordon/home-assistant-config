@@ -134,6 +134,9 @@ automation:
             "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
             "Did you hear that? I can't see a thing. Turning on the outside lights"
             ] | random + " https://amzn.to/2CR5mbQ" }}
+      - service: homeassistant.turn_on
+        entity_id:
+          - group.outside_lights
       - service: notify.mobile_app_nothing_phone_1
         data:
           title: "Motion outside!"
