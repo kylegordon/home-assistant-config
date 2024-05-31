@@ -65,6 +65,10 @@ automation:
           title: "Motion outside!"
           message: >
             Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+
 
   - alias: "Outside night lights on"
     id: outside_night_lights_on
@@ -136,6 +140,10 @@ automation:
           message: >
             Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
             Turning on outside lights
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+
       - service: homeassistant.turn_on
         entity_id:
           - group.outside_lights
