@@ -231,6 +231,7 @@ group: !include groups.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
+ios: !include ios.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
