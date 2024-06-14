@@ -152,6 +152,7 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
+        - logger.log: "Open Endstop Released"
         # Turn on the display
         - lambda: |-
             id(oled).turn_on();
@@ -190,6 +191,7 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
+        - logger.log: "Close Endstop Released"
         # Turn on the display
         - lambda: |-
             id(oled).turn_on();
