@@ -42,6 +42,7 @@ automation:
           message: "Toggling ensuite light"
 
   - alias: Ensuite motion
+    id: ensuite_motion
     trigger:
       - platform: state
         entity_id: binary_sensor.ensuite_motion_occupancy
@@ -68,6 +69,7 @@ automation:
             {% endif %}
 
   - alias: Ensuite shower activity
+    id: ensuite_shower_activity
     trigger:
       - platform: numeric_state
         entity_id: sensor.shower_pump_power_plug_power
@@ -113,6 +115,7 @@ automation:
           message: Hello! Enjoy your shower! The hot tank is currently {{ states('sensor.hot_tank_temperature') }} degrees.
 
   - alias: Ensuite shower off
+    id: ensuite_shower_off
     description: Return the heating boost to eco mode after the shower is finished
     trigger:
       - platform: numeric_state
@@ -133,6 +136,7 @@ automation:
       #     preset_mode: 'eco'
 
   - alias: Ensuite motion - night timeout
+    id: ensuite_motion_night_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.ensuite_motion_occupancy
@@ -151,6 +155,7 @@ automation:
       entity_id: light.ensuite
 
   - alias: Ensuite motion - regular timeout
+    id: ensuite_motion_regular_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.ensuite_motion_occupancy
