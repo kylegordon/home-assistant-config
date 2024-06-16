@@ -86,3 +86,36 @@ sensor:
 #    #friendly_name: "Grid Usage"
 #    value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
 #    unit_of_measurement: 'W'
+
+automation:
+  - alias: Boost hot water
+    id: boost_hot_water
+    trigger:
+      - platform: time
+        at: "11:00:00"
+    action:
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Waiting for sunshine and a full charge"
+          message: "When the battery is charged and we are exporting, we will trigger a hot water boost"
+      - wait_for_trigger:
+          - platform: numeric_state
+            entity_id: sensor.battery_percent
+            above: 99
+            for:
+              minutes: 30
+          - platform: numeric_state
+            entity_id: sensor.grid_export_power
+            above: 1000
+            for: 
+              minutes: 30
+        timeout: "12:00:00"
+        continue_on_timeout: false
+      - service: switch.turn_on
+        target:
+          entity_id: switch.viewpoint_domestic_hot_water_0_boost
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Hot water boost triggered"
+          message: "Hot water boost triggered whilst the sun is shining"
+
