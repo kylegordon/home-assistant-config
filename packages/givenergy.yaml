@@ -36,6 +36,36 @@ sensor:
         value_template:  "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
         unit_of_measurement: 'W'
 
+      ashp_heating_cop:
+        unique_id: ashp_heating_cop
+        friendly_name: "ASHP Heating COP"
+        value_template: >
+          {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') | int %}
+          {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
+          {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
+            unavailable
+          {%- elif heat_generated == unknown or consumed_electricity == unknown %}
+            unknown
+          {%- else %}
+            {{ heat_generated / consumed_electricity }}
+          {%- endif %}
+
+      ashp_hot_water_cop:
+        unique_id: ashp_hot_water_cop
+        friendly_name: "ASHP Hot Water COP"
+        value_template: >
+          {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int %}
+          {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
+          {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
+            unavailable
+          {%- elif heat_generated == unknown or consumed_electricity == unknown %}
+            unknown
+          {%- else %}
+            {{ heat_generated / consumed_electricity }}
+          {%- endif %}
+
+          "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
+
 #sensor:
   - platform: integration
     source: sensor.grid_all
