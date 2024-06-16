@@ -14,7 +14,7 @@ light:
     entities:
       - light.kitchen_cabinets
       - light.kitchen_worktop_lights
-      - light.kitchen
+      - light.kitchen_ceiling_lights
 
 automation:
   - alias: Kitchen motion
