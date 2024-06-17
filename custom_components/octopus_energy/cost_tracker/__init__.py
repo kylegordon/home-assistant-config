@@ -1,5 +1,9 @@
 from datetime import datetime, timedelta
 
+from homeassistant.components.sensor import (
+  SensorStateClass,
+)
+
 class CostTrackerResult:
   tracked_consumption_data: list
   untracked_consumption_data: list
@@ -33,8 +37,13 @@ def add_consumption(current: datetime,
                     new_last_reset: datetime,
                     old_last_reset: datetime,
                     is_accumulative_value: bool,
-                    is_tracking: bool):
-  if is_accumulative_value == False or (new_last_reset is not None and old_last_reset is not None and new_last_reset > old_last_reset):
+                    is_tracking: bool,
+                    state_class: str = None):
+  if (is_accumulative_value == False or 
+      (new_last_reset is not None and old_last_reset is not None and new_last_reset > old_last_reset) or
+      # Based on https://developers.home-assistant.io/docs/core/entity/sensor/#available-state-classes, when the new value is less than the old value
+      # this represents a reset
+      (state_class == SensorStateClass.TOTAL_INCREASING and new_value < old_value)):
     value = new_value
   elif old_value is not None:
     value = new_value - old_value
@@ -64,3 +73,54 @@ def add_consumption(current: datetime,
     new_untracked_consumption_data = __add_consumption(new_untracked_consumption_data, target_start, target_end, value)
 
   return CostTrackerResult(new_tracked_consumption_data, new_untracked_consumption_data)
+
+class AccumulativeCostTrackerResult:
+  accumulative_data: list
+  total_consumption: float
+  total_cost: float
+
+  def __init__(self, accumulative_data: list, total_consumption: float, total_cost: float):
+    self.accumulative_data = accumulative_data
+    self.total_consumption = total_consumption
+    self.total_cost = total_cost
+
+def accumulate_cost(current: datetime, accumulative_data: list, new_cost: float, new_consumption: float) -> AccumulativeCostTrackerResult:
+  start_of_day = current.replace(hour=0, minute=0, second=0, microsecond=0)
+  
+  if accumulative_data is None:
+    accumulative_data = []
+
+  total_cost = 0
+  total_consumption = 0
+  is_day_added = False
+  new_accumulative_data = []
+  for item in accumulative_data:
+    new_item = item.copy()
+    
+    if "start" in new_item and new_item["start"] == start_of_day:
+      new_item["cost"] = new_cost
+      new_item["consumption"] = new_consumption
+      is_day_added = True
+
+    if "consumption" in new_item:
+      total_consumption += new_item["consumption"]
+
+    if "cost" in new_item:
+      total_cost += new_item["cost"]
+
+    new_accumulative_data.append(new_item)
+
+  if is_day_added == False:
+    new_accumulative_data.append({
+      "start": start_of_day,
+      "end": start_of_day + timedelta(days=1),
+      "cost": new_cost,
+      "consumption": new_consumption,
+    })
+
+    total_consumption += new_consumption
+    total_cost += new_cost
+
+  return AccumulativeCostTrackerResult(new_accumulative_data, total_consumption, total_cost)
+
+  
