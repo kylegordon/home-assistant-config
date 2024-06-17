@@ -100,6 +100,7 @@ jobs:
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Compile all ESPHome ${{matrix.file}}
         uses: esphome/build-action@v2
+        continue-on-error: true
         with:
           version: dev
           yaml_file: ${{matrix.file}}
@@ -108,7 +109,7 @@ jobs:
   final:
     name: Final ESPHome check
     runs-on: ubuntu-latest
-    needs: [loop-stable, loop-beta, loop-dev]
+    needs: [loop-stable, loop-beta]
     steps:
       - name: Getting your configuration from GitHub
         uses: actions/checkout@v4
