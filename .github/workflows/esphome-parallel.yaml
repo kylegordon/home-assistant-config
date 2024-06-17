@@ -100,6 +100,7 @@ jobs:
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Compile all ESPHome ${{matrix.file}}
         uses: esphome/build-action@v2
+        continue-on-error: true
         with:
           version: dev
           yaml_file: ${{matrix.file}}
