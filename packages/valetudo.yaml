@@ -134,6 +134,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the front hall has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_livingroom:
     alias: vacuum_clean_livingroom
@@ -152,6 +155,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the living room has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_bootroom:
     alias: vacuum_clean_bootroom
@@ -170,6 +176,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the boot room has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_kitchen:
     alias: vacuum_clean_kitchen
@@ -188,6 +197,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the kitchen has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_hallway:
     alias: vacuum_clean_hallway
@@ -206,6 +218,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the hallway has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_bathroom:
     alias: vacuum_clean_bathroom
@@ -224,6 +239,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the bathroom has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_study:
     alias: vacuum_clean_study
@@ -243,6 +261,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the study has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_craftroom:
     alias: vacuum_clean_craftroom
@@ -261,6 +282,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the craft room has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_guestroom:
     alias: vacuum_clean_guestroom
@@ -279,6 +303,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the guest room has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_bedroom:
     alias: vacuum_clean_bedroom
@@ -297,6 +324,9 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the bedroom has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
 
   vacuum_clean_ensuite:
     alias: vacuum_clean_ensuite
@@ -315,3 +345,6 @@ script:
         data:
           title: "Vacuuming"
           message: "Vacuuming of the ensuite has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
