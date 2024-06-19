@@ -1,5 +1,4 @@
 ---
-#template:
 sensor:
   - platform: template
     sensors:
@@ -22,7 +21,7 @@ sensor:
             mdi:battery-charging
           {%- elif power_draw > 0 %}
             mdi:battery-minus
-          {%- else -%} 
+          {%- else -%}
             mdi:battery
           {%- endif %}
 
@@ -33,7 +32,7 @@ sensor:
 
       pv_all:
         friendly_name: "PV Usage"
-        value_template:  "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
         unit_of_measurement: 'W'
 
       ashp_heating_cop:
@@ -66,7 +65,6 @@ sensor:
 
           "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
 
-#sensor:
   - platform: integration
     source: sensor.grid_all
     method: left
@@ -82,7 +80,7 @@ sensor:
     round: 2
 
 #  - platform: template
-#    #name: grid_all                                                                                                                
+#    #name: grid_all
 #    #friendly_name: "Grid Usage"
 #    value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
 #    unit_of_measurement: 'W'
@@ -107,7 +105,7 @@ automation:
           - platform: numeric_state
             entity_id: sensor.grid_export_power
             above: 1000
-            for: 
+            for:
               minutes: 30
         timeout: "12:00:00"
         continue_on_timeout: false
@@ -118,4 +116,3 @@ automation:
         data:
           title: "Hot water boost triggered"
           message: "Hot water boost triggered whilst the sun is shining"
-
