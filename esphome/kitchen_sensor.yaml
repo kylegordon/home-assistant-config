@@ -17,8 +17,9 @@ logger:
 
 web_server:
 
-dallas:
-  - pin: D4
+one_wire:
+  - platform: gpio
+    pin: D4
 
 sensor:
   - platform: dallas

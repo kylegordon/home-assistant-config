@@ -38,8 +38,9 @@ button:
   - platform: restart
     name: "${friendly_name} Restart"
 
-dallas:
-  - pin: D4
+one_wire:
+  - platform: gpio
+    pin: D4
 
 sensor:
   - platform: wifi_signal
@@ -51,7 +52,7 @@ sensor:
     filters:
       - lambda: return x / 60.0;
     unit_of_measurement: minutes
-  - platform: dallas
+  - platform: dallas_temp
     address: 0xE40000031D87AC28
     name: "Garage Temperature"
 #   - platform: dallas
