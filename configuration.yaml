@@ -121,7 +121,6 @@ influxdb:
 conversation:
 
 person: !include persons.yaml
-proximity: !include proximity.yaml
 
 wake_on_lan:
 
