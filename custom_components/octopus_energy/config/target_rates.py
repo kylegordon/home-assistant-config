@@ -33,7 +33,7 @@ from ..const import (
   REGEX_WEIGHTING
 )
 
-from . import get_meter_tariffs
+from . import get_electricity_meter_tariffs
 from ..utils.tariff_check import is_agile_tariff
 from ..target_rates import create_weighting
 
@@ -147,17 +147,17 @@ def validate_target_rate_config(data, account_info, now):
     if data[CONFIG_TARGET_HOURS] % 0.5 != 0:
       errors[CONFIG_TARGET_HOURS] = "invalid_target_hours"
 
-  if CONFIG_TARGET_START_TIME in data:
+  if CONFIG_TARGET_START_TIME in data and data[CONFIG_TARGET_START_TIME] is not None:
     matches = re.search(REGEX_TIME, data[CONFIG_TARGET_START_TIME])
     if matches is None:
       errors[CONFIG_TARGET_START_TIME] = "invalid_target_time"
 
-  if CONFIG_TARGET_END_TIME in data:
+  if CONFIG_TARGET_END_TIME in data and data[CONFIG_TARGET_END_TIME] is not None:
     matches = re.search(REGEX_TIME, data[CONFIG_TARGET_END_TIME])
     if matches is None:
       errors[CONFIG_TARGET_END_TIME] = "invalid_target_time"
 
-  if CONFIG_TARGET_OFFSET in data:
+  if CONFIG_TARGET_OFFSET in data and data[CONFIG_TARGET_OFFSET] is not None:
     matches = re.search(REGEX_OFFSET_PARTS, data[CONFIG_TARGET_OFFSET])
     if matches is None:
       errors[CONFIG_TARGET_OFFSET] = "invalid_offset"
@@ -193,8 +193,8 @@ def validate_target_rate_config(data, account_info, now):
     if data[CONFIG_TARGET_TYPE] != CONFIG_TARGET_TYPE_CONTINUOUS:
       errors[CONFIG_TARGET_WEIGHTING] = "weighting_not_supported"
 
-  start_time = data[CONFIG_TARGET_START_TIME] if CONFIG_TARGET_START_TIME in data else "00:00"
-  end_time = data[CONFIG_TARGET_END_TIME] if CONFIG_TARGET_END_TIME in data else "00:00"
+  start_time = data[CONFIG_TARGET_START_TIME] if CONFIG_TARGET_START_TIME in data and data[CONFIG_TARGET_START_TIME] is not None else "00:00"
+  end_time = data[CONFIG_TARGET_END_TIME] if CONFIG_TARGET_END_TIME in data and data[CONFIG_TARGET_END_TIME] is not None else "00:00"
 
   is_time_valid = CONFIG_TARGET_START_TIME not in errors and CONFIG_TARGET_END_TIME not in errors
 
@@ -202,12 +202,12 @@ def validate_target_rate_config(data, account_info, now):
     if is_time_frame_long_enough(data[CONFIG_TARGET_HOURS], start_time, end_time) == False:
       errors[CONFIG_TARGET_HOURS] = "invalid_hours_time_frame"
 
-  meter_tariffs = get_meter_tariffs(account_info, now)
+  meter_tariffs = get_electricity_meter_tariffs(account_info, now)
   if (data[CONFIG_TARGET_MPAN] not in meter_tariffs):
     errors[CONFIG_TARGET_MPAN] = "invalid_mpan"
   elif is_time_valid:
     tariff = meter_tariffs[data[CONFIG_TARGET_MPAN]]
-    if is_agile_tariff(tariff):
+    if is_agile_tariff(tariff.code):
       if is_in_agile_darkzone(start_time, end_time):
         errors[CONFIG_TARGET_END_TIME] = "invalid_end_time_agile"
 
