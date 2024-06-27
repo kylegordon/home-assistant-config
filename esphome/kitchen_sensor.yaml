@@ -17,17 +17,18 @@ logger:
 
 web_server:
 
-dallas:
-  - pin: D4
+one_wire:
+  - platform: gpio
+    pin: D4
 
 sensor:
-  - platform: dallas
+  - platform: dallas_temp
     address: 0x490000031D4F3C28
     name: "Kitchen Temperature"
-  - platform: dallas
+  - platform: dallas_temp
     address: 0xF10000031DBFDD28
     name: "Freezer Temperature"
-  - platform: dallas
+  - platform: dallas_temp
     address: 0x620000040DD4C828
     name: "Fridge Temperature"
 
