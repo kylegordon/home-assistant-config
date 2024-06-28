@@ -6,7 +6,7 @@ import logging
 from homeassistant.util.dt import (as_utc, parse_datetime)
 
 from ..utils.conversions import value_inc_vat_to_pounds
-from ..const import REGEX_OFFSET_PARTS, REGEX_WEIGHTING
+from ..const import CONFIG_TARGET_KEYS, REGEX_OFFSET_PARTS, REGEX_WEIGHTING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -90,7 +90,7 @@ def calculate_continuous_times(
     max_rate = None,
     weighting: list = None
   ):
-  if (applicable_rates is None):
+  if (applicable_rates is None or target_hours <= 0):
     return []
   
   applicable_rates.sort(key=__get_valid_to, reverse=find_last_rates)
@@ -115,7 +115,7 @@ def calculate_continuous_times(
       continue
 
     continuous_rates = [rate]
-    continuous_rates_total = rate["value_inc_vat"] * (weighting[0] if weighting is not None else 1)
+    continuous_rates_total = rate["value_inc_vat"] * (weighting[0] if weighting is not None and len(weighting) > 0 else 1)
     
     for offset in range(1, total_required_rates):
       if (index + offset) < applicable_rates_count:
@@ -296,7 +296,7 @@ def get_target_rate_info(current_date: datetime, applicable_rates, offset: str =
   }
 
 def create_weighting(config: str, number_of_slots: int):
-  if config is None or config == "":
+  if config is None or config == "" or config.isspace():
     weighting = []
     for index in range(number_of_slots):
       weighting.append(1)
@@ -322,3 +322,15 @@ def create_weighting(config: str, number_of_slots: int):
     weighting.append(int(parts[index]))
 
   return weighting
+
+def compare_config(current_config: dict, existing_config: dict):
+  if current_config is None or existing_config is None:
+    return False
+
+  for key in CONFIG_TARGET_KEYS:
+    if ((key not in existing_config and key in current_config) or 
+        (key in existing_config and key not in current_config) or
+        (key in existing_config and key in current_config and current_config[key] != existing_config[key])):
+      return False
+    
+  return True
