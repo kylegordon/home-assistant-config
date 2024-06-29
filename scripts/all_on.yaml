@@ -15,7 +15,8 @@ all_on:
         entity_id: light.hall
 
 
-    ## Turn on outside lights. PIR will also be triggered on arrival, starting the timer.
+    ## Turn on outside lights.
+    ## The PIR will also be triggered on arrival, starting the timer.
     - service: light.turn_on
       data:
         entity_id: group.outside_lights

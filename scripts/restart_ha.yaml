@@ -7,5 +7,5 @@ restart_ha:
         message: "Restarting Home Assistant"
     - service: notify.email_kyle
       data:
-        message: "Restarting Home Assistant at {{ states('sensor.date__time') }}"
+        message: "Restarting Home Assistant at {{ states('sensor.date__time') }}"  # yamllint disable-line rule:line-length
     - service: shell_command.restart_ha
