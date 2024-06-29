@@ -11,11 +11,14 @@ binary_sensor:
           {% else %}
             mdi:window-closed
           {% endif %}
-        value_template: "{{ is_state('binary_sensor.ensuite_window_opening_contact','on') or is_state('binary_sensor.ensuite_window_vibration','on') }}"
+        value_template: >
+          "{{ is_state('binary_sensor.ensuite_window_opening_contact','on')
+            or is_state('binary_sensor.ensuite_window_vibration','on') }}"
 
 automation:
   - alias: Ensuite light toggle
-    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    # Can be improved, examples at
+    # https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -100,11 +103,6 @@ automation:
             {% endif %}
           color_temp: >
             200
-      # https://developers.home-assistant.io/docs/core/entity/climate/
-      # - service: climate.set_preset_mode
-      #   data_template:
-      #     entity_id: climate.hot_water
-      #     preset_mode: 'boost'
       - service: notify.alexa_media
         data_template:
           target:
@@ -112,7 +110,9 @@ automation:
           data:
             type: announce
             # method: all
-          message: Hello! Enjoy your shower! The hot tank is currently {{ states('sensor.hot_tank_temperature') }} degrees.
+          message: >
+            Hello! Enjoy your shower! The hot tank is currently
+            at {{ states('sensor.hot_tank_temperature') }} degrees.
 
   - alias: Ensuite shower off
     id: ensuite_shower_off
@@ -129,11 +129,6 @@ automation:
           name: EVENT
           message: "Shower is off"
           entity_id: sensor.shower_pump_power_plug_power
-      # https://developers.home-assistant.io/docs/core/entity/climate/
-      # - service: climate.set_preset_mode
-      #   data_template:
-      #     entity_id: climate.hot_water
-      #     preset_mode: 'eco'
 
   - alias: Ensuite motion - night timeout
     id: ensuite_motion_night_timeout

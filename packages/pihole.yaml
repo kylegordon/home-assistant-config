@@ -1,3 +1,4 @@
+---
 homeassistant:
 
   customize:
@@ -35,10 +36,8 @@ switch:
   - platform: command_line
     switches:
       pihole_temp_disable:
-        command_on: "curl -X GET 'http://172.24.32.246/admin/api.php?enable&auth='"
-        command_off: "curl -X GET 'http://172.24.32.246/admin/api.php?disable=3600&auth='"
-#        command_state: "curl -X GET 'http://172.24.32.246/admin/api.php?status'| grep enabled"
-#        value_template: "{{ value_json.status == 'enabled' }}
+        command_on: "curl -X GET 'http://172.24.32.246/admin/api.php?enable&auth='"  # yamllint disable-line rule:line-length
+        command_off: "curl -X GET 'http://172.24.32.246/admin/api.php?disable=3600&auth='"  # yamllint disable-line rule:line-length
 
 automation:
   - alias: PiHole Daily stats Tweet!
@@ -46,15 +45,17 @@ automation:
       platform: time
       at: '23:50:00'
     action:
-      - delay: '00:{{ range(0,5) | random | int }}{{ range(0,9) | random | int }}:00'
+      - delay: '00:{{ range(0,5) | random | int }}{{ range(0,9) | random | int }}:00'  # yamllint disable-line rule:line-length
       - service: script.tweet_engine_image
         data_template:
+          # yamllint disable
           tweet: >
             {{ [
             "I blocked {{states.sensor.pi_hole_ads_blocked_today.state}} ads. That is {{states.sensor.pi_hole_ads_percentage_blocked_today.state}}% of my internet traffic.",
             "Today was a good day! Why, you ask? Because I blocked {{states.sensor.pi_hole_ads_blocked_today.state}} ads via Pi-Hole!",
             "After a hard days work, I've blocked {{states.sensor.pi_hole_ads_blocked_today.state}} today!",
-            ] | random + " #PiHole #Security Status:({{states.binary_sensor.pi_hole_status.state}}) https://amzn.to/2CTOzFi"}}
+            ] | random + " #PiHole #Security Status:({{states.binary_sensor.pi_hole.state}}) https://amzn.to/2CTOzFi"}}
+          # yamllint enable
           image: >-
             {{ [
             "/config/www/custom_ui/images/pihole/Vortex-R.png",
@@ -67,14 +68,16 @@ automation:
       platform: time
       at: '04:30:00'
     action:
-      - delay: '0{{ (range(1, 5)|random|int) }}:{{ range(0,5) | random | int }}{{ range(0,9) | random | int }}:00'
+      - delay: '0{{ (range(1, 5)|random|int) }}:{{ range(0,5) | random | int }}{{ range(0,9) | random | int }}:00'  # yamllint disable-line rule:line-length
       - service: script.tweet_engine_image
         data_template:
+          # yamllint disable
           tweet: >
             {{ [
             "There are currently {{states.sensor.pi_hole_dns_unique_clients.state}} clients on my network.",
             "As reported by #pihole, there are {{states.sensor.pi_hole_dns_unique_clients.state}} clients on my network.",
             ] | random + "#Security https://amzn.to/2CTOzFi"}}
+          # yamllint enable
           image: >-
             {{ [
             "/config/www/custom_ui/images/pihole/Vortex-R.png",
