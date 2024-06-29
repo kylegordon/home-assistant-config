@@ -1,0 +1,50 @@
+automation:
+  - alias: Valetudo Notifications
+    description: Sends notifications for Snowwhite vacuum.
+    mode: queued
+    trigger:
+      - platform: state
+        entity_id: vacuum.valetudo_confusedmeaslyraccoon
+        from: cleaning
+        to: returning
+        id: cleaning_finished
+        variables:
+          msg_type: success_msg
+      - platform: state
+        entity_id: vacuum.valetudo_confusedmeaslyraccoon
+        to: error
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 5
+        id: error
+        variables:
+          msg_type: error_msg
+    condition:
+      - condition: or
+        alias: "Finished cleaning task or error message is not empty"
+        conditions:
+          - condition: trigger
+            id: cleaning_finished
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: sensor.valetudo_confusedmeaslyraccoon_error
+                state: "No error"
+    variables:
+      strings:
+        success_msg: "Cleaning task succeeded."
+        error_msg: "The vacuum has encountered an issue: {{ states('sensor.valetudo_confusedmeaslyraccoon_error') }}"
+        default_msg: "Everything is working fine."
+      message: "{{ strings[msg_type] | default(strings['default_msg']) }}"
+
+    action:
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          message: Vacuum error
+          data:
+            photo:
+              - url: http://home-assistant-valetudopng:3000/api/map/image
+                caption: |
+                  Snowwhite
+                  {{ message }}
