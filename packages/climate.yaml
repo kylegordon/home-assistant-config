@@ -1,5 +1,6 @@
 ---
-# Inspired by https://github.com/downthedeck/hassio-config/blob/master/packages/klimaat.yaml
+# Inspired by 
+# https://github.com/downthedeck/hassio-config/blob/master/packages/klimaat.yaml
 # Not all modes are supported, as above uses Toon integration
 # https://www.home-assistant.io/integrations/generic_thermostat/
 # Generic thermostat currently only supports 'heat', 'cool' and 'off'
@@ -72,11 +73,11 @@ automation:
           minutes: 5
       - condition: or
         conditions:
-        - condition: numeric_state
-          entity_id: sensor.stove_temperature_living_room
-          below: 100
-        - condition: template
-          value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
+          - condition: numeric_state
+            entity_id: sensor.stove_temperature_living_room
+            below: 100
+          - condition: template
+            value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"  # yamllint disable rule:line-length
     action:
       - service: homeassistant.turn_on
         entity_id: switch.boiler_valve_controls_relay_2

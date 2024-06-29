@@ -86,7 +86,10 @@ sensor:
 #  - platform: template
 #    #name: grid_all
 #    #friendly_name: "Grid Usage"
-#    value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+#    value_template: >
+#     "{{ states('sensor.grid_export_power')
+#     | float + states('sensor.consumption_power')
+#     | float }}"
 #    unit_of_measurement: 'W'
 
 automation:

@@ -5,7 +5,7 @@ rest_command:
     method: POST
     headers:
       Authorization: !secret github_token
-    payload: '{"title":"Home-Assistant {{ version }} available","body":"Home-Assistant {{ version }} is now available"}'
+    payload: '{"title":"Home-Assistant {{ version }} available","body":"Home-Assistant {{ version }} is now available"}'  # yamllint disable-line rule:line-length
 
 automation:
   alias: 'Update Available Notifications'
@@ -16,7 +16,7 @@ automation:
     - service: notify.email_kyle
       data:
         title: "Home Assistant {{ states.updater.updater.state }} now available"
-        message: "Update for Home Assistant is available. Version {{ states.updater.updater.state }} is out now!\nRelease notes: {{ states.updater.updater.attributes.release_notes }}"
+        message: "Update for Home Assistant is available. Version {{ states.updater.updater.state }} is out now!\nRelease notes: {{ states.updater.updater.attributes.release_notes }}"  # yamllint disable-line rule:line-length
     - service: rest_command.new_version_github_issue
       data_template:
         version: "{{ states.updater.updater.state }}"

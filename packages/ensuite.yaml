@@ -116,7 +116,7 @@ automation:
 
   - alias: Ensuite shower off
     id: ensuite_shower_off
-    description: Return the heating boost to eco mode after the shower is finished
+    description: Return heating boost to eco mode after the shower is finished
     trigger:
       - platform: numeric_state
         entity_id: sensor.shower_pump_power_plug_power
