@@ -8,6 +8,8 @@ from homeassistant.helpers.restore_state import RestoreEntity
 
 from homeassistant.helpers.entity import generate_entity_id, DeviceInfo
 
+from homeassistant.helpers import issue_registry as ir
+
 from ..const import (DOMAIN, REGEX_TARIFF_PARTS)
 
 from . import get_electricity_tariff_override_key
@@ -26,7 +28,7 @@ class OctopusEnergyPreviousAccumulativeElectricityCostTariffOverride(OctopusEner
 
   _attr_pattern = REGEX_TARIFF_PARTS
 
-  def __init__(self, hass: HomeAssistant, client: OctopusEnergyApiClient, tariff_code, meter, point):
+  def __init__(self, hass: HomeAssistant, account_id: str, client: OctopusEnergyApiClient, tariff_code, meter, point):
     """Init sensor."""
     OctopusEnergyElectricitySensor.__init__(self, hass, meter, point)
 
@@ -37,6 +39,7 @@ class OctopusEnergyPreviousAccumulativeElectricityCostTariffOverride(OctopusEner
     self._client = client
     self._tariff_code = tariff_code
     self._attr_native_value = tariff_code
+    self._account_id = account_id
   
   @property
   def entity_registry_enabled_default(self) -> bool:
@@ -54,7 +57,7 @@ class OctopusEnergyPreviousAccumulativeElectricityCostTariffOverride(OctopusEner
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Electricity {self._serial_number} {self._mpan}{self._export_name_addition} Previous Cost Override Tariff"
+    return f"Previous Cost Override Tariff {self._export_name_addition}Electricity ({self._serial_number}/{self._mpan})"
   
   @property
   def icon(self):
@@ -68,8 +71,9 @@ class OctopusEnergyPreviousAccumulativeElectricityCostTariffOverride(OctopusEner
       raise Exception(result)
 
     self._attr_native_value = value
-    self._hass.data[DOMAIN][get_electricity_tariff_override_key(self._serial_number, self._mpan)] = value
+    self._hass.data[DOMAIN][self._account_id][get_electricity_tariff_override_key(self._serial_number, self._mpan)] = value
     self.async_write_ha_state()
+    await self.async_check_is_used()
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -81,8 +85,26 @@ class OctopusEnergyPreviousAccumulativeElectricityCostTariffOverride(OctopusEner
       if state.state is not None:
         self._attr_native_value = state.state
         self._attr_state = state.state
-        self._hass.data[DOMAIN][get_electricity_tariff_override_key(self._serial_number, self._mpan)] = self._attr_native_value
+        self._hass.data[DOMAIN][self._account_id][get_electricity_tariff_override_key(self._serial_number, self._mpan)] = self._attr_native_value
       
       self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored OctopusEnergyPreviousAccumulativeElectricityCostTariffOverride state: {self._attr_state}')
+    
+    await self.async_check_is_used()
+
+  async def async_check_is_used(self):
+    key = f"cost_override_obsolete_{self._serial_number}_{self._mpan}"
+    if self._tariff_code != self._attr_native_value:
+      ir.async_create_issue(
+        self._hass,
+        DOMAIN,
+        key,
+        is_fixable=False,
+        severity=ir.IssueSeverity.ERROR,
+        learn_more_url="https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/repairs/cost_override_obsolete",
+        translation_key="cost_override_obsolete",
+        translation_placeholders={ "type": "electricity", "account_id": self._account_id, "mpan_mprn": self._mpan, "serial_number": self._serial_number },
+      )
+    else:
+      ir.async_delete_issue(self._hass, DOMAIN, key)

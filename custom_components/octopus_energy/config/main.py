@@ -1,7 +1,7 @@
 from ..const import (
   CONFIG_KIND,
   CONFIG_KIND_ACCOUNT,
-  CONFIG_MAIN_ACCOUNT_ID,
+  CONFIG_ACCOUNT_ID,
   CONFIG_MAIN_API_KEY,
   CONFIG_MAIN_ELECTRICITY_PRICE_CAP,
   CONFIG_MAIN_GAS_PRICE_CAP,
@@ -11,9 +11,12 @@ from ..const import (
   CONFIG_MAIN_OLD_API_KEY,
   CONFIG_MAIN_PREVIOUS_ELECTRICITY_CONSUMPTION_DAYS_OFFSET,
   CONFIG_MAIN_PREVIOUS_GAS_CONSUMPTION_DAYS_OFFSET,
-  CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION
+  CONFIG_MAIN_SUPPORTS_LIVE_CONSUMPTION,
+  CONFIG_MAIN_HOME_PRO_ADDRESS,
+  CONFIG_MAIN_HOME_PRO_API_KEY
 )
-from ..api_client import OctopusEnergyApiClient, RequestError, ServerError
+from ..api_client import OctopusEnergyApiClient, RequestException, ServerException
+from ..api_client_home_pro import OctopusEnergyHomeProApiClient
 
 async def async_migrate_main_config(version: int, data: {}):
   new_data = {**data}
@@ -33,7 +36,7 @@ async def async_migrate_main_config(version: int, data: {}):
       del new_data[CONFIG_MAIN_OLD_API_KEY]
 
     if CONFIG_MAIN_OLD_ACCOUNT_ID in new_data:
-      new_data[CONFIG_MAIN_ACCOUNT_ID] = new_data[CONFIG_MAIN_OLD_ACCOUNT_ID]
+      new_data[CONFIG_ACCOUNT_ID] = new_data[CONFIG_MAIN_OLD_ACCOUNT_ID]
       del new_data[CONFIG_MAIN_OLD_ACCOUNT_ID]
 
   return new_data
@@ -55,17 +58,25 @@ def merge_main_config(data: dict, options: dict, updated_config: dict = None):
 
   return config
 
-async def async_validate_main_config(data):
+async def async_validate_main_config(data, account_ids = []):
   errors = {}
 
+  if data[CONFIG_ACCOUNT_ID] in account_ids:
+    errors[CONFIG_ACCOUNT_ID] = "duplicate_account"
+    return errors
+  
+  if CONFIG_MAIN_API_KEY not in data:
+    errors[CONFIG_MAIN_API_KEY] = "api_key_not_set"
+    return errors
+  
   client = OctopusEnergyApiClient(data[CONFIG_MAIN_API_KEY])
 
   try:
-    account_info = await client.async_get_account(data[CONFIG_MAIN_ACCOUNT_ID])
-  except RequestError:
+    account_info = await client.async_get_account(data[CONFIG_ACCOUNT_ID])
+  except RequestException:
     # Treat errors as not finding the account
     account_info = None
-  except ServerError:
+  except ServerException:
     errors[CONFIG_MAIN_API_KEY] = "server_error"
   
   if (CONFIG_MAIN_API_KEY not in errors and account_info is None):
@@ -84,5 +95,21 @@ async def async_validate_main_config(data):
 
   if data[CONFIG_MAIN_PREVIOUS_GAS_CONSUMPTION_DAYS_OFFSET] < 1:
     errors[CONFIG_MAIN_PREVIOUS_GAS_CONSUMPTION_DAYS_OFFSET] = "value_greater_than_zero"
+
+  if ((CONFIG_MAIN_HOME_PRO_ADDRESS in data and CONFIG_MAIN_HOME_PRO_API_KEY not in data) or
+      (CONFIG_MAIN_HOME_PRO_ADDRESS not in data and CONFIG_MAIN_HOME_PRO_API_KEY in data)):
+    errors[CONFIG_MAIN_HOME_PRO_ADDRESS] = "all_home_pro_values_not_set"
+
+  if (CONFIG_MAIN_HOME_PRO_ADDRESS in data and CONFIG_MAIN_HOME_PRO_API_KEY in data):
+    home_pro_client = OctopusEnergyHomeProApiClient(data[CONFIG_MAIN_HOME_PRO_ADDRESS], data[CONFIG_MAIN_HOME_PRO_API_KEY])
+
+    can_connect = False
+    try:
+      can_connect = await home_pro_client.async_ping()
+    except:
+      can_connect = False
+
+    if can_connect == False:
+      errors[CONFIG_MAIN_HOME_PRO_ADDRESS] = "home_pro_connection_failed"
 
   return errors

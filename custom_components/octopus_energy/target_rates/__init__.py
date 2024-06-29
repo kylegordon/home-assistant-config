@@ -6,7 +6,7 @@ import logging
 from homeassistant.util.dt import (as_utc, parse_datetime)
 
 from ..utils.conversions import value_inc_vat_to_pounds
-from ..const import REGEX_OFFSET_PARTS
+from ..const import CONFIG_TARGET_KEYS, REGEX_OFFSET_PARTS, REGEX_WEIGHTING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ def apply_offset(date_time: datetime, offset: str, inverse = False):
   
   return date_time + timedelta(hours=hours, minutes=minutes, seconds=seconds)
 
-def __get_applicable_rates(current_date: datetime, target_start_time: str, target_end_time: str, rates, is_rolling_target: bool):
+def get_applicable_rates(current_date: datetime, target_start_time: str, target_end_time: str, rates, is_rolling_target = True):
   if (target_start_time is not None):
     target_start = parse_datetime(current_date.strftime(f"%Y-%m-%dT{target_start_time}:00%z"))
   else:
@@ -82,22 +82,23 @@ def __get_valid_to(rate):
   return rate["end"]
 
 def calculate_continuous_times(
-    current_date: datetime,
-    target_start_time: str,
-    target_end_time: str,
+    applicable_rates: list,
     target_hours: float,
-    rates,
-    is_rolling_target = True,
     search_for_highest_rate = False,
-    find_last_rates = False
+    find_last_rates = False,
+    min_rate = None,
+    max_rate = None,
+    weighting: list = None
   ):
-  applicable_rates = __get_applicable_rates(current_date, target_start_time, target_end_time, rates, is_rolling_target)
-  if (applicable_rates is None):
+  if (applicable_rates is None or target_hours <= 0):
     return []
   
   applicable_rates.sort(key=__get_valid_to, reverse=find_last_rates)
   applicable_rates_count = len(applicable_rates)
   total_required_rates = math.ceil(target_hours * 2)
+
+  if weighting is not None and len(weighting) != total_required_rates:
+    raise ValueError("Weighting does not match target hours")
 
   best_continuous_rates = None
   best_continuous_rates_total = None
@@ -107,14 +108,27 @@ def calculate_continuous_times(
   # Loop through our rates and try and find the block of time that meets our desired
   # hours and has the lowest combined rates
   for index, rate in enumerate(applicable_rates):
+    if (min_rate is not None and rate["value_inc_vat"] < min_rate):
+      continue
+
+    if (max_rate is not None and rate["value_inc_vat"] > max_rate):
+      continue
+
     continuous_rates = [rate]
-    continuous_rates_total = rate["value_inc_vat"]
+    continuous_rates_total = rate["value_inc_vat"] * (weighting[0] if weighting is not None and len(weighting) > 0 else 1)
     
     for offset in range(1, total_required_rates):
       if (index + offset) < applicable_rates_count:
         offset_rate = applicable_rates[(index + offset)]
+
+        if (min_rate is not None and offset_rate["value_inc_vat"] < min_rate):
+          break
+
+        if (max_rate is not None and offset_rate["value_inc_vat"] > max_rate):
+          break
+
         continuous_rates.append(offset_rate)
-        continuous_rates_total += offset_rate["value_inc_vat"]
+        continuous_rates_total += offset_rate["value_inc_vat"] * (weighting[offset] if weighting is not None else 1)
       else:
         break
     
@@ -132,16 +146,13 @@ def calculate_continuous_times(
   return []
 
 def calculate_intermittent_times(
-    current_date: datetime,
-    target_start_time: str,
-    target_end_time: str,
+    applicable_rates: list,
     target_hours: float,
-    rates,
-    is_rolling_target = True,
     search_for_highest_rate = False,
-    find_last_rates = False
+    find_last_rates = False,
+    min_rate = None,
+    max_rate = None
   ):
-  applicable_rates = __get_applicable_rates(current_date, target_start_time, target_end_time, rates, is_rolling_target)
   if (applicable_rates is None):
     return []
   
@@ -158,6 +169,7 @@ def calculate_intermittent_times(
     else:
       applicable_rates.sort(key= lambda rate: (rate["value_inc_vat"], rate["end"]))
 
+  applicable_rates = list(filter(lambda rate: (min_rate is None or rate["value_inc_vat"] >= min_rate) and (max_rate is None or rate["value_inc_vat"] <= max_rate), applicable_rates))
   applicable_rates = applicable_rates[:total_required_rates]
   
   _LOGGER.debug(f'{len(applicable_rates)} applicable rates found')
@@ -276,9 +288,49 @@ def get_target_rate_info(current_date: datetime, applicable_rates, offset: str =
     "current_average_cost": current_average_cost,
     "current_min_cost": current_min_cost,
     "current_max_cost": current_max_cost,
-    "next_time": apply_offset(next_time, offset) if next_time is not None and offset is not None else next_time,
+    "next_time": next_time,
     "next_duration_in_hours": next_duration_in_hours,
     "next_average_cost": next_average_cost,
     "next_min_cost": next_min_cost,
     "next_max_cost": next_max_cost,
   }
+
+def create_weighting(config: str, number_of_slots: int):
+  if config is None or config == "" or config.isspace():
+    weighting = []
+    for index in range(number_of_slots):
+      weighting.append(1)
+    
+    return weighting
+
+  matches = re.search(REGEX_WEIGHTING, config)
+  if matches is None:
+    raise ValueError("Invalid config")
+  
+  parts = config.split(',')
+  parts_length = len(parts)
+  weighting = []
+  for index in range(parts_length):
+    if (parts[index] == "*"):
+      # +1 to account for the current part
+      target_number_of_slots = number_of_slots - parts_length + 1
+      for index in range(target_number_of_slots):
+          weighting.append(1)
+
+      continue
+
+    weighting.append(int(parts[index]))
+
+  return weighting
+
+def compare_config(current_config: dict, existing_config: dict):
+  if current_config is None or existing_config is None:
+    return False
+
+  for key in CONFIG_TARGET_KEYS:
+    if ((key not in existing_config and key in current_config) or 
+        (key in existing_config and key not in current_config) or
+        (key in existing_config and key in current_config and current_config[key] != existing_config[key])):
+      return False
+    
+  return True

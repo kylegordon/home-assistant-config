@@ -1,7 +1,12 @@
-from homeassistant.util.dt import (now)
 import logging
 
-from homeassistant.core import HomeAssistant
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
+from homeassistant.core import HomeAssistant, callback
+
+from homeassistant.util.dt import (now)
 
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity
@@ -12,6 +17,7 @@ from homeassistant.components.sensor import (
   SensorStateClass,
 )
 
+from ..coordinators.current_consumption import CurrentConsumptionCoordinatorResult
 from .base import (OctopusEnergyElectricitySensor)
 from ..utils.attributes import dict_to_typed_dict
 
@@ -39,7 +45,7 @@ class OctopusEnergyCurrentElectricityDemand(CoordinatorEntity, OctopusEnergyElec
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Electricity {self._serial_number} {self._mpan} Current Demand"
+    return f"Current Demand Electricity ({self._serial_number}/{self._mpan})"
 
   @property
   def device_class(self):
@@ -68,15 +74,22 @@ class OctopusEnergyCurrentElectricityDemand(CoordinatorEntity, OctopusEnergyElec
   
   @property
   def native_value(self):
-    """Handle updated data from the coordinator."""
-    _LOGGER.debug('Updating OctopusEnergyCurrentElectricityConsumption')
-    consumption_result = self.coordinator.data if self.coordinator is not None else None
-
-    if (consumption_result is not None):
-      self._state = consumption_result[-1]["demand"]
-      self._attributes["last_evaluated"] = now()
-
     return self._state
+  
+  @callback
+  def _handle_coordinator_update(self) -> None:
+    """Handle updated data from the coordinator."""
+    _LOGGER.debug('Updating OctopusEnergyCurrentElectricityDemand')
+    consumption_result: CurrentConsumptionCoordinatorResult = self.coordinator.data if self.coordinator is not None and self.coordinator.data is not None else None
+    consumption_data = consumption_result.data if consumption_result is not None else None
+
+    if (consumption_data is not None):
+      self._state = consumption_data[-1]["demand"]
+      self._attributes["last_evaluated"] = now()
+      self._attributes["data_last_retrieved"] = consumption_result.last_retrieved if consumption_result is not None else None
+
+    self._attributes = dict_to_typed_dict(self._attributes)
+    super()._handle_coordinator_update()
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -85,7 +98,7 @@ class OctopusEnergyCurrentElectricityDemand(CoordinatorEntity, OctopusEnergyElec
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) else state.state
       self._attributes = dict_to_typed_dict(state.attributes)
 
       if "last_updated_timestamp" in self._attributes:

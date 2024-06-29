@@ -3,6 +3,9 @@ import logging
 from typing import Callable, Any
 
 from homeassistant.helpers import issue_registry as ir
+from homeassistant.helpers.update_coordinator import (
+  CoordinatorEntity,
+)
 from homeassistant.util.dt import (as_utc)
 
 from ..const import (
@@ -12,9 +15,10 @@ from ..const import (
 from ..api_client import OctopusEnergyApiClient
 
 from ..utils import (
-  get_active_tariff_code,
-  get_tariff_parts
+  get_active_tariff
 )
+from ..utils.rate_information import get_min_max_average_rates
+from ..utils.requests import calculate_next_refresh
 
 from ..const import (
   DOMAIN,
@@ -23,40 +27,64 @@ from ..const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_check_valid_tariff(hass, client: OctopusEnergyApiClient, tariff_code: str, is_electricity: bool):
-  tariff_key = f'{DATA_KNOWN_TARIFF}_{tariff_code}'
-  if (tariff_key not in hass.data[DOMAIN]):
-    tariff_parts = get_tariff_parts(tariff_code)
-    if tariff_parts is None:
+class MultiCoordinatorEntity(CoordinatorEntity):
+  def __init__(self, primary_coordinator, secondary_coordinators):
+    CoordinatorEntity.__init__(self, primary_coordinator)
+    self._secondary_coordinators = secondary_coordinators
+
+  async def async_added_to_hass(self) -> None:
+    """When entity is added to hass."""
+    await super().async_added_to_hass()
+    for secondary_coordinator in self._secondary_coordinators:
+      self.async_on_remove(
+          secondary_coordinator.async_add_listener(
+            self._handle_coordinator_update, self.coordinator_context
+          )
+      )
+
+class BaseCoordinatorResult:
+  last_retrieved: datetime
+  next_refresh: datetime
+  request_attempts: int
+  refresh_rate_in_minutes: float
+
+  def __init__(self, last_retrieved: datetime, request_attempts: int, refresh_rate_in_minutes: float):
+    self.last_retrieved = last_retrieved
+    self.request_attempts = request_attempts
+    self.next_refresh = calculate_next_refresh(last_retrieved, request_attempts, refresh_rate_in_minutes)
+    _LOGGER.debug(f'last_retrieved: {last_retrieved}; request_attempts: {request_attempts}; refresh_rate_in_minutes: {refresh_rate_in_minutes}; next_refresh: {self.next_refresh}')
+
+async def async_check_valid_product(hass, account_id: str, client: OctopusEnergyApiClient, product_code: str, is_electricity: bool):
+  tariff_key = f'{DATA_KNOWN_TARIFF}_{product_code}'
+  try:
+    _LOGGER.debug(f"Retrieving product information for '{product_code}'")
+    product = await client.async_get_product(product_code)
+    if product is None:
       ir.async_create_issue(
         hass,
         DOMAIN,
-        f"unknown_tariff_format_{tariff_code}",
+        f"unknown_product_{product_code}",
         is_fixable=False,
         severity=ir.IssueSeverity.ERROR,
-        learn_more_url="https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/repairs/unknown_tariff_format.md",
-        translation_key="unknown_tariff_format",
-        translation_placeholders={ "type": "Electricity" if is_electricity else "Gas", "tariff_code": tariff_code },
+        learn_more_url="https://bottlecapdave.github.io/HomeAssistant-OctopusEnergy/repairs/unknown_product",
+        translation_key="unknown_product",
+        translation_placeholders={ "type": "Electricity" if is_electricity else "Gas", "product_code": product_code },
       )
     else:
-      try:
-        _LOGGER.debug(f"Retrieving product information for '{tariff_parts.product_code}'")
-        product = await client.async_get_product(tariff_parts.product_code)
-        if product is None:
-          ir.async_create_issue(
-            hass,
-            DOMAIN,
-            f"unknown_tariff_{tariff_code}",
-            is_fixable=False,
-            severity=ir.IssueSeverity.ERROR,
-            learn_more_url="https://github.com/BottlecapDave/HomeAssistant-OctopusEnergy/blob/develop/_docs/repairs/unknown_tariff.md",
-            translation_key="unknown_tariff",
-            translation_placeholders={ "type": "Electricity" if is_electricity else "Gas", "tariff_code": tariff_code },
-          )
-        else:
-          hass.data[DOMAIN][tariff_key] = True
-      except:
-        _LOGGER.debug(f"Failed to retrieve product info for '{tariff_parts.product_code}'")
+      hass.data[DOMAIN][account_id][tariff_key] = True
+  except:
+    _LOGGER.debug(f"Failed to retrieve product info for '{product_code}'")
+
+def __raise_rate_event(event_key: str,
+                       rates: list,
+                       additional_attributes: "dict[str, Any]",
+                       fire_event: Callable[[str, "dict[str, Any]"], None]):
+  
+  min_max_average_rates = get_min_max_average_rates(rates)
+
+  event_data = { "rates": rates, "min_rate": min_max_average_rates["min"], "max_rate": min_max_average_rates["max"], "average_rate": min_max_average_rates["average"] }
+  event_data.update(additional_attributes)
+  fire_event(event_key, event_data)
 
 def raise_rate_events(now: datetime,
                       rates: list, 
@@ -81,36 +109,28 @@ def raise_rate_events(now: datetime,
     else:
       current_rates.append(rate)
 
-  event_data = { "rates": previous_rates }
-  event_data.update(additional_attributes)
-  fire_event(previous_event_key, event_data)
-  
-  event_data = { "rates": current_rates }
-  event_data.update(additional_attributes)
-  fire_event(current_event_key, event_data)
-  
-  event_data = { "rates": next_rates }
-  event_data.update(additional_attributes)
-  fire_event(next_event_key, event_data)
+  __raise_rate_event(previous_event_key, previous_rates, additional_attributes, fire_event)
+  __raise_rate_event(current_event_key, current_rates, additional_attributes, fire_event)
+  __raise_rate_event(next_event_key, next_rates, additional_attributes, fire_event)
 
-def get_electricity_meter_tariff_code(current: datetime, account_info, target_mpan: str, target_serial_number: str):
+def get_electricity_meter_tariff(current: datetime, account_info, target_mpan: str, target_serial_number: str):
   if len(account_info["electricity_meter_points"]) > 0:
     for point in account_info["electricity_meter_points"]:
-      active_tariff_code = get_active_tariff_code(current, point["agreements"])
+      active_tariff = get_active_tariff(current, point["agreements"])
       # The type of meter (ie smart vs dumb) can change the tariff behaviour, so we
       # have to enumerate the different meters being used for each tariff as well.
       for meter in point["meters"]:
-        if active_tariff_code is not None and point["mpan"] == target_mpan and meter["serial_number"] == target_serial_number:
-           return active_tariff_code
+        if active_tariff is not None and point["mpan"] == target_mpan and meter["serial_number"] == target_serial_number:
+          return active_tariff
            
   return None
 
-def get_gas_meter_tariff_code(current: datetime, account_info, target_mprn: str, target_serial_number: str):
+def get_gas_meter_tariff(current: datetime, account_info, target_mprn: str, target_serial_number: str):
   if len(account_info["gas_meter_points"]) > 0:
     for point in account_info["gas_meter_points"]:
-      active_tariff_code = get_active_tariff_code(current, point["agreements"])
+      active_tariff = get_active_tariff(current, point["agreements"])
       for meter in point["meters"]:
-        if active_tariff_code is not None and point["mprn"] == target_mprn and meter["serial_number"] == target_serial_number:
-           return active_tariff_code
+        if active_tariff is not None and point["mprn"] == target_mprn and meter["serial_number"] == target_serial_number:
+           return active_tariff
            
   return None

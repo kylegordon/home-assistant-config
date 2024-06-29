@@ -1,7 +1,10 @@
 import logging
 from datetime import datetime
-from ..statistics.consumption import async_import_external_statistics_from_consumption, get_gas_consumption_statistic_unique_id
 
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import (
   CoordinatorEntity,
@@ -12,7 +15,7 @@ from homeassistant.components.sensor import (
   SensorStateClass
 )
 from homeassistant.const import (
-    ENERGY_KILO_WATT_HOUR
+    UnitOfEnergy
 )
 
 from homeassistant.util.dt import (utcnow)
@@ -24,19 +27,19 @@ from . import (
 from .base import (OctopusEnergyGasSensor)
 from ..utils.attributes import dict_to_typed_dict
 from ..coordinators.previous_consumption_and_rates import PreviousConsumptionCoordinatorResult
+from ..statistics.consumption import async_import_external_statistics_from_consumption, get_gas_consumption_statistic_unique_id
 
 _LOGGER = logging.getLogger(__name__)
 
 class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, OctopusEnergyGasSensor, RestoreSensor):
   """Sensor for displaying the previous days accumulative gas consumption in kwh."""
 
-  def __init__(self, hass: HomeAssistant, coordinator, tariff_code, meter, point, calorific_value):
+  def __init__(self, hass: HomeAssistant, coordinator, meter, point, calorific_value):
     """Init sensor."""
     CoordinatorEntity.__init__(self, coordinator)
     OctopusEnergyGasSensor.__init__(self, hass, meter, point)
 
     self._hass = hass
-    self._tariff_code = tariff_code
     self._native_consumption_units = meter["consumption_units"]
     self._state = None
     self._last_reset = None
@@ -58,7 +61,7 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Gas {self._serial_number} {self._mprn} Previous Accumulative Consumption (kWh)"
+    return f"Previous Accumulative Consumption (kWh) Gas ({self._serial_number}/{self._mprn})"
 
   @property
   def device_class(self):
@@ -73,7 +76,7 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
   @property
   def native_unit_of_measurement(self):
     """The unit of measurement of sensor"""
-    return ENERGY_KILO_WATT_HOUR
+    return UnitOfEnergy.KILO_WATT_HOUR
 
   @property
   def icon(self):
@@ -115,7 +118,6 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
       rate_data,
       standing_charge,
       self._last_reset,
-      self._tariff_code,
       self._native_consumption_units,
       self._calorific_value
     )
@@ -130,9 +132,8 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
         self.name,
         consumption_and_cost["charges"],
         rate_data,
-        ENERGY_KILO_WATT_HOUR,
-        "consumption_kwh",
-        False
+        UnitOfEnergy.KILO_WATT_HOUR,
+        "consumption_kwh"
       )
 
       self._state = consumption_and_cost["total_consumption_kwh"]
@@ -155,6 +156,9 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
 
     if result is not None:
       self._attributes["data_last_retrieved"] = result.last_retrieved
+      self._attributes["latest_available_data_timestamp"] = result.latest_available_timestamp
+    
+    self._attributes = dict_to_typed_dict(self._attributes)
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -163,7 +167,7 @@ class OctopusEnergyPreviousAccumulativeGasConsumptionKwh(CoordinatorEntity, Octo
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) else state.state
       self._attributes = dict_to_typed_dict(state.attributes)
     
       _LOGGER.debug(f'Restored OctopusEnergyPreviousAccumulativeGasConsumptionKwh state: {self._state}')

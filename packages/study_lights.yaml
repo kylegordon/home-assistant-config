@@ -39,29 +39,25 @@ automation:
   - alias: 'Increase brightness of lamp from dimmer'
     initial_state: 'on'
     trigger:
-      platform: event
-      event_type: deconz_event
-      event_data:
-        id: "tradfri_wireless_dimmer"
-        event: 2002
+      - platform: mqtt
+        topic: zigbee2mqtt/Study Wireless Dimmer Dial/action
+        payload: 'brightness_move_up'
     action:
       - service: light.turn_on
         data:
-          entity_id: light.study_light
+          entity_id: light.study
           transition: 1
           brightness_step_pct: 10
 
   - alias: 'Decrease brightness of lamp from dimmer'
     initial_state: 'on'
     trigger:
-      platform: event
-      event_type: deconz_event
-      event_data:
-        id: "tradfri_wireless_dimmer"
-        event: 3002
+      - platform: mqtt
+        topic: zigbee2mqtt/Study Wireless Dimmer Dial/action
+        payload: 'brightness_move_down'
     action:
       - service: light.turn_on
         data:
-          entity_id: light.study_light
+          entity_id: light.study
           transition: 1
           brightness_step_pct: -10

@@ -1,6 +1,10 @@
 import logging
 from datetime import datetime
 
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
 from homeassistant.core import HomeAssistant
 
 from homeassistant.helpers.update_coordinator import (
@@ -29,13 +33,12 @@ _LOGGER = logging.getLogger(__name__)
 class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyGasSensor, RestoreSensor):
   """Sensor for displaying the previous days accumulative gas cost."""
 
-  def __init__(self, hass: HomeAssistant, coordinator, tariff_code, meter, point, calorific_value):
+  def __init__(self, hass: HomeAssistant, coordinator, meter, point, calorific_value):
     """Init sensor."""
     CoordinatorEntity.__init__(self, coordinator)
     OctopusEnergyGasSensor.__init__(self, hass, meter, point)
     
     self._hass = hass
-    self._tariff_code = tariff_code
     self._native_consumption_units = meter["consumption_units"]
 
     self._state = None
@@ -58,7 +61,7 @@ class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyG
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Gas {self._serial_number} {self._mprn} Previous Accumulative Cost"
+    return f"Previous Accumulative Cost Gas ({self._serial_number}/{self._mprn})"
 
   @property
   def device_class(self):
@@ -116,7 +119,6 @@ class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyG
       rate_data,
       standing_charge,
       self._last_reset,
-      self._tariff_code,
       self._native_consumption_units,
       self._calorific_value
     )
@@ -132,8 +134,7 @@ class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyG
         consumption_and_cost["charges"],
         rate_data,
         "GBP",
-        "consumption_kwh",
-        False
+        "consumption_kwh"
       )
 
       self._last_reset = consumption_and_cost["last_reset"]
@@ -142,7 +143,7 @@ class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyG
       self._attributes = {
         "mprn": self._mprn,
         "serial_number": self._serial_number,
-        "tariff_code": self._tariff_code,
+        "tariff_code": rate_data[0]["tariff_code"],
         "standing_charge": consumption_and_cost["standing_charge"],
         "total_without_standing_charge": consumption_and_cost["total_cost_without_standing_charge"],
         "total": consumption_and_cost["total_cost"],
@@ -160,6 +161,8 @@ class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyG
 
     if result is not None:
       self._attributes["data_last_retrieved"] = result.last_retrieved
+    
+    self._attributes = dict_to_typed_dict(self._attributes)
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -168,7 +171,7 @@ class OctopusEnergyPreviousAccumulativeGasCost(CoordinatorEntity, OctopusEnergyG
     state = await self.async_get_last_state()
     
     if state is not None and self._state is None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) else state.state
       self._attributes = dict_to_typed_dict(state.attributes)
 
       _LOGGER.debug(f'Restored OctopusEnergyPreviousAccumulativeGasCost state: {self._state}')

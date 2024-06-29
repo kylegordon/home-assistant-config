@@ -117,7 +117,6 @@ influxdb:
 conversation:
 
 person: !include persons.yaml
-proximity: !include proximity.yaml
 
 wake_on_lan:
 
@@ -236,6 +235,8 @@ scene: !include_dir_list scenes
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
+
+hwam_stove: !include hwam_stove.yaml
 
 utility_meter:
   quarter_hourly_energy:

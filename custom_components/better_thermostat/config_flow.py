@@ -10,11 +10,11 @@ from homeassistant.components.climate.const import HVACMode
 from homeassistant.helpers import config_validation as cv
 
 
-from .utils.bridge import load_adapter
+from .adapters.delegate import load_adapter
 
 from .utils.helpers import get_device_model, get_trv_intigration
 
-from .const import (
+from .utils.const import (
     CONF_COOLER,
     CONF_PROTECT_OVERHEATING,
     CONF_CALIBRATION,
@@ -35,6 +35,7 @@ from .const import (
     CONF_WINDOW_TIMEOUT_AFTER,
     CONF_CALIBRATION_MODE,
     CONF_TOLERANCE,
+    CONF_TARGET_TEMP_STEP,
     CalibrationMode,
     CalibrationType,
 )
@@ -65,6 +66,21 @@ CALIBRATION_TYPE_ALL_SELECTOR = selector.SelectSelector(
             selector.SelectOptionDict(
                 value=CalibrationType.LOCAL_BASED, label="Offset Based"
             ),
+            selector.SelectOptionDict(value=CalibrationType.HYBRID, label="Hybrid"),
+        ],
+        mode=selector.SelectSelectorMode.DROPDOWN,
+    )
+)
+
+TEMP_STEP_SELECTOR = selector.SelectSelector(
+    selector.SelectSelectorConfig(
+        options=[
+            selector.SelectOptionDict(value="0.0", label="Auto"),
+            selector.SelectOptionDict(value="0.1", label="0.1 °C"),
+            selector.SelectOptionDict(value="0.2", label="0.2 °C"),
+            selector.SelectOptionDict(value="0.25", label="0.25 °C"),
+            selector.SelectOptionDict(value="0.5", label="0.5 °C"),
+            selector.SelectOptionDict(value="1.0", label="1 °C"),
         ],
         mode=selector.SelectSelectorMode.DROPDOWN,
     )
@@ -75,7 +91,7 @@ CALIBRATION_MODE_SELECTOR = selector.SelectSelector(
         options=[
             selector.SelectOptionDict(value=CalibrationMode.DEFAULT, label="Normal"),
             selector.SelectOptionDict(
-                value=CalibrationMode.FIX_CALIBRATION, label="Agressive"
+                value=CalibrationMode.AGGRESIVE_CALIBRATION, label="Agressive"
             ),
             selector.SelectOptionDict(
                 value=CalibrationMode.HEATING_POWER_CALIBRATION, label="AI Time Based"
@@ -119,7 +135,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             if self.data is not None:
                 _LOGGER.debug("Confirm: %s", self.data[CONF_HEATER])
-                await self.async_set_unique_id(self.data["name"])
+                unique_trv_string = "_".join([x["trv"] for x in self.data[CONF_HEATER]])
+                await self.async_set_unique_id(
+                    f"{self.data['name']}_{unique_trv_string}"
+                )
+                self._abort_if_unique_id_configured()
                 return self.async_create_entry(title=self.data["name"], data=self.data)
         if confirm_type is not None:
             errors["base"] = confirm_type
@@ -354,6 +374,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Optional(
                         CONF_TOLERANCE, default=user_input.get(CONF_TOLERANCE, 0.0)
                     ): vol.All(vol.Coerce(float), vol.Range(min=0)),
+                    vol.Optional(
+                        CONF_TARGET_TEMP_STEP,
+                        default=str(user_input.get(CONF_TARGET_TEMP_STEP, "0.0")),
+                    ): TEMP_STEP_SELECTOR,
                 }
             ),
             errors=errors,
@@ -556,6 +580,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self.updated_config[CONF_TOLERANCE] = float(
                 user_input.get(CONF_TOLERANCE, 0.0)
             )
+            self.updated_config[CONF_TARGET_TEMP_STEP] = float(
+                user_input.get(CONF_TARGET_TEMP_STEP, "0.0")
+            )
 
             for trv in self.updated_config[CONF_HEATER]:
                 trv["adapter"] = None
@@ -683,6 +710,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 CONF_TOLERANCE, default=self.config_entry.data.get(CONF_TOLERANCE, 0.0)
             )
         ] = vol.All(vol.Coerce(float), vol.Range(min=0))
+        fields[
+            vol.Optional(
+                CONF_TARGET_TEMP_STEP,
+                default=str(self.config_entry.data.get(CONF_TARGET_TEMP_STEP, 0.0)),
+            )
+        ] = TEMP_STEP_SELECTOR
 
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(fields), last_step=False

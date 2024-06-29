@@ -1,6 +1,10 @@
 import logging
 
-from homeassistant.core import HomeAssistant
+from homeassistant.const import (
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+)
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import generate_entity_id
 from homeassistant.util.dt import (utcnow)
 
@@ -54,7 +58,7 @@ class OctopusEnergySavingSessions(CoordinatorEntity, BinarySensorEntity, Restore
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Octopus Energy {self._account_id} Octoplus Saving Session"
+    return f"Octoplus Saving Session ({self._account_id})"
 
   @property
   def icon(self):
@@ -68,6 +72,10 @@ class OctopusEnergySavingSessions(CoordinatorEntity, BinarySensorEntity, Restore
 
   @property
   def is_on(self):
+    return self._state
+  
+  @callback
+  def _handle_coordinator_update(self) -> None:
     """Determine if the user is in a saving session."""
     self._attributes = {
       "current_joined_event_start": None,
@@ -104,8 +112,8 @@ class OctopusEnergySavingSessions(CoordinatorEntity, BinarySensorEntity, Restore
       self._attributes["next_joined_event_duration_in_minutes"] = next_event.duration_in_minutes
 
     self._attributes["last_evaluated"] = current_date
-
-    return self._state
+    self._attributes = dict_to_typed_dict(self._attributes)
+    super()._handle_coordinator_update()
 
   async def async_added_to_hass(self):
     """Call when entity about to be added to hass."""
@@ -114,7 +122,7 @@ class OctopusEnergySavingSessions(CoordinatorEntity, BinarySensorEntity, Restore
     state = await self.async_get_last_state()
 
     if state is not None:
-      self._state = None if state.state == "unknown" else state.state
+      self._state = None if state.state in (STATE_UNAVAILABLE, STATE_UNKNOWN) or state.state is None else state.state.lower() == 'on'
       self._attributes = dict_to_typed_dict(state.attributes)
     
     if (self._state is None):
