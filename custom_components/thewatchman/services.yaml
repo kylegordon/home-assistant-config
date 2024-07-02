@@ -1,0 +1,38 @@
+report:
+  description: Run watchman report
+  fields:
+    create_file:
+      example: true
+      default: true
+      required: false
+      selector:
+        boolean:
+    send_notification:
+      example: true
+      default: false
+      required: false
+      selector:
+        boolean:
+    service:
+      example: "notify.telegram"
+      required: false
+      selector:
+        text:
+    data:
+      example: "parse_mode: html"
+
+    parse_config:
+      example: true
+      default: false
+      required: false
+      selector:
+        boolean:
+    chunk_size:
+      example: true
+      default: false
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 100000
+          mode: box
