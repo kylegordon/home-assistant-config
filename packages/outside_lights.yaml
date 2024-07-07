@@ -6,21 +6,22 @@ switch:
         friendly_name: Outside White Channels
         unique_id: outside_rgb_white_channels
         icon_template: mdi:lightbulb-group
-        value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
-                            or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
-                          true
-                        {% else %}
-                          false
-                        {% endif %}"
+        value_template:
+          "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
+          or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
+          true
+          {% else %}
+          false
+          {% endif %}"
         turn_on:
           service: light.turn_on
           # Set the white channel values to maximum
           data:
             entity_id: light.decking_lights
             rgbww_color:
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}" # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}" # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}" # yamllint disable-line rule:line-length
               - 255
               - 255
         turn_off:
@@ -29,9 +30,9 @@ switch:
           data:
             entity_id: light.decking_lights
             rgbww_color:
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
-              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}" # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}" # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}" # yamllint disable-line rule:line-length
               - 0
               - 0
 
@@ -47,7 +48,7 @@ automation:
           - binary_sensor.back_door_person_occupancy
           - binary_sensor.gates_person_occupancy
           - binary_sensor.front_door_person_occupancy
-        to: 'on'
+        to: "on"
     condition:
       - condition: state
         entity_id: sun.sun
@@ -63,12 +64,13 @@ automation:
       - service: notify.mobile_app_nothing_phone_1
         data:
           title: "Motion outside!"
+          # yamllint disable rule:line-length
           message: >
             Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+          # yamllint enable rule:line-length
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
-
 
   - alias: "Outside night lights on"
     id: outside_night_lights_on
@@ -117,7 +119,7 @@ automation:
           - binary_sensor.back_door_person_occupancy
           - binary_sensor.gates_person_occupancy
           - binary_sensor.front_door_person_occupancy
-        to: 'on'
+        to: "on"
     condition:
       - condition: state
         entity_id: input_boolean.night_view
@@ -128,21 +130,25 @@ automation:
     action:
       - service: script.tweet_engine
         data_template:
+          # yamllint disable rule:line-length
           tweet: >
             {{ [
             "Dark outside and motion detected! Scared! Turning on my outside lights!",
             "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
             "Did you hear that? I can't see a thing. Turning on the outside lights"
             ] | random + " https://amzn.to/2CR5mbQ" }}
+          # yamllint enable rule:line-length
       - service: homeassistant.turn_on
         entity_id:
           - group.outside_lights
       - service: notify.mobile_app_nothing_phone_1
         data:
           title: "Motion outside!"
+          # yamllint disable rule:line-length
           message: >
             Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
             Turning on outside lights
+          # yamllint enable rule:line-length
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
@@ -168,7 +174,7 @@ automation:
           - binary_sensor.driveway_person_occupancy
           - binary_sensor.driveway_person_occupancy
           - binary_sensor.gates_person_occupancy
-        to: 'off'
+        to: "off"
         for:
           seconds: 300
     action:
