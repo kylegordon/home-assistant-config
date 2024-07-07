@@ -31,6 +31,7 @@ esp32_ble_tracker:
     # https://esphome.io/components/esp32_ble_tracker.html#on-ble-advertise-trigger
     # - mac_address: 11:22:33:44:55:66
     #   then:
+    # yamllint disable rule:line-length
     - lambda: |-
         ESP_LOGD("ble_adv", "New BLE device");
         ESP_LOGD("ble_adv", "  address: %s", x.address_str().c_str());
@@ -47,6 +48,7 @@ esp32_ble_tracker:
         for (auto data : x.get_manufacturer_datas()) {
             ESP_LOGD("ble_adv", "    - %s: (length %i)", data.uuid.to_string().c_str(), data.data.size());
         }
+    # yamllint enable rule:line-length
 
 bluetooth_proxy:
   active: true
@@ -57,7 +59,7 @@ text_sensor:
     name: "BLE Devices Scanner"
 
 sensor:
-  # # https://esphome.io/components/sensor/xiaomi_ble.html#lywsd03mmc
+  # https://esphome.io/components/sensor/xiaomi_ble.html#lywsd03mmc
   # - platform: pvvx_mithermometer
   #   mac_address: "A4:C1:38:D0:BF:A7"
   #   temperature:

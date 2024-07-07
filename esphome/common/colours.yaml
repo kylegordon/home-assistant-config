@@ -2,7 +2,8 @@
 # Redistributed from https://gitlab.com/wjcarpenter/esphome-colors
 # under the BSD 2-Clause License
 
-# From https://gitlab.com/wjcarpenter/esphome-colors/-/blob/master/color/COLOR_CSS
+# From
+# https://gitlab.com/wjcarpenter/esphome-colors/-/blob/master/color/COLOR_CSS
 
 color:
   # name and values from https://www.w3.org/wiki/CSS/Properties/color/keywords

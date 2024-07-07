@@ -21,7 +21,8 @@ syslog:
   ip_address: 172.24.32.13
   port: 515
 
-# Shelly 1 detached switch config with multi click options and fallback in case of wifi or api fail
+# Shelly 1 detached switch config with multi click options
+# and fallback in case of wifi or api fail
 
 switch:
   - platform: gpio
@@ -35,7 +36,8 @@ binary_sensor:
     pin:
       number: GPIO5
     name: ${friendly_name} button
-    # Sourced from https://www.esphome-devices.com/devices/Shelly-1#detached-switch-mode-for-toggle-light-switch
+    # Sourced from
+    # https://www.esphome-devices.com/devices/Shelly-1#detached-switch-mode-for-toggle-light-switch
     # small delay to prevent debouncing
     filters:
       - delayed_on_off: 50ms

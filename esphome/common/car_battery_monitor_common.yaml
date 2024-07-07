@@ -1,6 +1,6 @@
 ---
-# yamllint disable-line rule:line-length
-# Inspired by https://www.reddit.com/r/homeautomation/comments/qiywpf/monitoring_a_car_battery_from_charged_over_first/
+# Inspired by
+# https://www.reddit.com/r/homeautomation/comments/qiywpf/monitoring_a_car_battery_from_charged_over_first/
 packages:
   common: !include common.yaml
 
