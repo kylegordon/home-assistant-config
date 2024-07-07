@@ -6,6 +6,7 @@ switch:
         friendly_name: Outside White Channels
         unique_id: outside_rgb_white_channels
         icon_template: mdi:lightbulb-group
+        # yamllint disable rule:line-length
         value_template:
           "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
           or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
@@ -13,6 +14,7 @@ switch:
           {% else %}
           false
           {% endif %}"
+        # yamllint enable rule:line-length
         turn_on:
           service: light.turn_on
           # Set the white channel values to maximum
