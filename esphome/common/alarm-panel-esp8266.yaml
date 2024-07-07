@@ -1,4 +1,6 @@
 ---
+
+# yamllint disable rule:line-length
 ####
 ##
 ## Konnected Alarm Panel (ESP8266)
@@ -24,6 +26,7 @@
 ## IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ##
 ####
+# yamllint enable rule:line-length
 
 ####
 # PACKAGES
