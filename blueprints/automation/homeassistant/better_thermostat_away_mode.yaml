@@ -4,7 +4,7 @@ blueprint:
   description: Set BT Thermostats to Away mode if house is unoccupied.
   domain: automation
   # source_url:
-  #  https://github.com/KartoffelToby/better_thermostat/blob/master/blueprints/away_mode.yaml
+  # https://github.com/KartoffelToby/better_thermostat/blob/master/blueprints/away_mode.yaml
   input:
     occupancy_sensor:
       name: Occupancy
