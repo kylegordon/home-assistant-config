@@ -20,8 +20,10 @@ binary_sensor:
         friendly_name: Christmas Time
         # Use %j to get the day of the year, force from string to integer,
         # and return true if after December 1st or before January 6th
-        value_template: >
-            {% if now().strftime("%j") | int >= 336 or now().strftime("%j") | int <= 6 %}
+        value_template: >-
+            {% if now().strftime("%j")
+              | int >= 336 or now().strftime("%j")
+              | int <= 6 %}
             true
             {% else %}
             false
@@ -44,11 +46,13 @@ automation:
         entity_id: light.outside_decorations
       - service: script.tweet_engine_image
         data_template:
+          # yamllint disable rule:line-length
           tweet: >
             {{ [
             "It's getting dark and it's near Christmas! Time to turn on the outside decorations!",
             "That christmas feeling! Turning on the outside Christmas decorations!",
             ] | random + " #christmas #homeautomation Status:({{states.sensor.server_pihole.state}}) https://amzn.to/2KU3Z2d"}}
+          # yamllint enable rule:line-length
           image: >-
             {{ [
             "/config/www/custom_ui/images/xmas/bauble.jpg",
@@ -68,11 +72,13 @@ automation:
         entity_id: light.outside_decorations
       - service: script.tweet_engine_image
         data_template:
+          # yamllint disable rule:line-length
           tweet: >
             {{ [
             "It's a dark morning and near Christmas! Time to turn on the outside decorations!",
             "That christmas feeling! Turning on the outside Christmas decorations!",
             ] | random + " #christmas #homeautomation Status:({{states.sensor.server_pihole.state}}) https://amzn.to/2KU3Z2d"}}
+          # yamllint enable rule:line-length
           image: >-
             {{ [
             "/config/www/custom_ui/images/xmas/bauble.jpg",

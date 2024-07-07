@@ -1,5 +1,5 @@
 ---
-# Inspired by 
+# Inspired by
 # https://github.com/downthedeck/hassio-config/blob/master/packages/klimaat.yaml
 # Not all modes are supported, as above uses Toon integration
 # https://www.home-assistant.io/integrations/generic_thermostat/
