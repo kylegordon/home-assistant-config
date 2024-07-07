@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Mapping
-from typing import Any, Iterable, Sequence
+from typing import Any
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -26,7 +26,6 @@ from myPyllant.models import (
     Circuit,
     Device,
     DeviceData,
-    DeviceDataBucket,
     System,
 )
 
@@ -54,13 +53,13 @@ DATA_UNIT_MAP = {
 
 async def create_system_sensors(
     hass: HomeAssistant, config: ConfigEntry
-) -> Sequence[SensorEntity]:
+) -> EntityList[SensorEntity]:
     system_coordinator: SystemCoordinator = hass.data[DOMAIN][config.entry_id][
         "system_coordinator"
     ]
     if not system_coordinator.data:
         _LOGGER.warning("No system data, skipping sensors")
-        return []
+        return EntityList()
 
     sensors: EntityList[SensorEntity] = EntityList()
     _LOGGER.debug("Creating system sensors for %s", system_coordinator.data)
@@ -203,7 +202,7 @@ async def create_system_sensors(
 
 async def create_daily_data_sensors(
     hass: HomeAssistant, config: ConfigEntry
-) -> Iterable[SensorEntity]:
+) -> EntityList[SensorEntity]:
     daily_data_coordinator: DailyDataCoordinator = hass.data[DOMAIN][config.entry_id][
         "daily_data_coordinator"
     ]
@@ -212,7 +211,7 @@ async def create_daily_data_sensors(
 
     if not daily_data_coordinator.data:
         _LOGGER.warning("No daily data, skipping sensors")
-        return []
+        return EntityList()
 
     sensors: EntityList[SensorEntity] = EntityList()
     for system_id, system_devices in daily_data_coordinator.data.items():
@@ -246,8 +245,8 @@ async def create_daily_data_sensors(
 async def async_setup_entry(
     hass: HomeAssistant, config: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    async_add_entities(await create_system_sensors(hass, config))
-    async_add_entities(await create_daily_data_sensors(hass, config))
+    async_add_entities(await create_system_sensors(hass, config))  # type: ignore
+    async_add_entities(await create_daily_data_sensors(hass, config))  # type: ignore
 
 
 class SystemSensor(SystemCoordinatorEntity, SensorEntity):
@@ -402,9 +401,22 @@ class HomeEntity(CoordinatorEntity, SensorEntity):
 
     @property
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
-        rts = self.system.rts if self.system.rts else {}
-        mpc = self.system.mpc if self.system.mpc else {}
-        return self.system.home.extra_fields | self.system.extra_fields | rts | mpc
+        rts = {"rts": self.system.rts} if self.system.rts else {}
+        mpc = {"mpc": self.system.mpc} if self.system.mpc else {}
+        energy_management = (
+            {"energy_management": self.system.energy_management}
+            if self.system.energy_management
+            else {}
+        )
+        eebus = {"eebus": self.system.eebus} if self.system.eebus else {}
+        return (
+            self.system.home.extra_fields
+            | self.system.extra_fields
+            | rts
+            | mpc
+            | energy_management
+            | eebus
+        )
 
     @property
     def name_prefix(self) -> str:
@@ -448,7 +460,9 @@ class ZoneDesiredRoomTemperatureSetpointSensor(ZoneCoordinatorEntity, SensorEnti
 
     @property
     def native_value(self):
-        if self.zone.desired_room_temperature_setpoint_heating:
+        if self.zone.desired_room_temperature_setpoint:
+            return self.zone.desired_room_temperature_setpoint
+        elif self.zone.desired_room_temperature_setpoint_heating:
             return self.zone.desired_room_temperature_setpoint_heating
         elif self.zone.desired_room_temperature_setpoint_cooling:
             return self.zone.desired_room_temperature_setpoint_cooling
@@ -456,6 +470,15 @@ class ZoneDesiredRoomTemperatureSetpointSensor(ZoneCoordinatorEntity, SensorEnti
             if self.zone.is_eco_mode:
                 return self.zone.heating.set_back_temperature
             return self.zone.desired_room_temperature_setpoint
+
+    @property
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        return {
+            "desired_room_temperature_setpoint_heating": self.zone.desired_room_temperature_setpoint_heating,
+            "desired_room_temperature_setpoint_cooling": self.zone.desired_room_temperature_setpoint_cooling,
+            "desired_room_temperature_setpoint": self.zone.desired_room_temperature_setpoint,
+            "is_eco_mode": self.zone.is_eco_mode,
+        }
 
     @property
     def unique_id(self) -> str:
@@ -802,14 +825,10 @@ class DataSensor(CoordinatorEntity, SensorEntity):
         return self.device_data.device
 
     @property
-    def data_bucket(self) -> DeviceDataBucket | None:
+    def total_consumption(self) -> float | None:
         if self.device_data is None:
             return None
-        data = [d for d in self.device_data.data if d.value is not None]
-        if len(data) > 0:
-            return data[-1]
-        else:
-            return None
+        return self.device_data.total_consumption_rounded
 
     @property
     def unique_id(self) -> str | None:
@@ -839,7 +858,7 @@ class DataSensor(CoordinatorEntity, SensorEntity):
 
     @property
     def native_value(self):
-        return self.data_bucket.value if self.data_bucket else None
+        return self.device_data.total_consumption_rounded
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -886,11 +905,9 @@ class EfficiencySensor(CoordinatorEntity, SensorEntity):
         """
         return sum(
             [
-                v.data[-1].value
+                v.total_consumption_rounded
                 for v in self.device_data_list
-                if len(v.data)
-                and v.data[-1].value
-                and v.energy_type == "CONSUMED_ELECTRICAL_ENERGY"
+                if v.energy_type == "CONSUMED_ELECTRICAL_ENERGY"
             ]
         )
 
@@ -901,11 +918,9 @@ class EfficiencySensor(CoordinatorEntity, SensorEntity):
         """
         return sum(
             [
-                v.data[-1].value
+                v.total_consumption_rounded
                 for v in self.device_data_list
-                if len(v.data)
-                and v.data[-1].value
-                and v.energy_type == "HEAT_GENERATED"
+                if v.energy_type == "HEAT_GENERATED"
             ]
         )
 
