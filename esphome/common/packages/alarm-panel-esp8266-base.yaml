@@ -3,9 +3,11 @@ substitutions:
 
   ####
   # NAME
-  # By default, the name of the ESPHome device is "alarm-panel-pro-xxxxxx" where xxxxxx is a unique identifier. The device's
-  # hostname on your network is also defined by the name, defaulting to "alarm-panel-pro-xxxxxx.local". Edit this variable to
-  # customize the name and hostname. Note: only lowercase characters, numbers and hyphen(-) are allowed.
+  # By default, the name of the ESPHome device is "alarm-panel-pro-xxxxxx"
+  # where xxxxxx is a unique identifier. The device's hostname on your network
+  # is also defined by the name, defaulting to "alarm-panel-pro-xxxxxx.local".
+  # Edit this variable to customize the name and hostname. 
+  # Note: only lowercase characters, numbers and hyphen(-) are allowed.
   name: alarm-panel
   friendly_name: Alarm Panel
   project_name: konnected.alarm-panel-esp8266
