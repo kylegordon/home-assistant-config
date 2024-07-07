@@ -15,6 +15,7 @@ esphome:
   on_boot:
     priority: -10
     then:
+      # yamllint disable rule:line-length
       - lambda: |-
           // check cover position
           if (id(open_endstop).state) // door open
@@ -35,6 +36,7 @@ esphome:
           {
             // last dir not know, so let cover restore last state
           }
+      # yamllint enable rule:line-length
 
 globals:
   - id: last_dir
@@ -91,6 +93,7 @@ display:
     model: "SH1106 128x64"
     # reset_pin: D0
     address: 0x3C
+    # yamllint disable rule:line-length
     lambda: |-
       static int yorigin = 0;
       static int lineheight = 9;
@@ -117,6 +120,7 @@ display:
 
       // Print time in HH:MM format
       it.strftime(0, 60, id(font1), TextAlign::BASELINE_LEFT, "%H:%M", id(esptime).now());
+    # yamllint enable rule:line-length
 
 # D0 == GPIO16 == Optional internal PullDOWN
 # D1 == GPIO5 == Optional internal Pullup
@@ -141,6 +145,7 @@ binary_sensor:
       - delayed_on_off: $debounce_time
     on_press:
       then:
+        # yamllint disable rule:line-length
         - lambda: |-
             // stop all current actions
             id(push_one).stop();
@@ -149,14 +154,17 @@ binary_sensor:
             id(garage_door).position = esphome::cover::COVER_OPEN;
             id(last_dir) = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).publish_state();
+        # yamllint enable rule:line-length
     on_release:
       # door was commanded manually (not esphome)
       then:
+        # yamllint disable rule:line-length
         - lambda: |-
             // set state as closing. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).publish_state();
+        # yamllint enable rule:line-length
   - platform: gpio
     pin:
       number: $close_endstop_pin
@@ -169,6 +177,7 @@ binary_sensor:
       - delayed_on_off: $debounce_time
     on_press:
       then:
+        # yamllint disable rule:line-length
         - lambda: |-
             // stop all current actions
             id(push_one).stop();
@@ -177,14 +186,17 @@ binary_sensor:
             id(garage_door).position = esphome::cover::COVER_CLOSED;
             id(last_dir) = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).publish_state();
+        # yamllint enable rule:line-length
     on_release:
       # door was commanded manually (not esphome)
       then:
+        # yamllint disable rule:line-length
         - lambda: |-
             // set state as opening. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).publish_state();
+        # yamllint enable rule:line-length
 switch:
   - platform: gpio
     pin: $cover_switch_pin
@@ -217,6 +229,7 @@ cover:
     has_position: true
     assumed_state: false
     # main loop
+    # yamllint disable rule:line-length
     lambda: |-
       static uint32_t last_recompute_time = 0;
       static uint32_t last_publish_time = 0;
@@ -269,10 +282,11 @@ cover:
         id(target_action) = 3;
       }
       return {};
+    # yamllint enable rule:line-length
     open_action:
       - logger.log:
           format: "Open Action - CO:%u PO:%f LD:%u"
-          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]  # yamllint disable-line rule:line-length
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN)
@@ -282,7 +296,7 @@ cover:
     close_action:
       - logger.log:
           format: "Close Action - CO:%u PO:%f LD:%u"
-          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]  # yamllint disable-line rule:line-length
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_CLOSED)
@@ -292,13 +306,15 @@ cover:
     stop_action:
       - logger.log:
           format: "Stop Action - CO:%u PO:%f LD:%u"
-          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]  # yamllint disable-line rule:line-length
       # update target
+      # yamllint disable rule:line-length
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN && id(garage_door).position != COVER_CLOSED)
           {
             id(target_action) = COVER_OPERATION_IDLE;
           }
+      # yamllint enable rule:line-length
 script:
   - id: push_one
     mode: single
@@ -306,6 +322,7 @@ script:
       - logger.log: "Push 1 Times"
       - switch.turn_on: cover_switch
       # state machine
+      # yamllint disable rule:line-length
       - lambda: |-
           if (id(garage_door).current_operation == esphome::cover::COVER_OPERATION_OPENING || id(garage_door).current_operation == esphome::cover::COVER_OPERATION_CLOSING)
           {
@@ -327,3 +344,4 @@ script:
             }
           }
           id(garage_door).publish_state();
+      # yamllint enable rule:line-length

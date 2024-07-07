@@ -4,7 +4,7 @@ mqtt:
     - name: flightradar_home
       state_topic: 'flightradar/viewpoint'
       # just an example atm
-      value_template: "{{ value_json.id if value_json.lat == 55 else states('sensor.outdoor_temperature') }}"
+      value_template: "{{ value_json.id if value_json.lat == 55 else states('sensor.outdoor_temperature') }}"  # yamllint disable rule:line-length
 
 automation:
   - alias: 'Flight entry notification - Home'
@@ -20,9 +20,11 @@ automation:
       - service: notify.email_kyle
         data_template:
           title: "Overflight event"
+          # yamllint disable rule:line-length
           message: 'Flight {{ trigger.event.data.callsign }} is passing nearby at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
+          # yamllint enable rule:line-length
 
   - alias: 'Flight entry notification - Uplawmoor'
     trigger:
@@ -34,12 +36,16 @@ automation:
       - service: notify.email_kyle
         data_template:
           title: "{{ trigger.event.data.callsign }} Overflight - Uplawmoor"
+          # yamllint disable rule:line-length
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
+          # yamllint enable rule:line-length
 
       - service: notify.mastodon_overuplawmoor
         data_template:
+          # yamllint disable rule:line-length
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
+          # yamllint enable rule:line-length

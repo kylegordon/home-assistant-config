@@ -21,7 +21,8 @@ syslog:
   ip_address: 172.24.32.13
   port: 515
 
-# Shelly 1 detached switch config with multi click options and fallback in case of wifi or api fail
+# Shelly 1 detached switch config with multi click options
+# and fallback in case of wifi or api fail
 
 switch:
   - platform: gpio
@@ -36,7 +37,8 @@ binary_sensor:
       number: GPIO5
     name: ${friendly_name} button
     # config for multi click actions
-    # Ideas from https://github.com/TheFes/HA-configuration/blob/main/esphome/packages/shelly1_detached_multi.yaml
+    # Ideas from
+    # https://github.com/TheFes/HA-configuration/blob/main/esphome/packages/shelly1_detached_multi.yaml
     on_multi_click:
       # triple click
       - timing:
@@ -75,7 +77,7 @@ binary_sensor:
                 and:
                   - wifi.connected:
                   - api.connected:
-              # send double click event in case wifi and api are conncected
+              # send double click event in case wifi and api are connected
               then:
                 - homeassistant.event:
                     event: esphome.button_pressed
