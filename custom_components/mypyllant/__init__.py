@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime as dt, timedelta
+from datetime import datetime as dt, timedelta, datetime
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -133,6 +133,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     async def handle_export(call: ServiceCall) -> ServiceResponse:
+        _LOGGER.debug("Exporting data with params %s", call.data)
         return {
             "export": await export.main(
                 user=username,
@@ -163,7 +164,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 password=password,
                 brand=brand,
                 country=country,
-                year=call.data.get("year"),
+                year=int(call.data.get("year", datetime.now().year)),
                 write_results=False,
             )
         }

@@ -3,6 +3,8 @@ from __future__ import annotations
 import copy
 import datetime
 import logging
+import re
+from abc import ABC, abstractmethod
 from typing import Any
 
 from homeassistant.components.calendar import (
@@ -24,8 +26,9 @@ from myPyllant.models import (
     ZoneTimeProgram,
     RoomTimeProgramDay,
     RoomTimeProgram,
+    System,
 )
-from myPyllant.enums import ZoneTimeProgramType
+from myPyllant.enums import ZoneOperatingType
 
 from . import SystemCoordinator
 from .const import DOMAIN, WEEKDAYS_TO_RFC5545, RFC5545_TO_WEEKDAYS
@@ -57,6 +60,10 @@ async def async_setup_entry(
                 sensors.append(
                     lambda: ZoneHeatingCalendar(index, zone_index, coordinator)
                 )
+            if zone.cooling and zone.cooling.time_program_cooling:
+                sensors.append(
+                    lambda: ZoneCoolingCalendar(index, zone_index, coordinator)
+                )
         for dhw_index, dhw in enumerate(system.domestic_hot_water):
             sensors.append(
                 lambda: DomesticHotWaterCalendar(index, dhw_index, coordinator)
@@ -70,10 +77,10 @@ async def async_setup_entry(
             sensors.append(
                 lambda: AmbisenseCalendar(index, room.room_index, coordinator)
             )
-    async_add_entities(sensors)
+    async_add_entities(sensors)  # type: ignore
 
 
-class BaseCalendarEntity(CalendarEntity):
+class BaseCalendarEntity(CalendarEntity, ABC):
     _attr_supported_features = (
         CalendarEntityFeature.CREATE_EVENT
         | CalendarEntityFeature.DELETE_EVENT
@@ -104,18 +111,22 @@ class BaseCalendarEntity(CalendarEntity):
         matching_weekdays = self.time_program.matching_weekdays(time_program_day)
         return f"FREQ=WEEKLY;INTERVAL=1;BYDAY={','.join([WEEKDAYS_TO_RFC5545[d] for d in matching_weekdays])}"
 
-    def _get_weekdays_from_rrule(self, rrule: str) -> list[str]:
+    @staticmethod
+    def _get_weekdays_from_rrule(rrule: str) -> list[str]:
         by_day = [p for p in rrule.split(";") if p.startswith("BYDAY=")][0].replace(
             "BYDAY=", ""
         )
         return [RFC5545_TO_WEEKDAYS[d] for d in by_day.split(",")]
 
-    def get_setpoint_from_summary(self, summary: str):
+    @staticmethod
+    def get_setpoint_from_summary(summary: str) -> float:
+        """
+        Extracts a float temperature value from a string such as "Heating to 21.0°C on Home Zone 1 (Circuit 0)"
+        """
+        match = re.search(r"([0-9.,]+)°?C?", summary)
         try:
-            if " " in summary:
-                summary = summary.split(" ")[0]
-            return float(summary.replace("°C", ""))
-        except ValueError:
+            return float(match.group(1).replace(",", "."))  # type: ignore
+        except (ValueError, AttributeError):
             raise HomeAssistantError("Invalid setpoint, use format '21.5°C' in Summary")
 
     def _check_overlap(self):
@@ -134,6 +145,11 @@ class BaseCalendarEntity(CalendarEntity):
 
     async def update_time_program(self):
         raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def system(self) -> System:
+        pass
 
     @property
     def event(self) -> CalendarEvent | None:
@@ -254,8 +270,8 @@ class BaseCalendarEntity(CalendarEntity):
         await self.update_time_program()
 
 
-class ZoneHeatingCalendar(BaseCalendarEntity, ZoneCoordinatorEntity):
-    _attr_icon = "mdi:thermometer-auto"
+class ZoneHeatingCalendar(ZoneCoordinatorEntity, BaseCalendarEntity):
+    _attr_icon = "mdi:home-thermometer"
     _has_setpoint = True
 
     @property
@@ -264,10 +280,15 @@ class ZoneHeatingCalendar(BaseCalendarEntity, ZoneCoordinatorEntity):
 
     @property
     def name(self) -> str:
-        return f"{self.name_prefix} Heating Schedule"
+        return self.name_prefix
 
     def _get_calendar_id_prefix(self):
         return f"zone_heating_{self.zone.index}"
+
+    def _get_setpoint(self, time_program_day: ZoneTimeProgramDay):
+        if time_program_day.setpoint:
+            return time_program_day.setpoint
+        return self.zone.desired_room_temperature_setpoint_heating
 
     def build_event(
         self,
@@ -275,7 +296,7 @@ class ZoneHeatingCalendar(BaseCalendarEntity, ZoneCoordinatorEntity):
         start: datetime.datetime,
         end: datetime.datetime,
     ):
-        summary = f"{time_program_day.setpoint}°C on {self.name}"
+        summary = f"Heating to {self._get_setpoint(time_program_day)}°C on {self.name}"
         return CalendarEvent(
             summary=summary,
             start=start,
@@ -288,13 +309,52 @@ class ZoneHeatingCalendar(BaseCalendarEntity, ZoneCoordinatorEntity):
 
     async def update_time_program(self):
         await self.coordinator.api.set_zone_time_program(
-            self.zone, str(ZoneTimeProgramType.HEATING), self.time_program
+            self.zone, str(ZoneOperatingType.HEATING), self.time_program
         )
         await self.coordinator.async_request_refresh_delayed()
 
 
-class DomesticHotWaterCalendar(BaseCalendarEntity, DomesticHotWaterCoordinatorEntity):
-    _attr_icon = "mdi:water-boiler-auto"
+class ZoneCoolingCalendar(ZoneCoordinatorEntity, BaseCalendarEntity):
+    _attr_icon = "mdi:snowflake-thermometer"
+    _has_setpoint = True
+
+    @property
+    def time_program(self) -> ZoneTimeProgram:
+        return self.zone.cooling.time_program_cooling  # type: ignore
+
+    @property
+    def name(self) -> str:
+        return self.name_prefix
+
+    def _get_calendar_id_prefix(self):
+        return f"zone_cooling_{self.zone.index}"
+
+    def build_event(
+        self,
+        time_program_day: ZoneTimeProgramDay,
+        start: datetime.datetime,
+        end: datetime.datetime,
+    ):
+        summary = f"Cooling to {self.zone.desired_room_temperature_setpoint_cooling}°C on {self.name}"
+        return CalendarEvent(
+            summary=summary,
+            start=start,
+            end=end,
+            description="You can change the start time, end time, or weekdays. Temperature is the same for all slots.",
+            uid=self._get_uid(time_program_day, start),
+            rrule=self._get_rrule(time_program_day),
+            recurrence_id=self._get_recurrence_id(time_program_day),
+        )
+
+    async def update_time_program(self):
+        await self.coordinator.api.set_zone_time_program(
+            self.zone, str(ZoneOperatingType.COOLING), self.time_program
+        )
+        await self.coordinator.async_request_refresh_delayed()
+
+
+class DomesticHotWaterCalendar(DomesticHotWaterCoordinatorEntity, BaseCalendarEntity):
+    _attr_icon = "mdi:water-thermometer"
 
     @property
     def time_program(self) -> DHWTimeProgram:
@@ -302,7 +362,7 @@ class DomesticHotWaterCalendar(BaseCalendarEntity, DomesticHotWaterCoordinatorEn
 
     @property
     def name(self) -> str:
-        return f"{self.name_prefix} Schedule"
+        return self.name_prefix
 
     def _get_calendar_id_prefix(self):
         return f"dhw_{self.domestic_hot_water.index}"
@@ -313,7 +373,7 @@ class DomesticHotWaterCalendar(BaseCalendarEntity, DomesticHotWaterCoordinatorEn
         start: datetime.datetime,
         end: datetime.datetime,
     ):
-        summary = f"{self.domestic_hot_water.tapping_setpoint}°C on {self.name}"
+        summary = f"Heating Water to {self.domestic_hot_water.tapping_setpoint}°C on {self.name}"
         return CalendarEvent(
             summary=summary,
             start=start,
@@ -332,7 +392,7 @@ class DomesticHotWaterCalendar(BaseCalendarEntity, DomesticHotWaterCoordinatorEn
 
 
 class DomesticHotWaterCirculationCalendar(
-    BaseCalendarEntity, DomesticHotWaterCoordinatorEntity
+    DomesticHotWaterCoordinatorEntity, BaseCalendarEntity
 ):
     _attr_icon = "mdi:pump"
 
@@ -342,7 +402,7 @@ class DomesticHotWaterCirculationCalendar(
 
     @property
     def name(self) -> str:
-        return f"{self.name_prefix} Circulation Schedule"
+        return f"Circulating Water in {self.name_prefix}"
 
     def _get_calendar_id_prefix(self):
         return f"dhw_circulation_{self.domestic_hot_water.index}"
@@ -371,7 +431,7 @@ class DomesticHotWaterCirculationCalendar(
         await self.coordinator.async_request_refresh_delayed()
 
 
-class AmbisenseCalendar(BaseCalendarEntity, AmbisenseCoordinatorEntity):
+class AmbisenseCalendar(AmbisenseCoordinatorEntity, BaseCalendarEntity):
     _attr_icon = "mdi:thermometer-auto"
     _has_setpoint = True
 
