@@ -2,7 +2,6 @@ secrets.yaml
 known_devices.yaml
 home-assistant.log
 home-assistant_v2.db
-.HA_VERSION
 .uuid
 emulated_hue_ids.json
 deconz.conf
