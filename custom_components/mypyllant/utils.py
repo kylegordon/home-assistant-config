@@ -11,7 +11,12 @@ from aiohttp.client_exceptions import ClientResponseError
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from custom_components.mypyllant.const import DOMAIN, OPTION_DEFAULT_HOLIDAY_DURATION
+from custom_components.mypyllant.const import (
+    DOMAIN,
+    OPTION_DEFAULT_HOLIDAY_DURATION,
+    OPTION_DEFAULT_MANUAL_COOLING_DURATION,
+    DEFAULT_MANUAL_COOLING_DURATION,
+)
 from myPyllant.const import DEFAULT_HOLIDAY_DURATION
 
 if typing.TYPE_CHECKING:
@@ -152,6 +157,47 @@ class HolidayEntity(SystemCoordinatorEntity):
         return self.zone.general.holiday_remaining if self.zone else None
 
 
+class ManualCoolingEntity(SystemCoordinatorEntity):
+    def __init__(
+        self,
+        index: int,
+        coordinator: "SystemCoordinator",
+        config: ConfigEntry,
+    ) -> None:
+        super().__init__(index, coordinator)
+        self.config = config
+
+    @property
+    def default_manual_cooling_duration(self):
+        return self.config.options.get(
+            OPTION_DEFAULT_MANUAL_COOLING_DURATION, DEFAULT_MANUAL_COOLING_DURATION
+        )
+
+    @property
+    def extra_state_attributes(self) -> typing.Mapping[str, typing.Any] | None:
+        return {
+            "manual_cooling_ongoing": self.system.manual_cooling_ongoing,
+            "manual_cooling_remaining_seconds": self.system.manual_cooling_remaining.total_seconds()
+            if self.system.manual_cooling_remaining
+            else None,
+            "manual_cooling_start_date_time": self.manual_cooling_start,
+            "manual_cooling_end_date_time": self.manual_cooling_end,
+            "manual_cooling_days_remaining": self.system.manual_cooling_days,
+        }
+
+    @property
+    def manual_cooling_start(self) -> datetime | None:
+        return self.system.manual_cooling_start_date
+
+    @property
+    def manual_cooling_end(self) -> datetime | None:
+        return self.system.manual_cooling_end_date
+
+    @property
+    def manual_cooling_remaining(self) -> timedelta | None:
+        return self.system.manual_cooling_remaining
+
+
 def shorten_zone_name(zone_name: str) -> str:
     if zone_name.startswith("Zone "):
         return zone_name[5:]
@@ -256,8 +302,8 @@ class ZoneCoordinatorEntity(CoordinatorEntity):
         )
 
     @property
-    def available(self) -> bool | None:
-        return self.zone.is_active
+    def available(self) -> bool:
+        return bool(self.zone.is_active)
 
 
 class AmbisenseCoordinatorEntity(CoordinatorEntity):
