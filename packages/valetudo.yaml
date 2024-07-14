@@ -253,7 +253,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_study") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{expand("input_boolean.vacuum_study") | map(attribute="attributes.mode")}}'
+            mode: '{{expand("input_boolean.vacuum_study") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the study carpet!"
