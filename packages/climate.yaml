@@ -54,17 +54,14 @@ input_boolean:
 
 automation:
   - alias: "Call for heat - demand"
-    id: callforheatdemand
+    id: turnonashp
     description: >-
-      Turn on boiler relay if there's a call for heat
+      Turn on ASHP if stove is off
       and all the openings are shut
     trigger:
       platform: time_pattern
       seconds: 30
     condition:
-      - condition: state
-        entity_id: group.call_for_heat
-        state: 'on'
       - condition: state
         entity_id: binary_sensor.climate_openings
         state: 'off'
@@ -78,21 +75,22 @@ automation:
         - condition: template
           value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
     action:
-      - service: homeassistant.turn_on
-        entity_id: switch.boiler_valve_controls_relay_2
+      - service: climate.set_preset_mode
+        entity_id: climate.viewpoint_zone_1_circuit_0_climate
+        date:
+          hvac_mode: auto
 
-  - alias: "Call for heat - no demand"
-    id: callforheatnodemand
-    description: Turn off boiler relay if demand for heat ceases
+  - alias: "Turn off ASHP"
+    id: turnoffashp
+    description: >-
+      Turn off ASHP if stove is on
+      or any of the openings are open
     trigger:
       platform: time_pattern
       seconds: 30
     condition:
       condition: or
       conditions:
-        - condition: state
-          entity_id: group.call_for_heat
-          state: 'off'
         - condition: state
           entity_id: binary_sensor.climate_openings
           state: 'on'
@@ -102,8 +100,10 @@ automation:
           entity_id: sensor.stove_temperature_living_room
           above: 100
     action:
-      - service: homeassistant.turn_off
-        entity_id: switch.boiler_valve_controls_relay_2
+      - service: climate.set_preset_mode
+        entity_id: climate.viewpoint_zone_1_circuit_0_climate
+        date:
+          hvac_mode: off
 
   # - alias: "Climate - Night Schedule"
   #   trigger:
