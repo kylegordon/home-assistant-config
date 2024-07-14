@@ -126,7 +126,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_fronthall") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{expand("input_boolean.vacuum_fronthall") | map(attribute="attributes.mode")}}'
+            mode: '{{expand("input_boolean.vacuum_fronthall") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the floor of the front hall!"
@@ -148,6 +148,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_livingroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_livingroom") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the living room!"
@@ -169,6 +170,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_bootroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_bootroom") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the boot room floor!"
@@ -190,6 +192,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_kitchen") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_kitchen") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the kitchen floor!"
@@ -211,6 +214,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_hallway") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_hallway") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the hallway!"
@@ -232,6 +236,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_bathroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_bathroom") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the bathroom!"
@@ -275,6 +280,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_craftroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_craftroom") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the craft room carpet!"
@@ -296,6 +302,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_guestroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_guestroom") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the guest room!"
@@ -317,6 +324,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_bedroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_bedroom") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to clean the bedroom!"
@@ -338,6 +346,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_ensuite") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{expand("input_boolean.vacuum_ensuite") | map(attribute="attributes.mode") | list | to_json }}'
       - service: script.tweet_engine
         data_template:
           tweet: "Dispatching my minion, Snowwhite the vacuum, to mop and clean the ensuite!"
