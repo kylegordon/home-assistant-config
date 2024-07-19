@@ -13,7 +13,11 @@ from custom_components.mypyllant.utils import (
     HolidayEntity,
     DomesticHotWaterCoordinatorEntity,
     EntityList,
+    ManualCoolingEntity,
+    ZoneCoordinatorEntity,
+    SystemCoordinatorEntity,
 )
+from myPyllant.enums import ZoneCurrentSpecialFunction
 from myPyllant.utils import get_default_holiday_dates
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,12 +37,22 @@ async def async_setup_entry(
     sensors: EntityList[SwitchEntity] = EntityList()
     for index, system in enumerate(coordinator.data):
         sensors.append(lambda: SystemHolidaySwitch(index, coordinator, config))
+        if system.eebus:
+            sensors.append(lambda: SystemEebusSwitch(index, coordinator))
 
+        if system.is_cooling_allowed:
+            sensors.append(
+                lambda: SystemManualCoolingSwitch(index, coordinator, config)
+            )
         for dhw_index, dhw in enumerate(system.domestic_hot_water):
             sensors.append(
                 lambda: DomesticHotWaterBoostSwitch(index, dhw_index, coordinator)
             )
-    async_add_entities(sensors)
+        for zone_index, zone in enumerate(system.zones):
+            sensors.append(
+                lambda: ZoneVentilationBoostSwitch(index, zone_index, coordinator)
+            )
+    async_add_entities(sensors)  # type: ignore
 
 
 class SystemHolidaySwitch(HolidayEntity, SwitchEntity):
@@ -74,6 +88,95 @@ class SystemHolidaySwitch(HolidayEntity, SwitchEntity):
     @property
     def unique_id(self) -> str:
         return f"{DOMAIN}_{self.id_infix}_holiday_switch"
+
+
+class SystemManualCoolingSwitch(ManualCoolingEntity, SwitchEntity):
+    _attr_icon = "mdi:snowflake-check"
+
+    @property
+    def name(self):
+        return f"{self.name_prefix} Manual Cooling"
+
+    @property
+    def is_on(self):
+        return self.system.manual_cooling_planned
+
+    async def async_turn_on(self, **kwargs):
+        await self.coordinator.api.set_cooling_for_days(
+            self.system, duration_days=self.default_manual_cooling_duration
+        )
+        await self.coordinator.async_request_refresh_delayed(20)
+
+    async def async_turn_off(self, **kwargs):
+        await self.coordinator.api.cancel_cooling_for_days(self.system)
+        await self.coordinator.async_request_refresh_delayed(20)
+
+    @property
+    def unique_id(self) -> str:
+        return f"{DOMAIN}_{self.id_infix}_manual_cooling_switch"
+
+
+class SystemEebusSwitch(SystemCoordinatorEntity, SwitchEntity):
+    _attr_icon = "mdi:check-network"
+
+    @property
+    def name(self):
+        return f"{self.name_prefix} EEBUS"
+
+    @property
+    def available(self) -> bool:
+        return (
+            self.system.eebus.get("spine_capable", False)
+            if self.system.eebus
+            else False
+        )
+
+    @property
+    def is_on(self):
+        return (
+            self.system.eebus.get("spine_enabled", False)
+            if self.system.eebus
+            else False
+        )
+
+    async def async_turn_on(self, **kwargs):
+        await self.coordinator.api.toggle_eebus(self.system, enabled=True)
+        await self.coordinator.async_request_refresh_delayed()
+
+    async def async_turn_off(self, **kwargs):
+        await self.coordinator.api.toggle_eebus(self.system, enabled=False)
+        await self.coordinator.async_request_refresh_delayed()
+
+    @property
+    def unique_id(self) -> str:
+        return f"{DOMAIN}_{self.id_infix}_eebus_switch"
+
+
+class ZoneVentilationBoostSwitch(ZoneCoordinatorEntity, SwitchEntity):
+    _attr_icon = "mdi:window-open-variant"
+
+    @property
+    def name(self):
+        return f"{self.name_prefix} Ventilation Boost"
+
+    @property
+    def is_on(self):
+        return (
+            self.zone.current_special_function
+            == ZoneCurrentSpecialFunction.VENTILATION_BOOST
+        )
+
+    async def async_turn_on(self, **kwargs):
+        await self.coordinator.api.set_ventilation_boost(self.system)
+        await self.coordinator.async_request_refresh_delayed(20)
+
+    async def async_turn_off(self, **kwargs):
+        await self.coordinator.api.cancel_ventilation_boost(self.system)
+        await self.coordinator.async_request_refresh_delayed(20)
+
+    @property
+    def unique_id(self) -> str:
+        return f"{DOMAIN}_{self.id_infix}_ventilation_boost_switch"
 
 
 class DomesticHotWaterBoostSwitch(DomesticHotWaterCoordinatorEntity, SwitchEntity):
