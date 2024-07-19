@@ -17,7 +17,7 @@ from myPyllant.models import Circuit, System
 
 from . import SystemCoordinator
 from .const import DOMAIN
-from .utils import EntityList
+from .utils import EntityList, ZoneCoordinatorEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,12 +39,20 @@ async def async_setup_entry(
         sensors.append(lambda: ControlOnline(index, coordinator))
         sensors.append(lambda: FirmwareUpdateRequired(index, coordinator))
         sensors.append(lambda: FirmwareUpdateEnabled(index, coordinator))
-        for circuit_index, circuit in enumerate(system.circuits):
+        if system.eebus:
+            sensors.append(lambda: EebusEnabled(index, coordinator))
+            sensors.append(lambda: EebusCapable(index, coordinator))
+        for circuit_index, _ in enumerate(system.circuits):
             sensors.append(
                 lambda: CircuitIsCoolingAllowed(index, circuit_index, coordinator)
             )
+        for zone_index, zone in enumerate(system.zones):
+            if zone.is_manual_cooling_active is not None:
+                sensors.append(
+                    lambda: ZoneIsManualCoolingActive(index, zone_index, coordinator)
+                )
 
-    async_add_entities(sensors)
+    async_add_entities(sensors)  # type: ignore
 
 
 class SystemControlEntity(CoordinatorEntity, BinarySensorEntity):
@@ -180,6 +188,60 @@ class FirmwareUpdateEnabled(SystemControlEntity):
         return f"{DOMAIN}_{self.id_infix}_firmware_update_enabled"
 
 
+class EebusCapable(SystemControlEntity):
+    _attr_icon = "mdi:check-network"
+
+    def __init__(
+        self,
+        system_index: int,
+        coordinator: SystemCoordinator,
+    ):
+        super().__init__(system_index, coordinator)
+
+    @property
+    def is_on(self) -> bool | None:
+        return (
+            self.system.eebus.get("spine_capable", False)
+            if self.system.eebus
+            else False
+        )
+
+    @property
+    def name(self) -> str:
+        return f"{self.name_prefix} EEBUS Capable"
+
+    @property
+    def unique_id(self) -> str:
+        return f"{DOMAIN}_{self.id_infix}_eebus_capable"
+
+
+class EebusEnabled(SystemControlEntity):
+    _attr_icon = "mdi:check-network"
+
+    def __init__(
+        self,
+        system_index: int,
+        coordinator: SystemCoordinator,
+    ):
+        super().__init__(system_index, coordinator)
+
+    @property
+    def is_on(self) -> bool | None:
+        return (
+            self.system.eebus.get("spine_enabled", False)
+            if self.system.eebus
+            else False
+        )
+
+    @property
+    def name(self) -> str:
+        return f"{self.name_prefix} EEBUS Enabled"
+
+    @property
+    def unique_id(self) -> str:
+        return f"{DOMAIN}_{self.id_infix}_eebus_enabled"
+
+
 class CircuitEntity(CoordinatorEntity, BinarySensorEntity):
     def __init__(
         self,
@@ -236,3 +298,17 @@ class CircuitIsCoolingAllowed(CircuitEntity):
     @property
     def unique_id(self) -> str:
         return f"{DOMAIN} {self.id_infix}_cooling_allowed"
+
+
+class ZoneIsManualCoolingActive(ZoneCoordinatorEntity, BinarySensorEntity):
+    @property
+    def is_on(self) -> bool | None:
+        return self.zone.is_manual_cooling_active
+
+    @property
+    def name(self) -> str:
+        return f"{self.name_prefix} Manual Cooling Active"
+
+    @property
+    def unique_id(self) -> str:
+        return f"{DOMAIN} {self.id_infix}_manual_cooling_active"
