@@ -46,6 +46,9 @@ automation:
       - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
         to: 'open'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
+        to: 'open'
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.tin_hut_occupied
@@ -77,6 +80,9 @@ automation:
         to: 'off'
       - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'closed'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'closed'
     action:
       - service: homeassistant.turn_off
@@ -111,7 +117,6 @@ automation:
       - service: input_boolean.turn_off
         entity_id: input_boolean.open_tin_hut_process
 
-
   - alias: Close tin hut process
     # This is used by Alexa
     id: close_tin_hut_process
@@ -128,6 +133,8 @@ automation:
           domain: input_boolean
       - service: input_boolean.turn_off
         entity_id: input_boolean.tin_hut_occupied
+      - service: cover.close_cover
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
       - service: input_boolean.turn_off
         entity_id: input_boolean.lockup_process
 
