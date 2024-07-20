@@ -35,6 +35,7 @@ input_boolean:
 
 automation:
   - alias: Tin Hut Occupied
+    id: tin_hut_occupied
     trigger:
       # - platform: state
       #   entity_id: binary_sensor.tin_hut_occupied
@@ -66,6 +67,7 @@ automation:
           entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
 
   - alias: Tin Hut Not Occupied
+    id: tin_hut_not_occupied
     trigger:
       # - platform: state
       #   entity_id: binary_sensor.tin_hut_occupied
@@ -92,7 +94,7 @@ automation:
 
   - alias: Open tin hut process
     # This is used by Alexa
-    unique_id: open_tin_hut_process
+    id: open_tin_hut_process
     trigger:
       - platform: state
         entity_id: input_boolean.open_tin_hut_process
@@ -112,7 +114,7 @@ automation:
 
   - alias: Close tin hut process
     # This is used by Alexa
-    unique_id: close_tin_hut_process
+    id: close_tin_hut_process
     trigger:
       - platform: state
         entity_id: input_boolean.lockup_process
@@ -130,6 +132,7 @@ automation:
         entity_id: input_boolean.lockup_process
 
   - alias: Tin Hut Doors Announce
+    id: tin_hut_doors_announce
     trigger:
       - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
