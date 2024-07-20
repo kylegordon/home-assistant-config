@@ -119,3 +119,24 @@ automation:
         entity_id: input_boolean.tin_hut_occupied
       - service: input_boolean.turn_off
         entity_id: input_boolean.lockup_process
+
+  - alias: Tin Hut Doors Announce
+    trigger:
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'on'
+    action:
+      - service: notify.alexa_media_everywhere
+        data:
+          message: "The tin hut doors have been opened!"
+          data:
+            type: announce
+            # method: all
+      - service: notify.email_kyle
+        data:
+          title: "Tin Hut Doors Open"
+          message: "The tin hut doors have been opened!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Tin Hut Doors Open"
+          message: "The tin hut doors have been opened!"
