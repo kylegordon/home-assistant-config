@@ -44,7 +44,7 @@ automation:
         to: 'on'
       - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
-        to: 'on'
+        to: 'open'
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.tin_hut_occupied
@@ -70,6 +70,9 @@ automation:
       - platform: state
         entity_id: input_boolean.tin_hut_occupied
         to: 'off'
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'closed'
     action:
       - service: homeassistant.turn_off
         entity_id: input_boolean.tin_hut_occupied
