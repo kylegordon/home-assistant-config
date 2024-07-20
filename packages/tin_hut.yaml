@@ -124,7 +124,7 @@ automation:
     trigger:
       - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
-        to: 'on'
+        to: 'open'
     action:
       - service: notify.alexa_media_everywhere
         data:
