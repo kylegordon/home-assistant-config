@@ -21,36 +21,69 @@ input_boolean:
     icon: mdi:account-alert
     initial: false
 
-binary_sensor:
-  - platform: template
-    sensors:
-      # This will eventually be replaced a sensor that collates multiple sensors
-      tin_hut_occupied:
-        friendly_name: Tin Hut Occupied
-        value_template: "{{
-          is_state('input_boolean.tin_hut_occupied', 'on')
-          }}"
+# binary_sensor:
+#   - platform: template
+#     sensors:
+#       # This will eventually be replaced a sensor that collates multiple sensors
+#       tin_hut_occupied:
+#         friendly_name: Tin Hut Occupied
+#         value_template: "{{
+#           is_state('input_boolean.tin_hut_occupied', 'on')
+#           or
+#           is_state('cover.tin_hut_door_left_tin_hut_door_left', 'on')
+#           }}"
 
 automation:
   - alias: Tin Hut Occupied
     trigger:
+      # - platform: state
+      #   entity_id: binary_sensor.tin_hut_occupied
+      #   to: 'on'
       - platform: state
-        entity_id: binary_sensor.tin_hut_occupied
+        entity_id: input_boolean.tin_hut_occupied
+        to: 'on'
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
         to: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.tin_hut_occupied
+      - service: homeassistant.turn_on
+        entity_id:
+          - switch.tin_hut_lights_relay
+      - service: openhome.invoke_pin
+        data:
+          pin: 1
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: media_player.volume_set
+        data:
+          volume_level: 0.4
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
 
   - alias: Tin Hut Not Occupied
     trigger:
+      # - platform: state
+      #   entity_id: binary_sensor.tin_hut_occupied
+      #   to: 'off'
       - platform: state
-        entity_id: binary_sensor.tin_hut_occupied
+        entity_id: input_boolean.tin_hut_occupied
         to: 'off'
     action:
       - service: homeassistant.turn_off
         entity_id: input_boolean.tin_hut_occupied
+      - service: homeassistant.turn_off
+        entity_id:
+          - switch.tin_hut_lights_relay
+      - service: media_player.turn_off
+        data: {}
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
 
   - alias: Open tin hut process
+    # This is used by Alexa
+    unique_id: open_tin_hut_process
     trigger:
       - platform: state
         entity_id: input_boolean.open_tin_hut_process
@@ -62,24 +95,15 @@ automation:
           message: "Triggering openup process"
           entity_id: input_boolean.open_tin_hut_process
           domain: input_boolean
-      - service: homeassistant.turn_on
-        entity_id:
-          - switch.tin_hut_lights_relay
-          - input_boolean.tin_hut_occupied
-      - service: openhome.invoke_pin
-        data:
-          pin: 1
-        target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
-      - service: media_player.volume_set
-        data:
-          volume_level: 0.4
-        target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.tin_hut_occupied
       - service: input_boolean.turn_off
         entity_id: input_boolean.open_tin_hut_process
 
+
   - alias: Close tin hut process
+    # This is used by Alexa
+    unique_id: close_tin_hut_process
     trigger:
       - platform: state
         entity_id: input_boolean.lockup_process
@@ -91,13 +115,7 @@ automation:
           message: "Triggering lockup process"
           entity_id: input_boolean.lockup_process
           domain: input_boolean
-      - service: homeassistant.turn_off
-        entity_id:
-          - switch.tin_hut_lights_relay
-          - input_boolean.tin_hut_occupied
-      - service: media_player.turn_off
-        data: {}
-        target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.tin_hut_occupied
       - service: input_boolean.turn_off
         entity_id: input_boolean.lockup_process
