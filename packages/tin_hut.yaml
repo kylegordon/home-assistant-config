@@ -21,36 +21,86 @@ input_boolean:
     icon: mdi:account-alert
     initial: false
 
-binary_sensor:
-  - platform: template
-    sensors:
-      # This will eventually be replaced a sensor that collates multiple sensors
-      tin_hut_occupied:
-        friendly_name: Tin Hut Occupied
-        value_template: "{{
-          is_state('input_boolean.tin_hut_occupied', 'on')
-          }}"
+# binary_sensor:
+#   - platform: template
+#     sensors:
+#       # This will eventually be replaced a sensor that collates multiple sensors
+#       tin_hut_occupied:
+#         friendly_name: Tin Hut Occupied
+#         value_template: "{{
+#           is_state('input_boolean.tin_hut_occupied', 'on')
+#           or
+#           is_state('cover.tin_hut_door_left_tin_hut_door_left', 'on')
+#           }}"
 
 automation:
   - alias: Tin Hut Occupied
+    id: tin_hut_occupied
     trigger:
+      # - platform: state
+      #   entity_id: binary_sensor.tin_hut_occupied
+      #   to: 'on'
       - platform: state
-        entity_id: binary_sensor.tin_hut_occupied
+        entity_id: input_boolean.tin_hut_occupied
         to: 'on'
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'open'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
+        to: 'open'
     action:
       - service: homeassistant.turn_on
         entity_id: input_boolean.tin_hut_occupied
+      - service: homeassistant.turn_on
+        entity_id:
+          - switch.tin_hut_lights_relay
+          - light.tin_hut_shelf_lights_bench
+          - light.tin_hut_shelf_lights_left
+          - light.tin_hut_shelf_lights_right
+      - service: openhome.invoke_pin
+        data:
+          pin: 1
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: media_player.volume_set
+        data:
+          volume_level: 0.4
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
 
   - alias: Tin Hut Not Occupied
+    id: tin_hut_not_occupied
     trigger:
+      # - platform: state
+      #   entity_id: binary_sensor.tin_hut_occupied
+      #   to: 'off'
       - platform: state
-        entity_id: binary_sensor.tin_hut_occupied
+        entity_id: input_boolean.tin_hut_occupied
         to: 'off'
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'closed'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
+        to: 'closed'
     action:
       - service: homeassistant.turn_off
         entity_id: input_boolean.tin_hut_occupied
+      - service: homeassistant.turn_off
+        entity_id:
+          - switch.tin_hut_lights_relay
+          - light.tin_hut_shelf_lights_bench
+          - light.tin_hut_shelf_lights_left
+          - light.tin_hut_shelf_lights_right
+      - service: media_player.turn_off
+        data: {}
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
 
   - alias: Open tin hut process
+    # This is used by Alexa
+    id: open_tin_hut_process
     trigger:
       - platform: state
         entity_id: input_boolean.open_tin_hut_process
@@ -62,24 +112,14 @@ automation:
           message: "Triggering openup process"
           entity_id: input_boolean.open_tin_hut_process
           domain: input_boolean
-      - service: homeassistant.turn_on
-        entity_id:
-          - switch.tin_hut_lights_relay
-          - input_boolean.tin_hut_occupied
-      - service: openhome.invoke_pin
-        data:
-          pin: 1
-        target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
-      - service: media_player.volume_set
-        data:
-          volume_level: 0.4
-        target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.tin_hut_occupied
       - service: input_boolean.turn_off
         entity_id: input_boolean.open_tin_hut_process
 
   - alias: Close tin hut process
+    # This is used by Alexa
+    id: close_tin_hut_process
     trigger:
       - platform: state
         entity_id: input_boolean.lockup_process
@@ -91,13 +131,31 @@ automation:
           message: "Triggering lockup process"
           entity_id: input_boolean.lockup_process
           domain: input_boolean
-      - service: homeassistant.turn_off
-        entity_id:
-          - switch.tin_hut_lights_relay
-          - input_boolean.tin_hut_occupied
-      - service: media_player.turn_off
-        data: {}
-        target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.tin_hut_occupied
+      - service: cover.close_cover
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
       - service: input_boolean.turn_off
         entity_id: input_boolean.lockup_process
+
+  - alias: Tin Hut Doors Announce
+    id: tin_hut_doors_announce
+    trigger:
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'open'
+    action:
+      - service: notify.alexa_media_everywhere
+        data:
+          message: "The tin hut doors have been opened!"
+          data:
+            type: announce
+            # method: all
+      - service: notify.email_kyle
+        data:
+          title: "Tin Hut Doors Open"
+          message: "The tin hut doors have been opened!"
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Tin Hut Doors Open"
+          message: "The tin hut doors have been opened!"
