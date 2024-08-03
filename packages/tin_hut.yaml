@@ -78,12 +78,6 @@ automation:
       - platform: state
         entity_id: input_boolean.tin_hut_occupied
         to: 'off'
-      - platform: state
-        entity_id: cover.tin_hut_door_left_tin_hut_door_left
-        to: 'closed'
-      - platform: state
-        entity_id: cover.tin_hut_door_right_tin_hut_door_right
-        to: 'closed'
     action:
       - service: homeassistant.turn_off
         entity_id: input_boolean.tin_hut_occupied
@@ -164,3 +158,63 @@ automation:
         data:
           title: "Tin Hut Doors Open"
           message: "The tin hut doors have been opened!"
+
+  - alias: Tin Hut Doors Closing
+    id: tin_hut_doors_closing
+    trigger:
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'closing'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
+        to: 'closing'
+    action:
+      - alias: "Flash red UNTIL either door is closed"
+        repeat:
+          sequence:
+            - service: light.turn_on
+              entity_id: light.traffic_light_red
+            - delay: 2s
+            - service: light.turn_off
+              entity_id: light.traffic_light_red
+            # Give it time to complete
+            - delay: 2s
+          until:
+            - condition: state
+              entity_id: cover.tin_hut_door_left_tin_hut_door_left
+              state: "closed"
+            - condition: state
+              entity_id: cover.tin_hut_door_right_tin_hut_door_right
+              state: "closed"
+
+  - alias: Tin Hut Doors Opening
+    id: tin_hut_doors_opening
+    trigger:
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'opening'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
+        to: 'opening'
+    action:
+      - alias: "Flash amber UNTIL either door is open"
+        repeat:
+          sequence:
+            - service: light.turn_on
+              entity_id: light.traffic_light_red
+            - delay: 2s
+            - service: light.turn_off
+              entity_id: light.traffic_light_red
+            - delay: 2s
+          until:
+            - condition: state
+              entity_id: cover.tin_hut_door_left_tin_hut_door_left
+              state: "open"
+            - condition: state
+              entity_id: cover.tin_hut_door_right_tin_hut_door_right
+              state: "open"
+      - service: light.turn_on
+        entity_id: light.traffic_light_green
+      - delay: 30s
+      - service: light.turn_off
+        entity_id: light.traffic_light_green
