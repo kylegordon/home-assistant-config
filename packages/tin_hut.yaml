@@ -135,6 +135,8 @@ automation:
         entity_id: input_boolean.tin_hut_occupied
       - service: cover.close_cover
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
+      - service: cover.close_cover
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
       - service: input_boolean.turn_off
         entity_id: input_boolean.lockup_process
 
@@ -143,6 +145,9 @@ automation:
     trigger:
       - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'open'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
     action:
       - service: notify.alexa_media_everywhere
