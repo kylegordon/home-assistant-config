@@ -174,11 +174,10 @@ automation:
           sequence:
             - service: light.turn_on
               entity_id: light.traffic_light_red
-            - delay: 00:00:02
+            - delay: 00:00:01
             - service: light.turn_off
               entity_id: light.traffic_light_red
-            # Give it time to complete
-            - delay: 00:00:02
+            - delay: 00:00:01
           until:
             - condition: state
               entity_id: cover.tin_hut_door_left_tin_hut_door_left
@@ -201,11 +200,11 @@ automation:
         repeat:
           sequence:
             - service: light.turn_on
-              entity_id: light.traffic_light_red
-            - delay: 00:00:02
+              entity_id: light.traffic_light_amber
+            - delay: 00:00:01
             - service: light.turn_off
-              entity_id: light.traffic_light_red
-            - delay: 00:00:02
+              entity_id: light.traffic_light_amber
+            - delay: 00:00:01
           until:
             - condition: state
               entity_id: cover.tin_hut_door_left_tin_hut_door_left
