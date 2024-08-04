@@ -217,7 +217,9 @@ automation:
                 entity_id: cover.tin_hut_door_right_tin_hut_door_right
                 state: "open"
       - service: light.turn_on
+        alias: "Turn on green light"
         entity_id: light.traffic_light_green
       - delay: 00:00:30
       - service: light.turn_off
+        alias: "Turn off green light"
         entity_id: light.traffic_light_green
