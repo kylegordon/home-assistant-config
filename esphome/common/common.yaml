@@ -5,10 +5,10 @@ ota:
 
 wifi:
   ssid: !secret wifi_ssid
-  password: !secret wifi_pass
+  password: !secret wifi_password
   ap:  # since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
     ssid: ${friendly_name}_AP
-    password: !secret wifi_pass
+    password: !secret wifi_password
     ap_timeout: 3min
 
 sensor:
