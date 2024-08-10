@@ -52,7 +52,7 @@ jobs:
         uses: esphome/build-action@v4
         with:
           version: stable
-          yaml_file: ${{matrix.file}}
+          yaml-file: ${{matrix.file}}
 
   loop-beta:
     name: Test ESPHome Beta firmware
@@ -77,7 +77,7 @@ jobs:
         uses: esphome/build-action@v4
         with:
           version: beta
-          yaml_file: ${{matrix.file}}
+          yaml-file: ${{matrix.file}}
 
   # This is used by branch protections
   final:
