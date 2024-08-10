@@ -2,37 +2,37 @@
 homeassistant:
   customize:
     input_boolean.vacuum_fronthall:
-      room_id: "8"
-      mode: "vacuum_and_mop"
-    input_boolean.vacuum_livingroom:
-      room_id: "6"
-      mode: "vacuum_and_mop"
-    input_boolean.vacuum_bootroom:
       room_id: "1"
       mode: "vacuum_and_mop"
+    input_boolean.vacuum_livingroom:
+      room_id: "11"
+      mode: "vacuum_and_mop"
+    input_boolean.vacuum_bootroom:
+      room_id: "4"
+      mode: "vacuum_and_mop"
     input_boolean.vacuum_kitchen:
-      room_id: "10"
+      room_id: "2"
       mode: "vacuum_and_mop"
     input_boolean.vacuum_hallway:
-      room_id: "5"
+      room_id: "10"
       mode: "vacuum_and_mop"
     input_boolean.vacuum_bathroom:
-      room_id: "12"
+      room_id: "3"
       mode: "vacuum_and_mop"
     input_boolean.vacuum_study:
-      room_id: "7"
+      room_id: "8"
       mode: "vacuum"
     input_boolean.vacuum_craftroom:
-      room_id: "4"
+      room_id: "6"
       mode: "vacuum"
     input_boolean.vacuum_guestroom:
-      room_id: "9"
+      room_id: "12"
       mode: "vacuum"
     input_boolean.vacuum_bedroom:
-      room_id: "2"
+      room_id: "9"
       mode: "vacuum"
     input_boolean.vacuum_ensuite:
-      room_id: "3"
+      room_id: "7"
       mode: "vacuum_and_mop"
 
 # Error handling
