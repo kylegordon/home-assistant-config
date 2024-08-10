@@ -72,18 +72,6 @@ automation:
           name: EVENT
           message: "Toggling dining nook lights"
 
-  - alias: Living Room motion - motion timeout
-    id: living_room_motion_timeout
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.living_room_motion_occupancy
-        to: 'off'
-        for:
-          minutes: 60
-    action:
-      service: homeassistant.turn_off
-      entity_id: light.living_room, light.dining_nook
-
   - alias: Living Room - sunlight timeout
     trigger:
       - platform: numeric_state
@@ -143,6 +131,20 @@ automation:
             - light.living_room
             - light.george_usb_switch_relay_1
 
+  - alias: Living Room Sofa - presence timeout
+    id: living_room_presence_timeout
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.everything_presence_lite_2fbc58_zone_1_occupancy
+        to: 'off'
+        for:
+          minutes: 15
+    action:
+      service: homeassistant.turn_off
+      entity_id:
+        - light.living_room
+        - light.george_usb_switch_relay_1
+
   - alias: Dining Nook Presence
     id: dining_nook_presence
     trigger:
@@ -170,54 +172,72 @@ automation:
           entity_id:
             - light.dining_nook
             - light.sideboard
+            - light.art
+            - light.train_cabinets
 
-  - alias: Living Room motion
-    id: living_room_motion
+  - alias: Dining Nook - presence timeout
+    id: dining_nook_presence_timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.living_room_motion_occupancy
-        to: 'on'
-        from: 'off'
-    condition:
-      condition: and
-      conditions:
-      - condition: state
-        entity_id: input_boolean.night_view
-        state: "off"
-      - condition: state
-        entity_id: light.living_room
-        state: "off"
-      - condition: state
-        entity_id: light.dining_nook
-        state: "off"
-      - condition: numeric_state
-        entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level_trigger
-        # for:
-        #   minutes: 10
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
-      - condition: or
-        conditions:
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "idle"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "stopped"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "paused"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "off"
+        entity_id: binary_sensor.everything_presence_lite_2fbc58_zone_2_occupancy
+        to: 'off'
+        for:
+          minutes: 15
     action:
-      - service: light.turn_on
-        data_template:
-          entity_id: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-            light.living_room, light.dining_nook
-            {% else %}
-            light.living_room, light.dining_nook
-            {% endif %}
+      service: homeassistant.turn_off
+      entity_id:
+        - light.dining_nook
+        - light.sideboard
+        - light.art
+        - light.train_cabinets
+
+  # - alias: Living Room motion
+  #   id: living_room_motion
+  #   trigger:
+  #     - platform: state
+  #       entity_id: binary_sensor.living_room_motion_occupancy
+  #       to: 'on'
+  #       from: 'off'
+  #   condition:
+  #     condition: and
+  #     conditions:
+  #     - condition: state
+  #       entity_id: input_boolean.night_view
+  #       state: "off"
+  #     - condition: state
+  #       entity_id: light.living_room
+  #       state: "off"
+  #     - condition: state
+  #       entity_id: light.dining_nook
+  #       state: "off"
+  #     - condition: numeric_state
+  #       entity_id: sensor.average_external_light_level
+  #       below: input_number.living_room_light_level_trigger
+  #       # for:
+  #       #   minutes: 10
+  #     - condition: state
+  #       entity_id: binary_sensor.home_occupied
+  #       state: "on"
+  #     - condition: or
+  #       conditions:
+  #         - condition: state
+  #           entity_id: media_player.living_room_kodi
+  #           state: "idle"
+  #         - condition: state
+  #           entity_id: media_player.living_room_kodi
+  #           state: "stopped"
+  #         - condition: state
+  #           entity_id: media_player.living_room_kodi
+  #           state: "paused"
+  #         - condition: state
+  #           entity_id: media_player.living_room_kodi
+  #           state: "off"
+  #   action:
+  #     - service: light.turn_on
+  #       data_template:
+  #         entity_id: >
+  #           {% if states('sensor.time_of_day') == "Morning" %}
+  #           light.living_room, light.dining_nook
+  #           {% else %}
+  #           light.living_room, light.dining_nook
+  #           {% endif %}
