@@ -84,7 +84,7 @@ automation:
       service: homeassistant.turn_off
       entity_id: light.living_room, light.dining_nook
 
-  - alias: Living Room motion - sunlight timeout
+  - alias: Living Room - sunlight timeout
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
@@ -93,7 +93,13 @@ automation:
           minutes: 10
     action:
       service: homeassistant.turn_off
-      entity_id: light.living_room, light.dining_nook
+      entity_id:
+        - light.living_room
+        - light.dining_nook
+        - light.sideboard
+        - light.art
+        - light.train_cabinets
+        - light.george_usb_switch_relay_1
 
   - alias: Living Room Sofa Presence
     id: living_room_sofa_presence
