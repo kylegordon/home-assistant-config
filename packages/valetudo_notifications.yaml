@@ -1,5 +1,6 @@
 automation:
   - alias: Valetudo Notifications
+    id: valetudo_notifications
     description: Sends notifications for Snowwhite vacuum.
     mode: queued
     trigger:
