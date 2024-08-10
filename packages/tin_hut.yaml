@@ -78,12 +78,6 @@ automation:
       - platform: state
         entity_id: input_boolean.tin_hut_occupied
         to: 'off'
-      - platform: state
-        entity_id: cover.tin_hut_door_left_tin_hut_door_left
-        to: 'closed'
-      - platform: state
-        entity_id: cover.tin_hut_door_right_tin_hut_door_right
-        to: 'closed'
     action:
       - service: homeassistant.turn_off
         entity_id: input_boolean.tin_hut_occupied
@@ -135,6 +129,8 @@ automation:
         entity_id: input_boolean.tin_hut_occupied
       - service: cover.close_cover
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
+      - service: cover.close_cover
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
       - service: input_boolean.turn_off
         entity_id: input_boolean.lockup_process
 
@@ -143,6 +139,9 @@ automation:
     trigger:
       - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'open'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
     action:
       - service: notify.alexa_media_everywhere
@@ -159,3 +158,68 @@ automation:
         data:
           title: "Tin Hut Doors Open"
           message: "The tin hut doors have been opened!"
+
+  - alias: Tin Hut Doors Closing
+    id: tin_hut_doors_closing
+    trigger:
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'closing'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
+        to: 'closing'
+    action:
+      - alias: "Flash red UNTIL either door is closed"
+        repeat:
+          sequence:
+            - service: light.turn_on
+              entity_id: light.traffic_light_red
+            - delay: 00:00:01
+            - service: light.turn_off
+              entity_id: light.traffic_light_red
+            - delay: 00:00:01
+          until:
+            condition: or
+            conditions:
+              - condition: state
+                entity_id: cover.tin_hut_door_left_tin_hut_door_left
+                state: "closed"
+              - condition: state
+                entity_id: cover.tin_hut_door_right_tin_hut_door_right
+                state: "closed"
+
+  - alias: Tin Hut Doors Opening
+    id: tin_hut_doors_opening
+    trigger:
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'opening'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
+        to: 'opening'
+    action:
+      - alias: "Flash amber UNTIL either door is open"
+        repeat:
+          sequence:
+            - service: light.turn_on
+              entity_id: light.traffic_light_amber
+            - delay: 00:00:01
+            - service: light.turn_off
+              entity_id: light.traffic_light_amber
+            - delay: 00:00:01
+          until:
+            condition: or
+            conditions:
+              - condition: state
+                entity_id: cover.tin_hut_door_left_tin_hut_door_left
+                state: "open"
+              - condition: state
+                entity_id: cover.tin_hut_door_right_tin_hut_door_right
+                state: "open"
+      - service: light.turn_on
+        alias: "Turn on green light"
+        entity_id: light.traffic_light_green
+      - delay: 00:00:30
+      - service: light.turn_off
+        alias: "Turn off green light"
+        entity_id: light.traffic_light_green
