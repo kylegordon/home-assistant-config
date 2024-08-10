@@ -20,17 +20,17 @@ automation:
           - condition: state
             entity_id: light.living_room_2
             state: 'on'
-          - condition: state
-            entity_id: light.dining_nook
-            state: 'on'
     action:
       - service: light.turn_off
         entity_id:
           - light.living_room
       - condition: state
         entity_id:
-          - input_boolean.tv_lights_lockout
+          - binary_sensor.everything_presence_lite_2fbc58_zone_2_occupancy
         state: 'off'
       - service: light.turn_off
         entity_id:
           - light.dining_nook
+          - light.sideboard
+          - light.art
+          - light.train_cabinets
