@@ -9,11 +9,13 @@ from typing import TYPE_CHECKING
 from homeassistant.components import bluetooth
 from homeassistant.const import CONF_ADDRESS
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryNotReady, HomeAssistantError
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from pymammotion.data.model.device import MowingDevice
 from pymammotion.mammotion.devices import MammotionBaseBLEDevice
 from pymammotion.proto.luba_msg import LubaMsg
+from pymammotion.proto.mctrl_sys import RptAct, RptInfoType
+from pymammotion.utility.constant import WorkMode
 
 from .const import COMMAND_EXCEPTIONS, DOMAIN, LOGGER
 
@@ -23,7 +25,7 @@ if TYPE_CHECKING:
 SCAN_INTERVAL = timedelta(minutes=1)
 
 
-class MammotionDataUpdateCoordinator(DataUpdateCoordinator[LubaMsg]):
+class MammotionDataUpdateCoordinator(DataUpdateCoordinator[MowingDevice]):
     """Class to manage fetching mammotion data."""
 
     address: str
@@ -67,6 +69,32 @@ class MammotionDataUpdateCoordinator(DataUpdateCoordinator[LubaMsg]):
         """Get map data from the device."""
         await self.device.start_map_sync()
 
+    async def async_start_stop_blades(self, start_stop: bool) -> None:
+        if start_stop:
+            await self.async_send_command("set_blade_control", on_off=1)
+        else:
+            await self.async_send_command("set_blade_control", on_off=0)
+
+    async def async_blade_height(self, height: int) -> None:
+        await self.async_send_command("set_blade_height", height=height)
+
+
+    async def async_request_iot_sync(self) -> None:
+        await self.async_send_command("request_iot_sys", rpt_act=RptAct.RPT_START,
+                               rpt_info_type=[RptInfoType.RIT_CONNECT, RptInfoType.RIT_DEV_STA],
+                               timeout=1000,
+                               period=3000,
+                               no_change_period=4000,
+                               count=0)
+
+    async def async_send_command(self, command: str, **kwargs) -> None:
+        try:
+            await self.device.command(command, **kwargs)
+        except COMMAND_EXCEPTIONS as exc:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN, translation_key="command_failed"
+            ) from exc
+
     async def _async_update_data(self) -> MowingDevice:
         """Get data from the device."""
         if not (
@@ -79,10 +107,13 @@ class MammotionDataUpdateCoordinator(DataUpdateCoordinator[LubaMsg]):
 
         self.device.update_device(ble_device)
         try:
-            await self.device.command("get_report_cfg")
+            await self.async_request_iot_sync()
+            if self.device.luba_msg.report_data.dev.sys_status != WorkMode.MODE_WORKING:
+                await self.async_send_command("get_report_cfg")
         except COMMAND_EXCEPTIONS as exc:
             self.update_failures += 1
             raise UpdateFailed(f"Updating Mammotion device failed: {exc}") from exc
+
 
         LOGGER.debug("Updated Mammotion device %s", self.device_name)
         LOGGER.debug("================= Debug Log =================")
@@ -91,3 +122,11 @@ class MammotionDataUpdateCoordinator(DataUpdateCoordinator[LubaMsg]):
 
         self.update_failures = 0
         return self.device.luba_msg
+
+    async def _async_setup(self) -> None:
+        try:
+            await self.device.start_sync(0)
+        except COMMAND_EXCEPTIONS as exc:
+            self.update_failures += 1
+            raise UpdateFailed(f"Updating Mammotion device failed: {exc}") from exc
+
