@@ -65,6 +65,11 @@ sensor:
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
 
+      free_electricity:
+        value_template: "{{ states.calendar.family_calendar.attributes.message }}"
+        friendly_name: Free Electricity
+        unique_id: calendar.free_electricity
+
   - platform: integration
     source: sensor.grid_all
     method: left
@@ -116,23 +121,3 @@ automation:
         data:
           title: "Hot water boost triggered"
           message: "Hot water boost triggered whilst the sun is shining"
-
-  - alias: Enable battery charging
-    id: enable_battery_charging
-    trigger:
-      - platform: time
-        at: "00:00:00"
-    action: givenergy_local.enable_timed_charge
-    data:
-      device_id: 636335f26ef06930329cf34272a13502
-      start_time: "13:00:00"
-      end_time: "14:00:00"
-
-  - alias: Disable battery charging
-    id: disable_battery_charging
-    trigger:
-      - platform: time
-        at: "14:05:00"
-    action: homeassistant.turn_off
-    target:
-      entity_id: switch.battery_ac_charging
