@@ -4,17 +4,18 @@ automation:
     trigger:
       - platform: time
         at: "00:00:00"
-    action: givenergy_local.enable_timed_charge
-    data:
-      device_id: 636335f26ef06930329cf34272a13502
-      start_time: "13:00:00"
-      end_time: "14:00:00"
+    action:
+      - service: givenergy_local.enable_timed_charge
+        data:
+          device_id: 636335f26ef06930329cf34272a13502
+          start_time: "13:00:00"
+          end_time: "14:00:00"
 
   - alias: Disable battery charging
     id: disable_battery_charging
     trigger:
       - platform: time
         at: "14:05:00"
-    action: homeassistant.turn_off
-    target:
-      entity_id: switch.battery_ac_charging
+    action:
+      - service: homeassistant.turn_off
+        entity_id: switch.battery_ac_charging
