@@ -74,6 +74,10 @@
     "button": {
       "start_map_sync": {
         "name": "Sync maps"
+      },
+      "resync_rtk_dock": {
+        "name": "Sync RTK and dock",
+        "description": "Syncs RTK and dock location for when you move them."
       }
     },
     "switch": {
@@ -126,7 +130,7 @@
         "description": "Set the start progress percentage."
       },
       "cutter_height": {
-        "name": "Cutter Height",
+        "name": "Blade Height",
         "description": "Adjust the height of the cutter in increments."
       },
       "working_speed": {
