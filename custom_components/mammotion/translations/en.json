@@ -5,18 +5,43 @@
       "already_in_progress": "Configuration flow is already in progress",
       "no_devices_found": "Could not find devices",
       "no_longer_present": "Device is no longer present",
-      "not_supported": "Device not supported"
+      "not_supported": "Device not supported",
+      "no_device_name": "Device name required to proceed",
+      "reconfigure_successful": "Re-configure successful"
     },
     "flow_title": "Configure your Mammotion lawn mower",
     "step": {
       "bluetooth_confirm": {
         "description": "Setup {name}"
       },
+      "reconfigure": {
+        "data": {
+          "device_name": "Device name e.g Luba-****, Yuka-**** which needs to be unique",
+          "use_wifi": "Use Wi-fi",
+          "account_name": "Mammotion email or account number",
+          "password": "Mammotion account password"
+        }
+      },
       "user": {
         "data": {
-          "address": "Device"
+          "address": "Device",
+          "device_name": "Device name e.g Luba-****, Yuka-**** which needs to be unique",
+          "use_wifi": "Use Wi-fi",
+          "account_name": "Mammotion email or account number",
+          "password": "Mammotion account password"
+
         },
         "description": "Select your mower"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "title": "Update Configuration",
+          "stay_connected_bluetooth": "Keep bluetooth connected"
+        }
       }
     }
   },
@@ -64,6 +89,9 @@
       "position_mode": {
         "name": "RTK position"
       },
+      "position_type": {
+        "name": "Device position type"
+      },
       "activity_mode": {
         "name": "Activity mode"
       }
@@ -71,7 +99,58 @@
     "button": {
       "start_map_sync": {
         "name": "Sync maps"
+      },
+       "resync_rtk_dock": {
+        "name": "Sync RTK and dock"
       }
+    },
+    "switch": {
+      "blades_on_off": {
+        "name": "Blades On/Off"
+      },
+      "mowing_on_off": {
+        "name": "Mowing On/Off"
+      },
+      "dump_grass_on_off": {
+        "name": "Dump Grass On/Off"
+      },
+      "rain_detection_on_off": {
+        "name": "Rain Detection On/Off"
+      },
+      "side_led_on_off": {
+        "name": "Side LED On/Off"
+      },
+       "perimeter_first_on_off": {
+        "name": "Perimeter First"
+      }
+    },
+    "select": {
+       "cutting_mode": {
+        "name": "Cutting Mode"
+      },
+      "border_patrol_mode": {
+        "name": "Border Patrol Mode"
+      },
+      "obstacle_laps_mode": {
+        "name": "Obstacle Laps Mode"
+      },
+      "mow_order": {
+        "name": "Mow Order"
+      }
+    },
+    "number": {
+       "start_progress": {
+        "name": "Start Progress"
+      },
+      "blade_height": {
+        "name": "Blade Height"
+      },
+      "working_speed": {
+        "name": "Working Speed"
+      }
+    },
+    "device_tracker": {
+      "name": "Device Tracking"
     }
   },
   "exceptions": {
@@ -89,6 +168,9 @@
     },
     "dock_failed": {
       "message": "Failed to send the mower to the dock."
+    },
+    "command_failed": {
+      "message": "Failed to send command to the mower."
     }
   }
 }
