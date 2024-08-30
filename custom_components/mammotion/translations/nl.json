@@ -5,8 +5,8 @@
       "already_in_progress": "De configuratie-flow is al in uitvoering",
       "no_devices_found": "Kon geen apparaten vinden",
       "no_longer_present": "Het apparaat is niet langer aanwezig",
-      "not_supported": "Apparaat wordt niet ondersteund"
-	  "no_device_name": "Apparaatnaam vereist om door te gaan",
+      "not_supported": "Apparaat wordt niet ondersteund",
+      "no_device_name": "Apparaatnaam vereist om door te gaan",
       "reconfigure_successful": "instelling succesvol"
     },
     "flow_title": "Stel uw Mammotion gazonmachines in",
@@ -16,7 +16,6 @@
       },
       "reconfigure": {
         "data": {
-          "device_name": "Apparaatnaam, bijvoorbeeld Luba-****, Yuka-****, het moet uniek zijn",
           "use_wifi": "Gebruik Wi-fi",
           "account_name": "Mammotion e-mailadres of accountnummer",
           "password": "Mammotion-accountwachtwoord"
@@ -25,13 +24,17 @@
       "user": {
         "data": {
           "address": "Apparaat"
-		  "device_name": "Apparaatnaam, bijvoorbeeld Luba-****, Yuka-****, het moet uniek zijn",
-          "use_wifi": "Gebruik Wi-fi",
-          "account_name": "Mammotion e-mailadres of accountnummer",
-          "password": "Mammotion-accountwachtwoord"
-
         },
         "description": "Kies uw gazonmachines"
+      },
+      "wifi": {
+        "data": {
+          "use_wifi": "Gebruik Wi-fi (haal het vinkje weg en verstuur om Bluetooth te gebruiken)",
+          "account_name": "Mammotion e-mailadres of accountnummer",
+          "password": "Mammotion-accountwachtwoord"
+        },
+         "title": "Verbind met Wi-Fi",
+         "description": "Voer je Mammotion account e-mail of id en wachtwoord in"
       }
     }
   },
