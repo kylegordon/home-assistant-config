@@ -1,0 +1,65 @@
+---
+
+## Data from a Vaillant Arotherm Plus heat pump, via ebusd
+
+mqtt:
+  sensor:
+    - name: "Heat Pump Flow Rate"
+      state_topic: "ebusd/hmu/WaterThroughput"
+      value_template: "{{ value_json['0']['value'] }}"
+
+      ## State00 uses a different format from State01 and State07
+#    - name: "Heat Pump State00"
+#      state_topic: "ebusd/hmu/State00"
+#      json_attributes_topic: "ebusd/hmu/State00"
+
+    - name: "S00_SupplyTemp"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['S00_SupplyTemp']['value'] }}"
+
+    - name: "S00_CompressorModulation"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['S00_CompressorModulation']['value'] }}"
+
+    - name: "S00_CompressorPower"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['S00_CompressorPower']['value'] }}"
+
+    - name: "S00_CompressorState"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['CompressorState']['value'] }}"
+
+      # Check MQTT message on ebusd/hmu/State01 to inspect the rest of the State01 array
+      # The message is too large to squeeze into a top level state
+
+    - name: "Heat Pump Flow Temperature"
+      state_topic: "ebusd/hmu/State01"
+      unit_of_measurement: "°C"
+      value_template: "{{ value_json['0']['value'] }}"
+
+    - name: "Heat Pump Return Temperature"
+      unit_of_measurement: "°C"
+      state_topic: "ebusd/hmu/State01"
+      value_template: "{{ value_json['1']['value'] }}"
+
+    - name: "Heat Pump State07"
+      state_topic: "ebusd/hmu/State07"
+      json_attributes_topic: "ebusd/hmu/State07"
+
+      # This is a %age of capacity
+    - name: "Heat Pump Energy Usage Level"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['0']['value'] }}"
+
+    - name: "Heat Pump Daily Energy"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['1']['value'] }}"
+
+    - name: "Heat Pump Mode"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['2']['value'] }}"
+
+    - name: "Heat Pump Task"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['3']['value'] }}"
+
