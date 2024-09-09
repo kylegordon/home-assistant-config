@@ -21,17 +21,17 @@ input_boolean:
     icon: mdi:account-alert
     initial: false
 
- binary_sensor:
-   - platform: template
-     sensors:
-       # This will eventually be replaced a sensor that collates multiple sensors
-       tin_hut_occupied:
-         friendly_name: Tin Hut Occupied
-         value_template: "{{
-           is_state('input_boolean.tin_hut_occupied', 'on')
-           or
-           is_state('binary_sensor.presence_lite_tin_hut_occupancy', 'on')
-           }}"
+binary_sensor:
+  - platform: template
+    sensors:
+      # This will eventually be replaced a sensor that collates multiple sensors
+      tin_hut_occupied:
+        friendly_name: Tin Hut Occupied
+        value_template: "{{
+          is_state('input_boolean.tin_hut_occupied', 'on')
+          or
+          is_state('binary_sensor.presence_lite_tin_hut_occupancy', 'on')
+          }}"
 
 automation:
   - alias: Tin Hut Occupied
