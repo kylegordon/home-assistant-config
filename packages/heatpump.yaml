@@ -8,18 +8,36 @@ mqtt:
       state_topic: "ebusd/hmu/WaterThroughput"
       value_template: "{{ value_json['0']['value'] }}"
 
-      ## State00 uses a different format from State01 and State07
-#    - name: "Heat Pump State00"
-#      state_topic: "ebusd/hmu/State00"
-#      json_attributes_topic: "ebusd/hmu/State00"
+### Converts the following message into individual sensors
+# State00 is too large to squeeze into a top level state or set of attributes
+# ebusd/hmu/State00 {
+#     "S00_SupplyTemp": {"value": 14.56},
+#     "field2": {"value": 19},
+#     "S00_CompressorModulation": {"value": 0.0},
+#     "CompressorState": {"value": "off"},
+#     "HeatingState": {"value": 0},
+#     "field6": {"value": 0},
+#     "Defrost": {"value": "inactive"},
+#     "S00_CompressorPower": {"value": 0.0}}
+###
+
+    - name: "Heat Pump Defrost"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['Defrost']['value'] }}"
+
+    - name: "Heat Pump Heating State"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['HeatingState']['value'] }}"
 
     - name: "S00_SupplyTemp"
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['S00_SupplyTemp']['value'] }}"
+      unit_of_measurement: "°C"
 
     - name: "S00_CompressorModulation"
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['S00_CompressorModulation']['value'] }}"
+      unit_of_measurement: "%"
 
     - name: "S00_CompressorPower"
       state_topic: "ebusd/hmu/State00"
@@ -32,6 +50,14 @@ mqtt:
       # Check MQTT message on ebusd/hmu/State01 to inspect the rest of the State01 array
       # The message is too large to squeeze into a top level state
 
+    # ebusd/hmu/State01 {
+    #     "0": {"name": "temp1", "value": 14.5},
+    #     "1": {"name": "temp1", "value": 17.5},
+    #     "2": {"name": "temp2", "value": null},
+    #     "3": {"name": "temp1", "value": null},
+    #     "4": {"name": "temp1", "value": null},
+    #     "5": {"name": "pumpstate", "value": "off"}}
+
     - name: "Heat Pump Flow Temperature"
       state_topic: "ebusd/hmu/State01"
       unit_of_measurement: "°C"
@@ -42,9 +68,16 @@ mqtt:
       state_topic: "ebusd/hmu/State01"
       value_template: "{{ value_json['1']['value'] }}"
 
-    - name: "Heat Pump State07"
-      state_topic: "ebusd/hmu/State07"
-      json_attributes_topic: "ebusd/hmu/State07"
+    ### The installers advised the following data is as described below
+    # ebusd/hmu/State07 {
+    #      "0": {"name": "power", "value": 0},
+    #      "1": {"name": "energy", "value": 3.0},
+    #      "2": {"name": "state", "value": "Normal mode HP off"},
+    #      "3": {"name": "state", "value": "ready"}}
+
+    # - name: "Heat Pump State07"
+    #   state_topic: "ebusd/hmu/State07"
+    #   json_attributes_topic: "ebusd/hmu/State07"
 
       # This is a %age of capacity
     - name: "Heat Pump Energy Usage Level"
