@@ -2,6 +2,9 @@
 
 ## Data from a Vaillant Arotherm Plus heat pump, via ebusd
 
+## The ebusd discovery seems to be broken, in that when HA is restarted all the ebusd devices are unavailable.
+## Declaring all relevant sensors here seems to work instead.
+
 mqtt:
   sensor:
     - name: "Heat Pump Flow Rate"
