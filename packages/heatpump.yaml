@@ -11,18 +11,18 @@ mqtt:
       state_topic: "ebusd/hmu/WaterThroughput"
       value_template: "{{ value_json['0']['value'] }}"
 
-### Converts the following message into individual sensors
-# State00 is too large to squeeze into a top level state or set of attributes
-# ebusd/hmu/State00 {
-#     "S00_SupplyTemp": {"value": 14.56},
-#     "field2": {"value": 19},
-#     "S00_CompressorModulation": {"value": 0.0},
-#     "CompressorState": {"value": "off"},
-#     "HeatingState": {"value": 0},
-#     "field6": {"value": 0},
-#     "Defrost": {"value": "inactive"},
-#     "S00_CompressorPower": {"value": 0.0}}
-###
+    ### Converts the following message into individual sensors
+    # State00 is too large to squeeze into a top level state or set of attributes
+    # ebusd/hmu/State00 {
+    #     "S00_SupplyTemp": {"value": 14.56},
+    #     "field2": {"value": 19},
+    #     "S00_CompressorModulation": {"value": 0.0},
+    #     "CompressorState": {"value": "off"},
+    #     "HeatingState": {"value": 0},
+    #     "field6": {"value": 0},
+    #     "Defrost": {"value": "inactive"},
+    #     "S00_CompressorPower": {"value": 0.0}}
+    ###
 
     - name: "Heat Pump Defrost"
       state_topic: "ebusd/hmu/State00"
