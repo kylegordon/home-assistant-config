@@ -42,7 +42,8 @@ automation:
     action:
       - service: notify.mobile_app_nothing_phone_1
         data:
-          message: Vacuum error
+          title: Snowwhite vacuum
+          message: "{{ message }}"
           data:
             photo:
               - url: http://home-assistant-valetudopng:3000/api/map/image
