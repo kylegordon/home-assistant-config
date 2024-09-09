@@ -374,10 +374,10 @@ display:
           }
 
           if (id(grid_export_power).has_state()) {
-            it.printf(0, 170, id(fontlarge), id(my_golden), TextAlign::BASELINE_LEFT, "Grid: %7.2f W", id(grid_export_power).state);
+            it.printf(0, 170, id(font5), id(my_white), TextAlign::BASELINE_LEFT, "Grid:%7.2f W", id(grid_export_power).state);
           }
           if (id(pv_power).has_state()) {
-            it.printf(0, 220, id(fontlarge), id(my_golden), TextAlign::BASELINE_LEFT, "PV: %7.2f W", id(pv_power).state);
+            it.printf(0, 220, id(font5), id(my_white), TextAlign::BASELINE_LEFT, "PV: %7.2f W", id(pv_power).state);
           }
 
       # - id: circle
