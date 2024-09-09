@@ -98,4 +98,3 @@ mqtt:
     - name: "Heat Pump Task"
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['3']['value'] }}"
-
