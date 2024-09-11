@@ -227,6 +227,7 @@ climate: !include climate.yaml
 # Merged Includes
 automation: !include_dir_list automation
 scene: !include_dir_list scenes
+template: !include_dir_list templates
 
 # Merged items requiring a dictionary
 input_select: !include_dir_named input_select

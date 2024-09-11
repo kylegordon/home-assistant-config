@@ -65,6 +65,11 @@ sensor:
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
 
+      free_electricity:
+        value_template: "{{ states.calendar.family_calendar.attributes.message }}"
+        friendly_name: Free Electricity
+        unique_id: calendar.free_electricity
+
   - platform: integration
     source: sensor.grid_all
     method: left
