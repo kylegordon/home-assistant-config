@@ -1,3 +1,4 @@
+---
 automation:
   - alias: Valetudo Notifications
     id: valetudo_notifications
@@ -45,8 +46,23 @@ automation:
           title: Snowwhite vacuum
           message: "{{ message }}"
           data:
-            photo:
-              - url: http://home-assistant-valetudopng:3000/api/map/image
-                caption: |
-                  Snowwhite
-                  {{ message }}
+            image: /api/camera_proxy/camera.snowwhite_camera?token={{ state_attr('camera.snowwhite_camera','access_token') }}
+            color: red
+            channel: Cameras
+            tag: Motion
+            actions:
+              - action: URI
+                title: Click to Open Vacuum
+                uri: /lovelace/vacuum
+
+    # action:
+    #   - service: notify.mobile_app_nothing_phone_1
+    #     data:
+    #       title: Snowwhite vacuum
+    #       message: "{{ message }}"
+    #       data:
+    #         photo:
+    #           - url: http://home-assistant-valetudopng:3000/api/map/image
+    #             caption: |
+    #               Snowwhite
+    #               {{ message }}
