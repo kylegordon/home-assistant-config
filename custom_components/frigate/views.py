@@ -276,6 +276,13 @@ class NotificationsProxyView(ProxyView):
 
         if path.endswith("clip.mp4"):
             return f"api/events/{event_id}/clip.mp4"
+
+        if path.endswith("event_preview.gif"):
+            return f"api/events/{event_id}/preview.gif"
+
+        if path.endswith("review_preview.gif"):
+            return f"api/review/{event_id}/preview"
+
         return None
 
     def _permit_request(
@@ -524,6 +531,7 @@ def _init_header(request: web.Request) -> CIMultiDict | dict[str, str]:
             hdrs.SEC_WEBSOCKET_VERSION,
             hdrs.SEC_WEBSOCKET_KEY,
             hdrs.HOST,
+            hdrs.AUTHORIZATION,
         ):
             continue
         headers[name] = value

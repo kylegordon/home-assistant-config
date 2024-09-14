@@ -1,0 +1,118 @@
+---
+sensor:
+  - platform: template
+    sensors:
+      battery_status:
+        friendly_name: "Battery status"
+        value_template: >
+          {%- set power_draw = states('sensor.battery_power') | int %}
+          {%- if power_draw < 0 %}
+            Charging
+          {%- elif power_draw == 0 %}
+            Balanced
+          {%- elif power_draw > 0 %}
+            Draining
+          {%- else -%}
+            Indeterminate
+          {%- endif %}
+        icon_template: >-
+          {%- set power_draw = states('sensor.battery_power') | int %}
+          {%- if power_draw < 0 %}
+            mdi:battery-charging
+          {%- elif power_draw > 0 %}
+            mdi:battery-minus
+          {%- else -%}
+            mdi:battery
+          {%- endif %}
+
+      grid_all:
+        friendly_name: "Grid Usage"
+        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        unit_of_measurement: 'W'
+
+      pv_all:
+        friendly_name: "PV Usage"
+        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        unit_of_measurement: 'W'
+
+      ashp_heating_cop:
+        unique_id: ashp_heating_cop
+        friendly_name: "ASHP Heating COP"
+        value_template: >
+          {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') | int %}
+          {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
+          {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
+            unavailable
+          {%- elif heat_generated == unknown or consumed_electricity == unknown %}
+            unknown
+          {%- else %}
+            {{ heat_generated / consumed_electricity }}
+          {%- endif %}
+
+      ashp_hot_water_cop:
+        unique_id: ashp_hot_water_cop
+        friendly_name: "ASHP Hot Water COP"
+        value_template: >
+          {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int %}
+          {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
+          {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
+            unavailable
+          {%- elif heat_generated == unknown or consumed_electricity == unknown %}
+            unknown
+          {%- else %}
+            {{ heat_generated / consumed_electricity }}
+          {%- endif %}
+
+        # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
+
+  - platform: integration
+    source: sensor.grid_all
+    method: left
+    name: grid_daily_usage
+    unit_prefix: k
+    round: 2
+
+  - platform: integration
+    source: sensor.pv_all
+    method: left
+    name: pv_daily_usage
+    unit_prefix: k
+    round: 2
+
+#  - platform: template
+#    #name: grid_all
+#    #friendly_name: "Grid Usage"
+#    value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+#    unit_of_measurement: 'W'
+
+automation:
+  - alias: Boost hot water
+    id: boost_hot_water
+    trigger:
+      - platform: time
+        at: "11:00:00"
+    action:
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Waiting for sunshine and a full charge"
+          message: "When the battery is charged and we are exporting, we will trigger a hot water boost"
+      - wait_for_trigger:
+          - platform: numeric_state
+            entity_id: sensor.battery_percent
+            above: 99
+            for:
+              minutes: 30
+          - platform: numeric_state
+            entity_id: sensor.grid_export_power
+            above: 1000
+            for:
+              minutes: 30
+        timeout: "12:00:00"
+        continue_on_timeout: false
+      - service: switch.turn_on
+        target:
+          entity_id: switch.viewpoint_domestic_hot_water_0_boost
+      - service: notify.mobile_app_nothing_phone_1
+        data:
+          title: "Hot water boost triggered"
+          message: "Hot water boost triggered whilst the sun is shining"

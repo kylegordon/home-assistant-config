@@ -1,0 +1,169 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Il dispositivo è già configurato",
+      "already_in_progress": "La configurazione è già in corso",
+      "no_devices_found": "Impossibile trovare il dispositivo",
+      "no_longer_present": "Il dispositivo non è più presente",
+      "not_supported": "Dispositivo non supportato",
+      "no_device_name": "È necessario il nome del dispositivo per procedere",
+      "reconfigure_successful": "Riconfigurazione avvenuta con successo"
+    },
+    "flow_title": "Configura il tuo rasaerba Mammotion",
+    "step": {
+      "bluetooth_confirm": {
+        "description": "Configura {nome}"
+      },
+      "reconfigure": {
+        "data": {
+          "use_wifi": "Usa Wi-Fi",
+          "account_name": "Email o numero di conto Mammotion",
+          "password": "Password dell'account Mammotion"
+        }
+      },
+      "user": {
+        "data": {
+          "address": "Dispositivo"
+        },
+        "description": "Seleziona il tuo rasaerba"
+      },
+      "wifi": {
+        "data": {
+          "use_wifi": "Usa Wi-Fi (deseleziona e invia per utilizzare il Bluetooth)",
+          "account_name": "Email o numero di conto Mammotion",
+          "password": "Password dell'account Mammotion"
+        },
+        "title": "Connetti al Wi-Fi",
+        "description": "Inserisci l'email o l'id del tuo account Mammotion e la password"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "battery_percent": {
+        "name": "Batteria"
+      },
+      "ble_rssi": {
+        "name": "BLE RSSI"
+      },
+      "wifi_rssi": {
+        "name": "WiFi RSSI"
+      },
+      "gps_stars": {
+        "name": "Satelliti (Robot)"
+      },
+      "blade_height": {
+        "name": "Altezza lama"
+      },
+      "area": {
+        "name": "Area"
+      },
+      "mowing_speed": {
+        "name": "Velocità di taglio"
+      },
+      "progress": {
+        "name": "Avanzamento"
+      },
+      "total_time": {
+        "name": "Tempo totale"
+      },
+      "elapsed_time": {
+        "name": "Tempo trascorso"
+      },
+      "left_time": {
+        "name": "Tempo rimanente"
+      },
+      "l1_satellites": {
+        "name": "Satelliti L1 (Co-Viewing)"
+      },
+      "l2_satellites": {
+        "name": "Satelliti L2 (Co-Viewing)"
+      },
+      "position_mode": {
+        "name": "Posizione RTK"
+      },
+      "position_type": {
+        "name": "Tipo di posizionamento"
+      },
+      "activity_mode": {
+        "name": "Modalità attività"
+      }
+    },
+    "button": {
+      "start_map_sync": {
+        "name": "Sincronizza mappe"
+      },
+      "resync_rtk_dock": {
+        "name": "Sincronizza base e RTK"
+      }
+    },
+    "switch": {
+      "blades_on_off": {
+        "name": "Lame On/Off"
+      },
+      "mowing_on_off": {
+        "name": "Taglio On/Off"
+      },
+      "dump_grass_on_off": {
+        "name": "Scarico erba On/Off"
+      },
+      "rain_detection_on_off": {
+        "name": "Rilevamento pioggia On/Off"
+      },
+      "side_led_on_off": {
+        "name": "LED laterale On/Off"
+      },
+      "perimeter_first_on_off": {
+        "name": "Taglio perimetro"
+      }
+    },
+    "select": {
+      "cutting_mode": {
+        "name": "Modalità di taglio"
+      },
+      "border_patrol_mode": {
+        "name": "Modalità controllo bordi"
+      },
+      "obstacle_laps_mode": {
+        "name": "Modalità aggiramento ostacoli"
+      },
+      "mow_order": {
+        "name": "Ordine di taglio"
+      }
+    },
+    "number": {
+      "start_progress": {
+        "name": "Avanzamento iniziale"
+      },
+      "blade_height": {
+        "name": "Altezza della lama"
+      },
+      "working_speed": {
+        "name": "Velocità di lavoro"
+      }
+    },
+    "device_tracker": {
+      "name": "Tracciamento del dispositivo"
+    }
+  },
+  "exceptions": {
+    "device_not_ready": {
+      "message": "Il dispositivo non è pronto."
+    },
+    "pause_failed": {
+      "message": "Impossibile mettere in pausa il rasaerba."
+    },
+    "resume_failed": {
+      "message": "Impossibile riavviare il rasaerba."
+    },
+    "start_failed": {
+      "message": "Impossibile avviare il rasaerba."
+    },
+    "dock_failed": {
+      "message": "Impossibile inviare il rasaerba alla base."
+    },
+    "command_failed": {
+      "message": "Impossibile inviare il comando al rasaerba."
+    }
+  }
+}
