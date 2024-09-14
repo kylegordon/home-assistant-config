@@ -54,15 +54,3 @@ automation:
               - action: URI
                 title: Click to Open Vacuum
                 uri: /lovelace/vacuum
-
-    # action:
-    #   - service: notify.mobile_app_nothing_phone_1
-    #     data:
-    #       title: Snowwhite vacuum
-    #       message: "{{ message }}"
-    #       data:
-    #         photo:
-    #           - url: http://home-assistant-valetudopng:3000/api/map/image
-    #             caption: |
-    #               Snowwhite
-    #               {{ message }}
