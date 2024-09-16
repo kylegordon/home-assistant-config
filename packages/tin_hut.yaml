@@ -16,10 +16,6 @@ input_boolean:
     name: Lockup process
     icon: mdi:sleep
     initial: false
-  tin_hut_occupied:
-    name: Tin Hut Occupied
-    icon: mdi:account-alert
-    initial: false
 
 binary_sensor:
   - platform: template
