@@ -28,8 +28,6 @@ binary_sensor:
       tin_hut_occupied:
         friendly_name: Tin Hut Occupied
         value_template: "{{
-          is_state('input_boolean.tin_hut_occupied', 'on')
-          or
           is_state('binary_sensor.presence_lite_tin_hut_occupancy', 'on')
           }}"
 
@@ -41,17 +39,12 @@ automation:
         entity_id: binary_sensor.tin_hut_occupied
         to: 'on'
       - platform: state
-        entity_id: input_boolean.tin_hut_occupied
-        to: 'on'
-      - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
         to: 'open'
       - platform: state
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
     action:
-      - service: homeassistant.turn_on
-        entity_id: input_boolean.tin_hut_occupied
       - service: homeassistant.turn_on
         entity_id:
           - switch.tin_hut_lights_relay
@@ -75,12 +68,7 @@ automation:
       - platform: state
         entity_id: binary_sensor.tin_hut_occupied
         to: 'off'
-      - platform: state
-        entity_id: input_boolean.tin_hut_occupied
-        to: 'off'
     action:
-      - service: homeassistant.turn_off
-        entity_id: input_boolean.tin_hut_occupied
       - service: homeassistant.turn_off
         entity_id:
           - switch.tin_hut_lights_relay
@@ -106,8 +94,6 @@ automation:
           message: "Triggering openup process"
           entity_id: input_boolean.open_tin_hut_process
           domain: input_boolean
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.tin_hut_occupied
       - service: input_boolean.turn_off
         entity_id: input_boolean.open_tin_hut_process
 
@@ -125,8 +111,6 @@ automation:
           message: "Triggering lockup process"
           entity_id: input_boolean.lockup_process
           domain: input_boolean
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.tin_hut_occupied
       - service: cover.close_cover
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
       - service: cover.close_cover
