@@ -37,9 +37,9 @@ automation:
   - alias: Tin Hut Occupied
     id: tin_hut_occupied
     trigger:
-      # - platform: state
-      #   entity_id: binary_sensor.tin_hut_occupied
-      #   to: 'on'
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        to: 'on'
       - platform: state
         entity_id: input_boolean.tin_hut_occupied
         to: 'on'
@@ -72,9 +72,9 @@ automation:
   - alias: Tin Hut Not Occupied
     id: tin_hut_not_occupied
     trigger:
-      # - platform: state
-      #   entity_id: binary_sensor.tin_hut_occupied
-      #   to: 'off'
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        to: 'off'
       - platform: state
         entity_id: input_boolean.tin_hut_occupied
         to: 'off'
