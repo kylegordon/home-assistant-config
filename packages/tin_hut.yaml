@@ -64,6 +64,8 @@ automation:
       - platform: state
         entity_id: binary_sensor.tin_hut_occupied
         to: 'off'
+        for:
+          minutes: 5
     action:
       - service: homeassistant.turn_off
         entity_id:
