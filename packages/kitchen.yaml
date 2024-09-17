@@ -41,11 +41,16 @@ automation:
 
   - alias: Kitchen motion - 10 minute timeout
     trigger:
-      platform: state
-      entity_id: binary_sensor.kitchen_motion_occupancy
-      to: 'off'
-      for:
-        minutes: 10
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion_occupancy
+        to: 'off'
+        for:
+          minutes: 10
+      - platform: state
+        entity_id: binary_sensor.presence_lite_kitchen_occupancy
+        to: 'off'
+        for:
+          minutes: 10
     action:
       service: homeassistant.turn_off
       entity_id:
