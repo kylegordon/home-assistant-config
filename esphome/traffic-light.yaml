@@ -7,7 +7,7 @@ substitutions:
   icon: mdi:traffic-light
   go_green_pin: D7
   go_red_pin: D6
-  green_output_pin: D3
+  green_output_pin: D5
   amber_output_pin: D2
   red_output_pin: D1
   blue_led_pin: D4

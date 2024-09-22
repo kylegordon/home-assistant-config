@@ -10,7 +10,7 @@ wifi:
   # Only enables if no WiFi connection possible
   ap:
     ssid: ${friendly_name}_AP
-    password: !secret wifi_pass
+    password: !secret wifi_password
     ap_timeout: 3min
 
 sensor:

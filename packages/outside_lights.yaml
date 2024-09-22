@@ -56,13 +56,6 @@ automation:
         entity_id: sun.sun
         state: "above_horizon"
     action:
-      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            {{ [
-            "Motion detected outside!",
-            "Something moved outside and triggered a sensor."
-            ] | random + " https://amzn.to/2CR5mbQ" }}
       - service: notify.mobile_app_nothing_phone_1
         data:
           title: "Motion outside!"

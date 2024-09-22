@@ -158,14 +158,21 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
-        # yamllint disable rule:line-length
+        - logger.log: "Open Endstop Released"
+        # Turn on the display
         - lambda: |-
+            id(oled).turn_on();        - lambda: |-
             // set state as closing. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).publish_state();
-        # yamllint enable rule:line-length
-  - platform: gpio
+        # If display_on_off is false, wait 30 seconds and then turn off the display
+        - lambda: |-
+            if (!id(display_on_off))
+            {
+              delay(30000);
+              id(oled).turn_off();
+            }  - platform: gpio
     pin:
       number: $close_endstop_pin
       mode: INPUT_PULLUP
@@ -190,13 +197,22 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
-        # yamllint disable rule:line-length
+        - logger.log: "Close Endstop Released"
+        # Turn on the display
         - lambda: |-
+            id(oled).turn_on();        - lambda: |-
             // set state as opening. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).publish_state();
-        # yamllint enable rule:line-length
+
+        # If display_on_off is false, wait 30 seconds and then turn off the display
+        - lambda: |-
+            if (!id(display_on_off))
+            {
+              delay(30000);
+              id(oled).turn_off();
+            }
 switch:
   - platform: gpio
     pin: $cover_switch_pin
@@ -286,36 +302,61 @@ cover:
     open_action:
       - logger.log:
           format: "Open Action - CO:%u PO:%f LD:%u"
-          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]  # yamllint disable-line rule:line-length
-      # update target
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();      # update target
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN)
           {
             id(target_action) = COVER_OPERATION_OPENING;
           }
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
+          }
     close_action:
       - logger.log:
           format: "Close Action - CO:%u PO:%f LD:%u"
-          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]  # yamllint disable-line rule:line-length
-      # update target
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();      # update target
       - lambda: |-
           if (id(garage_door).position != COVER_CLOSED)
           {
             id(target_action) = COVER_OPERATION_CLOSING;
           }
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
+          }
     stop_action:
       - logger.log:
           format: "Stop Action - CO:%u PO:%f LD:%u"
-          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]  # yamllint disable-line rule:line-length
-      # update target
+          args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();      # update target
       # yamllint disable rule:line-length
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN && id(garage_door).position != COVER_CLOSED)
           {
             id(target_action) = COVER_OPERATION_IDLE;
           }
-      # yamllint enable rule:line-length
-script:
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
+          }script:
   - id: push_one
     mode: single
     then:

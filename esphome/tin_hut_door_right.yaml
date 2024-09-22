@@ -18,8 +18,8 @@ substitutions:
   $push_interval: "1500"  # safe time between relay activations in ms
 
   # endstop config
-  open_endstop_pin: D7  # gpio pin for open endstop sensor
-  close_endstop_pin: D6  # gpio pin for close endstop sensor
+  open_endstop_pin: D6  # gpio pin for open endstop sensor
+  close_endstop_pin: D7  # gpio pin for close endstop sensor
   debounce_time: 30ms  # debounce time for open/close endstops
 
 packages:

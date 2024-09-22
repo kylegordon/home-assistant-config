@@ -51,10 +51,10 @@ jobs:
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Compile all ESPHome ${{matrix.file}}
-        uses: esphome/build-action@v3
+        uses: esphome/build-action@v4
         with:
           version: stable
-          yaml_file: ${{matrix.file}}
+          yaml-file: ${{matrix.file}}
 
   loop-beta:
     name: Test ESPHome Beta firmware
@@ -77,10 +77,10 @@ jobs:
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Compile all ESPHome ${{matrix.file}}
-        uses: esphome/build-action@v3
+        uses: esphome/build-action@v4
         with:
           version: beta
-          yaml_file: ${{matrix.file}}
+          yaml-file: ${{matrix.file}}
 
   # This is used by branch protections
   final:
