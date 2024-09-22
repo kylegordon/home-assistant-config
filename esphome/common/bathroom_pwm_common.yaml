@@ -4,7 +4,9 @@ packages:
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP8266
+  friendly_name: ${friendly_name}
+
+esp8266:
   board: d1_mini
 
 # Enable logging

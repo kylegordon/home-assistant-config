@@ -1,4 +1,5 @@
 """Switch for the Adaptive Lighting integration."""
+
 from __future__ import annotations
 
 import asyncio
@@ -53,6 +54,8 @@ from homeassistant.const import (
     EVENT_CALL_SERVICE,
     EVENT_HOMEASSISTANT_STARTED,
     EVENT_STATE_CHANGED,
+    MAJOR_VERSION,
+    MINOR_VERSION,
     SERVICE_TOGGLE,
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
@@ -69,6 +72,13 @@ from homeassistant.core import (
     callback,
 )
 from homeassistant.helpers import entity_platform, entity_registry
+from homeassistant.helpers.entity_component import async_update_entity
+
+if [MAJOR_VERSION, MINOR_VERSION] < [2023, 9]:
+    from homeassistant.helpers.entity import DeviceInfo
+else:
+    from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.event import (
     async_track_state_change_event,
     async_track_time_interval,
@@ -358,7 +368,8 @@ async def handle_change_switch_settings(
 
     # deep copy the defaults so we don't modify the original dicts
     switch._set_changeable_settings(data=data, defaults=deepcopy(defaults))
-    switch._update_time_interval_listener()
+    if switch.is_on:
+        switch._update_time_interval_listener()
 
     _LOGGER.debug(
         "Called 'adaptive_lighting.change_switch_settings' service with '%s'",
@@ -628,7 +639,10 @@ def _expand_light_groups(
 
 
 def _is_light_group(state: State) -> bool:
-    return "entity_id" in state.attributes
+    return "entity_id" in state.attributes and not state.attributes.get(
+        "is_hue_group",
+        False,
+    )
 
 
 @bind_hass
@@ -681,7 +695,7 @@ def _convert_attributes(attributes: dict[str, Any]) -> dict[str, Any]:
 
     if rgb is not None:
         attributes[ATTR_RGB_COLOR] = rgb
-        _LOGGER.debug(f"Converted {attributes} to rgb {rgb}")
+        _LOGGER.debug("Converted attributes %s to rgb %s", attributes, rgb)
     else:
         _LOGGER.debug("No suitable color conversion found for %s", attributes)
 
@@ -710,6 +724,10 @@ def _attributes_have_changed(
     adapt_color: bool,
     context: Context,
 ) -> bool:
+    # 2023-11-19: HA core no longer removes light domain attributes when off
+    # so we must protect for `None` here
+    # see https://github.com/home-assistant/core/pull/101946
+
     if adapt_color:
         old_attributes, new_attributes = _add_missing_attributes(
             old_attributes,
@@ -718,8 +736,8 @@ def _attributes_have_changed(
 
     if (
         adapt_brightness
-        and ATTR_BRIGHTNESS in old_attributes
-        and ATTR_BRIGHTNESS in new_attributes
+        and old_attributes.get(ATTR_BRIGHTNESS)
+        and new_attributes.get(ATTR_BRIGHTNESS)
     ):
         last_brightness = old_attributes[ATTR_BRIGHTNESS]
         current_brightness = new_attributes[ATTR_BRIGHTNESS]
@@ -736,8 +754,8 @@ def _attributes_have_changed(
 
     if (
         adapt_color
-        and ATTR_COLOR_TEMP_KELVIN in old_attributes
-        and ATTR_COLOR_TEMP_KELVIN in new_attributes
+        and old_attributes.get(ATTR_COLOR_TEMP_KELVIN)
+        and new_attributes.get(ATTR_COLOR_TEMP_KELVIN)
     ):
         last_color_temp = old_attributes[ATTR_COLOR_TEMP_KELVIN]
         current_color_temp = new_attributes[ATTR_COLOR_TEMP_KELVIN]
@@ -754,8 +772,8 @@ def _attributes_have_changed(
 
     if (
         adapt_color
-        and ATTR_RGB_COLOR in old_attributes
-        and ATTR_RGB_COLOR in new_attributes
+        and old_attributes.get(ATTR_RGB_COLOR)
+        and new_attributes.get(ATTR_RGB_COLOR)
     ):
         last_rgb_color = old_attributes[ATTR_RGB_COLOR]
         current_rgb_color = new_attributes[ATTR_RGB_COLOR]
@@ -938,6 +956,17 @@ class AdaptiveSwitch(SwitchEntity, RestoreEntity):
         """Return true if adaptive lighting is on."""
         return self._state
 
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info, used to group this and adjacent entities in the UI."""
+        return DeviceInfo(
+            identifiers={
+                (DOMAIN, self._name),
+            },
+            name=self._name,
+            entry_type=DeviceEntryType.SERVICE,
+        )
+
     async def async_added_to_hass(self) -> None:
         """Call when entity about to be added to hass."""
         if self.hass.is_running:
@@ -1041,11 +1070,10 @@ class AdaptiveSwitch(SwitchEntity, RestoreEntity):
         try:
             # HACK: this is a private method in `Entity` which can change
             super()._call_on_remove_callbacks()
-        except AttributeError as err:
-            _LOGGER.error(
-                "%s: Caught AttributeError in `_call_on_remove_callbacks`: %s",
+        except AttributeError:
+            _LOGGER.exception(
+                "%s: Caught AttributeError in `_call_on_remove_callbacks`",
                 self._name,
-                err,
             )
 
     def _remove_interval_listener(self) -> None:
@@ -1558,9 +1586,9 @@ class SimpleSwitch(SwitchEntity, RestoreEntity):
         self._icon = icon
         self._state: bool | None = None
         self._which = which
-        name = data[CONF_NAME]
-        self._unique_id = f"{name}_{slugify(self._which)}"
-        self._name = f"Adaptive Lighting {which}: {name}"
+        self._config_name = data[CONF_NAME]
+        self._unique_id = f"{self._config_name}_{slugify(self._which)}"
+        self._name = f"Adaptive Lighting {which}: {self._config_name}"
         self._initial_state = initial_state
 
     @property
@@ -1582,6 +1610,17 @@ class SimpleSwitch(SwitchEntity, RestoreEntity):
     def is_on(self) -> bool | None:
         """Return true if adaptive lighting is on."""
         return self._state
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info, used to group this and adjacent entities in the UI."""
+        return DeviceInfo(
+            identifiers={
+                (DOMAIN, self._config_name),
+            },
+            name=f"Adaptive Lighting: {self._config_name}",
+            entry_type=DeviceEntryType.SERVICE,
+        )
 
     async def async_added_to_hass(self) -> None:
         """Call when entity about to be added to hass."""
@@ -1816,7 +1855,7 @@ class AdaptiveLightingManager:
             single_switch_with_multiple_lights and switch_without_multi_light_intercept
         ):
             _LOGGER.warning(
-                "Single switch with multiple lights targeted, but"
+                "Single switch with multiple lights targeted (%s), but"
                 " `multi_light_intercept: true` is not set, so skipping intercept"
                 " for all lights.",
                 switch_to_eids,
@@ -2454,7 +2493,7 @@ class AdaptiveLightingManager:
         # Ensure HASS is correctly updating your light's state with
         # light.turn_on calls if any problems arise. This
         # can happen e.g. using zigbee2mqtt with 'report: false' in device settings.
-        await self.hass.helpers.entity_component.async_update_entity(light)
+        await async_update_entity(self.hass, light)
         refreshed_state = self.hass.states.get(light)
         assert refreshed_state is not None
 
@@ -2649,7 +2688,10 @@ class AdaptiveLightingManager:
             entity_id,
             service_data,
         )
-        if any(attr in service_data for attr in COLOR_ATTRS | BRIGHTNESS_ATTRS):
+        if any(
+            attr in service_data
+            for attr in COLOR_ATTRS | BRIGHTNESS_ATTRS | {ATTR_EFFECT}
+        ):
             self.mark_as_manual_control(entity_id)
             return True
         return False
