@@ -82,7 +82,7 @@ mqtt:
     #   state_topic: "ebusd/hmu/State07"
     #   json_attributes_topic: "ebusd/hmu/State07"
 
-      # This is a %age of capacity
+    # This is a %age of capacity
     - name: "Heat Pump Energy Usage Level"
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['0']['value'] }}"
