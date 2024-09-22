@@ -1,6 +1,6 @@
 """Constants for the GivEnergy integration."""
 
-from enum import StrEnum
+from enum import Enum
 from logging import Logger, getLogger
 
 DOMAIN = "givenergy_local"
@@ -14,7 +14,7 @@ MANUFACTURER = "GivEnergy"
 BATTERY_NOMINAL_VOLTAGE = 51.2
 
 
-class Icon(StrEnum):
+class Icon(str, Enum):
     """Icon styles."""
 
     PV = "mdi:solar-power"
@@ -24,7 +24,6 @@ class Icon(StrEnum):
     BATTERY_TEMPERATURE = "mdi:thermometer"
     BATTERY_MINUS = "mdi:battery-minus"
     BATTERY_PLUS = "mdi:battery-plus"
-    BATTERY_PAUSE = "mdi:battery-clock"
     INVERTER = "mdi:flash"
     GRID_IMPORT = "mdi:transmission-tower-export"
     GRID_EXPORT = "mdi:transmission-tower-import"
