@@ -47,6 +47,18 @@ automation:
           - light.tin_hut_shelf_lights_bench
           - light.tin_hut_shelf_lights_left
           - light.tin_hut_shelf_lights_right
+      - condition: or
+        # If the below condition is false, the action will stop here.
+        conditions:
+          - condition: state
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            state: 'idle'
+          - condition: state
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            state: 'off'
+          - condition: state
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            state: 'paused'
       - service: openhome.invoke_pin
         data:
           pin: 1
