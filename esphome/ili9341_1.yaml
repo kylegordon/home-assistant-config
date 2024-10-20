@@ -251,6 +251,7 @@ display:
     dc_pin: GPIO27
     reset_pin: GPIO33
     rotation: 270
+    invert_colors: false
     pages:
 
       - id: weather
