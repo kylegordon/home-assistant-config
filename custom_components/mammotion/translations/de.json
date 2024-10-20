@@ -4,15 +4,19 @@
       "already_configured": "Das Gerät ist bereits konfiguriert",
       "already_in_progress": "Der Konfigurationsprozess läuft bereits",
       "no_devices_found": "Es wurden keine Geräte gefunden",
+      "no_devices_found_in_account": "Es wurden keine Geräte in deinem Account gefunden",
+      "bluetooth_and_account_mismatch": "Es wurde kein Bluetooth-Gerät in deinem Account gefunden",
       "no_longer_present": "Das Gerät ist nicht länger verfügbar",
-      "not_supported": "Das Gerät wird nicht unterstützt",
-      "no_device_name": "Der Gerätename ist erforderlich, um fortfahren zu können",
+      "not_supported": "Das Gerät wird nicht unterstützt",											  
       "reconfigure_successful": "Die Neukonfiguration war erfolgreich"
     },
     "flow_title": "Konfiguriere deinen Mammotion Mähroboter",
     "step": {
       "bluetooth_confirm": {
-        "description": "Installiere {name}"
+        "description": "Installiere {name}",
+        "data": {
+          "stay_connected_bluetooth": "Bluetooth-Verbindung aufrechterhalten"
+        }
       },
       "reconfigure": {
         "data": {
@@ -23,7 +27,8 @@
       },
       "user": {
         "data": {
-          "address": "Gerät"
+          "address": "Gerät",
+          "stay_connected_bluetooth": "Bluetooth-Verbindung aufrechterhalten"																
         },
         "description": "Wähle deinen Mähroboter"
       },
@@ -93,67 +98,236 @@
         "name": "RTK Position"
       },
       "position_type": {
-        "name": "RTL Link Modus"
+        "name": "Typ der Gerätepositionierung"
       },
       "activity_mode": {
         "name": "Aktivitätsmodus"
+      },
+      "work_area": {
+        "name": "Arbeitsbereich Hash"
       }
     },
     "button": {
       "start_map_sync": {
         "name": "Synchronisiere Karte"
       },
-       "resync_rtk_dock": {
+      "resync_rtk_dock": {
         "name": "Synchronisiere RTK und Ladestation"
+      },
+      "release_from_dock": {
+        "name": "Abdocken"
+      },
+      "emergency_nudge_forward": {
+        "name": "Notfall-Schub vorwärts"
+      },
+      "emergency_nudge_left": {
+        "name": "Notfall-Schub links"
+      },
+      "emergency_nudge_right": {
+        "name": "Notfall-Schub rechts"
+      },
+      "emergency_nudge_back": {
+        "name": "Notfall-Schub rückwärts"
+      },
+      "cancel_task": {
+        "name": "Aktuelle Aufgabe abbrechen"
+      },
+      "clear_all_mapdata": {
+        "name": "Bereinige alle Karten- und Bereichsdaten"
       }
     },
     "switch": {
-      "blades_on_off": {
+      "blade_status": {
         "name": "Klingen An/Aus"
       },
-      "mowing_on_off": {
+      "is_mow": {
         "name": "Mähen An/Aus"
       },
-      "dump_grass_on_off": {
-        "name": "Gras sammeln An/Aus"
+      "is_dump": {
+        "name": "Gras sammeln"
       },
-      "rain_detection_on_off": {
-        "name": "Regenerkennung An/Aus"
+      "is_edge": {
+        "name": "Kanten schneiden"
       },
-      "side_led_on_off": {
-        "name": "Seitenlicht An/Aus"
+      "rain_tactics": {
+        "name": "Regenerkennung"
       },
-       "perimeter_first_on_off": {
-        "name": "Zuerst den Umfang berechnen An/Aus"
+      "side_led": {
+        "name": "Seitenlicht"
+      },
+      "perimeter_first_on_off": {
+        "name": "Zuerst den Umfang"
       }
     },
     "select": {
-       "cutting_mode": {
-        "name": "Mähmodus"
+      "channel_mode": {
+        "name": "Navigationsmodus",
+        "state": {
+          "single_grid": "Einzelnes Raster",
+          "double_grid": "Doppeltes Raster",
+          "segment_grid": "Segment Raster",
+          "no_grid": "Kein Raster"
+        }
       },
-      "border_patrol_mode": {
-        "name": "Patrouillenmodus für die seitlichen Grenzen"
+      "mowing_laps": {
+        "name": "Patrouillenrunden für den seitlichen Rasenschnitt",
+        "state": {
+          "none": "Keine",
+          "one": "Eine",
+          "two": "Zwei",
+          "three": "Drei",
+          "four": "Vier"
+        }
       },
-      "obstacle_laps_mode": {
-        "name": "Bypass-Strategie"
+      "obstacle_laps": {
+        "name": "Mähen von No-Go-Zonen",
+        "state": {
+          "none": "Keine",
+          "one": "Eine",
+          "two": "Zwei",
+          "three": "Drei",
+          "four": "Vier"
+        }
       },
-      "mow_order": {
-        "name": "Ausführungsreihenfolge des Pfades"
+      "border_mode": {
+        "name": "Ausführungsreihenfolge des Pfades",
+        "state": {
+          "border_first": "Zuerst den Umfang",
+          "grid_first": "Zuerst das Raster"
+        }
+      },
+      "bypass_mode": {
+        "name": "Modus der Hinderniserkennung",
+        "state": {
+          "direct_touch": "Direkte Berührung",
+          "slow_touch": "Langsame Berührung",
+          "less_touch": "Weniger Berührung",
+          "no_touch": "Keine Berührung"
+        }
+      },
+      "cutting_angle_mode": {
+        "name": "Wegwinkel Modus",
+        "state": {
+          "relative_angle": "Relativer Winkel",
+          "absolute_angle": "Absoluter Winkel",
+          "random_angle": "Zufälliger Winkel"
+        }
       }
     },
     "number": {
-       "start_progress": {
-        "name": "Mähen bei x % Fortschritt beginnen"
+      "start_progress": {
+        "name": "Fortschritt beim Start"
       },
       "blade_height": {
         "name": "Schnitthöhe"
       },
       "working_speed": {
         "name": "Aufgabengeschwindigkeit"
+      },
+      "cutting_angle": {
+        "name": "Wegwinkel"
+      },
+      "path_spacing": {
+        "name": "Wegabstand"
+      },
+      "dumping_interval": {
+        "name": "Intervall für das Entleeren"
       }
     },
     "device_tracker": {
       "name": "Geräteverfolgung"
+    }
+  },
+  "services": {
+    "cancel_job": {
+      "name": "Aktuelle Aufgabe abbrechen",
+      "description": "Stoppt den Mähroboter und bereinigt die aktuelle Aufgabe."
+    },
+    "start_mow": {
+      "name": "Starte Mähvorgang",
+      "description": "Startet einen Mähvorgang mit individuellen Einstellungen.",
+      "fields": {
+        "is_mow": {
+          "name": "Mähen",
+          "description": "Gibt an, ob Mähen aktiviert ist. (Yuka)"
+        },
+        "is_dump": {
+          "name": "Gras sammeln",
+          "description": "Gibt an, ob Gras sammeln aktiviert ist. (Yuka)"
+        },
+        "is_edge": {
+          "name": "Kanten schneiden",
+          "description": "Gibt an, ob der Modus zum Kanten schneiden aktiv ist. (Yuka)"
+        },
+        "collect_grass_frequency": {
+          "name": "Intervall für das Entleeren",
+          "description": "Intervall für das Entleeren beim Modus für Gras sammeln. (Quadratmeter). (Yuka)"
+        },
+        "job_mode": {
+          "name": "Ausführungsreihenfolge des Pfades",
+          "description": "Abfolge bei der Ausführung des Pfades (Umfang zuerst oder Raster zuerst)."
+        },
+        "job_version": {
+          "name": "Job Version",
+          "description": "Version des Jobs."
+        },
+        "job_id": {
+          "name": "Job ID",
+          "description": "ID des Jobs."
+        },
+        "speed": {
+          "name": "Geschwindigkeit",
+          "description": "Geschwindigkeit beim Mähen."
+        },
+        "ultra_wave": {
+          "name": "Modus der Hinderniserkennung",
+          "description": "Bypass Strategie / Modus der Hinderniserkennung beim Mähen."
+        },
+        "channel_mode": {
+          "name": "Navigationsmodus",
+          "description": "Raster für die Navigation (Einzel, Doppel, Segment oder kein Raster)."
+        },
+        "channel_width": {
+          "name": "Wegabstand",
+          "description": "Wähle den Wegabstand (in cm)."
+        },
+        "rain_tactics": {
+          "name": "Erkennung von Regen",
+          "description": "Stoppt das Mähen, wenn Regen erkannt wird."
+        },
+        "blade_height": {
+          "name": "Schnitthöhe",
+          "description": "Gewünschte Schnitthöhe."
+        },
+        "toward": {
+          "name": "Wegwinkel",
+          "description": "Wegwinkel für das Mähen."
+        },
+        "toward_included_angle": {
+          "name": "Wegwinkel im Verhältnis zum Raster",
+          "description": "Ändern des zweiten Winkels bei Auswahl eines Rasters."
+        },
+        "toward_mode": {
+          "name": "Wegwinkel Modus",
+          "description": "Wähle den Modus für den Wegwinkel."
+        },
+        "border_mode": {
+          "name": "Patrouillenrunden für den seitlichen Rasenschnitt",
+          "description": "Anzahl der Runden für den seitlichen Rasenschnitt."
+        },
+        "obstacle_laps": {
+          "name": "Mähen von No-Go-Zonen",
+          "description": "Anzahl der Runden rund um Hindernisse."
+        },
+        "start_progress": {
+          "name": "Fortschritt beim Start",
+          "description": "Fortschritt beim Start in Prozent."
+        },
+        "areas": {
+          "name": "Bereiche",
+          "description": "Auswahl der zu mähenden Bereiche."
+        }
+      }
     }
   },
   "exceptions": {
@@ -171,6 +345,9 @@
     },
     "dock_failed": {
       "message": "Rückkehr des Mähroboters zur Ladestation fehlgeschlagen."
+    },
+    "dock_cancel_failed": {
+      "message": "Stoppen der Rückkehr des Mähroboters zur Ladestation fehlgeschlagen."
     },
     "command_failed": {
       "message": "Senden eines Befehls zum Mähroboter fehlgeschlagen."
