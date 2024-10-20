@@ -37,6 +37,7 @@ class OctopusEnergyOctoplusPoints(RestoreSensor):
     self._last_evaluated = None
     self._next_refresh = None
     self._request_attempts = 1
+    self._attributes = {}
 
     self.entity_id = generate_entity_id("sensor.{}", self.unique_id, hass=hass)
 
@@ -124,4 +125,3 @@ class OctopusEnergyOctoplusPoints(RestoreSensor):
       self._request_attempts = self._request_attempts + 1
 
     self._next_refresh = calculate_next_refresh(self._last_evaluated, self._request_attempts, REFRESH_RATE_IN_MINUTES_OCTOPLUS_POINTS)
-    self._attributes["data_last_retrieved"] = self._last_evaluated
