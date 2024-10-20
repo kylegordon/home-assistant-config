@@ -8,8 +8,10 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 
 from .const import (
+    CONF_ACCOUNTNAME,
     CONF_AEP_DATA,
     CONF_AUTH_DATA,
+    CONF_CONNECT_DATA,
     CONF_DEVICE_DATA,
     CONF_REGION_DATA,
     CONF_RETRY_COUNT,
@@ -58,23 +60,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: MammotionConfigEntry) ->
     mammotion_coordinator = MammotionDataUpdateCoordinator(hass, entry)
     await mammotion_coordinator.async_setup()
 
-    # config_updates = {}
-    mqtt = mammotion_coordinator.manager.mqtt_list.get(
-        mammotion_coordinator.device_name
-    )
-    cloud_client = mqtt.cloud_client if mqtt else None
-
-    if CONF_AUTH_DATA not in entry.data and cloud_client:
-        config_updates = {
-            **entry.data,
-            CONF_AUTH_DATA: cloud_client.login_by_oauth_response,
-            CONF_REGION_DATA: cloud_client.region_response,
-            CONF_AEP_DATA: cloud_client.aep_response,
-            CONF_SESSION_DATA: cloud_client.session_by_authcode_response,
-            CONF_DEVICE_DATA: cloud_client.devices_by_account_response,
-        }
-        hass.config_entries.async_update_entry(entry, data=config_updates)
-
     await mammotion_coordinator.async_config_entry_first_refresh()
     entry.runtime_data = mammotion_coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -94,7 +79,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
-        await hass.async_add_executor_job(
-            entry.runtime_data.manager.remove_device, entry.runtime_data.device_name
-        )
+        await entry.runtime_data.manager.remove_device(entry.runtime_data.device_name)
     return unload_ok
