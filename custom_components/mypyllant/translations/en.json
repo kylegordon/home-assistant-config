@@ -1,0 +1,61 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "password": "Password",
+          "username": "Username",
+          "country": "Country",
+          "brand": "Brand"
+        },
+        "title": "Login Information",
+        "description": "Same as myVAILLANT app"
+      }
+    },
+    "error": {
+      "login_endpoint_invalid": "No login method was found for this combination of brand and country",
+      "realm_invalid": "This brand requires a country to be selected",
+      "authentication_failed": "Authentication failed, check your username and password and make sure you selected the right country and device brand",
+      "unknown": "Unexpected error"
+    }
+  },
+  "entity": {
+    "climate": {
+      "mypyllant_zone": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "system_off": "System Off",
+              "ventilation_boost": "Ventilation Boost",
+              "boost": "Quick Veto",
+              "away": "Holiday"
+            }
+          }
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Seconds between updates (lowering risks 'quota exceeded' errors and temporary bans)",
+          "update_interval_daily": "Seconds between energy data updates (lowering risks 'quota exceeded' errors and temporary bans)",
+          "refresh_delay": "Delay in seconds before refreshing data after updates",
+          "quick_veto_duration": "Default duration in hours for quick veto",
+          "holiday_duration": "Default duration in days for away mode",
+          "time_program_overwrite": "Temperature controls overwrite time program instead of setting quick veto",
+          "default_holiday_setpoint": "Default temperature setpoint for away mode",
+          "manual_cooling_duration": "Default duration for manual cooling in days",
+          "country": "Country",
+          "brand": "Brand",
+          "fetch_rts": "Fetch real-time statistics (not supported on every system)",
+          "fetch_mpc": "Fetch real-time power usage (not supported on every system)",
+          "fetch_ambisense_rooms": "Fetch Ambisense Room Thermostats",
+          "fetch_energy_management": "Fetch Energy Management Data",
+          "fetch_eebus": "Fetch EEBUS Data"
+        }
+      }
+    }
+  }
+}

@@ -46,7 +46,7 @@ class OctopusEnergyIntelligentBumpCharge(CoordinatorEntity, SwitchEntity, Octopu
   @property
   def name(self):
     """Name of the sensor."""
-    return f"Octopus Energy {self._account_id} Intelligent Bump Charge"
+    return f"Intelligent Bump Charge ({self._account_id})"
 
   @property
   def icon(self):
@@ -68,14 +68,11 @@ class OctopusEnergyIntelligentBumpCharge(CoordinatorEntity, SwitchEntity, Octopu
     result: IntelligentDispatchesCoordinatorResult = self.coordinator.data if self.coordinator is not None else None
     if result is None or (self._last_updated is not None and self._last_updated > result.last_retrieved):
       return self._state
-    
-    if result is not None:
-      self._attributes["data_last_retrieved"] = result.last_retrieved
 
     current_date = utcnow()
     self._state = is_in_bump_charge(current_date, result.dispatches.planned if result.dispatches is not None else [])
-    self._attributes["last_evaluated"] = current_date
 
+    self._attributes = dict_to_typed_dict(self._attributes)
     super()._handle_coordinator_update()
 
   async def async_turn_on(self):

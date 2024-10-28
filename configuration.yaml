@@ -8,12 +8,7 @@ homeassistant:
     - type: trusted_networks
       trusted_networks:
         - 172.24.32.0/24
-        - 172.24.34.0/24
-        - 172.18.0.0/24
-        - 10.8.0.18/32
         - 127.0.0.1
-    - type: legacy_api_password
-      api_password: !secret api_password
 
   whitelist_external_dirs:
     - /tmp
@@ -94,8 +89,6 @@ http:
   use_x_forwarded_for: true
   trusted_proxies:
     - 172.18.0.0/24
-    - 127.0.0.1
-    - ::1
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
     - http://viewpoint.house
@@ -121,7 +114,6 @@ influxdb:
 conversation:
 
 person: !include persons.yaml
-proximity: !include proximity.yaml
 
 wake_on_lan:
 

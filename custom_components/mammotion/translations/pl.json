@@ -1,0 +1,259 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Urządzenie jest już skonfigurowane",
+      "already_in_progress": "Proces konfiguracji już trwa",
+      "no_devices_found": "Nie znaleziono żadnych urządzeń",
+      "no_devices_found_in_account": "Na Twoim koncie nie ma żadnych urządzeń",
+      "bluetooth_and_account_mismatch": "Na Twoim koncie nie znaleziono żadnego urządzenia Bluetooth",
+      "no_longer_present": "Urządzenie nie jest już dostępne",
+      "not_supported": "Urządzenie nie jest obsługiwane",
+
+      "reconfigure_successful": "Ponowna konfiguracja zakończona powodzeniem"
+    },
+    "flow_title": "Skonfiguruj swoją kosiarkę Mammotion",
+    "step": {
+      "bluetooth_confirm": {
+        "description": "Konfiguracja {name}",
+        "data": {
+          "stay_connected_bluetooth": "Utrzymuj połączenie Bluetooth"
+        }
+      },
+      "reconfigure": {
+        "data": {
+          "use_wifi": "Użyj Wi-Fi",
+          "account_name": "E-mail lub numer konta Mammotion",
+          "password": "Hasło do konta Mammotion"
+        }
+      },
+      "user": {
+        "data": {
+          "address": "Urządzenie",
+          "stay_connected_bluetooth": "Utrzymuj połączenie Bluetooth"
+        },
+        "description": "Wybierz swoją kosiarkę"
+      },
+      "wifi": {
+        "data": {
+          "use_wifi": "Użyj Wi-Fi",
+          "account_name": "E-mail lub numer konta Mammotion",
+          "password": "Hasło do konta Mammotion"
+        },
+        "title": "Połącz z Wi-Fi",
+        "description": "Wprowadź adres e-mail lub identyfikator oraz hasło do swojego konta Mammotion"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "title": "Aktualizuj konfigurację",
+          "stay_connected_bluetooth": "Użyj połączenia Bluetooth"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "battery_percent": {
+        "name": "Bateria"
+      },
+      "ble_rssi": {
+        "name": "BLE RSSI"
+      },
+      "wifi_rssi": {
+        "name": "WiFi RSSI"
+      },
+      "gps_stars": {
+        "name": "Satelity (Robot)"
+      },
+      "blade_height": {
+        "name": "Wysokość koszenia"
+      },
+      "area": {
+        "name": "Obszar"
+      },
+      "mowing_speed": {
+        "name": "Prędkość koszenia"
+      },
+      "progress": {
+        "name": "Postęp"
+      },
+      "total_time": {
+        "name": "Całkowity czas"
+      },
+      "elapsed_time": {
+        "name": "Miniony czas"
+      },
+      "left_time": {
+        "name": "Pozostały czas"
+      },
+      "l1_satellites": {
+        "name": "Satelity L1 (wspólne oglądanie)"
+      },
+      "l2_satellites": {
+        "name": "Satelity L2 (wspólne oglądanie)"
+      },
+      "position_mode": {
+        "name": "Pozycjonowanie RTK"
+      },
+      "position_type": {
+        "name": "Stan urządzenia"
+      },
+      "activity_mode": {
+        "name": "Stan pracy"
+     },
+      "work_area": {
+        "name": "Obszar roboczy hash"
+      }
+    },
+    "button": {
+      "start_map_sync": {
+        "name": "Synchronizuj mapy"
+      },
+       "resync_rtk_dock": {
+        "name": "Zsynchronizuj RTK i stację ładującą"
+      },
+      "release_from_dock": {
+        "name": "Oddokuj"
+      },
+      "emergency_nudge_forward": {
+        "name": "Awaryjne ruszenie do przodu"
+      },
+       "emergency_nudge_left": {
+        "name": "Awaryjne ruszenie w lewo"
+      },
+      "emergency_nudge_right": {
+        "name": "Awaryjne ruszenie w prawo"
+      },
+      "emergency_nudge_back": {
+        "name": "Awaryjne ruszenie do tył"
+      },
+      "cancel_task": {
+        "name": "Anuluj bieżące zadanie"
+      }
+    },
+    "switch": {
+      "blade_status": {
+        "name": "Ostrza wł/wył"
+      },
+      "is_mow": {
+        "name": "Koszenie wł/wył"
+      },
+      "is_dump": {
+        "name": "Wysypywanie trawy wł/wył"
+      },
+      "is_edge": {
+        "name": "Cięcie krawędzi"
+      },
+      "rain_tactics": {
+        "name": "Wykrywanie deszczu wł/wył"
+      },
+      "side_led": {
+        "name": "Boczna dioda LED wł/wył"
+      },
+       "perimeter_first_on_off": {
+        "name": "Najpierw obwód"
+      }
+    },
+    "select": {
+       "channel_mode": {
+        "name": "Tryb cięcia",
+        "state": {
+           "single_grid": "Pojedyncza siatka",
+           "double_grid": "Podwójna siatka",
+           "segment_grid": "Siatka mieszana/segmentowa",
+           "no_grid": "Brak siatki"
+         }
+      },
+      "mowing_laps": {
+        "name": "Koszenie obwodu",
+        "state": {
+          "none": "Nie koś",
+          "one": "Jeden raz",
+          "two": "Dwa razy",
+          "three": "Trzy razy",
+          "four": "Cztery razy"
+        }
+      },
+      "obstacle_laps": {
+        "name": "Koszenie stref zakazanych",
+        "state": {
+          "none": "Nie koś",
+          "one": "Jeden raz",
+          "two": "Dwa razy",
+          "three": "Trzy razy",
+          "four": "Cztery razy"
+        }
+      },
+      "border_mode": {
+        "name": "Kolejność wykonania ścieżki",
+        "state": {
+          "border_first": "Najpierw obwód",
+          "grid_first": "Najpierw siatka"
+        }
+      },
+      "bypass_mode": {
+        "name": "Tryb wykrywania przeszkód",
+        "state": {
+          "direct_touch": "Bezpośredne dotknięcie",
+          "slow_touch": "Wolne dotknięcie",
+          "less_touch": "Mniej dotyku",
+          "no_touch": "Brak dotyku"
+        }
+      },
+      "cutting_angle_mode": {
+        "name": "Kąt cięcia siatki",
+        "state": {
+          "relative_angle": "Kąt względny",
+          "absolute_angle": "Kąt bezwzględny",
+          "random_angle": "Kąt losowy"
+        }
+      }
+    },
+    "number": {
+       "start_progress": {
+        "name": "Rozpocznij koszenie przy x% postępie"
+      },
+      "blade_height": {
+        "name": "Wysokość cięcia"
+      },
+      "working_speed": {
+        "name": "Prędkość robocza"
+      },
+      "cutting_angle": {
+        "name": "Kąt cięcia"
+      },
+      "path_spacing": {
+        "name": "Odległość między ścieżkami"
+      },
+      "dumping_interval": {
+        "name": "Częstotliwość zrzutu"
+      }
+    },
+    "device_tracker": {
+      "name": "Śledzenie urządzenia"
+    }
+  },
+  "exceptions": {
+    "device_not_ready": {
+      "message": "Urządzenie obecnie nie jest gotowe."
+    },
+    "pause_failed": {
+      "message": "Wstrzymanie kosiarki nie powiodło się."
+    },
+    "resume_failed": {
+      "message": "Wznowienie kosiarki nie powiodło się."
+    },
+    "start_failed": {
+      "message": "Nie udało się uruchomić kosiarki."
+    },
+    "dock_failed": {
+      "message": "Nie udało się wysłać kosiarki do stacji ładującej."
+    },
+    "command_failed": {
+      "message": "Nie udało się wysłać polecenia do kosiarki."
+    }
+  }
+}
