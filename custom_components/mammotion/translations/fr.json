@@ -64,6 +64,9 @@
       "wifi_rssi": {
         "name": "WiFi RSSI"
       },
+      "connect_type": {
+        "name": "Raccordement"
+      },
       "gps_stars": {
         "name": "Satellites (Robot)"
       },
@@ -104,14 +107,23 @@
         "name": "Mode activité"
       },
       "work_area": {
-        "name": "Work area hash"
+        "name": "Hachage de la zone de travail"
+      },
+      "maintenance_distance": {
+        "name": "Kilométrage total"
+      },
+      "maintenance_work_time": {
+        "name": "Durée de la tâche"
+      },
+      "maintenance_bat_cycles": {
+        "name": "Cycles de batterie"
       }
     },
     "button": {
       "start_map_sync": {
         "name": "Synchroniser les cartes"
       },
-       "resync_rtk_dock": {
+      "resync_rtk_dock": {
         "name": "Synchroniser RTK et base de charge"
       },
       "release_from_dock": {
@@ -155,8 +167,11 @@
       "side_led": {
         "name": "Voyants LED On/Off"
       },
-       "perimeter_first_on_off": {
+      "perimeter_first_on_off": {
         "name": "Bordure en premier"
+      },
+      "schedule_updates": {
+        "name": "Activer/Désactiver les mises à jour"
       }
     },
     "select": {
@@ -166,7 +181,7 @@
           "single_grid": "Grille unique",
           "double_grid": "Grille à damier",
           "segment_grid": "Grille mixte/segmentée",
-          "no_grid": "Pas de grille" 
+          "no_grid": "Pas de grille"
         }
       },
       "mowing_laps": {
@@ -232,6 +247,9 @@
       },
       "dumping_interval": {
         "name": "Fréquence de vidage"
+      },
+      "toward_included_angle": {
+        "name": "Angle de traversée"
       }
     },
     "device_tracker": {
@@ -249,21 +267,21 @@
       "fields": {
         "is_mow": {
           "name": "Est-ce que la tonte est active",
-          "description": "Si la tonte est active. (Yuka)"
+          "description": "Whether mowing is active. (Yuka)."
         },
         "is_dump": {
           "name": "Est-ce que le déversement est actif",
-          "description": "Si le déversement d'herbe est actif. (Yuka)"
+          "description": "Whether grass dumping is active. (Yuka)."
         },
         "is_edge": {
           "name": "Est-ce que le mode bordure est actif",
-          "description": "Si le mode bordure est actif. (Yuka)"
+          "description": "Whether edge mode is active. (Yuka)."
         },
         "collect_grass_frequency": {
           "name": "Fréquence de ramassage de l'herbe",
-          "description": "Fréquence de ramassage de l'herbe (en mètres carrés). (Yuka)"
+          "description": "Frequency to collect grass (in meters squared). (Yuka)."
         },
-        "job_mode": {
+        "border_mode": {
           "name": "Ordre de tonte",
           "description": "Ordre du chemin de tonte (bordure d'abord ou grille d'abord)."
         },
@@ -311,7 +329,7 @@
           "name": "Mode de direction",
           "description": "Mode angle."
         },
-        "border_mode": {
+        "mowing_laps": {
           "name": "Mode Chien de Garde",
           "description": "Mode chien de garde (nombre de tours)."
         },

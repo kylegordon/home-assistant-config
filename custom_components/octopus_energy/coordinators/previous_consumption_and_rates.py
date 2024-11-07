@@ -32,12 +32,12 @@ from ..intelligent import adjust_intelligent_rates, is_intelligent_product
 from ..coordinators.intelligent_dispatches import IntelligentDispatchesCoordinatorResult
 from . import BaseCoordinatorResult, get_electricity_meter_tariff, get_gas_meter_tariff
 from ..utils.rate_information import get_min_max_average_rates
-from ..octoplus import get_saving_session_weekday_dates, get_saving_session_weekend_dates, SavingSessionConsumptionDate
+from ..octoplus import get_octoplus_session_weekday_dates, get_octoplus_session_weekend_dates, OctoplusSessionConsumptionDate
 
 _LOGGER = logging.getLogger(__name__)
 
 def __get_interval_end(item):
-    return item["end"]
+    return (item["end"].timestamp(), item["end"].fold)
 
 def __sort_consumption(consumption_data):
   sorted = consumption_data.copy()
@@ -73,7 +73,7 @@ def contains_consumption(consumptions: list, current_consumption):
   
   return False
 
-def extract_missing_consumption_periods(target_consumption_dates: list[SavingSessionConsumptionDate], consumptions: list):
+def extract_missing_consumption_periods(target_consumption_dates: list[OctoplusSessionConsumptionDate], consumptions: list):
   new_target_consumption_dates = []
   for consumption_date in target_consumption_dates:
     consumption_count = 0
@@ -94,7 +94,7 @@ async def async_get_missing_consumption(
     identifier: str,
     serial_number: str,
     consumptions: list,
-    consumption_dates: list[SavingSessionConsumptionDate]
+    consumption_dates: list[OctoplusSessionConsumptionDate]
   ):
   try:
     requests = []
@@ -165,11 +165,11 @@ async def async_enhance_with_historic_consumption(
 
   # Fetch rates that might be missing
   local_start = as_local(current).replace(hour=0, minute=0, second=0, microsecond=0)
-  weekday_periods = get_saving_session_weekday_dates(local_start, 15, timedelta(hours=24), [])
+  weekday_periods = get_octoplus_session_weekday_dates(local_start, 15, timedelta(hours=24), [])
   earliest_weekday_start = weekday_periods[-1].start
   missing_weekday_consumptions = extract_missing_consumption_periods(weekday_periods, historic_weekday_consumptions)
 
-  weekend_periods = get_saving_session_weekend_dates(local_start, 8, timedelta(hours=24), [])
+  weekend_periods = get_octoplus_session_weekend_dates(local_start, 8, timedelta(hours=24), [])
   earliest_weekend_start = weekend_periods[-1].start
   missing_weekend_consumptions = extract_missing_consumption_periods(weekend_periods, historic_weekend_consumptions)
 
@@ -179,8 +179,8 @@ async def async_enhance_with_historic_consumption(
   historic_weekday_consumptions = remove_old_consumptions(historic_weekday_consumptions, earliest_weekday_start)
   historic_weekend_consumptions = remove_old_consumptions(historic_weekend_consumptions, earliest_weekend_start)
 
-  historic_weekday_consumptions.sort(key=lambda x: x["start"])
-  historic_weekend_consumptions.sort(key=lambda x: x["start"])
+  historic_weekday_consumptions.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
+  historic_weekend_consumptions.sort(key=lambda x: (x["start"].timestamp(), x["start"].fold))
 
   current_weekday_earliest_start = historic_weekday_consumptions[0]["start"] if historic_weekday_consumptions is not None and len(historic_weekday_consumptions) > 0 else None
   current_weekday_latest_end = historic_weekday_consumptions[-1]["end"] if historic_weekday_consumptions is not None and len(historic_weekday_consumptions) > 0 else None
@@ -224,6 +224,7 @@ def get_latest_day(consumption_data: list | None):
   if len(current_reduced_consumption_data) == 48:
     latest_reduced_consumption_data = current_reduced_consumption_data
 
+  _LOGGER.debug(f"Latest day: {latest_reduced_consumption_data[-1]["end"] if latest_reduced_consumption_data is not None and len(latest_reduced_consumption_data) > 0 else None}")
   return latest_reduced_consumption_data
 
 async def async_fetch_consumption_and_rates(
@@ -246,16 +247,15 @@ async def async_fetch_consumption_and_rates(
   if (account_info is None):
     return previous_data
 
+  _LOGGER.debug(f"{'electricity' if is_electricity else 'gas'} {identifier}/{serial_number}: next_refresh: {previous_data.next_refresh if previous_data is not None else None}; ")
   if (previous_data == None or 
       current >= previous_data.next_refresh):
-    _LOGGER.debug(f"Retrieving previous consumption data for {'electricity' if is_electricity else 'gas'} {identifier}/{serial_number}...")
-
     rate_data = None
     standing_charge = None
     
     try:
       if (is_electricity == True):
-        consumption_data = await client.async_get_electricity_consumption(identifier, serial_number, page_size=50)
+        consumption_data = await client.async_get_electricity_consumption(identifier, serial_number, page_size=52)
         consumption_data = get_latest_day(consumption_data)
 
         if consumption_data is not None:
@@ -283,7 +283,7 @@ async def async_fetch_consumption_and_rates(
                                                   intelligent_dispatches.planned,
                                                   intelligent_dispatches.completed)
       else:
-        consumption_data = await client.async_get_gas_consumption(identifier, serial_number, page_size=50)
+        consumption_data = await client.async_get_gas_consumption(identifier, serial_number, page_size=52)
         consumption_data = get_latest_day(consumption_data)
 
         if consumption_data is not None:
@@ -300,6 +300,7 @@ async def async_fetch_consumption_and_rates(
             client.async_get_gas_standing_charge(tariff.product, tariff.code, period_from, period_to)
           )
       
+      _LOGGER.debug(f"{'electricity' if is_electricity else 'gas'} {identifier}/{serial_number}: consumption_data: {len(consumption_data) if consumption_data is not None else None}; rate_data: {len(rate_data) if rate_data is not None else None}; standing_charge: {standing_charge}")
       if consumption_data is not None and len(consumption_data) >= MINIMUM_CONSUMPTION_DATA_LENGTH and rate_data is not None and len(rate_data) > 0 and standing_charge is not None:
         _LOGGER.debug(f"Discovered previous consumption data for {'electricity' if is_electricity else 'gas'} {identifier}/{serial_number}")
         consumption_data = __sort_consumption(consumption_data)
@@ -323,6 +324,7 @@ async def async_fetch_consumption_and_rates(
           None,
           None
         )
+    
       
       return PreviousConsumptionCoordinatorResult(
         current,
@@ -348,7 +350,7 @@ async def async_fetch_consumption_and_rates(
           previous_data.historic_weekday_consumption,
           previous_data.historic_weekend_consumption
         )
-        _LOGGER.warning(f"Failed to retrieve previous consumption data for {'electricity' if is_electricity else 'gas'} {identifier}/{serial_number} - using cached data. Next attempt at {result.next_refresh}")
+        _LOGGER.warning(f"Failed to retrieve previous consumption data for {'electricity' if is_electricity else 'gas'} {identifier}/{serial_number} - using cached data. Next attempt at {result.next_refresh}. Exception: {e}")
       else:
         result = PreviousConsumptionCoordinatorResult(
           # We want to force into our fallback mode
@@ -360,7 +362,7 @@ async def async_fetch_consumption_and_rates(
           None,
           None
         )
-        _LOGGER.warning(f"Failed to retrieve previous consumption data for {'electricity' if is_electricity else 'gas'} {identifier}/{serial_number}. Next attempt at {result.next_refresh}")
+        _LOGGER.warning(f"Failed to retrieve previous consumption data for {'electricity' if is_electricity else 'gas'} {identifier}/{serial_number}. Next attempt at {result.next_refresh}. Exception: {e}")
 
       return result
 

@@ -6,6 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
 """
+
 import asyncio
 import logging
 import os
@@ -20,13 +21,7 @@ from homeassistant.components.media_player import (
     ATTR_MEDIA_ANNOUNCE,
     async_process_play_media_url,
 )
-
-from homeassistant.const import (
-    CONF_EMAIL,
-    CONF_NAME,
-    CONF_PASSWORD,
-    STATE_UNAVAILABLE,
-)
+from homeassistant.const import CONF_EMAIL, CONF_NAME, CONF_PASSWORD, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.discovery import async_load_platform
@@ -49,6 +44,7 @@ from .const import (
     DEPENDENT_ALEXA_COMPONENTS,
     MIN_TIME_BETWEEN_FORCED_SCANS,
     MIN_TIME_BETWEEN_SCANS,
+    MODEL_IDS,
     PLAY_SCAN_INTERVAL,
     UPLOAD_PATH,
 )
@@ -76,7 +72,7 @@ SUPPORT_ALEXA = (
     | MediaPlayerEntityFeature.TURN_ON
     | MediaPlayerEntityFeature.VOLUME_MUTE
     | MediaPlayerEntityFeature.SELECT_SOURCE
-    | MediaPlayerEntityFeature.SHUFFLE_SET  
+    | MediaPlayerEntityFeature.SHUFFLE_SET
 )
 _LOGGER = logging.getLogger(__name__)
 
@@ -185,12 +181,14 @@ async def async_setup_entry(hass, config_entry, async_add_devices):
                 _LOGGER.debug(
                     "%s: Loading config entry for %s", hide_email(account), component
                 )
-                config_entry.async_create_task(
-                    hass,
-                    hass.config_entries.async_forward_entry_setups(
+                try:
+                    await hass.config_entries.async_forward_entry_setups(
                         config_entry, [component]
                     )
-                )
+                except (asyncio.TimeoutError, TimeoutException) as ex:
+                    raise ConfigEntryNotReady(
+                        f"Timeout while loading config entry for {component}"
+                    ) from ex
         return True
     raise ConfigEntryNotReady
 
@@ -420,6 +418,15 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                     self.hass.data[DATA_ALEXAMEDIA]["accounts"][email]["http2"]
                 )
                 self.async_schedule_update_ha_state(force_refresh=force_refresh)
+            if self._last_called:
+                self.hass.bus.async_fire(
+                    "alexa_media_last_called_event",
+                    {
+                        "last_called": self.device_serial_number,
+                        "timestamp": self._last_called_timestamp,
+                        "summary": self._last_called_summary,
+                    },
+                )
         elif "bluetooth_change" in event:
             if event_serial == self.device_serial_number:
                 _LOGGER.debug(
@@ -431,7 +438,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                 self._bluetooth_state = event["bluetooth_change"]
                 # the setting of bluetooth_state is not consistent as this
                 # takes from the event instead of the hass storage. We're
-                # setting the value twice. Architectually we should have a
+                # setting the value twice. Architecturally we should have a
                 # single authoritative source of truth.
                 self._source = self._get_source()
                 self._source_list = self._get_source_list()
@@ -478,7 +485,11 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                         self.schedule_update_ha_state()
                 await _refresh_if_no_audiopush(already_refreshed)
         elif "push_activity" in event:
-            if self.state in {MediaPlayerState.IDLE, MediaPlayerState.PAUSED, MediaPlayerState.PLAYING}:
+            if self.state in {
+                MediaPlayerState.IDLE,
+                MediaPlayerState.PAUSED,
+                MediaPlayerState.PLAYING,
+            }:
                 _LOGGER.debug(
                     "%s: %s checking for potential state update due to push activity on %s",
                     hide_email(self._login.email),
@@ -765,8 +776,12 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
                     else:
                         await self.alexa_api.set_bluetooth(devices["address"])
                     self._source = source
+        # Safely access 'http2' setting
         if not (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][self._login.email]["http2"]
+            self.hass.data.get(DATA_ALEXAMEDIA, {})
+            .get("accounts", {})
+            .get(self._login.email, {})
+            .get("http2")
         ):
             await self.async_update()
 
@@ -911,35 +926,47 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
         except AttributeError:
             pass
         email = self._login.email
+
+        # Check if DATA_ALEXAMEDIA and 'accounts' exist
+        accounts_data = self.hass.data.get(DATA_ALEXAMEDIA, {}).get("accounts", {})
         if (
             self.entity_id is None  # Device has not initialized yet
-            or email not in self.hass.data[DATA_ALEXAMEDIA]["accounts"]
+            or email not in accounts_data
             or self._login.session.closed
         ):
             self._assumed_state = True
             self.available = False
             return
-        device = self.hass.data[DATA_ALEXAMEDIA]["accounts"][email]["devices"][
-            "media_player"
-        ][self.device_serial_number]
+
+        # Safely access the device
+        device = accounts_data[email]["devices"]["media_player"].get(
+            self.device_serial_number
+        )
+        if not device:
+            _LOGGER.warning(
+                "Device serial number %s not found for account %s. Skipping update.",
+                self.device_serial_number,
+                hide_email(email),
+            )
+            self.available = False
+            return
+
+        # Safely access websocket_commands
         seen_commands = (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"][email][
-                "websocket_commands"
-            ].keys()
-            if "websocket_commands"
-            in (self.hass.data[DATA_ALEXAMEDIA]["accounts"][email])
+            accounts_data[email]["websocket_commands"].keys()
+            if "websocket_commands" in accounts_data[email]
             else None
         )
-        await self.refresh(  # pylint: disable=unexpected-keyword-arg
-            device, no_throttle=True
-        )
-        push_enabled = (
-            self.hass.data[DATA_ALEXAMEDIA]["accounts"].get(email, {}).get("http2")
-        )
+
+        await self.refresh(device, no_throttle=True)
+
+        # Safely access 'http2' setting
+        push_enabled = accounts_data[email].get("http2")
+
         if (
             self.state in [MediaPlayerState.PLAYING]
             and
-            #  only enable polling if websocket not connected
+            # Only enable polling if websocket not connected
             (
                 not push_enabled
                 or not seen_commands
@@ -959,7 +986,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             ):
                 _LOGGER.debug(
                     "%s: %s playing; scheduling update in %s seconds",
-                    hide_email(self._login.email),
+                    hide_email(email),
                     self.name,
                     PLAY_SCAN_INTERVAL,
                 )
@@ -972,9 +999,8 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             self._should_poll = False
             if not push_enabled:
                 _LOGGER.debug(
-                    "%s: Disabling polling and scheduling last update in"
-                    " 300 seconds for %s",
-                    hide_email(self._login.email),
+                    "%s: Disabling polling and scheduling last update in 300 seconds for %s",
+                    hide_email(email),
                     self.name,
                 )
                 async_call_later(
@@ -985,7 +1011,7 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             else:
                 _LOGGER.debug(
                     "%s: Disabling polling for %s",
-                    hide_email(self._login.email),
+                    hide_email(email),
                     self.name,
                 )
         self._last_update = util.utcnow()
@@ -1158,7 +1184,10 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
     @_catch_login_errors
     async def async_media_play(self):
         """Send play command."""
-        if not (self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED] and self.available):
+        if not (
+            self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED]
+            and self.available
+        ):
             return
         if self._playing_parent:
             await self._playing_parent.async_media_play()
@@ -1175,7 +1204,10 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
     @_catch_login_errors
     async def async_media_pause(self):
         """Send pause command."""
-        if not (self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED] and self.available):
+        if not (
+            self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED]
+            and self.available
+        ):
             return
         if self._playing_parent:
             await self._playing_parent.async_media_pause()
@@ -1242,7 +1274,10 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
     @_catch_login_errors
     async def async_media_next_track(self):
         """Send next track command."""
-        if not (self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED] and self.available):
+        if not (
+            self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED]
+            and self.available
+        ):
             return
         if self._playing_parent:
             await self._playing_parent.async_media_next_track()
@@ -1259,7 +1294,10 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
     @_catch_login_errors
     async def async_media_previous_track(self):
         """Send previous track command."""
-        if not (self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED] and self.available):
+        if not (
+            self.state in [MediaPlayerState.PLAYING, MediaPlayerState.PAUSED]
+            and self.available
+        ):
             return
         if self._playing_parent:
             await self._playing_parent.async_media_previous_track()
@@ -1599,7 +1637,9 @@ class AlexaClient(MediaPlayerDevice, AlexaMedia):
             "identifiers": {(ALEXA_DOMAIN, self.unique_id)},
             "name": self.name,
             "manufacturer": "Amazon",
-            "model": f"{self._device_family} {self._device_type}",
+            "model": MODEL_IDS.get(
+                self._device_type, f"{self._device_family} {self._device_type}"
+            ),
             "sw_version": self._software_version,
         }
 

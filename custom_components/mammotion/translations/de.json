@@ -7,7 +7,7 @@
       "no_devices_found_in_account": "Es wurden keine Geräte in deinem Account gefunden",
       "bluetooth_and_account_mismatch": "Es wurde kein Bluetooth-Gerät in deinem Account gefunden",
       "no_longer_present": "Das Gerät ist nicht länger verfügbar",
-      "not_supported": "Das Gerät wird nicht unterstützt",											  
+      "not_supported": "Das Gerät wird nicht unterstützt",
       "reconfigure_successful": "Die Neukonfiguration war erfolgreich"
     },
     "flow_title": "Konfiguriere deinen Mammotion Mähroboter",
@@ -28,7 +28,7 @@
       "user": {
         "data": {
           "address": "Gerät",
-          "stay_connected_bluetooth": "Bluetooth-Verbindung aufrechterhalten"																
+          "stay_connected_bluetooth": "Bluetooth-Verbindung aufrechterhalten"
         },
         "description": "Wähle deinen Mähroboter"
       },
@@ -63,6 +63,9 @@
       },
       "wifi_rssi": {
         "name": "WiFi RSSI"
+      },
+      "connect_type": {
+        "name": "Verbindung"
       },
       "gps_stars": {
         "name": "Satelliten (Roboter)"
@@ -105,6 +108,15 @@
       },
       "work_area": {
         "name": "Arbeitsbereich Hash"
+      },
+      "maintenance_distance": {
+        "name": "Gesamtkilometerstand"
+      },
+      "maintenance_work_time": {
+        "name": "Aufgabendauer"
+      },
+      "maintenance_bat_cycles": {
+        "name": "Batteriezyklen"
       }
     },
     "button": {
@@ -157,6 +169,9 @@
       },
       "perimeter_first_on_off": {
         "name": "Zuerst den Umfang"
+      },
+      "schedule_updates": {
+        "name": "Updates ein/aus"
       }
     },
     "select": {
@@ -232,6 +247,9 @@
       },
       "dumping_interval": {
         "name": "Intervall für das Entleeren"
+      },
+      "toward_included_angle": {
+        "name": "Kreuzwinkel"
       }
     },
     "device_tracker": {
@@ -249,21 +267,21 @@
       "fields": {
         "is_mow": {
           "name": "Mähen",
-          "description": "Gibt an, ob Mähen aktiviert ist. (Yuka)"
+          "description": "Whether mowing is active. (Yuka)."
         },
         "is_dump": {
           "name": "Gras sammeln",
-          "description": "Gibt an, ob Gras sammeln aktiviert ist. (Yuka)"
+          "description": "Whether grass dumping is active. (Yuka)."
         },
         "is_edge": {
           "name": "Kanten schneiden",
-          "description": "Gibt an, ob der Modus zum Kanten schneiden aktiv ist. (Yuka)"
+          "description": "Whether edge mode is active. (Yuka)."
         },
         "collect_grass_frequency": {
           "name": "Intervall für das Entleeren",
-          "description": "Intervall für das Entleeren beim Modus für Gras sammeln. (Quadratmeter). (Yuka)"
+          "description": "Häufigkeit für das Auffangen von Gras (in Quadratmetern). (Yuka)."
         },
-        "job_mode": {
+        "border_mode": {
           "name": "Ausführungsreihenfolge des Pfades",
           "description": "Abfolge bei der Ausführung des Pfades (Umfang zuerst oder Raster zuerst)."
         },
@@ -311,7 +329,7 @@
           "name": "Wegwinkel Modus",
           "description": "Wähle den Modus für den Wegwinkel."
         },
-        "border_mode": {
+        "mowing_laps": {
           "name": "Patrouillenrunden für den seitlichen Rasenschnitt",
           "description": "Anzahl der Runden für den seitlichen Rasenschnitt."
         },
