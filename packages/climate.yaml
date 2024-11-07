@@ -41,8 +41,9 @@ automation:
         - condition: template
           value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
     action:
-      - service: climate.set_preset_mode
-        entity_id: climate.viewpoint_zone_1_circuit_0_climate
+      - service: climate.set_hvac_mode
+        target:
+          entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
           hvac_mode: auto
 
@@ -72,7 +73,8 @@ automation:
           for:
             minutes: 5
     action:
-      - service: climate.set_preset_mode
-        entity_id: climate.viewpoint_zone_1_circuit_0_climate
+      - service: climate.set_hvac_mode
+        target:
+          entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
           hvac_mode: 'off'
