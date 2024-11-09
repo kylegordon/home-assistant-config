@@ -28,8 +28,8 @@ automation:
       - trigger: state
         entity_id: binary_sensor.climate_openings
         to: 'off'
-          for:
-            minutes: 5
+        for:
+          minutes: 5
       - trigger: numeric_state
         entity_id: sensor.stove_temperature_living_room
         below: 100
@@ -52,16 +52,16 @@ automation:
       - trigger: state
         entity_id: binary_sensor.climate_openings
         to: 'on'
-          for:
-            minutes: 5
+        for:
+          minutes: 5
       - trigger: numeric_state
         entity_id: sensor.stove_temperature_living_room
         above: 100
       - trigger: state
         entity_id: binary_sensor.home_occupied
         to: 'on'
-          for:
-            minutes: 5
+        for:
+          minutes: 5
     action:
       - service: climate.set_hvac_mode
         target:
