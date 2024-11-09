@@ -24,7 +24,7 @@ automation:
     description: >-
       Turn on ASHP if stove is off
       and all the openings are shut
-    trigger:
+    triggers:
       - trigger: state
         entity_id: binary_sensor.climate_openings
         to: 'off'
@@ -48,7 +48,7 @@ automation:
       Turn off ASHP if stove is on
       or any of the openings are open
       or home is not occupied
-    trigger:
+    triggers:
       - trigger: state
         entity_id: binary_sensor.climate_openings
         to: 'on'
