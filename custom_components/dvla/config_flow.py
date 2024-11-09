@@ -1,34 +1,51 @@
 """Config flow for DVLA integration."""
+
 from __future__ import annotations
 
+from collections import OrderedDict
 import logging
 from typing import Any
 
 import voluptuous as vol
-from collections import OrderedDict
-from homeassistant.core import callback
+
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
+from homeassistant.components.calendar import CalendarEntityFeature
+from homeassistant.const import CONF_API_KEY, CONF_SCAN_INTERVAL
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
-import homeassistant.helpers.config_validation as cv
-from .const import DOMAIN, CONF_REG_NUMBER
-from .coordinator import DVLACoordinator
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.const import (
-    CONF_API_KEY,
-    CONF_SCAN_INTERVAL
-)
+import homeassistant.helpers.config_validation as cv
+
+from .const import CONF_CALENDARS, CONF_REG_NUMBER, DOMAIN
+from .coordinator import DVLACoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-STEP_USER_DATA_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_API_KEY): cv.string,
-        vol.Required(CONF_REG_NUMBER): cv.string,
-        vol.Required(CONF_SCAN_INTERVAL, default=21600): cv.positive_int,
-    }
-)
+
+async def _get_calendar_entities(hass: HomeAssistant) -> list[str]:
+    """Retrieve calendar entities."""
+    entity_registry = er.async_get(hass)
+    calendar_entities = {}
+    for entity_id, entity in entity_registry.entities.items():
+        if entity_id.startswith("calendar."):
+            calendar_entity = hass.states.get(entity_id)
+            if calendar_entity:
+                supported_features = calendar_entity.attributes.get(
+                    "supported_features", 0
+                )
+
+                supports_create_event = (
+                    supported_features & CalendarEntityFeature.CREATE_EVENT
+                )
+
+                if supports_create_event:
+                    calendar_name = entity.original_name or entity_id
+                    calendar_entities[entity_id] = calendar_name
+
+    calendar_entities["None"] = "Create a new calendar"
+    return calendar_entities
 
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
@@ -48,8 +65,8 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     return {"title": str(data[CONF_REG_NUMBER]).upper()}
 
 
-class OptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle a option flow for Alexa Media."""
+class DVLAFlowHandler(config_entries.OptionsFlow):
+    """Handle a option flow for DVLA."""
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
@@ -59,13 +76,20 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Manage the options"""
+        """Manage the options."""
+
+        calendar_entities = await _get_calendar_entities(self.hass)
 
         options_schema = vol.Schema(
             {
-                vol.Required(CONF_API_KEY, default=self.config_entry.data.get(CONF_API_KEY, "")): cv.string,
-                vol.Required(CONF_REG_NUMBER, default=self.config_entry.data.get(CONF_REG_NUMBER, "")): cv.string,
-                vol.Required(CONF_SCAN_INTERVAL, default=self.config_entry.data.get(CONF_SCAN_INTERVAL, 21600)): cv.positive_int,
+                vol.Required(
+                    CONF_SCAN_INTERVAL,
+                    default=self.config_entry.data.get(CONF_SCAN_INTERVAL, 21600),
+                ): cv.positive_int,
+                vol.Required(
+                    CONF_CALENDARS,
+                    default=self.config_entry.data.get(CONF_CALENDARS, []),
+                ): cv.multi_select(calendar_entities),
             }
         )
 
@@ -90,24 +114,59 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle the initial step."""
+
+        errors: dict[str, str] = {}
+
+        calendar_entities = await _get_calendar_entities(self.hass)
+
+        user_input = user_input or {}
+
+        STEP_USER_DATA_SCHEMA = vol.Schema(
+            {
+                vol.Required(
+                    CONF_API_KEY, default=user_input.get(CONF_API_KEY, "")
+                ): cv.string,
+                vol.Required(
+                    CONF_REG_NUMBER, default=user_input.get(CONF_REG_NUMBER, "")
+                ): cv.string,
+                vol.Required(
+                    CONF_SCAN_INTERVAL,
+                    default=user_input.get(CONF_SCAN_INTERVAL, 21600),
+                ): cv.positive_int,
+                vol.Required(
+                    CONF_CALENDARS, default=user_input.get(CONF_CALENDARS, [])
+                ): cv.multi_select(calendar_entities),
+            }
+        )
         if user_input is None:
             return self.async_show_form(
                 step_id="user", data_schema=STEP_USER_DATA_SCHEMA
             )
 
-        errors = {}
+        if user_input:
+            entries = self.hass.config_entries.async_entries(DOMAIN)
 
-        try:
-            info = await validate_input(self.hass, user_input)
-        except CannotConnect:
-            errors["base"] = "cannot_connect"
-        except InvalidAuth:
-            errors["base"] = "invalid_auth"
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.exception("Unexpected exception")
-            errors["base"] = "unknown"
-        else:
-            return self.async_create_entry(title=info["title"], data=user_input)
+            if any(
+                entry.data.get(CONF_REG_NUMBER) == user_input.get(CONF_REG_NUMBER)
+                for entry in entries
+            ):
+                errors["base"] = "vehicle_exists"
+
+            if not user_input.get(CONF_CALENDARS):
+                errors["base"] = "no_calendar_selected"
+
+            if not errors:
+                try:
+                    info = await validate_input(self.hass, user_input)
+                except CannotConnect:
+                    errors["base"] = "cannot_connect"
+                except InvalidAuth:
+                    errors["base"] = "invalid_auth"
+                except Exception:  # pylint: disable=broad-except
+                    _LOGGER.exception("Unexpected exception")
+                    errors["base"] = "unknown"
+                else:
+                    return self.async_create_entry(title=info["title"], data=user_input)
 
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
@@ -119,7 +178,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         config_entry: config_entries.ConfigEntry,
     ) -> config_entries.OptionsFlow:
         """Get the options flow for this handler."""
-        return OptionsFlowHandler(config_entry)
+        return DVLAFlowHandler(config_entry)
 
 
 class CannotConnect(HomeAssistantError):
