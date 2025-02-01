@@ -88,7 +88,7 @@ recorder: !include recorder.yaml
 http:
   use_x_forwarded_for: true
   trusted_proxies:
-    - 172.18.0.0/24
+    - 172.20.0.0/24
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
     - http://viewpoint.house
@@ -223,6 +223,7 @@ group: !include groups.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
+template: !include template.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
@@ -232,8 +233,6 @@ scene: !include_dir_list scenes
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
-
-hwam_stove: !include hwam_stove.yaml
 
 utility_meter:
   quarter_hourly_energy:
