@@ -99,31 +99,31 @@ automation:
     condition:
       condition: and
       conditions:
-      - condition: state
-        entity_id: input_boolean.night_view
-        state: "off"
-      - condition: numeric_state
-        entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level_trigger
-        # for:
-        #   minutes: 10
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
-      - condition: or
-        conditions:
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "idle"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "stopped"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "paused"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "off"
+        - condition: state
+          entity_id: input_boolean.night_view
+          state: "off"
+        - condition: numeric_state
+          entity_id: sensor.average_external_light_level
+          below: input_number.living_room_light_level_trigger
+          # for:
+          #   minutes: 10
+        - condition: state
+          entity_id: binary_sensor.home_occupied
+          state: "on"
+        - condition: or
+          conditions:
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "idle"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "stopped"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "paused"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "off"
     action:
       - service: light.turn_on
         data_template:
@@ -155,17 +155,17 @@ automation:
     condition:
       condition: and
       conditions:
-      - condition: state
-        entity_id: input_boolean.night_view
-        state: "off"
-      - condition: numeric_state
-        entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level_trigger
-        # for:
-        #   minutes: 10
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
+        - condition: state
+          entity_id: input_boolean.night_view
+          state: "off"
+        - condition: numeric_state
+          entity_id: sensor.average_external_light_level
+          below: input_number.living_room_light_level_trigger
+          # for:
+          #   minutes: 10
+        - condition: state
+          entity_id: binary_sensor.home_occupied
+          state: "on"
     action:
       - service: light.turn_on
         data_template:
@@ -203,34 +203,34 @@ automation:
     condition:
       condition: and
       conditions:
-      - condition: state
-        entity_id: input_boolean.night_view
-        state: "off"
-      - condition: state
-        entity_id: light.art
-        state: "off"
-      - condition: numeric_state
-        entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level_trigger
-        # for:
-        #   minutes: 10
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
-      - condition: or
-        conditions:
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "idle"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "stopped"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "paused"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "off"
+        - condition: state
+          entity_id: input_boolean.night_view
+          state: "off"
+        - condition: state
+          entity_id: light.art
+          state: "off"
+        - condition: numeric_state
+          entity_id: sensor.average_external_light_level
+          below: input_number.living_room_light_level_trigger
+          # for:
+          #   minutes: 10
+        - condition: state
+          entity_id: binary_sensor.home_occupied
+          state: "on"
+        - condition: or
+          conditions:
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "idle"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "stopped"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "paused"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "off"
     action:
       - service: light.turn_on
         data_template:
