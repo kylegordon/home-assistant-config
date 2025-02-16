@@ -134,3 +134,22 @@ automation:
             sticky: true
             color: red
     mode: single
+
+  - alias: "Announce defrost cycle"
+    id: announce_defrost_cycle
+    description: >-
+      Announce defrost cycle
+    triggers:
+      - trigger: state
+        entity_id: sensor.s00_compressorstate
+        to: "Defrost"
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.kitchen
+          data:
+            type: announce
+            # method: all
+          message: >-
+            "Heat pump has started a defrost cycle"
