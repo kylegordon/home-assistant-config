@@ -1,14 +1,15 @@
+---
 # Inspired by https://www.reddit.com/r/homeautomation/comments/qiywpf/monitoring_a_car_battery_from_charged_over_first/
 packages:
   common: !include common.yaml
 
+esp8266:
+  board: d1_mini
 
 esphome:
   name: ${device_name}
   comment: ${device_description}
   friendly_name: ${friendly_name}
-  platform: ESP8266
-  board: d1_mini
 
   on_boot:
     priority: -200
