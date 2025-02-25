@@ -9,10 +9,15 @@ esphome:
   name: ${device_name}
   comment: ${device_description}
   friendly_name: ${friendly_name}
-  includes:
-    - ClosedCube_OPT3001/ClosedCube_OPT3001.h
-    - ClosedCube_OPT3001/ClosedCube_OPT3001.cpp
-    - OPT3001.h
+  # includes:
+  #   - ClosedCube_OPT3001/ClosedCube_OPT3001.h
+  #   - ClosedCube_OPT3001/ClosedCube_OPT3001.cpp
+  #   - OPT3001.h
+
+external_components:
+  - source:
+      type: local
+      path: ClosedCube_OPT3001
 
 captive_portal:
 
