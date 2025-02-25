@@ -7,11 +7,12 @@
 packages:
   common: !include common.yaml
 
+esp32:
+  board: esp32cam
+
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP32
-  board: esp32cam
 
 # Enable logging
 logger:

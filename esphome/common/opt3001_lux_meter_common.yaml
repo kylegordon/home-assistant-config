@@ -1,12 +1,14 @@
+---
 packages:
   common: !include common.yaml
+
+esp8266:
+  board: d1_mini
 
 esphome:
   name: ${device_name}
   comment: ${device_description}
   friendly_name: ${friendly_name}
-  platform: ESP8266
-  board: d1_mini
   includes:
     - ClosedCube_OPT3001/ClosedCube_OPT3001.h
     - ClosedCube_OPT3001/ClosedCube_OPT3001.cpp
