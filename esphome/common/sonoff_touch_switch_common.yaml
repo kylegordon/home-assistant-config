@@ -9,8 +9,6 @@ esphome:
   name: ${device_name}
   comment: ${device_description}
   friendly_name: ${friendly_name}
-  platform: ESP8266
-  board: esp8285
 
 captive_portal:
 
