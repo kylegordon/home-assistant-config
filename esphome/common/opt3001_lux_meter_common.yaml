@@ -22,7 +22,7 @@ esphome:
 external_components:
 # equivalent shorthand for GitHub
   - source: github://OstertagM/ESPhome-user-component/esphome@main
-    components: [ OPT3001 ]
+    components: [OPT3001]
     refresh: 0s
 
 captive_portal:
