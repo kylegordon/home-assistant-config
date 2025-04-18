@@ -9,21 +9,14 @@ esphome:
   name: ${device_name}
   comment: ${device_description}
   friendly_name: ${friendly_name}
-  # includes:
-  #   - ClosedCube_OPT3001/ClosedCube_OPT3001.h
-  #   - ClosedCube_OPT3001/ClosedCube_OPT3001.cpp
-  #   - OPT3001.h
-
-# external_components:
-#   - source:
-#       type: local
-#       path: ClosedCube_OPT3001
 
 external_components:
-# equivalent shorthand for GitHub
-  - source: github://OstertagM/ESPhome-user-component/esphome@main
-    components: [OPT3001]
-    refresh: 0s
+  - source:
+      type: local
+      path: custom_components/syslog
+  - source:
+      type: local
+      path: custom_components/OPT3001
 
 captive_portal:
 
@@ -69,8 +62,8 @@ sensor:
   - platform: OPT3001
     i2c_id: bus_a
     illuminance:
-      name: "Lux Level"
-    address: 0x44
+      name: "Level"
+    # address: 0x44 - this doesn't work, the address is set in the library, OPT3001.cpp
     update_interval: 5s
 
 
