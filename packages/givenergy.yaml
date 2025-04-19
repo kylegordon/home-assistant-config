@@ -5,7 +5,7 @@ sensor:
       battery_status:
         friendly_name: "Battery status"
         value_template: >
-          {%- set power_draw = states('sensor.battery_power') | int %}
+          {%- set power_draw = states('sensor.battery_power') | int(0) %}
           {%- if power_draw < 0 %}
             Charging
           {%- elif power_draw == 0 %}
@@ -16,7 +16,7 @@ sensor:
             Indeterminate
           {%- endif %}
         icon_template: >-
-          {%- set power_draw = states('sensor.battery_power') | int %}
+          {%- set power_draw = states('sensor.battery_power') | int(0) %}
           {%- if power_draw < 0 %}
             mdi:battery-charging
           {%- elif power_draw > 0 %}

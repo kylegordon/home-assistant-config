@@ -24,25 +24,21 @@ automation:
     description: >-
       Turn on ASHP if stove is off
       and all the openings are shut
-    trigger:
-      platform: time_pattern
-      seconds: 30
-    condition:
-      - condition: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.climate_openings
-        state: 'off'
+        to: 'off'
         for:
           minutes: 5
-      - condition: or
-        conditions:
-        - condition: numeric_state
-          entity_id: sensor.stove_temperature_living_room
-          below: 100
-        - condition: template
-          value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
+      - trigger: numeric_state
+        entity_id: sensor.stove_temperature_living_room
+        below: 100
+      - trigger: template
+        value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
     action:
-      - service: climate.set_preset_mode
-        entity_id: climate.viewpoint_zone_1_circuit_0_climate
+      - service: climate.set_hvac_mode
+        target:
+          entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
           hvac_mode: auto
 
@@ -52,27 +48,23 @@ automation:
       Turn off ASHP if stove is on
       or any of the openings are open
       or home is not occupied
-    trigger:
-      platform: time_pattern
-      seconds: 30
-    condition:
-      condition: or
-      conditions:
-        - condition: state
-          entity_id: binary_sensor.climate_openings
-          state: 'on'
-          for:
-            minutes: 5
-        - condition: numeric_state
-          entity_id: sensor.stove_temperature_living_room
-          above: 100
-        - condition: state
-          entity_id: binary_sensor.home_occupied
-          state: 'off'
-          for:
-            minutes: 5
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.climate_openings
+        to: 'on'
+        for:
+          minutes: 5
+      - trigger: numeric_state
+        entity_id: sensor.stove_temperature_living_room
+        above: 100
+      - trigger: state
+        entity_id: binary_sensor.home_occupied
+        to: 'on'
+        for:
+          minutes: 5
     action:
-      - service: climate.set_preset_mode
-        entity_id: climate.viewpoint_zone_1_circuit_0_climate
+      - service: climate.set_hvac_mode
+        target:
+          entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
-          hvac_mode: 'off'
+          hvac_mode: 'away'

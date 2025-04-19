@@ -16,10 +16,6 @@ input_boolean:
     name: Lockup process
     icon: mdi:sleep
     initial: false
-  tin_hut_occupied:
-    name: Tin Hut Occupied
-    icon: mdi:account-alert
-    initial: false
 
 binary_sensor:
   - platform: template
@@ -27,9 +23,9 @@ binary_sensor:
       # This will eventually be replaced a sensor that collates multiple sensors
       tin_hut_occupied:
         friendly_name: Tin Hut Occupied
+        device_class: occupancy
+        delay_off: 0:05:00
         value_template: "{{
-          is_state('input_boolean.tin_hut_occupied', 'on')
-          or
           is_state('binary_sensor.presence_lite_tin_hut_occupancy', 'on')
           }}"
 
@@ -37,11 +33,8 @@ automation:
   - alias: Tin Hut Occupied
     id: tin_hut_occupied
     trigger:
-      # - platform: state
-      #   entity_id: binary_sensor.tin_hut_occupied
-      #   to: 'on'
       - platform: state
-        entity_id: input_boolean.tin_hut_occupied
+        entity_id: binary_sensor.tin_hut_occupied
         to: 'on'
       - platform: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
@@ -51,36 +44,43 @@ automation:
         to: 'open'
     action:
       - service: homeassistant.turn_on
-        entity_id: input_boolean.tin_hut_occupied
-      - service: homeassistant.turn_on
         entity_id:
           - switch.tin_hut_lights_relay
           - light.tin_hut_shelf_lights_bench
           - light.tin_hut_shelf_lights_left
           - light.tin_hut_shelf_lights_right
+      - condition: or
+        # If the below condition is false, the action will stop here.
+        conditions:
+          - condition: state
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            state: 'idle'
+          - condition: state
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            state: 'off'
+          - condition: state
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            state: 'paused'
       - service: openhome.invoke_pin
         data:
-          pin: 1
+          pin: 4
         target:
           entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
       - service: media_player.volume_set
         data:
-          volume_level: 0.4
+          volume_level: 0.3
         target:
           entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
 
   - alias: Tin Hut Not Occupied
     id: tin_hut_not_occupied
     trigger:
-      # - platform: state
-      #   entity_id: binary_sensor.tin_hut_occupied
-      #   to: 'off'
       - platform: state
-        entity_id: input_boolean.tin_hut_occupied
+        entity_id: binary_sensor.tin_hut_occupied
         to: 'off'
+        for:
+          minutes: 5
     action:
-      - service: homeassistant.turn_off
-        entity_id: input_boolean.tin_hut_occupied
       - service: homeassistant.turn_off
         entity_id:
           - switch.tin_hut_lights_relay
@@ -106,8 +106,6 @@ automation:
           message: "Triggering openup process"
           entity_id: input_boolean.open_tin_hut_process
           domain: input_boolean
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.tin_hut_occupied
       - service: input_boolean.turn_off
         entity_id: input_boolean.open_tin_hut_process
 
@@ -125,8 +123,6 @@ automation:
           message: "Triggering lockup process"
           entity_id: input_boolean.lockup_process
           domain: input_boolean
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.tin_hut_occupied
       - service: cover.close_cover
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
       - service: cover.close_cover

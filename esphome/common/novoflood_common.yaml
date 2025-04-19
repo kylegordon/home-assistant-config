@@ -1,3 +1,4 @@
+---
 # Common code for Novostella 20W Flood Lights
 
 # Credit to https://esphome-configs.io/devices/novostella-20w/
@@ -9,12 +10,13 @@
 packages:
   common: !include common.yaml
 
+esp8266:
+  board: esp01_1m
+
 esphome:
   name: ${device_name}
   comment: ${device_description}
   friendly_name: ${friendly_name}
-  platform: ESP8266
-  board: esp01_1m
 
 captive_portal:
 
