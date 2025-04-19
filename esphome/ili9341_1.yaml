@@ -226,7 +226,7 @@ color:
 image:
   - id: bin
     file: "delete-empty.png"
-    type: RGB24
+    type: RGB
 
 touchscreen:
   platform: xpt2046

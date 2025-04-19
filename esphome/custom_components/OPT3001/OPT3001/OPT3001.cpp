@@ -1,36 +1,26 @@
-#include "esphome.h"
+#include "OPT3001.h"
 #include "ClosedCube_OPT3001.h"
+#include "esphome/core/log.h"
 
-using namespace esphome;
+namespace esphome {
+namespace opt3001 {
 
-class MyOPT3001 : public PollingComponent {
- public:
+static const char *const TAG = "opt3001";
 
   ClosedCube_OPT3001 myself;
-  Sensor *sensor_status = new Sensor();
-  Sensor *manufacturer_id_sensor = new Sensor();
-  Sensor *device_id_sensor = new Sensor();
-  Sensor *lux_sensor = new Sensor();
-  Sensor *high_limit_sensor = new Sensor();
-  Sensor *low_limit_sensor = new Sensor();
-
-  // Update every 5s (value in ms)
-  MyOPT3001() : PollingComponent(5000) { }
-
-  void setup() override {
-    // myself.initSHT20();    // Init SHT20 Sensor
+  
+  void OPT3001Component::setup () {
     myself.begin(0x44);
     delay(100);
-    configureSensor();
+    configureSensor_();
     delay(100);
-    // myself.checkSHT20();   // Check SHT20 Sensor
     myself.readManufacturerID();
     myself.readDeviceID();
   }
 
   // Most of this copied from https://github.com/closedcube/ClosedCube_OPT3001_Arduino/blob/master/examples/opt3001demo/opt3001demo.ino
   // I have no real idea what I'm doing.
-  void configureSensor() {
+  void OPT3001Component::configureSensor_() {
     OPT3001_Config newConfig;
 
     newConfig.RangeNumber = B1100;
@@ -39,7 +29,7 @@ class MyOPT3001 : public PollingComponent {
     newConfig.ModeOfConversionOperation = B11;
 
     OPT3001_ErrorCode errorConfig = myself.writeConfig(newConfig);
-    if (errorConfig)
+    if (errorConfig != NO_ERROR)
       ESP_LOGD("error","OPT3001 configuration %i", errorConfig);
     else {
       OPT3001_Config sensorConfig = myself.readConfig();
@@ -60,23 +50,36 @@ class MyOPT3001 : public PollingComponent {
     }
 
     u_short manufacturer_id = myself.readManufacturerID();
-    manufacturer_id_sensor->publish_state(manufacturer_id);
+    this->ambient_light_sensor_->publish_state(manufacturer_id);
 
     u_short device_id = myself.readDeviceID();
-    device_id_sensor->publish_state(device_id);
+    this->ambient_light_sensor_->publish_state(device_id);
 
     u_short high_limit = myself.readHighLimit().lux;
-    high_limit_sensor->publish_state(high_limit);
+    this->ambient_light_sensor_->publish_state(high_limit);
 
     u_short low_limit = myself.readLowLimit().lux;
-    low_limit_sensor->publish_state(low_limit);
+    this->ambient_light_sensor_->publish_state(low_limit);
 
     u_short error_code = myself.readResult().error;
   }
+  void OPT3001Component::dump_config() {
+  ESP_LOGCONFIG(TAG, "OPT3001:");
+  LOG_I2C_DEVICE(this);
+  if (this->is_failed()) {
+    ESP_LOGE(TAG, "Communication with OPT3001 failed!");
+  }
+  LOG_UPDATE_INTERVAL(this);
 
-  void update() override {
+  LOG_SENSOR("  ", "Ambient: ", this->ambient_light_sensor_);
+}
+  
+  float OPT3001Component::get_setup_priority() const { return setup_priority::DATA; }
+  void OPT3001Component::update() {
     ESP_LOGD("update", "Sending update");
     int lux_level = myself.readResult().lux;
-    lux_sensor->publish_state(lux_level);
+    this->ambient_light_sensor_->publish_state(lux_level);
   }
-};
+
+}// Namespace ESP
+}// Namespace OPT3001
