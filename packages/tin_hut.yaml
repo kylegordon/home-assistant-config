@@ -26,7 +26,11 @@ binary_sensor:
         device_class: occupancy
         delay_off: 0:05:00
         value_template: "{{
-          is_state('binary_sensor.presence_lite_tin_hut_occupancy', 'on')
+          is_state('binary_sensor.presence_lite_tin_hut_occupancy', 'on') or
+          is_state('binary_sensor.tin_hut_left_motion', 'on') or
+          is_state('binary_sensor.tin_hut_right_motion', 'on') or
+          is_state('binary_sensor.thingino_c2_888a_motion_2', 'on') or
+          is_state('binary_sensor.thingino_c2_ddde_motion', 'on')
           }}"
 
 automation:
