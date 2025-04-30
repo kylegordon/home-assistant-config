@@ -6,11 +6,12 @@ substitutions:
   device_description: Hot Water Tank Sensor
   friendly_name: Hot Water Tank Sensor
 
+esp8266:
+  board: d1_mini
+
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP8266
-  board: d1_mini
 
 # Enable logging
 logger:

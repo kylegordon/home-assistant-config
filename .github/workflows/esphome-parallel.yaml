@@ -49,7 +49,7 @@ jobs:
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Compile all ESPHome ${{matrix.file}}
-        uses: esphome/build-action@v4
+        uses: esphome/build-action@v7
         with:
           version: stable
           yaml-file: ${{matrix.file}}
@@ -74,7 +74,7 @@ jobs:
           cp -R esphome/travis_secrets.yaml.txt esphome/common/secrets.yaml
           cp -R esphome/travis_secrets.yaml.txt esphome/secrets.yaml
       - name: Compile all ESPHome ${{matrix.file}}
-        uses: esphome/build-action@v4
+        uses: esphome/build-action@v7
         with:
           version: beta
           yaml-file: ${{matrix.file}}
