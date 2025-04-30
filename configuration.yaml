@@ -8,12 +8,7 @@ homeassistant:
     - type: trusted_networks
       trusted_networks:
         - 172.24.32.0/24
-        - 172.24.34.0/24
-        - 172.18.0.0/24
-        - 10.8.0.18/32
         - 127.0.0.1
-    - type: legacy_api_password
-      api_password: !secret api_password
 
   whitelist_external_dirs:
     - /tmp
@@ -45,19 +40,19 @@ homeassistant:
     sensor.weather_station_rainfall:
       icon: mdi:weather-rainy
     sensor.weather_station_wind_velocity:
-        icon: mdi:weather-windy-variant
+      icon: mdi:weather-windy-variant
     sensor.weather_station_wind_maximum:
-        icon: mdi:weather-windy
+      icon: mdi:weather-windy
     sensor.weather_station_relative_humidity:
-        icon: mdi:water-percent
+      icon: mdi:water-percent
     sensor.house_average_humidity:
-        icon: mdi:water-percent
+      icon: mdi:water-percent
     sensor.rest_of_house_average_temperature:
-        icon: mdi:thermometer
+      icon: mdi:thermometer
     sensor.next_bin:
       icon: mdi:delete-empty
     light.kyles_bedside:
-        icon: mdi:hotel
+      icon: mdi:hotel
     light.sideboard:
       assumed_state: false
     light.lava_lamp:
@@ -69,13 +64,13 @@ homeassistant:
     light.front_hall:
       assumed_state: false
     group.bedside_lights:
-        icon: mdi:hotel
+      icon: mdi:hotel
     sensor.kyle_status:
-        entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg
+      entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg
     input_boolean.guest_mode:
-        icon: mdi:account-multiple-plus
+      icon: mdi:account-multiple-plus
     light.craft_room_desk_level:
-        friendly_name: Craft Room Desk
+      friendly_name: Craft Room Desk
     sensor.daily_energy:
       friendly_name: Daily energy usage
     sensor.monthly_energy:
@@ -93,9 +88,7 @@ recorder: !include recorder.yaml
 http:
   use_x_forwarded_for: true
   trusted_proxies:
-    - 172.18.0.0/24
-    - 127.0.0.1
-    - ::1
+    - 172.20.0.0/24
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
     - http://viewpoint.house
@@ -103,10 +96,10 @@ http:
 stream:
 
 alarm_control_panel:
-    - platform: manual
-      name: Home Alarm
-      code_arm_required: false
-      code: !secret alarm_code
+  - platform: manual
+    name: Home Alarm
+    code_arm_required: false
+    code: !secret alarm_code
 
 influxdb:
   host: 172.24.32.13
@@ -230,6 +223,7 @@ group: !include groups.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
+template: !include template.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
@@ -239,8 +233,6 @@ scene: !include_dir_list scenes
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
-
-hwam_stove: !include hwam_stove.yaml
 
 utility_meter:
   quarter_hourly_energy:
@@ -269,33 +261,3 @@ utility_meter:
     cycle: monthly
 
 smartir:
-
-panel_iframe:
-  esphome:
-    title: "ESPHome"
-    url: "https://esphome.viewpoint.house"
-    icon: mdi:car-esp
-  zigbee2mqtt:
-    title: "Z2M"
-    url: "https://z2m.viewpoint.house"
-    icon: mdi:antenna
-  cctv:
-    title: "CCTV"
-    url: "https://cctv.viewpoint.house"
-    icon: mdi:cctv
-  sonarr:
-    title: "TV Shows"
-    url: "https://tv.viewpoint.house"
-    icon: mdi:television-classic
-  radarr:
-    title: "Movies"
-    url: "https://movies.viewpoint.house"
-    icon: mdi:movie-open
-  lazylibrarian:
-    title: "Books"
-    url: "https://books.viewpoint.house"
-    icon: mdi:book-open-page-variant
-  homepage:
-    title: "Home Page"
-    url: "https://home.viewpoint.house"
-    icon: mdi:home

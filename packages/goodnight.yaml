@@ -13,6 +13,7 @@ input_boolean:
 
 automation:
   - alias: Goodnight process
+    id: goodnight_process
     trigger:
       - platform: state
         entity_id: input_boolean.goodnight_process
@@ -34,7 +35,7 @@ automation:
           - light.art
           - group.outside_lights
           - group.front_hall
-          - group.kitchen
+          - light.kitchen_lights
           - light.hall
           - light.boot_room
           - light.twig_lights

@@ -6,12 +6,13 @@
 ## Display On/Off when doors moving
 ## Restore last state of display
 
+esp8266:
+  board: $board
+
 esphome:
   name: $device_name
   comment: $device_description
   friendly_name: $friendly_name
-  platform: $platform
-  board: $board
   on_boot:
     priority: -10
     then:
@@ -152,11 +153,22 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
+        - logger.log: "Open Endstop Released"
+        # Turn on the display
+        - lambda: |-
+            id(oled).turn_on();
         - lambda: |-
             // set state as closing. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).publish_state();
+        # If display_on_off is false, wait 30 seconds and then turn off the display
+        - lambda: |-
+            if (!id(display_on_off))
+            {
+              delay(30000);
+              id(oled).turn_off();
+            }
   - platform: gpio
     pin:
       number: $close_endstop_pin
@@ -180,11 +192,22 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
+        - logger.log: "Close Endstop Released"
+        # Turn on the display
+        - lambda: |-
+            id(oled).turn_on();
         - lambda: |-
             // set state as opening. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).publish_state();
+        # If display_on_off is false, wait 30 seconds and then turn off the display
+        - lambda: |-
+            if (!id(display_on_off))
+            {
+              delay(30000);
+              id(oled).turn_off();
+            }
 switch:
   - platform: gpio
     pin: $cover_switch_pin
@@ -273,31 +296,61 @@ cover:
       - logger.log:
           format: "Open Action - CO:%u PO:%f LD:%u"
           args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN)
           {
             id(target_action) = COVER_OPERATION_OPENING;
           }
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
+          }
     close_action:
       - logger.log:
           format: "Close Action - CO:%u PO:%f LD:%u"
           args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_CLOSED)
           {
             id(target_action) = COVER_OPERATION_CLOSING;
           }
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
+          }
     stop_action:
       - logger.log:
           format: "Stop Action - CO:%u PO:%f LD:%u"
           args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN && id(garage_door).position != COVER_CLOSED)
           {
             id(target_action) = COVER_OPERATION_IDLE;
+          }
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
           }
 script:
   - id: push_one

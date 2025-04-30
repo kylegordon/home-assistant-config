@@ -1,9 +1,4 @@
 ---
-# Inspired by https://github.com/downthedeck/hassio-config/blob/master/packages/klimaat.yaml
-# Not all modes are supported, as above uses Toon integration
-# https://www.home-assistant.io/integrations/generic_thermostat/
-# Generic thermostat currently only supports 'heat', 'cool' and 'off'
-
 binary_sensor:
   - platform: group
     # Openings that should prevent the heating from coming on
@@ -23,176 +18,53 @@ binary_sensor:
       - binary_sensor.kitchen_window
       # - binary_sensor.utility_room_window
 
-group:
-  call_for_heat:
-    # Add zones here. Essentially a glorified OR condition
-    name: Call For Heat - Group
-    entities:
-      - input_boolean.call_for_rad_heat
-      - binary_sensor.craft_room_trv_heat_required
-      - binary_sensor.study_trv_heat_required
-      - binary_sensor.living_room_trv_heat_required
-      - binary_sensor.hallway_trv_heat_required
-      - binary_sensor.guest_room_trv_heat_required
-
-input_boolean:
-  # Inputs from external thermostats, such as household generic or a single room
-  call_for_rad_heat:
-    name: Call for heat - General
-    icon: mdi:radiator
-
-# input:
-#   night_temp:
-#     name: Night Temperature
-#     description: The target temperature at night
-#     default: 18
-#     selector:
-#       number:
-#         min: 5
-#         max: 35
-#         unit_of_measurement: °C
-
 automation:
-  - alias: "Call for heat - demand"
-    id: callforheatdemand
+  - alias: "Turn on ASHP"
+    id: turnonashp
     description: >-
-      Turn on boiler relay if there's a call for heat
+      Turn on ASHP if stove is off
       and all the openings are shut
-    trigger:
-      platform: time_pattern
-      seconds: 30
-    condition:
-      - condition: state
-        entity_id: group.call_for_heat
-        state: 'on'
-      - condition: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.climate_openings
-        state: 'off'
+        to: 'off'
         for:
           minutes: 5
-      - condition: or
-        conditions:
-        - condition: numeric_state
-          entity_id: sensor.stove_temperature_living_room
-          below: 100
-        - condition: template
-          value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
+      - trigger: numeric_state
+        entity_id: sensor.stove_temperature_living_room
+        below: 100
+      - trigger: template
+        value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
     action:
-      - service: homeassistant.turn_on
-        entity_id: switch.boiler_valve_controls_relay_2
+      - service: climate.set_hvac_mode
+        target:
+          entity_id: climate.viewpoint_zone_1_circuit_0_climate
+        data:
+          hvac_mode: auto
 
-  - alias: "Call for heat - no demand"
-    id: callforheatnodemand
-    description: Turn off boiler relay if demand for heat ceases
-    trigger:
-      platform: time_pattern
-      seconds: 30
-    condition:
-      condition: or
-      conditions:
-        - condition: state
-          entity_id: group.call_for_heat
-          state: 'off'
-        - condition: state
-          entity_id: binary_sensor.climate_openings
-          state: 'on'
-          for:
-            minutes: 5
-        - condition: numeric_state
-          entity_id: sensor.stove_temperature_living_room
-          above: 100
+  - alias: "Turn off ASHP"
+    id: turnoffashp
+    description: >-
+      Turn off ASHP if stove is on
+      or any of the openings are open
+      or home is not occupied
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.climate_openings
+        to: 'on'
+        for:
+          minutes: 5
+      - trigger: numeric_state
+        entity_id: sensor.stove_temperature_living_room
+        above: 100
+      - trigger: state
+        entity_id: binary_sensor.home_occupied
+        to: 'on'
+        for:
+          minutes: 5
     action:
-      - service: homeassistant.turn_off
-        entity_id: switch.boiler_valve_controls_relay_2
-
-  # - alias: "Climate - Night Schedule"
-  #   trigger:
-  #     - platform: state
-  #       entity_id: !input night_times_schedule
-  #       from: "on"
-  #       to: "off"
-  #     - platform: state
-  #       entity_id: !input night_times_schedule
-  #       from: "off"
-  #       to: "on"
-  #   condition: []
-  #   action:
-  #     - if:
-  #         - condition: state
-  #           entity_id: !input night_times_schedule
-  #           state: "on"
-  #       then:
-  #         # Set night target temperatures
-  #         - service: better_thermostat.set_temp_target_temperature
-  #           data:
-  #             temperature: input.night_temp
-  #           target:
-  #             - climate.craft_room
-  #             - climate.guest_bedroom
-  #             - climate.hallway
-  #             - climate.living_room
-  #             - climate.study
-  #       else:
-  #         # Restore daytime target temperatures
-  #         - service: better_thermostat.restore_saved_target_temperature
-  #           data: {}
-  #           target:
-  #             - climate.craft_room
-  #             - climate.guest_bedroom
-  #             - climate.hallway
-  #             - climate.living_room
-  #             - climate.study
-
-  # - alias: "Climate - Lazy Morning"
-  #   trigger:
-  #     - platform: time
-  #       at: "07:30:00"
-  #   condition:
-  #     - condition: state
-  #       entity_id: binary_sensor.workday
-  #       state: "off"
-  #     - condition: state
-  #       entity_id: binary_sensor.home_occupied
-  #       state: "on"
-  #   action:
-  #     - service: climate.set_temperature
-  #       data:
-  #         entity_id: climate.house
-  #         temperature: 20
-  #     - service: logbook.log
-  #       data_template:
-  #         name: EVENT
-  #         message: >
-  #           Warming the house up for a lazy morning.
-
-  - alias: Better Thermostat Night mode
-    id: better_thermostat_night_mode
-    description: "Set TRVs to night mode. The schedule is night hours."
-    use_blueprint:
-      path: homeassistant/better_thermostat_night_mode.yaml
-      input:
-        thermostat_target:
-          entity_id:
-            - climate.craft_room
-            - climate.guest_bedroom
-            - climate.hallway
-            - climate.living_room
-            - climate.study
-            - climate.rest_of_house
-        night_times_schedule: schedule.thermostat_night_schedule
-
-  - alias: Better Thermostat Away mode
-    id: better_thermostat_away_mode
-    description: "Set TRVs to away mode when house is unoccupied."
-    use_blueprint:
-      path: homeassistant/better_thermostat_away_mode.yaml
-      input:
-        thermostat_target:
-          entity_id:
-            - climate.craft_room
-            - climate.guest_bedroom
-            - climate.hallway
-            - climate.living_room
-            - climate.study
-            - climate.rest_of_house
-        occupancy_sensor: binary_sensor.home_occupied
+      - service: climate.set_hvac_mode
+        target:
+          entity_id: climate.viewpoint_zone_1_circuit_0_climate
+        data:
+          hvac_mode: 'away'

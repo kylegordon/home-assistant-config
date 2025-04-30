@@ -1,16 +1,22 @@
+---
 packages:
   common: !include common.yaml
+
+esp8266:
+  board: d1_mini
 
 esphome:
   name: ${device_name}
   comment: ${device_description}
   friendly_name: ${friendly_name}
-  platform: ESP8266
-  board: d1_mini
-  includes:
-    - ClosedCube_OPT3001/ClosedCube_OPT3001.h
-    - ClosedCube_OPT3001/ClosedCube_OPT3001.cpp
-    - OPT3001.h
+
+external_components:
+  - source:
+      type: local
+      path: custom_components/syslog
+  - source:
+      type: local
+      path: custom_components/OPT3001
 
 captive_portal:
 
@@ -30,27 +36,20 @@ time:
     timezone: Europe/London
 
 i2c:
+  id: bus_a
   sda: GPIO4
   scl: GPIO5
   scan: true
 
 sensor:
-  - platform: custom
-    lambda: |-
-      auto opt3001 = new MyOPT3001();
-      App.register_component(opt3001);
-      return {opt3001->sensor_status, opt3001->manufacturer_id_sensor, opt3001->device_id_sensor, opt3001->high_limit_sensor, opt3001->low_limit_sensor, opt3001->lux_sensor};
-    sensors:
-    - name: "Sensor Status"
-    - name: "Manufacturer ID"
-    - name: "Device ID"
-    - name: "Lux High Limit"
-      unit_of_measurement: lx
-    - name: "Lux Low Limit"
-      unit_of_measurement: lx
-    - name: "Lux Level"
-      unit_of_measurement: lx
+  - platform: OPT3001
+    i2c_id: bus_a
+    illuminance:
+      name: "Level"
       icon: mdi:sun-wireless-outline
+    # address: 0x44 - this doesn't work, the address is set in the library, OPT3001.cpp
+    update_interval: 5s
+
 
 output:
   # Register the blue LED as a dimmable output ....
@@ -70,16 +69,16 @@ light:
 interval:
   - interval: 500ms
     then:
-    - if:
-        condition:
-          not:
-            wifi.connected:
-        then:
-          - light.turn_on:
-              id: blue_led_light
-              brightness: 50%
-              transition_length: 0s
-          - delay: 250ms
-          - light.turn_off:
-              id: blue_led_light
-              transition_length: 250ms
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 50%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 250ms
