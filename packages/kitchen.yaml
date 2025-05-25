@@ -26,7 +26,7 @@ automation:
         event_data:
           device_name: kitchen_switch
           action: click
-          button_id: 1
+          button_id: "1"
     action:
       - service: light.turn_on
         data:
@@ -55,7 +55,7 @@ automation:
         event_data:
           device_name: kitchen_switch
           action: click
-          button_id: 2
+          button_id: "2"
     action:
       - service: light.turn_on
         data:
