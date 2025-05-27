@@ -33,14 +33,19 @@ automation:
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
-        event_type: esphome.button_pressed
+        event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: living_room_switch
-          click_type: single
+          action: click
+          button_id: 1
     action:
+      - service: light.turn_on
+        data:
+          entity_id: light.living_room_switch_light
+          effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id:
-          - switch.living_room_switch_relay
+          - switch.living_room_switch_relay_1
       - service: light.toggle
         data_template:
           entity_id:
@@ -49,20 +54,31 @@ automation:
         data_template:
           name: EVENT
           message: "Toggling living room lights"
+      - delay: "00:00:05"
+      - service: light.turn_off
+        target:
+          entity_id: light.living_room_switch_light
+        data:
+          transition: 1
 
   - alias: Dining nook light toggle
     id: dining_nook_light_toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
-        event_type: esphome.button_pressed
+        event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: living_room_switch
-          click_type: double
+          action: click
+          button_id: 2
     action:
+      - service: light.turn_on
+        data:
+          entity_id: light.living_room_switch_light
+          effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id:
-          - switch.living_room_switch_relay
+          - switch.living_room_switch_relay_2
       - service: light.toggle
         data_template:
           entity_id:
@@ -71,6 +87,12 @@ automation:
         data_template:
           name: EVENT
           message: "Toggling dining nook lights"
+      - delay: "00:00:05"
+      - service: light.turn_off
+        target:
+          entity_id: light.living_room_switch_light
+        data:
+          transition: 1
 
   - alias: Living Room - sunlight timeout
     trigger:
