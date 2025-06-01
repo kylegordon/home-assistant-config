@@ -59,7 +59,7 @@ automation:
         target:
           entity_id: light.living_room_switch_light
         data:
-          transition: 1
+          transition: "1"
 
   - alias: Dining nook light toggle
     id: dining_nook_light_toggle
@@ -70,7 +70,7 @@ automation:
         event_data:
           device_name: living_room_switch
           action: click
-          button_id: 2
+          button_id: "2"
     action:
       - service: light.turn_on
         data:
