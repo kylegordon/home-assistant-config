@@ -19,6 +19,8 @@ light:
 automation:
 
   - alias: Kitchen ceiling lights toggle
+    id: kitchen_ceiling_toggle
+    mode: parallel
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
@@ -48,6 +50,8 @@ automation:
           transition: 1
 
   - alias: Kitchen worktop lights toggle
+    id: kitchen_worktop_toggle
+    mode: parallel
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
