@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "study_switch"
-  friendly_name: "Study Switch"
-  device_description: "Study Light Switch"
+  name: "kitchen_switch"
+  friendly_name: "Kitchen Switch"
+  device_description: "Kitchen Light Switch"
 
 packages:
   remote_package:
