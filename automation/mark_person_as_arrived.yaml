@@ -1,4 +1,6 @@
+---
 alias: Mark Person as just arrived
+id: mark_person_as_just_arrived
 trigger:
   - platform: state
     entity_id: person.kyle

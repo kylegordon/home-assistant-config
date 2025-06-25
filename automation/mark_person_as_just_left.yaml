@@ -1,4 +1,6 @@
+---
 alias: Mark Person as just left
+id: mark_person_as_just_left
 trigger:
   - platform: state
     entity_id: person.kyle
