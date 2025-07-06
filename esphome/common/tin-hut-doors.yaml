@@ -120,15 +120,19 @@ switch:
 
 binary_sensor:
   - platform: gpio
-    pin: $open_endstop_pin
     id: door_left_open_sensor
     name: "Door Left Open Sensor"
-    internal: true
-    mode: INPUT_PULLUP
+    internal: false
+    pin:
+      number: $open_endstop_pin
+      inverted: true
+      mode: INPUT_PULLUP
 
   - platform: gpio
-    pin: $close_endstop_pin
     id: door_left_closed_sensor
     name: "Door Left Closed Sensor"
     internal: true
-    mode: INPUT_PULLUP
+    pin:
+      number: $close_endstop_pin
+      inverted: true
+      mode: INPUT_PULLUP
