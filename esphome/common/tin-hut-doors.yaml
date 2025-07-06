@@ -60,9 +60,9 @@ display:
       y = y+lineheight;
       it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Relay state: %s", id(cover_switch).state ? "Open" : "Closed");
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Lower Sensor: %s", id(close_endstop).state ? "Open" : "Closed");
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Lower Sensor: %s", id(door_closed_sensor).state ? "Open" : "Closed");
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Upper Sensor: %s", id(open_endstop).state ? "Open" : "Closed");
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Upper Sensor: %s", id(door_open_sensor).state ? "Open" : "Closed");
 
       // Print time in HH:MM format
       it.strftime(0, 60, id(font1), TextAlign::BASELINE_LEFT, "%H:%M", id(esptime).now());
@@ -79,22 +79,22 @@ display:
 
 cover:
   - platform: feedback
-    name: "Tin Hut Doors Left"
-    id: tin_hut_doors_left
+    name: $friendly_name
+    id: cover_switch
     open_action:
-      - switch.turn_on: relay_door_left
+      - switch.turn_on: relay_door
       - delay: 500ms
-      - switch.turn_off: relay_door_left
+      - switch.turn_off: relay_door
     close_action:
-      - switch.turn_on: relay_door_left
+      - switch.turn_on: relay_door
       - delay: 500ms
-      - switch.turn_off: relay_door_left
+      - switch.turn_off: relay_door
     stop_action:
-      - switch.turn_on: relay_door_left
+      - switch.turn_on: relay_door
       - delay: 500ms
-      - switch.turn_off: relay_door_left
-    close_endstop: door_left_closed_sensor
-    open_endstop: door_left_open_sensor
+      - switch.turn_off: relay_door
+    close_endstop: door_closed_sensor
+    open_endstop: door_open_sensor
     open_duration: 12s
     close_duration: 12s
     has_built_in_endstop: true
@@ -102,8 +102,8 @@ cover:
 switch:
   - platform: gpio
     pin: $cover_switch_pin
-    id: relay_door_left
-    name: "Relay Door Left"
+    id: relay_door
+    name: "Relay Door"
     internal: true
   - platform: template
     name: "Display On/Off"
@@ -120,8 +120,8 @@ switch:
 
 binary_sensor:
   - platform: gpio
-    id: door_left_open_sensor
-    name: "Door Left Open Sensor"
+    id: door_open_sensor
+    name: "Open Endstop Sensor"
     internal: false
     pin:
       number: $open_endstop_pin
@@ -129,8 +129,8 @@ binary_sensor:
       mode: INPUT_PULLUP
 
   - platform: gpio
-    id: door_left_closed_sensor
-    name: "Door Left Closed Sensor"
+    id: door_closed_sensor
+    name: "Closed Endstop Sensor"
     internal: true
     pin:
       number: $close_endstop_pin
