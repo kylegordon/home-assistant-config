@@ -58,7 +58,7 @@ display:
       y = y+lineheight;
       it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "HA: %s", id(connection_status).state ? "Connected" : "Disconnected");
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Relay state: %s", id(cover_switch).state ? "Open" : "Closed");
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Relay state: %s", id(cover_switch).position ? "Open" : "Closed");
       y = y+lineheight;
       it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Lower Sensor: %s", id(door_closed_sensor).state ? "Open" : "Closed");
       y = y+lineheight;
