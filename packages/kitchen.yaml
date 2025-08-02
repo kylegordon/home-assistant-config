@@ -32,7 +32,7 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.kitchen_switch_light
+          entity_id: light.kitchen_switch_light_eu
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id: switch.kitchen_switch_relay_1
@@ -45,7 +45,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.kitchen_switch_light
+          entity_id: light.kitchen_switch_light_eu
         data:
           transition: 1
 
@@ -63,7 +63,7 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.kitchen_switch_light
+          entity_id: light.kitchen_switch_light_eu
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id: switch.kitchen_switch_relay_2
@@ -76,7 +76,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.kitchen_switch_light
+          entity_id: light.kitchen_switch_light_eu
         data:
           transition: 1
 
