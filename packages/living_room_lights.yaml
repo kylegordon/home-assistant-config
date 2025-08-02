@@ -151,7 +151,7 @@ automation:
     id: living_room_sofa_presence
     trigger:
       - platform: state
-        entity_id: binary_sensor.everything_presence_lite_2fbc58_zone_1_occupancy
+        entity_id: binary_sensor.presence_lite_living_room_zone_1_occupancy
         to: 'on'
         from: 'off'
     condition:
@@ -193,7 +193,7 @@ automation:
     id: living_room_presence_timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.everything_presence_lite_2fbc58_zone_1_occupancy
+        entity_id: binary_sensor.presence_lite_living_room_zone_1_occupancy
         to: 'off'
         for:
           minutes: 15
@@ -207,7 +207,7 @@ automation:
     id: dining_nook_presence
     trigger:
       - platform: state
-        entity_id: binary_sensor.everything_presence_lite_2fbc58_zone_2_occupancy
+        entity_id: binary_sensor.presence_lite_living_room_zone_2_occupancy
         to: 'on'
         from: 'off'
     condition:
@@ -238,7 +238,7 @@ automation:
     id: dining_nook_presence_timeout
     trigger:
       - platform: state
-        entity_id: binary_sensor.everything_presence_lite_2fbc58_zone_2_occupancy
+        entity_id: binary_sensor.presence_lite_living_room_zone_2_occupancy
         to: 'off'
         for:
           minutes: 15
