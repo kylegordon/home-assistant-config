@@ -17,9 +17,18 @@ logger:
 
 web_server:
 
+syslog:
+  udp_id: esphome_udp_syslog
+  time_id: esptime
+
 udp:
+  id: esphome_udp_syslog
   addresses: 172.24.32.13
   port: 515
+
+time:
+  - platform: homeassistant
+    id: esptime
 
 binary_sensor:
   - platform: gpio

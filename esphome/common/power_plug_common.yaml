@@ -27,7 +27,12 @@ esp8266:
 
 logger:
 
+syslog:
+  udp_id: esphome_udp_syslog
+  time_id: esptime
+
 udp:
+  id: esphome_udp_syslog
   addresses: 172.24.32.13
   port: 515
 
@@ -42,6 +47,7 @@ web_server:
 
 time:
   - platform: homeassistant
+    id: esptime
     timezone: Europe/London
 
 api:
