@@ -113,7 +113,8 @@ script:
           payload_template: "{{mode|default('vacuum_and_mop')}}"
       - service: mqtt.publish
         data:
-          topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set          payload_template: '{"segment_ids": {{segments}}}'
+          topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set
+          payload_template: '{"segment_ids": {{segments}}}'
     mode: single
 
   # A series of script calls to clean rooms.
