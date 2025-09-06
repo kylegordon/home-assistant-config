@@ -57,24 +57,29 @@ automation:
         # If the below condition is false, the action will stop here.
         conditions:
           - condition: state
-            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            entity_id:
+              - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
             state: 'idle'
           - condition: state
-            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            entity_id:
+              - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
             state: 'off'
           - condition: state
-            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            entity_id:
+              - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
             state: 'paused'
       - service: openhome.invoke_pin
         data:
           pin: 4
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+          entity_id:
+            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
       - service: media_player.volume_set
         data:
           volume_level: 0.3
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+          entity_id:
+            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
 
   - alias: Tin Hut Not Occupied
     id: tin_hut_not_occupied
@@ -94,7 +99,8 @@ automation:
       - service: media_player.turn_off
         data: {}
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+          entity_id:
+            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
 
   - alias: Open tin hut process
     # This is used by Alexa
@@ -118,12 +124,14 @@ automation:
         data:
           pin: 1
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f  # yamllint disable rule:line-length
+          entity_id:
+            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
       - service: media_player.volume_set
         data:
           volume_level: 0.4
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f  # yamllint disable rule:line-length
+          entity_id:
+            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
       - service: input_boolean.turn_off
         entity_id: input_boolean.open_tin_hut_process
 
@@ -147,7 +155,8 @@ automation:
       - service: media_player.turn_off
         data: {}
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f  # yamllint disable rule:line-length
+          entity_id:
+            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
       - service: cover.close_cover
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
       - service: cover.close_cover
