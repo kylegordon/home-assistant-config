@@ -31,8 +31,8 @@ automation:
         data:
           transition: 1
 
-    # Can be improved, examples at
-    # https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+  # Can be improved, examples at
+  # https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
   - alias: Study decorative light toggle
     id: study_decorative_toggle
     mode: parallel
