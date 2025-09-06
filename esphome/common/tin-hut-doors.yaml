@@ -1,10 +1,11 @@
 ---
-
-
 ### TODO
 
 ## Display On/Off when doors moving
 ## Restore last state of display
+
+packages:
+  syslog: !include syslog.yaml
 
 esp8266:
   board: $board
@@ -65,20 +66,6 @@ logger:
 web_server:
 
 captive_portal:
-
-syslog:
-  udp_id: esphome_udp_syslog
-  time_id: esptime
-
-udp:
-  id: esphome_udp_syslog
-  addresses: 172.24.32.13
-  port: 515
-
-time:
-  - platform: homeassistant
-    id: esptime
-    timezone: Europe/London
 
 font:
   - file: 'common/fonts/slkscr.ttf'

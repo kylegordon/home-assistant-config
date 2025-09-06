@@ -2,6 +2,7 @@
 # Basic config
 packages:
   common: !include common.yaml
+  syslog: !include syslog.yaml
 
 esp8266:
   board: esp01_1m
@@ -17,19 +18,6 @@ captive_portal:
 logger:
 
 web_server:
-
-syslog:
-  udp_id: esphome_udp_syslog
-  time_id: esptime
-
-udp:
-  id: esphome_udp_syslog
-  addresses: 172.24.32.13
-  port: 515
-time:
-  - platform: homeassistant
-    id: esptime
-    timezone: Europe/London
 
 # Shelly 1 detached switch config with multi click options and fallback in case of wifi or api fail
 switch:
