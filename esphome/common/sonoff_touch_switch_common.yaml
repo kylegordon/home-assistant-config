@@ -24,6 +24,11 @@ udp:
   addresses: 172.24.32.13
   port: 515
 
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/London
+
 binary_sensor:
   - platform: gpio
     pin:
