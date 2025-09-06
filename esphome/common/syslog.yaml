@@ -1,5 +1,5 @@
 ---
-# /home/kyleg/src/home-assistant-config/esphome/common/packages/syslog.yaml
+
 udp:
   id: esphome_udp_syslog
   addresses: 172.24.32.13
@@ -7,7 +7,6 @@ udp:
 syslog:
   udp_id: esphome_udp_syslog
   time_id: esptime
-  addresses: 172.24.32.13
   port: 515
 
 # Time synchronization from Home Assistant
