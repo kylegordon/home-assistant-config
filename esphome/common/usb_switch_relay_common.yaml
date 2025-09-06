@@ -14,15 +14,6 @@ esp8266:
 
 logger:
 
-# wifi:
-#   ssid: Glasgownet
-#   password: always32
-#   fast_connect: True
-#   power_save_mode: HIGH
-#   ap:
-#     ssid: "${friendly_name}"
-#     ap_timeout: 3min
-
 captive_portal:
 
 # Enable web server

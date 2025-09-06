@@ -130,8 +130,8 @@ automation:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"  # yamllint disable-line rule:line-length
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"  # yamllint disable-line rule:line-length
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int(0,16) }}"  # yamllint disable-line rule:line-length
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int(0,16) }}"  # yamllint disable-line rule:line-length
 
   - alias: Cheerlights - Tin Hut
     id: cheerlights_tin_hut

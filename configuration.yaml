@@ -84,7 +84,7 @@ recorder: !include recorder.yaml
 http:
   use_x_forwarded_for: true
   trusted_proxies:
-    - 172.18.0.0/24
+    - 172.20.0.0/24
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
     - http://viewpoint.house
@@ -219,6 +219,7 @@ group: !include groups.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
 climate: !include climate.yaml
+template: !include template.yaml
 
 # Merged Includes
 automation: !include_dir_list automation
@@ -228,8 +229,6 @@ scene: !include_dir_list scenes
 input_select: !include_dir_named input_select
 input_boolean: !include_dir_named input_boolean
 script: !include_dir_merge_named scripts/
-
-hwam_stove: !include hwam_stove.yaml
 
 utility_meter:
   quarter_hourly_energy:
@@ -258,33 +257,3 @@ utility_meter:
     cycle: monthly
 
 smartir:
-
-panel_iframe:
-  esphome:
-    title: "ESPHome"
-    url: "https://esphome.viewpoint.house"
-    icon: mdi:car-esp
-  zigbee2mqtt:
-    title: "Z2M"
-    url: "https://z2m.viewpoint.house"
-    icon: mdi:antenna
-  cctv:
-    title: "CCTV"
-    url: "https://cctv.viewpoint.house"
-    icon: mdi:cctv
-  sonarr:
-    title: "TV Shows"
-    url: "https://tv.viewpoint.house"
-    icon: mdi:television-classic
-  radarr:
-    title: "Movies"
-    url: "https://movies.viewpoint.house"
-    icon: mdi:movie-open
-  lazylibrarian:
-    title: "Books"
-    url: "https://books.viewpoint.house"
-    icon: mdi:book-open-page-variant
-  homepage:
-    title: "Home Page"
-    url: "https://home.viewpoint.house"
-    icon: mdi:home
