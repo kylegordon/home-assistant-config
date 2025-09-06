@@ -5,7 +5,9 @@ sensor:
       bandwidth_in_as_percentage:
         friendly_name: 'Bandwidth in as percentage'
         # We have a, nominally, 100Meg connection.
-        value_template: "{{ (states('sensor.internet_speed_in') | float(0) ) }}"
+        value_template: >-
+          {% set v = states('sensor.internet_speed_in') | float(0) %}
+          {{ [0, [v, 100] | min] | max }}  # clamp 0..100
         unit_of_measurement: '%'
 
 automation:
