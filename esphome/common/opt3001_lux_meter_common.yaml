@@ -13,9 +13,6 @@ esphome:
 external_components:
   - source:
       type: local
-      path: custom_components/syslog
-  - source:
-      type: local
       path: custom_components/OPT3001
 
 captive_portal:
