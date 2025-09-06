@@ -31,8 +31,17 @@ web_server:
   port: 80
 
 syslog:
-  ip_address: 172.24.32.13
+  udp_id: esphome_udp_syslog
+  time_id: esptime
+
+udp:
+  id: esphome_udp_syslog
+  addresses: 172.24.32.13
   port: 515
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/London
 
 light:
   # ... and then make a light out of it.

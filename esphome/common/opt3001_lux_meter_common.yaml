@@ -1,6 +1,7 @@
 ---
 packages:
   common: !include common.yaml
+  syslog: !include syslog.yaml
 
 esp8266:
   board: d1_mini
@@ -13,9 +14,6 @@ esphome:
 external_components:
   - source:
       type: local
-      path: custom_components/syslog
-  - source:
-      type: local
       path: custom_components/OPT3001
 
 captive_portal:
@@ -25,15 +23,6 @@ logger:
   esp8266_store_log_strings_in_flash: false
 
 web_server:
-
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
-
-time:
-  - platform: homeassistant
-    id: esptime
-    timezone: Europe/London
 
 i2c:
   id: bus_a
