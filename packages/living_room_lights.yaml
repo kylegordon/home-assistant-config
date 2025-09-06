@@ -101,7 +101,8 @@ automation:
   - alias: Art light toggle
     id: art_light_toggle
     mode: parallel
-    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    # Can be improved, examples at
+    # https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
         event_type: esphome.tx_ultimate_easy
@@ -159,31 +160,32 @@ automation:
     condition:
       condition: and
       conditions:
-      - condition: state
-        entity_id: input_boolean.night_view
-        state: "off"
-      - condition: numeric_state
-        entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level_trigger
-        # for:
-        #   minutes: 10
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
-      - condition: or
-        conditions:
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "idle"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "stopped"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "paused"
-          - condition: state
-            entity_id: media_player.living_room_kodi
-            state: "off"    action:
+        - condition: state
+          entity_id: input_boolean.night_view
+          state: "off"
+        - condition: numeric_state
+          entity_id: sensor.average_external_light_level
+          below: input_number.living_room_light_level_trigger
+          # for:
+          #   minutes: 10
+        - condition: state
+          entity_id: binary_sensor.home_occupied
+          state: "on"
+        - condition: or
+          conditions:
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "idle"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "stopped"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "paused"
+            - condition: state
+              entity_id: media_player.living_room_kodi
+              state: "off"
+    action:
       - service: light.turn_on
         data_template:
           entity_id:
@@ -214,17 +216,17 @@ automation:
     condition:
       condition: and
       conditions:
-      - condition: state
-        entity_id: input_boolean.night_view
-        state: "off"
-      - condition: numeric_state
-        entity_id: sensor.average_external_light_level
-        below: input_number.living_room_light_level_trigger
-        # for:
-        #   minutes: 10
-      - condition: state
-        entity_id: binary_sensor.home_occupied
-        state: "on"
+        - condition: state
+          entity_id: input_boolean.night_view
+          state: "off"
+        - condition: numeric_state
+          entity_id: sensor.average_external_light_level
+          below: input_number.living_room_light_level_trigger
+          # for:
+          #   minutes: 10
+        - condition: state
+          entity_id: binary_sensor.home_occupied
+          state: "on"
     action:
       - service: light.turn_on
         data_template:
@@ -252,53 +254,53 @@ automation:
         - light.train_cabinets
         - light.george_usb_switch_relay_1
 
-  # - alias: Living Room motion
-  #   id: living_room_motion
-  #   trigger:
-  #     - platform: state
-  #       entity_id: binary_sensor.living_room_motion_occupancy
-  #       to: 'on'
-  #       from: 'off'
-  #   condition:
-  #     condition: and
-  #     conditions:
-  #     - condition: state
-  #       entity_id: input_boolean.night_view
-  #       state: "off"
-  #     - condition: state
-  #       entity_id: light.living_room
-  #       state: "off"
-  #     - condition: state
-  #       entity_id: light.dining_nook
-  #       state: "off"
-  #     - condition: numeric_state
-  #       entity_id: sensor.average_external_light_level
-  #       below: input_number.living_room_light_level_trigger
-  #       # for:
-  #       #   minutes: 10
-  #     - condition: state
-  #       entity_id: binary_sensor.home_occupied
-  #       state: "on"
-  #     - condition: or
-  #       conditions:
-  #         - condition: state
-  #           entity_id: media_player.living_room_kodi
-  #           state: "idle"
-  #         - condition: state
-  #           entity_id: media_player.living_room_kodi
-  #           state: "stopped"
-  #         - condition: state
-  #           entity_id: media_player.living_room_kodi
-  #           state: "paused"
-  #         - condition: state
-  #           entity_id: media_player.living_room_kodi
-  #           state: "off"
-  #   action:
-  #     - service: light.turn_on
-  #       data_template:
-  #         entity_id: >
-  #           {% if states('sensor.time_of_day') == "Morning" %}
-  #           light.living_room, light.dining_nook
-  #           {% else %}
-  #           light.living_room, light.dining_nook
-  #           {% endif %}
+# - alias: Living Room motion
+#   id: living_room_motion
+#   trigger:
+#     - platform: state
+#       entity_id: binary_sensor.living_room_motion_occupancy
+#       to: 'on'
+#       from: 'off'
+#   condition:
+#     condition: and
+#     conditions:
+#     - condition: state
+#       entity_id: input_boolean.night_view
+#       state: "off"
+#     - condition: state
+#       entity_id: light.living_room
+#       state: "off"
+#     - condition: state
+#       entity_id: light.dining_nook
+#       state: "off"
+#     - condition: numeric_state
+#       entity_id: sensor.average_external_light_level
+#       below: input_number.living_room_light_level_trigger
+#       # for:
+#       #   minutes: 10
+#     - condition: state
+#       entity_id: binary_sensor.home_occupied
+#       state: "on"
+#     - condition: or
+#       conditions:
+#         - condition: state
+#           entity_id: media_player.living_room_kodi
+#           state: "idle"
+#         - condition: state
+#           entity_id: media_player.living_room_kodi
+#           state: "stopped"
+#         - condition: state
+#           entity_id: media_player.living_room_kodi
+#           state: "paused"
+#         - condition: state
+#           entity_id: media_player.living_room_kodi
+#           state: "off"
+#   action:
+#     - service: light.turn_on
+#       data_template:
+#         entity_id: >
+#           {% if states('sensor.time_of_day') == "Morning" %}
+#           light.living_room, light.dining_nook
+#           {% else %}
+#           light.living_room, light.dining_nook
+#           {% endif %}
