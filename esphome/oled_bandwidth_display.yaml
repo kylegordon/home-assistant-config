@@ -33,8 +33,8 @@ sensor:
     entity_id: sensor.internet_speed_out
     internal: true
 
-syslog:
-  ip_address: 172.24.32.13
+udp:
+  addresses: 172.24.32.13
   port: 515
 
 time:

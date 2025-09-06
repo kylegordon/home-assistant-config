@@ -29,8 +29,8 @@ logger:
 web_server:
   port: 80
 
-syslog:
-  ip_address: 172.24.32.13
+udp:
+  addresses: 172.24.32.13
   port: 515
 
 output:
