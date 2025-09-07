@@ -296,7 +296,7 @@ automation:
             {% if states('sensor.time_of_day') == "Morning" %}
             light.living_room, light.dining_nook
             {% else %}
-            light.living_room, light.dining_nook
+            light.living_room_small_lights, light.art, light.train_cabinets
             {% endif %}
 
 
