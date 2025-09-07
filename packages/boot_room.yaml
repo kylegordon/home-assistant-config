@@ -133,6 +133,8 @@ automation:
           domain: light
       - service: light.turn_off
         entity_id: light.boot_room
+        data:
+          transition: 120
 
 
   - alias: Boot room motion - 10 minute timeout
