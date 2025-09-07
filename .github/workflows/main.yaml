@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Running YAMLlint
         uses: ibiqlik/action-yamllint@v3
         continue-on-error: false
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Running Remark lint
         uses: "docker://pipelinecomponents/remark-lint:latest"
         continue-on-error: false
@@ -73,7 +73,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Copy stub files into configuration folder
         run: |
           cp -R travis_secrets.yaml secrets.yaml
@@ -94,7 +94,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Copy stub files into configuration folder
         run: |
           cp -R travis_secrets.yaml secrets.yaml
@@ -115,7 +115,7 @@ jobs:
     needs: [yamllint, remarklint]
     steps:
       - name: Getting your configuration from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Copy stub files into configuration folder
         run: |
           cp -R travis_secrets.yaml secrets.yaml
