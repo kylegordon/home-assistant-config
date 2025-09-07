@@ -56,7 +56,7 @@ automation:
         entity_id: sun.sun
         state: "above_horizon"
     action:
-      - service: notify.mobile_app_nothing_phone_1
+      - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Motion outside!"
           # yamllint disable rule:line-length
@@ -136,7 +136,7 @@ automation:
       - service: homeassistant.turn_on
         entity_id:
           - group.outside_lights
-      - service: notify.mobile_app_nothing_phone_1
+      - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Motion outside!"
           # yamllint disable rule:line-length

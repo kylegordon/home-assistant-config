@@ -61,7 +61,7 @@ automation:
             type: announce
             # method: all
           message: "The stove requires more wood."
-      - service: notify.mobile_app_nothing_phone_1
+      - service: notify.mobile_app_nothing_phone_2
         data:
           title: "More wood needed!"
           message: >

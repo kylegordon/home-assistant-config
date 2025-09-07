@@ -11,11 +11,6 @@ esphome:
   comment: ${device_description}
   friendly_name: ${friendly_name}
 
-external_components:
-  - source:
-      type: local
-      path: custom_components/OPT3001
-
 captive_portal:
 
 logger:
@@ -31,24 +26,12 @@ i2c:
   scan: true
 
 sensor:
-  - platform: custom
-    # yamllint disable rule:line-length
-    lambda: |-
-      auto opt3001 = new MyOPT3001();
-      App.register_component(opt3001);
-      return {opt3001->sensor_status, opt3001->manufacturer_id_sensor, opt3001->device_id_sensor, opt3001->high_limit_sensor, opt3001->low_limit_sensor, opt3001->lux_sensor};
-    # yamllint enable rule:line-length
-    sensors:
-      - name: "Sensor Status"
-      - name: "Manufacturer ID"
-      - name: "Device ID"
-      - name: "Lux High Limit"
-        unit_of_measurement: lx
-      - name: "Lux Low Limit"
-        unit_of_measurement: lx
-      - name: "Lux Level"
-        unit_of_measurement: lx
-        icon: mdi:sun-wireless-outline
+  - platform: opt3001
+    i2c_id: bus_a
+    name: "Level"
+    icon: mdi:sun-wireless-outline
+    address: 0x44
+    update_interval: 5s
 
 output:
   # Register the blue LED as a dimmable output ....

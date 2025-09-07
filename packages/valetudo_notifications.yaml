@@ -43,7 +43,7 @@ automation:
       message: "{{ strings[msg_type] | default(strings['default_msg']) }}"
 
     action:
-      - service: notify.mobile_app_nothing_phone_1
+      - service: notify.mobile_app_nothing_phone_2
         data:
           title: Snowwhite vacuum
           message: "{{ message }}"
