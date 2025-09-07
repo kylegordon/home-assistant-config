@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "masterbedroom_switch"
-  friendly_name: "Master Bedroom Lightswitch"
-  device_description: "Master Bedroom Light Switch"
+  name: "kitchen_switch"
+  friendly_name: "Kitchen Switch"
+  device_description: "Kitchen Light Switch"
 
 packages:
   remote_package:
