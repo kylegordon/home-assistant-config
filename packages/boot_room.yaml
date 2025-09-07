@@ -79,6 +79,8 @@ automation:
           domain: light
       - service: homeassistant.turn_off
         entity_id: light.boot_room
+        data:
+          transition: 600
 
   - alias: Boot room light motion - night view
     initial_state: true
@@ -132,6 +134,8 @@ automation:
           domain: light
       - service: light.turn_off
         entity_id: light.boot_room
+        data:
+          transition: 120
 
 
   - alias: Boot room motion - 10 minute timeout
@@ -148,5 +152,7 @@ automation:
           message: "Turning boot room lights off"
           entity_id: light.boot_room
           domain: light
-      - service: light.turn_off
+      - service: homeassistant.turn_off
         entity_id: light.boot_room
+        data:
+          transition: 600
