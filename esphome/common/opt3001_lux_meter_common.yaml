@@ -27,6 +27,7 @@ i2c:
 
 sensor:
   - platform: opt3001
+    i2c_id: bus_a
     name: "Level"
     icon: mdi:sun-wireless-outline
     address: 0x44
