@@ -36,6 +36,9 @@ automation:
       - trigger: template
         value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
     action:
+      - service: mypyllant.clear_quick_veto
+        target:
+          entity_id: climate.viewpoint_zone_1_circuit_0_climate
       - service: climate.set_hvac_mode
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
@@ -63,8 +66,94 @@ automation:
         for:
           minutes: 5
     action:
-      - service: climate.set_hvac_mode
+      - service: mypyllant.set_quick_veto
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
-          hvac_mode: 'away'
+          temperature: 15
+          duration_hours: 3
+
+  - alias: Predbat error monitor
+    description: Alert when Predbat has raised an exception
+    trace:
+      stored_traces: 20
+    triggers:
+      - trigger: template
+        alias: Predbat status contains 'Error' for 5 minutes
+        value_template: "{{ 'Error' in states('predbat.status') }}"
+        for:
+          minutes: 5
+        variables:
+          alert_text: >-
+            predbat status is {{ states('predbat.status') }}, error={{
+            state_attr('predbat.status', 'error') }}
+      - trigger: state
+        alias: Predbat is in error status for 5 minutes
+        entity_id: predbat.status
+        attribute: error
+        to: true
+        for:
+          minutes: 5
+        variables:
+          alert_text: >-
+            predbat status is {{ states('predbat.status') }}, error={{
+            state_attr('predbat.status', 'error') }}
+      - trigger: state
+        alias: Predbat status.last_updated has not changed for 20 minutes
+        entity_id: predbat.status
+        attribute: last_updated
+        for:
+          minutes: 20
+        variables:
+          alert_text: >-
+            Predbat stalled? Restarting. last_updated=' {{
+            state_attr('predbat.status','last_updated')|as_timestamp|timestamp_custom('%a
+            %H:%M') }}', unchanged for 20 mins; Status='{{ states('predbat.status')
+            }}'
+          restart_predbat: "Y"
+      - trigger: state
+        entity_id: binary_sensor.predbat_running
+        to: "off"
+        for:
+          minutes: 15
+        variables:
+          alert_text: Predbat add-on is not running
+          restart_predbat: "Y"
+    action:
+      - service: notify.notify
+        alias: Send alert message
+        data:
+          title: Predbat status issue
+          message: |
+            {{now().strftime('%-d %b %H:%M')}} ISSUE:
+            {{ alert_text }}
+          data:
+            visibility: public
+            persistent: true
+            push:
+              sound:
+                name: default
+                critical: 1
+                volume: 0.8
+            sticky: true
+            color: red
+    mode: single
+
+  - alias: "Announce defrost cycle"
+    id: announce_defrost_cycle
+    description: >-
+      Announce defrost cycle
+    triggers:
+      - trigger: state
+        entity_id: sensor.s00_compressorstate
+        to: "Defrost"
+    action:
+      - service: notify.alexa_media
+        data_template:
+          target:
+            - media_player.kitchen
+          data:
+            type: announce
+            # method: all
+          message: >-
+            "Heat pump has started a defrost cycle"
