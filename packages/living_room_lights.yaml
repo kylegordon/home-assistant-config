@@ -142,7 +142,7 @@ automation:
       entity_id:
         - light.living_room
         - light.dining_nook
-        - light.sideboard
+        - light.drinks_cabinet
         - light.art
         - light.train_cabinets
         - light.george_usb_switch_relay_1
@@ -229,7 +229,7 @@ automation:
         data_template:
           entity_id:
             - light.dining_nook
-            - light.sideboard
+            - light.drinks_cabinet
             - light.art
             - light.train_cabinets
             - light.george_usb_switch_relay_1
@@ -246,7 +246,7 @@ automation:
       service: homeassistant.turn_off
       entity_id:
         - light.dining_nook
-        - light.sideboard
+        - light.drinks_cabinet
         - light.art
         - light.train_cabinets
         - light.george_usb_switch_relay_1

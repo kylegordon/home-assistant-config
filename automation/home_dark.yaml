@@ -22,7 +22,7 @@ action:
       message: "Home in the dark."
   - service: light.turn_on
     data:
-      entity_id: light.sideboard
+      entity_id: light.drinks_cabinet
   - service: light.turn_on
     data:
       entity_id: light.uplighter
