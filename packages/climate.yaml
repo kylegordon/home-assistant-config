@@ -36,6 +36,9 @@ automation:
       - trigger: template
         value_template: "{{ 'states.sensor.stove_temperature_living_room' != 'unknown' }}"
     action:
+      - service: mypyllant.clear_quick_veto
+        target:
+          entity_id: climate.viewpoint_zone_1_circuit_0_climate
       - service: climate.set_hvac_mode
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
@@ -63,11 +66,12 @@ automation:
         for:
           minutes: 5
     action:
-      - service: climate.set_hvac_mode
+      - service: mypyllant.set_quick_veto
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
-          hvac_mode: 'away'
+          temperature: 15
+          duration_hours: 3
 
   - alias: Predbat error monitor
     description: Alert when Predbat has raised an exception
@@ -87,7 +91,7 @@ automation:
         alias: Predbat is in error status for 5 minutes
         entity_id: predbat.status
         attribute: error
-        to: "true"
+        to: true
         for:
           minutes: 5
         variables:
@@ -115,8 +119,8 @@ automation:
         variables:
           alert_text: Predbat add-on is not running
           restart_predbat: "Y"
-    actions:
-      - action: notify.notify
+    action:
+      - service: notify.notify
         alias: Send alert message
         data:
           title: Predbat status issue
