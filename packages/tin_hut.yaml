@@ -156,7 +156,7 @@ automation:
         data:
           title: "Tin Hut Doors Open"
           message: "The tin hut doors have been opened!"
-      - service: notify.mobile_app_nothing_phone_1
+      - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Tin Hut Doors Open"
           message: "The tin hut doors have been opened!"

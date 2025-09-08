@@ -1,6 +1,4 @@
 ---
-
-
 ### TODO
 
 ## Display On/Off when doors moving
@@ -17,6 +15,9 @@
 # D7 - Closed input (working)
 # D8 - Boot fails if pulled high
 #
+
+packages:
+  syslog: !include syslog.yaml
 
 esp8266:
   board: $board
@@ -77,15 +78,6 @@ logger:
 web_server:
 
 captive_portal:
-
-#syslog:
-#  ip_address: 172.24.32.13
-#  port: 515
-
-time:
-  - platform: homeassistant
-    id: esptime
-    timezone: Europe/London
 
 font:
   - file: 'common/fonts/slkscr.ttf'

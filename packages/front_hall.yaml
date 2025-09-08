@@ -58,6 +58,8 @@ automation:
           domain: light
       - service: light.turn_off
         entity_id: light.front_hall
+        data:
+          transition: 120
 
   - alias: Front hall - 10 minute timeout
     id: front_hall_motion_10_minute
@@ -76,3 +78,5 @@ automation:
           domain: light
       - service: light.turn_off
         entity_id: light.front_hall
+        data:
+          transition: 600
