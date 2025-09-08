@@ -5,7 +5,7 @@
 ## Restore last state of display
 
 # https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
-# D0 - 
+# D0 -
 # D1 - Cover switch relay
 # D2 - SDA
 # D3 - Boot fails if pulled low
@@ -137,7 +137,7 @@ binary_sensor:
   - platform: gpio
     pin:
       number: $open_endstop_pin
-      #mode: INPUT_PULLUP
+      # mode: INPUT_PULLUP
       inverted: true
     name: "Open Endstop Sensor"
     id: open_endstop
