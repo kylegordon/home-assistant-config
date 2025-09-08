@@ -58,7 +58,7 @@
       friendly_name: Hwam Stove
       icon_template: >
         {%- set phase = states.sensor.phase_living_room.state %}
-        {%- set refuel = states.binary_sensor.refill_alarm_living_room.state %}
+        {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
         {%- if phase == 'Burn' %}
           mdi:fire
         {%- elif phase == 'Standby' %}
@@ -74,7 +74,7 @@
         {%- set phase = states.sensor.phase_living_room.state %}
         {%- set temp = states.sensor.stove_temperature_living_room.state %}
         {%- set timer = states.sensor.time_to_new_fire_wood_living_room.state %}
-        {%- set refuel = states.binary_sensor.refill_alarm_living_room.state %}
+        {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
         {%- if phase == 'Burn' %}
           {{ temp }} °C
         {%- elif phase == 'Standby' %}
