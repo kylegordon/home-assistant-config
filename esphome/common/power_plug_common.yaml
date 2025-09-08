@@ -27,9 +27,9 @@ esp8266:
 
 logger:
 
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
+#syslog:
+#  ip_address: 172.24.32.13
+#  port: 515
 
 # This should point to the public location of this yaml file.
 dashboard_import:
