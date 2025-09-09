@@ -264,7 +264,10 @@ display:
           it.filled_rectangle(0,  0, it.get_width(), it.get_height(), id(my_background));
           it.strftime(10, 10, id(font2), id(my_white), TextAlign::TOP_LEFT, "%A %d %b", id(esptime).now());
           // Print time in HH:MM format
-          it.strftime(10, 40, id(font5), id(my_white), TextAlign::TOP_LEFT, "%H:%M", id(esptime).now());
+          it.strftime(it.get_width(), 26, id(fontlarge),
+                      TextAlign::CENTER_RIGHT,
+                      "%H:%M:%S",
+                      id(esptime).now());
 
           std::map<std::string, std::string> weather_icon_map
             {
@@ -321,19 +324,18 @@ display:
           }
           it.line(50, 197, 115, 197, id(my_golden));
           if (id(house_target_temperature).has_state()) {
-            it.printf(40, 195, id(font2), id(my_golden), TextAlign::TOP_LEFT , "%7.1f°", id(house_target_temperature).state);
+            it.printf(0, 128, id(fontlarge),
+                      TextAlign::BASELINE_LEFT,
+                      "Target: %.1f°C",
+                      id(house_target_temperature).state);
           }
 
-      # - id: temperatures
-      #   lambda: |-
-      #     it.printf(0, 0, id(fontlarge), TextAlign::BASELINE_LEFT , "Climate");
-      #     // %.1f substitutes to 1 decimal place
-      #     if (id(house_target_temperature).has_state()) {
-      #       it.printf(0, 128, id(fontlarge), TextAlign::BASELINE_LEFT , "Target: %.1f°C", id(house_target_temperature).state);
-      #     }
-      #     if (id(house_average_temperature).has_state()) {
-      #       it.printf(0, 192, id(fontlarge), TextAlign::BASELINE_LEFT , "Actual: %.1f°C", id(house_average_temperature).state);
-      #     }
+          if (id(house_average_temperature).has_state()) {
+            it.printf(0, 192, id(fontlarge),
+                      TextAlign::BASELINE_LEFT,
+                      "Actual: %.1f°C",
+                      id(house_average_temperature).state);
+          }
 
       - id: nextbin
         lambda: |-
@@ -386,9 +388,12 @@ display:
             it.printf(0, 220, id(font5), id(my_white), TextAlign::BASELINE_LEFT, "PV: %7.2f W", id(pv_power).state);
           }
 
-      # - id: circle
-      #   lambda: |-
-      #     it.filled_circle(it.get_width() / 2, it.get_height() / 3, 30, COLOR_CSS_RED);
+      - id: circle
+        lambda: |-
+          it.filled_circle(it.get_width() / 2,
+                            it.get_height() / 3,
+                            30,
+                            COLOR_CSS_RED);
 
 interval:
   - interval: 10s

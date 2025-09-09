@@ -1,5 +1,6 @@
 ---
-# Inspired by https://github.com/bruhautomation/BRUH2-Home-Assistant-Configuration
+# Inspired from:
+# https://github.com/bruhautomation/BRUH2-Home-Assistant-Configuration
 
 homeassistant:
 
@@ -13,16 +14,11 @@ homeassistant:
   whitelist_external_dirs:
     - /tmp
 
-  # Name of the location where Home Assistant is running
   name: Home
-  # Location required to calculate the time the sun rises and sets
   latitude: !secret home_latitude
   longitude: !secret home_longitude
-  # Impacts weather/sunrise data (altitude above sea level in meters)
   elevation: 69
-  # metric for Metric, imperial for Imperial
   unit_system: metric
-  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
   country: GB
   currency: GBP
@@ -66,7 +62,7 @@ homeassistant:
     group.bedside_lights:
       icon: mdi:hotel
     sensor.kyle_status:
-      entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg
+      entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg  # yamllint disable-line rule:line-length
     input_boolean.guest_mode:
       icon: mdi:account-multiple-plus
     light.craft_room_desk_level:
@@ -76,7 +72,7 @@ homeassistant:
     sensor.monthly_energy:
       friendly_name: Monthly energy usage
 
-# The default_config meta-component provides a host of other configs options, some listed at
+# The default_config meta-component provides a host of other configs options
 # https://www.home-assistant.io/integrations/default_config/
 default_config:
 

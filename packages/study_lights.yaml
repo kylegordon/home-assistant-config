@@ -1,9 +1,10 @@
 ---
 automation:
   - alias: Study light toggle
+    # Can be improved, examples at
+    # https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     id: study_light_toggle
     mode: parallel
-    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
         event_type: esphome.tx_ultimate_easy
@@ -30,10 +31,11 @@ automation:
         data:
           transition: 1
 
+  # Can be improved, examples at
+  # https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
   - alias: Study decorative light toggle
     id: study_decorative_toggle
     mode: parallel
-    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
         event_type: esphome.tx_ultimate_easy
