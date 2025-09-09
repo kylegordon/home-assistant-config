@@ -70,7 +70,8 @@ automation:
           entity_id: light.hall
       - service: light.turn_on
         data_template:
-          entity_id: light.hall
+          entity_id:
+            - light.hall
 
   - alias: Hallway motion - 2 minute night timeout
     trigger:

@@ -27,10 +27,10 @@ binary_sensor:
         delay_off: 0:05:00
         value_template: "{{
           is_state('binary_sensor.presence_lite_tin_hut_occupancy', 'on') or
-          is_state('binary_sensor.tin_hut_left_motion', 'on') or
-          is_state('binary_sensor.tin_hut_right_motion', 'on') or
-          is_state('binary_sensor.thingino_c2_888a_motion_2', 'on') or
-          is_state('binary_sensor.thingino_c2_ddde_motion', 'on')
+          is_state('binary_sensor.tin_hut_left_person_occupancy', 'on') or
+          is_state('binary_sensor.tin_hut_right_person_occupancy', 'on') or
+          is_state('binary_sensor.thingino_c2_888a_person_occupancy_2', 'on') or
+          is_state('binary_sensor.thingino_c2_ddde_person_occupancy', 'on')
           }}"
 
 automation:
@@ -50,6 +50,7 @@ automation:
       - service: homeassistant.turn_on
         entity_id:
           - switch.tin_hut_lights_relay
+          - switch.shower_pump_workbench_lighting
           - light.tin_hut_shelf_lights_bench
           - light.tin_hut_shelf_lights_left
           - light.tin_hut_shelf_lights_right
@@ -57,29 +58,24 @@ automation:
         # If the below condition is false, the action will stop here.
         conditions:
           - condition: state
-            entity_id:
-              - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
             state: 'idle'
           - condition: state
-            entity_id:
-              - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
             state: 'off'
           - condition: state
-            entity_id:
-              - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
             state: 'paused'
       - service: openhome.invoke_pin
         data:
           pin: 4
         target:
-          entity_id:
-            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
       - service: media_player.volume_set
         data:
-          volume_level: 0.3
+          volume_level: 0.45
         target:
-          entity_id:
-            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
 
   - alias: Tin Hut Not Occupied
     id: tin_hut_not_occupied
@@ -93,14 +89,14 @@ automation:
       - service: homeassistant.turn_off
         entity_id:
           - switch.tin_hut_lights_relay
+          - switch.shower_pump_workbench_lighting
           - light.tin_hut_shelf_lights_bench
           - light.tin_hut_shelf_lights_left
           - light.tin_hut_shelf_lights_right
       - service: media_player.turn_off
         data: {}
         target:
-          entity_id:
-            - media_player.openhome_uuid_4c494e4e_0026_0f21_a10a_01260864013f
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
 
   - alias: Open tin hut process
     # This is used by Alexa
