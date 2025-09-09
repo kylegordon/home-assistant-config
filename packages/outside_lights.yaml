@@ -1,0 +1,170 @@
+---
+switch:
+  - platform: template
+    switches:
+      outside_rgb_white_channels:
+        friendly_name: Outside White Channels
+        unique_id: outside_rgb_white_channels
+        icon_template: mdi:lightbulb-group
+        value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
+                            or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
+                          true
+                        {% else %}
+                          false
+                        {% endif %}"
+        turn_on:
+          service: light.turn_on
+          # Set the white channel values to maximum
+          data:
+            entity_id: light.decking_lights
+            rgbww_color:
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - 255
+              - 255
+        turn_off:
+          service: light.turn_on
+          # Set the white channel values to zero
+          data:
+            entity_id: light.decking_lights
+            rgbww_color:
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - 0
+              - 0
+
+automation:
+  - alias: Outdoor motion detected
+    id: outdoor_motion_detected
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.back_door_pir
+          - binary_sensor.driveway_pir
+          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.back_door_person_occupancy
+          - binary_sensor.gates_person_occupancy
+          - binary_sensor.front_door_person_occupancy
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "above_horizon"
+    action:
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Motion outside!"
+          message: >
+            Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+
+
+  - alias: "Outside night lights on"
+    id: outside_night_lights_on
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        below: input_number.blinds_evening
+        for:
+          minutes: 10
+    condition:
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id:
+          - light.car_port
+          - light.front_door_dome
+        data:
+          brightness_pct: 100
+          color_temp: 400
+          transition: 30
+
+  - alias: Outside night lights off
+    id: outside_night_lights_off
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        above: input_number.blinds_morning
+        for:
+          minutes: 10
+    action:
+      - service: light.turn_off
+        entity_id:
+          - light.car_port
+          - light.front_door_dome
+
+  - alias: Outdoor lights on
+    id: outdoor_lights_on
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.back_door_pir
+          - binary_sensor.driveway_pir
+          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.back_door_person_occupancy
+          - binary_sensor.gates_person_occupancy
+          - binary_sensor.front_door_person_occupancy
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: input_boolean.night_view
+        state: "off"
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+    action:
+      - service: script.tweet_engine
+        data_template:
+          tweet: >
+            {{ [
+            "Dark outside and motion detected! Scared! Turning on my outside lights!",
+            "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
+            "Did you hear that? I can't see a thing. Turning on the outside lights"
+            ] | random + " https://amzn.to/2CR5mbQ" }}
+      - service: homeassistant.turn_on
+        entity_id:
+          - group.outside_lights
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Motion outside!"
+          message: >
+            Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Turning on outside lights
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+
+      - service: homeassistant.turn_on
+        entity_id:
+          - group.outside_lights
+      # If this evaluates to false, the action will stop here.
+      - condition: template
+        value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
+      - service: light.turn_on
+        entity_id: light.front_door_floodlights
+
+  - alias: Outdoor lights off
+    id: outdoor_lights_off
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.back_door_pir
+          - binary_sensor.driveway_pir
+          - binary_sensor.front_door_motion
+          - binary_sensor.back_door_person_occupancy
+          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.gates_person_occupancy
+        to: 'off'
+        for:
+          seconds: 300
+    action:
+      - service: homeassistant.turn_off
+        entity_id:
+          - group.outside_lights

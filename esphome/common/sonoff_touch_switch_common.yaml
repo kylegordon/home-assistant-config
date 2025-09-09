@@ -1,76 +1,134 @@
-esphome:
-  name: ${device_name}
-  platform: ESP8266
+---
+packages:
+  common: !include common.yaml
+  syslog: !include syslog.yaml
+
+esp8266:
   board: esp8285
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
-  ap: #since we listed an SSID above, this AP mode will only enable if no WiFi connection could be made
-    ssid: ${friendly_name}_AP
-    password: !secret wifi_pass
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  friendly_name: ${friendly_name}
 
 captive_portal:
 
 # Enable logging
 logger:
 
-# Enable Home Assistant API
-api:
-
-ota:
-
-text_sensor:
-- platform: version
-  name: "${friendly_name} Firmware version"
-
-sensor:
-  - platform: wifi_signal
-    name: "${friendly_name} Signal Level"
-    update_interval: 60s
-  - platform: uptime
-    name: "${friendly_name} uptime"
-
 binary_sensor:
-  - platform: status
-    name: "${friendly_name} Status"
   - platform: gpio
     pin:
       number: GPIO0
       mode: INPUT_PULLUP
-      inverted: True
+      inverted: true
     name: "${friendly_name} Touch Pad"
-    on_press:
-      if:
-        condition:
-          not:
-            api.connected:
+    on_multi_click:
+      # triple click
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.2s
         then:
-          - lambda: |-
-              id(failover_control).publish_state(true);
-              id(failover_control).publish_state(false);
-  - platform: template
-    id: failover_control
-    on_press:
-      if:
-        condition:
-          not:
-            api.connected:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send double click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} triple click
+                      device_name: ${device_name}
+                      click_type: triple
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: sonoff_touch_relay
+      # double click
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.2s
         then:
-          - switch.toggle: sonoff_touch_relay
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send double click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} double click
+                      device_name: ${device_name}
+                      click_type: double
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: sonoff_touch_relay
+      # long click
+      - timing:
+          - ON for at least 1.5s
+        then:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send long click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} long click
+                      device_name: ${device_name}
+                      click_type: long
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: sonoff_touch_relay
+      # single click
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.2s
+        then:
+          - if:
+              condition:
+                and:
+                  - wifi.connected:
+                  - api.connected:
+              # send single click event in case wifi and api are conncected
+              then:
+                - homeassistant.event:
+                    event: esphome.button_pressed
+                    data:
+                      title: ${friendly_name} short click
+                      device_name: ${device_name}
+                      click_type: single
+              # toggle relay in case either wifi or api are not connected
+              else:
+                - switch.toggle: sonoff_touch_relay
+    internal: true
+    id: button_input
 
 switch:
   - platform: gpio
     id: sonoff_touch_relay
     name: "${friendly_name} Relay"
     pin: GPIO12
+    restore_mode: "${default_state}"
 
 output:
   # Register the blue LED as a dimmable output ....
   - platform: esp8266_pwm
     id: blue_led
     pin: GPIO13
-    inverted: True
+    inverted: true
 
 light:
   # ... and then make a light out of it.

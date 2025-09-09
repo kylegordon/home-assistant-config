@@ -1,0 +1,66 @@
+---
+packages:
+  common: !include common.yaml
+  syslog: !include syslog.yaml
+
+esp8266:
+  board: d1_mini
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  friendly_name: ${friendly_name}
+
+captive_portal:
+
+logger:
+  level: DEBUG
+  esp8266_store_log_strings_in_flash: false
+
+web_server:
+
+i2c:
+  id: bus_a
+  sda: GPIO4
+  scl: GPIO5
+  scan: true
+
+sensor:
+  - platform: opt3001
+    i2c_id: bus_a
+    name: "Level"
+    icon: mdi:sun-wireless-outline
+    address: 0x44
+    update_interval: 5s
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: true
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "${friendly_name} Blue LED"
+    id: blue_led_light
+    output: blue_led
+
+# Blink the light if we aren't connected to WiFi.
+interval:
+  - interval: 500ms
+    then:
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 50%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 250ms

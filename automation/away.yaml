@@ -10,7 +10,7 @@ condition:
   - condition: template
     value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
   - condition: state
-    entity_id: input_boolean.guest_mode
+    entity_id: binary_sensor.guest_mode
     state: "off"
 action:
   - service: script.all_off

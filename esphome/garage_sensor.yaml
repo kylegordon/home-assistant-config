@@ -1,11 +1,20 @@
-esphome:
-  name: garage_sensor
-  platform: ESP8266
+---
+substitutions:
+  device_name: garage_sensor
+  device_description: Garage Temperature Sensor
+  friendly_name: Garage Temperature Sensor
+
+esp8266:
   board: d1_mini
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  friendly_name: ${friendly_name}
 
 wifi:
   ssid: !secret wifi_ssid
-  password: !secret wifi_pass
+  password: !secret wifi_password
 
 # Enable logging
 logger:
@@ -14,35 +23,52 @@ logger:
 api:
 
 ota:
+  platform: esphome
 
 web_server:
 
-text_sensor:
-- platform: version
-  name: "Firmware version"
+binary_sensor:
+  # Reports if this device is Connected or not
+  - platform: status
+    name: ${friendly_name} Status
 
-dallas:
-  - pin: GPIO2
+text_sensor:
+  # Reports the ESPHome Version with compile date
+  - platform: version
+    name: ${friendly_name} ESPHome Version
+
+button:
+  - platform: restart
+    name: "${friendly_name} Restart"
+
+one_wire:
+  - platform: gpio
+    pin: D4
 
 sensor:
   - platform: wifi_signal
-    name: "WiFi Signal Garage Sensor"
+    name: "${friendly_name} Signal Strength"
     update_interval: 60s
+  # Reports how long the device has been powered (in minutes)
   - platform: uptime
-    name: "Device uptime"
-  - platform: dallas
+    name: ${friendly_name} Uptime
+    filters:
+      - lambda: return x / 60.0;
+    unit_of_measurement: minutes
+  - platform: dallas_temp
     address: 0xE40000031D87AC28
     name: "Garage Temperature"
-  - platform: dallas
-    address: 0xE50000031DC8B828
-    name: "Carport Temperature"
+#   - platform: dallas
+#     address: 0xE50000031DC8B828
+#     name: "Carport Temperature"
 
 output:
   # Register the blue LED as a dimmable output ....
   - platform: esp8266_pwm
     id: blue_led
-    pin: D4
-    inverted: True
+    pin: D5  # Nothing is really connected to D5.
+    # The built-in blue LED is connected to D4, but I stupidly picked that for I2C and don't want to change it.
+    inverted: true
 
 light:
   # ... and then make a light out of it.

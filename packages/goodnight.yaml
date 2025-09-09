@@ -1,3 +1,4 @@
+---
 homeassistant:
   ## This doesn't seem to work. It needs to be surfaced in configuration.yaml
   customize:
@@ -8,34 +9,61 @@ input_boolean:
   goodnight_process:
     name: Goodnight process
     icon: mdi:sleep
-    initial: off
+    initial: false
 
 automation:
   - alias: Goodnight process
+    id: goodnight_process
     trigger:
       - platform: state
         entity_id: input_boolean.goodnight_process
         to: 'on'
     action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Triggering goodnight mode"
+          entity_id: input_boolean.goodnight_process
+          domain: input_boolean
+      - service: cover.close_cover
+        entity_id:
+          - cover.patio_blinds
       - service: homeassistant.turn_off
         entity_id:
-        - group.living_room
-        - group.living_room_lights
-        - group.outside_lights
-        - group.utility_room
-        - group.kitchen
-        - group.hall
-        - light.twig_lights
-        - group.bedroom_1
-        - group.bedroom_3
-        - group.bedroom_4
-        - input_boolean.goodnight_process
+          - light.living_room
+          - light.dining_nook
+          - light.art
+          - group.outside_lights
+          - group.front_hall
+          - light.kitchen_lights
+          - light.hall
+          - light.boot_room
+          - light.twig_lights
+          - light.glow_orbs
+          - light.under_bed_lights
+          - group.bedroom_1
+          - group.bedroom_3
+          - group.bedroom_4
       - condition: or
         # If guests are staying, don't turn off their bedroom lights
-        conditions: 
+        conditions:
           - condition: state
-            entity_id: input_boolean.guest_mode
+            entity_id: binary_sensor.guest_mode
             state: 'off'
       - service: homeassistant.turn_off
         entity_id:
-        - group.bedroom_2
+          - group.bedroom_2
+
+  - alias: Goodnight process reset
+    trigger:
+      - platform: time
+        at: '04:00:00'
+    action:
+      - service: logbook.log
+        data_template:
+          name: EVENT
+          message: "Resetting goodnight mode"
+          entity_id: input_boolean.goodnight_process
+          domain: input_boolean
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.goodnight_process

@@ -1,42 +1,9 @@
-- platform: rfxtrx
-  automatic_add: False
-  devices:
-    #0a140029f0dd3c0e010060:
-    #  name: Living Room
-    #0a140017f090a201010070:
-    #  # Dimmable CFL Remote Left
-    #  name: Utility Room
-    0a140001f0dd3c01010070:
-      # White Remote A1
-      name: Christmas Star
-    0a140075f0dd3c10000060:
-      # Black Remote D4
-      name: Edison lamp old
-    0a14000bf0dd3c0f010070:
-      name: Lava Lamp
-    0a140031f0dd3c0d010070:
-      name: Craft Room bookcase
-    0a140037f0dd3c0b010060:
-      name: Christmas Tree
-    0a14003cf0dd3c0a010060:
-      name: Craft room fairy lights
-    0710080041020000:
-      name: Star Burst
-    0710080041030000:
-      name: Candle Arch
-    0710080041040000:
-      name: Edison Lamp
-    0a140041f0dd3c09010070:
-      name: Arc Lamp
-    0a14005ff0dd3c05010060:
-      name: Twig lights
-
 - platform: switch
   name: "Garage Lights"
   entity_id: switch.garage_lights_relay
 
 - platform: switch
-  name: "Front Door Floodlights"
+  name: "Front Floodlights"
   entity_id: switch.front_floodlights_relay
 
 - platform: switch
@@ -48,11 +15,51 @@
   entity_id: switch.back_floodlights_relay
 
 - platform: switch
-  name: "Mini Deck Floodlight"
-  entity_id: switch.mini_deck_floodlight_relay
+  name: "Garden Steps Floodlight"
+  entity_id: switch.garden_steps_floodlight_relay
+
+- platform: switch
+  name: "Edison Lamp"
+  entity_id: switch.edison_lamp
+
+- platform: switch
+  name: "Star Burst"
+  entity_id: switch.star_burst
+
+- platform: switch
+  name: "Twig Lights"
+  entity_id: switch.twig_lights
+
+- platform: switch
+  name: "Craft Room Fairy Lights"
+  entity_id: switch.craft_fairy_lights
+
+- platform: switch
+  name: "Lava Lamp"
+  entity_id: switch.lava_lamp
+
+- platform: switch
+  name: "Monitor Lights"
+  entity_id: switch.monitor_lights_power_plug_switch
+
+- platform: switch
+  name: "Christmas Tree"
+  entity_id: switch.christmas_tree
+
+- platform: switch
+  name: "Candle Arch"
+  entity_id: switch.candle_arch
+
+- platform: switch
+  name: "Outside Decorations"
+  entity_id: switch.outside_decorations
 
 - platform: group
   name: Decking Lights
   entities:
     - light.decking_rgbww_flood_east
     - light.decking_rgbww_flood_west
+
+- platform: switch
+  name: Octoprint Lighting
+  entity_id: switch.octoprint_relay_1

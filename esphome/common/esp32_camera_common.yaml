@@ -1,0 +1,88 @@
+---
+# Use ESPHome-Flasher, as esptool.py doesn't seem to do some sort of magic with the bootloader.
+# See https://github.com/esphome/issues/issues/598
+
+# Do not enable BLE tracking when the camera module is enabled. Device does not boot correctly
+
+packages:
+  common: !include common.yaml
+
+esp32:
+  board: esp32cam
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+
+# Enable logging
+logger:
+
+web_server:
+
+# AI-Thinker template from ESPHome docs
+esp32_camera:
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+
+  # Image settings
+  name: ${friendly_name} Camera
+  # resolution: 1600x1200  # Works but slow
+  resolution: 1280x1024  # Works well
+  # resolution: 800x600 XX
+  # resolution: 640x480 XX
+
+output:
+  # Register the red LED as a dimmable output ....
+  - platform: ledc
+    id: red_led
+    channel: 2  # Don't stomp on the cameras use of timer channel 1
+    pin: GPIO33
+    inverted: true
+  - platform: ledc
+    id: flash_led
+    channel: 3  # Don't stomp on the cameras use of timer channel 1
+    pin: GPIO4
+
+esp32_camera_web_server:
+  - port: 8080
+    mode: stream
+  - port: 8081
+    mode: snapshot
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "${friendly_name} Red LED"
+    id: red_led_light
+    output: red_led
+  - platform: monochromatic
+    name: "${friendly_name} Flash LED"
+    id: flash_light
+    output: flash_led
+
+# Blink the light if we aren't connected to WiFi.
+interval:
+  - interval: 500ms
+    then:
+    - if:
+        condition:
+          not:
+            wifi.connected:
+        then:
+          - light.turn_on:
+              id: red_led_light
+              brightness: 50%
+              transition_length: 0s
+          - delay: 250ms
+          - light.turn_off:
+              id: red_led_light
+              transition_length: 250ms

@@ -1,0 +1,38 @@
+---
+packages:
+  common: !include common.yaml
+  syslog: !include syslog.yaml
+
+esp8266:
+  board: d1_mini
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  friendly_name: ${friendly_name}
+
+# Enable logging
+logger:
+
+web_server:
+
+binary_sensor:
+  - platform: gpio
+    name: "${friendly_name} Motion Sensor"
+    pin:
+      number: D1
+    device_class: motion
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: true
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    name: "${friendly_name} Blue LED"
+    id: blue_led_light
+    output: blue_led

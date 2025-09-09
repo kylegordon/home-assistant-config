@@ -1,0 +1,207 @@
+---
+substitutions:
+  device_name: traffic-light
+  device_description: Traffic Light
+  friendly_name: Traffic Light
+  default_state: "ALWAYS_OFF"
+  icon: mdi:traffic-light
+  go_green_pin: D7
+  go_red_pin: D6
+  green_output_pin: D5
+  amber_output_pin: D2
+  red_output_pin: D1
+  blue_led_pin: D4
+
+packages:
+  common: !include common/common.yaml
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+
+esp8266:
+  board: d1_mini
+
+captive_portal:
+
+logger:
+
+# Enable web server
+web_server:
+  port: 80
+
+syslog:
+  udp_id: esphome_udp_syslog
+  time_id: esptime
+
+udp:
+  id: esphome_udp_syslog
+  addresses: 172.24.32.13
+  port: 515
+time:
+  - platform: homeassistant
+    id: esptime
+    timezone: Europe/London
+
+light:
+  # ... and then make a light out of it.
+  - platform: monochromatic
+    id: blue_led_light
+    name: "${friendly_name} Blue LED"
+    output: blue_led
+
+  - platform: binary
+    id: red
+    name: "${friendly_name} Red"
+    output: red_relay
+
+  - platform: binary
+    id: green
+    name: "${friendly_name} Green"
+    output: green_relay
+
+  - platform: binary
+    id: amber
+    name: "${friendly_name} Amber"
+    output: amber_relay
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: ${go_green_pin}
+      # mode: INPUT_PULLUP
+      inverted: true
+    name: "Go Green Button"
+    on_release:
+      then:
+        switch.toggle: go_green_sequence
+
+  - platform: gpio
+    pin:
+      number: ${go_red_pin}
+      # mode: INPUT_PULLUP
+      inverted: true
+    name: "Go Red Button"
+    on_release:
+      then:
+        switch.toggle: go_red_sequence
+
+output:
+  # Register the blue LED as a dimmable output ....
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: ${blue_led_pin}
+    inverted: true
+
+  - platform: gpio
+    # name: ${friendly_name} Green Relay
+    pin: ${green_output_pin}
+    id: green_relay
+    # restore_mode: "${default_state}"
+
+  - platform: gpio
+    # name: ${friendly_name} Amber Relay
+    pin: ${amber_output_pin}
+    id: amber_relay
+    # restore_mode: "${default_state}"
+
+  - platform: gpio
+    # name: ${friendly_name} Red Relay
+    pin: ${red_output_pin}
+    id: red_relay
+    # restore_mode: "${default_state}"
+
+  # Page 35 of https://assets.publishing.service.gov.uk/media/5df0e29fed915d15f42c4820/dft-traffic-signs-manual-chapter-6.pdf
+
+switch:
+  - platform: template
+    id: go_green_sequence
+    name: "${friendly_name} Go Green Sequence"
+    turn_on_action:
+      # Start it up and show red for 3 seconds
+      - light.turn_off:
+          id: green
+      - light.turn_off:
+          id: amber
+      - light.turn_on:
+          id: red
+      - delay: 3s
+      # Now the sequence really starts
+      - light.turn_on:
+          id: amber
+      - delay: 2s
+      - light.turn_off:
+          id: red
+      - light.turn_off:
+          id: amber
+      - light.turn_on:
+          id: green
+
+  - platform: template
+    id: go_red_sequence
+    name: "${friendly_name} Go Red Sequence"
+    turn_on_action:
+      # Start it up and show green for 3 seconds
+      - light.turn_off:
+          id: red
+      - light.turn_off:
+          id: amber
+      - light.turn_on:
+          id: green
+      - delay: 3s
+      # Now the sequence really starts
+      - light.turn_on:
+          id: amber
+      - light.turn_off:
+          id: green
+      - delay: 3s
+      - light.turn_off:
+          id: amber
+      - light.turn_on:
+          id: red
+
+# Blink the light if we aren't connected to WiFi.
+interval:
+  - interval: 5000ms
+    id: no_wifi
+    then:
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 100%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 0ms
+            - delay: 250ms
+  - interval: 5000ms
+    id: no_api
+    then:
+      - if:
+          condition:
+            not:
+              api.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 100%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 0ms
+            - delay: 250ms
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 100%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 0ms
+            - delay: 250ms

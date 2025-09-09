@@ -1,6 +1,8 @@
+---
 substitutions:
   device_name: ensuite_switch
   device_description: Ensuite Lightswitch
   friendly_name: Ensuite Switch
+  default_state: "RESTORE_DEFAULT_ON"
 
-<<: !include common/sonoff_touch_switch_common.yaml
+<<: !include common/sonoff_t1_r2_touch_switch_common.yaml

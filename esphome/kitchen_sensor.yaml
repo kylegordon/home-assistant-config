@@ -1,42 +1,35 @@
-esphome:
-  name: kitchen_sensor
-  platform: ESP8266
+packages:
+  common: !include common/common.yaml
+
+substitutions:
+  device_name: kitchen_sensor
+  device_description: Kitchen Sensor
+  friendly_name: Kitchen Sensor
+
+esp8266:
   board: d1_mini
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_pass
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
 
 # Enable logging
 logger:
 
-# Enable Home Assistant API
-api:
-
-ota:
-
 web_server:
 
-text_sensor:
-- platform: version
-  name: "Firmware version"
-
-dallas:
-  - pin: GPIO2
+one_wire:
+  - platform: gpio
+    pin: D4
 
 sensor:
-  - platform: wifi_signal
-    name: "WiFi Signal Kitchen Sensor"
-    update_interval: 60s
-  - platform: uptime
-    name: "Device uptime"
-  - platform: dallas
+  - platform: dallas_temp
     address: 0x490000031D4F3C28
     name: "Kitchen Temperature"
-  - platform: dallas
+  - platform: dallas_temp
     address: 0xF10000031DBFDD28
     name: "Freezer Temperature"
-  - platform: dallas
+  - platform: dallas_temp
     address: 0x620000040DD4C828
     name: "Fridge Temperature"
 
@@ -44,8 +37,9 @@ output:
   # Register the blue LED as a dimmable output ....
   - platform: esp8266_pwm
     id: blue_led
-    pin: D4
-    inverted: True
+    pin: D5  # Nothing is really connected to D5.
+    # The built-in blue LED is connected to D4, but I stupidly picked that for I2C and don't want to change it.
+    inverted: true
 
 light:
   # ... and then make a light out of it.

@@ -1,0 +1,12 @@
+---
+substitutions:
+  device_name: tin_hut_shelf_lights_right
+  device_description: Tin Hut Shelf Light Right
+  friendly_name: Tin Hut Shelf Lights Right
+  red: GPIO15
+  green: GPIO12
+  blue: GPIO13
+  cold_white: GPIO14
+  warm_white: GPIO04
+
+<<: !include common/h801_rgbww_common.yaml

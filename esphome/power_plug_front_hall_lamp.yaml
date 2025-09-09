@@ -1,0 +1,11 @@
+---
+packages:
+  plug: !include common/localbytes_plug_pm_common.yaml
+  common: !include common/power_plug_common.yaml
+
+substitutions:
+  device_name: power_plug_front_hall_lamp
+  device_description: Front Hall Lamp Power Plug
+  friendly_name: Front Hall Lamp Power Plug
+  default_state: "RESTORE_DEFAULT_ON"
+  main_icon: power-socket-uk

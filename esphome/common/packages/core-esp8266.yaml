@@ -1,0 +1,15 @@
+---
+esp8266:
+  board: nodemcuv2
+  restore_from_flash: true
+
+esphome:
+  name: $name
+  name_add_mac_suffix: false
+  friendly_name: $friendly_name
+  project:
+    name: $project_name
+    version: $project_version
+
+substitutions:
+  status_led_inverted: "true"

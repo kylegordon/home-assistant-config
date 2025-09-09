@@ -1,0 +1,52 @@
+---
+packages:
+  common: !include common.yaml
+  syslog: !include syslog.yaml
+
+esp8266:
+  board: esp01_1m
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  friendly_name: ${friendly_name}
+
+captive_portal:
+
+# Enable logging
+logger:
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "${friendly_name} Button 1"
+    on_press:
+      - switch.toggle: relay_1
+  - platform: gpio
+    pin:
+      number: GPIO10
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "${friendly_name} Button 2"
+    on_press:
+      - switch.toggle: relay_2
+
+switch:
+  - platform: gpio
+    name: "${friendly_name} Relay 1"
+    pin: GPIO12
+    icon: "mdi:valve"
+    id: relay_1
+  - platform: gpio
+    name: "${friendly_name} Relay 2"
+    pin: GPIO5
+    icon: "mdi:valve"
+    id: relay_2
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: true
