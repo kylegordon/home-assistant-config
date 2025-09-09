@@ -1,17 +1,31 @@
 ---
-
-
 ### TODO
 
 ## Display On/Off when doors moving
 ## Restore last state of display
 
+# https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
+# D0 -
+# D1 - Cover switch relay
+# D2 - SDA
+# D3 - Boot fails if pulled low
+# D4 - Boot fails if pulled low
+# D5 - SCL
+# D6 - Open input (not working)
+# D7 - Closed input (working)
+# D8 - Boot fails if pulled high
+#
+
+packages:
+  syslog: !include syslog.yaml
+
+esp8266:
+  board: $board
+
 esphome:
   name: $device_name
   comment: $device_description
   friendly_name: $friendly_name
-  platform: $platform
-  board: $board
   on_boot:
     priority: -10
     then:
@@ -64,15 +78,6 @@ logger:
 web_server:
 
 captive_portal:
-
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
-
-time:
-  - platform: homeassistant
-    id: esptime
-    timezone: Europe/London
 
 font:
   - file: 'common/fonts/slkscr.ttf'
@@ -132,7 +137,7 @@ binary_sensor:
   - platform: gpio
     pin:
       number: $open_endstop_pin
-      mode: INPUT_PULLUP
+      # mode: INPUT_PULLUP
       inverted: true
     name: "Open Endstop Sensor"
     id: open_endstop
@@ -152,11 +157,22 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
+        - logger.log: "Open Endstop Released"
+        # Turn on the display
+        - lambda: |-
+            id(oled).turn_on();
         - lambda: |-
             // set state as closing. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_CLOSING;
             id(garage_door).publish_state();
+        # If display_on_off is false, wait 30 seconds and then turn off the display
+        - lambda: |-
+            if (!id(display_on_off))
+            {
+              delay(30000);
+              id(oled).turn_off();
+            }
   - platform: gpio
     pin:
       number: $close_endstop_pin
@@ -180,11 +196,22 @@ binary_sensor:
     on_release:
       # door was commanded manually (not esphome)
       then:
+        - logger.log: "Close Endstop Released"
+        # Turn on the display
+        - lambda: |-
+            id(oled).turn_on();
         - lambda: |-
             // set state as opening. This will start position update and reporting
             id(last_dir) = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).current_operation = esphome::cover::COVER_OPERATION_OPENING;
             id(garage_door).publish_state();
+        # If display_on_off is false, wait 30 seconds and then turn off the display
+        - lambda: |-
+            if (!id(display_on_off))
+            {
+              delay(30000);
+              id(oled).turn_off();
+            }
 switch:
   - platform: gpio
     pin: $cover_switch_pin
@@ -273,31 +300,61 @@ cover:
       - logger.log:
           format: "Open Action - CO:%u PO:%f LD:%u"
           args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN)
           {
             id(target_action) = COVER_OPERATION_OPENING;
           }
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
+          }
     close_action:
       - logger.log:
           format: "Close Action - CO:%u PO:%f LD:%u"
           args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_CLOSED)
           {
             id(target_action) = COVER_OPERATION_CLOSING;
           }
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
+          }
     stop_action:
       - logger.log:
           format: "Stop Action - CO:%u PO:%f LD:%u"
           args: [id(garage_door).current_operation, id(garage_door).position, id(last_dir)]
+      # Turn on the display
+      - lambda: |-
+          id(oled).turn_on();
       # update target
       - lambda: |-
           if (id(garage_door).position != COVER_OPEN && id(garage_door).position != COVER_CLOSED)
           {
             id(target_action) = COVER_OPERATION_IDLE;
+          }
+      # If display_on_off is off, wait 30 seconds and then turn off the display
+      - lambda: |-
+          if (!id(display_on_off))
+          {
+            delay(30000);
+            id(oled).turn_off();
           }
 script:
   - id: push_one

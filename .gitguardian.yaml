@@ -1,0 +1,7 @@
+---
+version: 2
+
+secret:
+  ignored_paths:
+    - 'README.md'
+    - 'custom_components/**'

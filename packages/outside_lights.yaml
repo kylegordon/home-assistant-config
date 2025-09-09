@@ -53,18 +53,15 @@ automation:
         entity_id: sun.sun
         state: "above_horizon"
     action:
-      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            {{ [
-            "Motion detected outside!",
-            "Something moved outside and triggered a sensor."
-            ] | random + " https://amzn.to/2CR5mbQ" }}
-      - service: notify.mobile_app_nothing_phone_1
+      - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Motion outside!"
           message: >
             Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+
 
   - alias: "Outside night lights on"
     id: outside_night_lights_on
@@ -130,12 +127,19 @@ automation:
             "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
             "Did you hear that? I can't see a thing. Turning on the outside lights"
             ] | random + " https://amzn.to/2CR5mbQ" }}
-      - service: notify.mobile_app_nothing_phone_1
+      - service: homeassistant.turn_on
+        entity_id:
+          - group.outside_lights
+      - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Motion outside!"
           message: >
             Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
             Turning on outside lights
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+
       - service: homeassistant.turn_on
         entity_id:
           - group.outside_lights

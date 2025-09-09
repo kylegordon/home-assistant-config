@@ -8,8 +8,8 @@ substitutions:
   board: d1_mini
 
   # cover config
-  open_duration: "30000"  # ms
-  close_duration: "30000"  # ms
+  open_duration: "12000"  # ms
+  close_duration: "12000"  # ms
   cover_device_class: garage
 
   # switch config
@@ -18,8 +18,8 @@ substitutions:
   $push_interval: "1500"  # safe time between relay activations in ms
 
   # endstop config
-  open_endstop_pin: D7  # gpio pin for open endstop sensor
-  close_endstop_pin: D6  # gpio pin for close endstop sensor
+  open_endstop_pin: D6  # gpio pin for open endstop sensor
+  close_endstop_pin: D7  # gpio pin for close endstop sensor
   debounce_time: 30ms  # debounce time for open/close endstops
 
 packages:

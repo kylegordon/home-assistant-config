@@ -1,3 +1,4 @@
+---
 # Common code for Novostella 20W Flood Lights
 
 # Credit to https://esphome-configs.io/devices/novostella-20w/
@@ -8,13 +9,15 @@
 
 packages:
   common: !include common.yaml
+  syslog: !include syslog.yaml
+
+esp8266:
+  board: esp01_1m
 
 esphome:
   name: ${device_name}
   comment: ${device_description}
   friendly_name: ${friendly_name}
-  platform: ESP8266
-  board: esp01_1m
 
 captive_portal:
 
@@ -26,10 +29,6 @@ logger:
 # Enable web server
 web_server:
   port: 80
-
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
 
 output:
   - platform: esp8266_pwm

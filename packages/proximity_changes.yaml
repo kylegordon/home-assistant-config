@@ -4,24 +4,24 @@ automation:
     alias: Notification - Kyle Approaching Home
     trigger:
     - platform: numeric_state
-      entity_id: proximity.kyle
+      entity_id: sensor.home_kyle_distance  # The sensor is in meters
       below: '2000'
-      above: '500'
     condition:
     - condition: and
       conditions:
-      - condition: template
-        value_template: '{{ states.proximity.kyle.attributes.dir_of_travel  == "towards" }}'
       - condition: state
-        entity_id: device_tracker.kyle_phone
+        entity_id: sensor.home_kyle_direction_of_travel
+        state: towards
+      - condition: state
+        entity_id: device_tracker.nothing_phone
         state: moving
     action:
-    - service: notify.mobile_app_f2
+    - service: notify.mobile_app_nothing_phone_2
       data:
         data:
           push:
             category: ARRIVING_HOME
         message: Kyle Approaching Home
-    - service: notify.email_kyle
+    - service: notify.mobile_app_nothing_phone_2
       data:
         message: "Kyle approaching home"

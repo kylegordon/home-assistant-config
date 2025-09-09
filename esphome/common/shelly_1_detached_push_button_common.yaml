@@ -2,12 +2,15 @@
 # Basic config
 packages:
   common: !include common.yaml
+  syslog: !include syslog.yaml
+
+esp8266:
+  board: esp01_1m
 
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP8266
-  board: esp01_1m
+  friendly_name: ${friendly_name}
 
 captive_portal:
 
@@ -16,12 +19,7 @@ logger:
 
 web_server:
 
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
-
 # Shelly 1 detached switch config with multi click options and fallback in case of wifi or api fail
-
 switch:
   - platform: gpio
     name: ${friendly_name} Relay
