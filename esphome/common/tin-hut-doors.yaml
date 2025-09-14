@@ -16,7 +16,6 @@
 # D8 - Boot fails if pulled high
 #
 
-
 packages:
   syslog: !include syslog.yaml
 
