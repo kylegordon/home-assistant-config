@@ -92,6 +92,7 @@ cover:
   - platform: feedback
     name: $friendly_name
     id: cover_switch
+    device_class: Garage
     open_action:
       - switch.turn_on: relay_door
       - delay: 500ms
@@ -134,6 +135,9 @@ binary_sensor:
     id: door_open_sensor
     name: "Open Endstop Sensor"
     internal: false
+    filter:
+      - delayed_on: 1s
+      - delayed_off: 1s
     pin:
       number: $open_endstop_pin
       inverted: true
@@ -142,7 +146,10 @@ binary_sensor:
   - platform: gpio
     id: door_closed_sensor
     name: "Closed Endstop Sensor"
-    internal: true
+    internal: false
+    filter:
+      - delayed_on: 1s
+      - delayed_off: 1s
     pin:
       number: $close_endstop_pin
       inverted: true
