@@ -22,6 +22,7 @@ sensor:
           {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
           {%- set temp = states.sensor.hwam_smart_stove_temperature.state %}
           {%- set timer = states.sensor.hwam_smart_stove_time_to_new_firewood.state %}
+          {%- set refill_timer = (timer | int(0) // 3600) ~ ':' ~ ((timer | int(0) % 3600) // 60) | string().zfill(2) %}
           {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
           {%- if phase == 'Burn' %}
             {{ temp }} °C
@@ -33,7 +34,7 @@ sensor:
             Refuel now!
           {%- else -%}
             Refuel in
-            {{ timer }}
+            {{ refill_timer }}
           {%- endif %}
 
 automation:
