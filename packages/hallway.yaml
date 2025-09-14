@@ -69,7 +69,8 @@ automation:
           entity_id: light.hall
       - service: light.turn_on
         data_template:
-          entity_id: light.hall
+          entity_id:
+            - light.hall
 
   - alias: Hallway motion - 2 minute night timeout
     trigger:
@@ -90,6 +91,7 @@ automation:
           name: EVENT
           message: "Turning hall lights off"
           entity_id: light.hall
+          transition: 120
       - service: light.turn_off
         entity_id: light.hall
 
@@ -108,6 +110,7 @@ automation:
           name: EVENT
           message: "Turning hall lights off"
           entity_id: light.hall
+          transition: 600
       - service: light.turn_off
         entity_id: light.hall
 
@@ -127,3 +130,5 @@ automation:
           domain: light
       - service: homeassistant.turn_off
         entity_id: light.hall
+        data:
+          transition: 600

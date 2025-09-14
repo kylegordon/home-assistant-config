@@ -4,6 +4,18 @@
 ## Display On/Off when doors moving
 ## Restore last state of display
 
+# https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
+# D0 -
+# D1 - Cover switch relay
+# D2 - SDA
+# D3 - Boot fails if pulled low
+# D4 - Boot fails if pulled low
+# D5 - SCL
+# D6 - Open input (not working)
+# D7 - Closed input (working)
+# D8 - Boot fails if pulled high
+#
+
 packages:
   syslog: !include syslog.yaml
 
