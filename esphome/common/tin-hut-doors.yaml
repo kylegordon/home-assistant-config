@@ -16,6 +16,8 @@
 # D8 - Boot fails if pulled high
 #
 
+# Change internal: false to true when operational and reliable
+
 packages:
   syslog: !include syslog.yaml
 
@@ -116,7 +118,7 @@ switch:
     pin: $cover_switch_pin
     id: relay_door
     name: "Relay Door"
-    internal: true
+    internal: false
   - platform: template
     name: "Display On/Off"
     id: display_on_off
@@ -135,7 +137,7 @@ binary_sensor:
     id: door_open_sensor
     name: "Open Endstop Sensor"
     internal: false
-    filter:
+    filters:
       - delayed_on: 1s
       - delayed_off: 1s
     pin:
@@ -147,7 +149,7 @@ binary_sensor:
     id: door_closed_sensor
     name: "Closed Endstop Sensor"
     internal: false
-    filter:
+    filters:
       - delayed_on: 1s
       - delayed_off: 1s
     pin:
