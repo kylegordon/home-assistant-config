@@ -63,12 +63,12 @@ automation:
         state: "on"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning hall lights on"
           entity_id: light.hall
       - service: light.turn_on
-        data_template:
+        data:
           entity_id:
             - light.hall
 
@@ -87,7 +87,7 @@ automation:
         state: "Night"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning hall lights off"
           entity_id: light.hall
@@ -107,7 +107,7 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning hall lights off"
           entity_id: light.hall
@@ -125,7 +125,7 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning hallway lights off"
           entity_id: light.hall
