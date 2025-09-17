@@ -130,7 +130,7 @@ automation:
           message: "Turning hallway lights off"
           entity_id: light.hall
           domain: light
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         entity_id: light.hall
         data:
           transition: 600
