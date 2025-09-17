@@ -94,8 +94,8 @@ automation:
           message: "Turning hall lights off"
           entity_id: light.hall
       - service: light.turn_off
-        entity_id: light.hall
         data:
+          entity_id: light.hall
           transition: 120
 
   - alias: Hallway motion - 10 minute timeout
