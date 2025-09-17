@@ -26,16 +26,20 @@ automation:
       # Turn on the rainbow effect for 5 seconds
       # to show the button press was registered
       - service: light.turn_on
+        target:
+          entity_id:
+            - light.hall_single_switch_light_eu
         data:
-          entity_id: light.hall_single_switch_light_eu
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id:
-          - switch.hall_single_switch_relay
-          - switch.hall_dual_switch_relay_1
+        target:
+          entity_id:
+            - switch.hall_single_switch_relay
+            - switch.hall_dual_switch_relay_1
       - service: light.toggle
-        data:
-          entity_id: light.hall
+        target:
+          entity_id:
+            - light.hall
       - service: logbook.log
         data:
           name: EVENT
@@ -43,7 +47,8 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.hall_single_switch_light_eu
+          entity_id:
+            - light.hall_single_switch_light_eu
         data:
           transition: 1
 
@@ -70,7 +75,7 @@ automation:
           message: "Turning hall lights on"
           entity_id: light.hall
       - service: light.turn_on
-        data:
+        target:
           entity_id:
             - light.hall
 
@@ -94,8 +99,10 @@ automation:
           message: "Turning hall lights off"
           entity_id: light.hall
       - service: light.turn_off
+        target:
+          entity_id:
+            - light.hall
         data:
-          entity_id: light.hall
           transition: 120
 
   - alias: Hallway motion - 10 minute timeout
@@ -114,7 +121,9 @@ automation:
           message: "Turning hall lights off"
           entity_id: light.hall
       - service: light.turn_off
-        entity_id: light.hall
+        target:
+          entity_id:
+            - light.hall
         data:
           transition: 600
 
@@ -133,6 +142,8 @@ automation:
           entity_id: light.hall
           domain: light
       - service: light.turn_off
-        entity_id: light.hall
+        target:
+          entity_id:
+            - light.hall
         data:
           transition: 600
