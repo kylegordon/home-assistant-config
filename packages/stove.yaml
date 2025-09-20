@@ -4,6 +4,7 @@ sensor:
     sensors:
       stove_sensor:
         friendly_name: Hwam Stove
+        # yamllint disable rule:line-length
         icon_template: >
           {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
           {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
@@ -36,6 +37,7 @@ sensor:
             Refuel in
             {{ refill_timer }}
           {%- endif %}
+        # yamllint enable rule:line-length
 
 automation:
   - alias: More wood

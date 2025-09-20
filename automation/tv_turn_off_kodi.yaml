@@ -1,3 +1,4 @@
+---
 alias: TV turn off Hi-Fi
 trigger:
   - platform: state
@@ -8,7 +9,7 @@ trigger:
       seconds: 30
 condition:
   - condition: template
-    value_template: '{{ media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f.attributes.source == "Kodi" }}'
+    value_template: '{{ media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f.attributes.source == "Kodi" }}'  # yamllint disable rule:line-length
 action:
   - service: logbook.log
     data_template:

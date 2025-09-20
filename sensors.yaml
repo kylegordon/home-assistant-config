@@ -1,6 +1,7 @@
 ---
 # !include travel_times.yaml
 
+# yamllint disable-line rule:line-length
 # Improve with https://github.com/bah2830/Home-Assistant-Configs/blob/master/includes/automation/notifications.yaml
 
 # - platform: google_travel_time
@@ -31,15 +32,13 @@
   sensors:
     last_alexa:
       value_template: >
-        {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
+        {{ states.media_player | selectattr('attributes.last_called','eq',True)
+          | map(attribute='entity_id')
+          | first }}
 
     next_bin:
-      # value_template: "{{ states.calendar.next_bin.attributes.message }}"
-      # value_template: "{{ states.calendar.family_calendar.attributes.message|replace(' bin','') }}"
-      value_template: "{{ states.calendar.garbage_collection.attributes.message|replace('bin','') }}"
+      value_template: "{{ states.calendar.garbage_collection.attributes.message|replace('bin','') }}"  # yamllint disable-line rule:line-length
       friendly_name: Next Bin
-      # friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
-      # entity_id: calendar.next_bin
       unique_id: calendar.next_bin
 
     kyle_status:
@@ -49,7 +48,7 @@
       unique_id: input_select.kyle_status_dropdown
 
     charlotte_status:
-      value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
+      value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'  # yamllint disable-line rule:line-length
       friendly_name: 'Charlotte'
       # entity_id: input_select.charlotte_status_dropdown
       unique_id: input_select.charlotte_status_dropdown
@@ -150,20 +149,20 @@
         {% endif %}
 
     forecast_2_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[2].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[2].temperature}}"  # yamllint disable-line rule:line-length
     forecast_4_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[4].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[4].temperature}}"  # yamllint disable-line rule:line-length
     forecast_6_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[6].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[6].temperature}}"  # yamllint disable-line rule:line-length
     forecast_8_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[8].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[8].temperature}}"  # yamllint disable-line rule:line-length
     forecast_10_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[10].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[10].temperature}}"  # yamllint disable-line rule:line-length
     forecast_12_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[12].temperature}}"
+      value_template: "{{state_attr('weather.openweathermap', 'forecast')[12].temperature}}"  # yamllint disable-line rule:line-length
 
     house_target_temperature:
-      value_template: "{{state_attr('climate.rest_of_house_thermostat', 'temperature')}}"
+      value_template: "{{state_attr('climate.rest_of_house_thermostat', 'temperature')}}"  # yamllint disable-line rule:line-length
 
 - platform: thermal_comfort
   sensors:

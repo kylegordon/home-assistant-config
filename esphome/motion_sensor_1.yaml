@@ -1,3 +1,4 @@
+---
 substitutions:
   device_name: motion_sensor_1
   device_description: Motion Sensor 1

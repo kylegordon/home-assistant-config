@@ -1,3 +1,4 @@
+---
 alias: "Owntracks Refresh"
 trigger:
   - platform: time_pattern

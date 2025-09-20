@@ -1,3 +1,4 @@
+---
 alias: Mark Person as just arrived
 trigger:
   - platform: state
@@ -23,7 +24,7 @@ action:
     data_template:
       name: EVENT
       message: >
-        {{ trigger.to_state.attributes.friendly_name }} has just arrived at the house.
+        {{ trigger.to_state.attributes.friendly_name }} has just arrived home.
 
   - service: script.tweet_engine
     data_template:

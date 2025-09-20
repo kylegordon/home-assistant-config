@@ -2,7 +2,8 @@
 
 ## Data from a Vaillant Arotherm Plus heat pump, via ebusd
 
-## The ebusd discovery seems to be broken, in that when HA is restarted all the ebusd devices are unavailable.
+## The ebusd discovery seems to be broken, in that when HA is restarted
+## all the ebusd devices are unavailable.
 ## Declaring all relevant sensors here seems to work instead.
 
 mqtt:
@@ -12,7 +13,8 @@ mqtt:
       value_template: "{{ value_json['0']['value'] }}"
 
     ### Converts the following message into individual sensors
-    # State00 is too large to squeeze into a top level state or set of attributes
+    # State00 is too large to squeeze into a top level state
+    # or set of attributes
     # ebusd/hmu/State00 {
     #     "S00_SupplyTemp": {"value": 14.56},
     #     "field2": {"value": 19},
@@ -50,7 +52,8 @@ mqtt:
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['CompressorState']['value'] }}"
 
-      # Check MQTT message on ebusd/hmu/State01 to inspect the rest of the State01 array
+      # Check MQTT message on ebusd/hmu/State01
+      # to inspect the rest of the State01 array
       # The message is too large to squeeze into a top level state
 
     # ebusd/hmu/State01 {

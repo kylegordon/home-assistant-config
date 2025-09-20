@@ -111,8 +111,6 @@ output:
     id: red_relay
     # restore_mode: "${default_state}"
 
-  # Page 35 of https://assets.publishing.service.gov.uk/media/5df0e29fed915d15f42c4820/dft-traffic-signs-manual-chapter-6.pdf
-
 switch:
   - platform: template
     id: go_green_sequence

@@ -27,17 +27,18 @@ sensor:
 
       grid_all:
         friendly_name: "Grid Usage"
-        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"  # yamllint disable-line rule:line-length
         unit_of_measurement: 'W'
 
       pv_all:
         friendly_name: "PV Usage"
-        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"  # yamllint disable-line rule:line-length
         unit_of_measurement: 'W'
 
       ashp_heating_cop:
         unique_id: ashp_heating_cop
         friendly_name: "ASHP Heating COP"
+        # yamllint disable rule:line-length
         value_template: >
           {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') | int %}
           {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
@@ -48,10 +49,12 @@ sensor:
           {%- else %}
             {{ heat_generated / consumed_electricity }}
           {%- endif %}
+        # yamllint enable rule:line-length
 
       ashp_hot_water_cop:
         unique_id: ashp_hot_water_cop
         friendly_name: "ASHP Hot Water COP"
+        # yamllint disable rule:line-length
         value_template: >
           {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int %}
           {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
@@ -64,6 +67,7 @@ sensor:
           {%- endif %}
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
+        # yamllint enable rule:line-length
 
   - platform: integration
     source: sensor.grid_all
@@ -82,7 +86,10 @@ sensor:
 #  - platform: template
 #    #name: grid_all
 #    #friendly_name: "Grid Usage"
-#    value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+#    value_template: >
+#     "{{ states('sensor.grid_export_power')
+#     | float + states('sensor.consumption_power')
+#     | float }}"
 #    unit_of_measurement: 'W'
 
 automation:

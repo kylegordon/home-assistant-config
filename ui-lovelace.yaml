@@ -1,3 +1,4 @@
+---
 resources:
   - url: /local/battery-entity.js?v=0.1
     type: module

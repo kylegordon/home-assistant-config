@@ -14,11 +14,16 @@ template:
   - sensor:
       - name: Last Alexa
         state: |-
-          {{ expand(integration_entities('alexa_media') | select('search', 'media_player'))
-          | selectattr('attributes.last_called', 'eq', True) | map(attribute='entity_id') | first }}
+          {{ expand(integration_entities('alexa_media')
+          | select('search', 'media_player'))
+          | selectattr('attributes.last_called', 'eq', True)
+          | map(attribute='entity_id')
+          | first }}
         availability: |-
-          {{ expand(integration_entities('alexa_media') | select('search', 'media_player'))
-          | selectattr('attributes.last_called','eq',True) | first is defined }}
+          {{ expand(integration_entities('alexa_media')
+            | select('search', 'media_player'))
+            | selectattr('attributes.last_called','eq',True)
+            | first is defined }}
 
 # "Alexa, turn on the lights"
 script:
@@ -28,8 +33,11 @@ script:
       - service: homeassistant.turn_on
         data_template:
           entity_id: >-
-            {# Use the name of each Echo to determine which room the command likely came from. #}
-            {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+            {# Use the name of each Echo to determine which room the
+              command likely came from. #}
+            {%- set room = states("sensor.last_alexa")
+              |replace('media_player.','')
+            -%}
 
             {%- if room == "kitchen" -%}
               light.kitchen
@@ -52,8 +60,11 @@ script:
       - service: homeassistant.turn_off
         data_template:
           entity_id: >-
-            {# Use the name of each Echo to determine which room the command likely came from. #}
-            {%- set room = states("sensor.last_alexa")|replace('media_player.','') -%}
+            {# Use the name of each Echo to determine which room the
+              command likely came from. #}
+            {%- set room = states("sensor.last_alexa")
+              |replace('media_player.','')
+            -%}
 
             {%- if room == "kitchen" -%}
               light.kitchen

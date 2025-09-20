@@ -1,3 +1,4 @@
+---
 alias: TV turn on Hi-Fi
 trigger:
   - platform: state

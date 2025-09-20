@@ -40,8 +40,10 @@ logger:
 #     lambda: !lambda |-
 #       return true;
 #     turn_on_action:
+# yamllint disable rule:line-length
 #       - lambda: !lambda |-
 #           ESP_LOGD("log_it", "LOG CO:%u PO:%f LD:%u", id(garage_door).current_operation,  id(garage_door).position, id(last_dir));
 #     turn_off_action:
 #       - lambda: !lambda |-
 #           ESP_LOGD("log_it", "LOG CO:%u PO:%f LD:%u", id(garage_door).current_operation,  id(garage_door).position, id(last_dir));
+# yamllint enable rule:line-length

@@ -1,8 +1,0 @@
-alias: "Charlotte Car Finder Refresh"
-trigger:
-  platform: state
-  entity_id: input_select.charlotte_status
-  from: "driving"
-  to: "standby"
-action:
-  service: script.refresh_devices

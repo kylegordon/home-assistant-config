@@ -1,3 +1,4 @@
+---
 substitutions:
   device_name: boiler_valve_controls
   device_description: Boiler Valve Controls

@@ -1,8 +1,10 @@
 ---
-# Use ESPHome-Flasher, as esptool.py doesn't seem to do some sort of magic with the bootloader.
+# Use ESPHome-Flasher, as esptool.py doesn't seem
+# to do some sort of magic with the bootloader.
 # See https://github.com/esphome/issues/issues/598
 
-# Do not enable BLE tracking when the camera module is enabled. Device does not boot correctly
+# Do not enable BLE tracking when the camera module is enabled.
+# Device does not boot correctly
 
 packages:
   common: !include common.yaml
@@ -73,16 +75,16 @@ light:
 interval:
   - interval: 500ms
     then:
-    - if:
-        condition:
-          not:
-            wifi.connected:
-        then:
-          - light.turn_on:
-              id: red_led_light
-              brightness: 50%
-              transition_length: 0s
-          - delay: 250ms
-          - light.turn_off:
-              id: red_led_light
-              transition_length: 250ms
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: red_led_light
+                brightness: 50%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: red_led_light
+                transition_length: 250ms

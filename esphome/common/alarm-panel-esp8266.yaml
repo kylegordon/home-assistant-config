@@ -1,4 +1,6 @@
 ---
+
+# yamllint disable rule:line-length
 ####
 ##
 ## Konnected Alarm Panel (ESP8266)
@@ -24,6 +26,7 @@
 ## IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ##
 ####
+# yamllint enable rule:line-length
 
 ####
 # PACKAGES
@@ -78,13 +81,14 @@ packages:
   #     - packages/status-led.yaml
 
 dashboard_import:
-  package_import_url: github://konnected-io/konnected-esphome/alarm-panel-esp8266.yaml@master
+  package_import_url: github://konnected-io/konnected-esphome/alarm-panel-esp8266.yaml@master  # yamllint disable-line rule:line-length
   import_full_config: false
 
 ####
 # WEB SEVER
-# Enables the built-in web server for viewing the device state, internals and controls via web browser
-# on the same local network as the device.
+# Enables the built-in web server for viewing the device state,
+# internals and controls via web browser on the same local network
+# as the device.
 web_server:
   include_internal: true
 

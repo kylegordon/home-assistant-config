@@ -1,3 +1,4 @@
+---
 alias: Mark Person as home
 trigger:
   - platform: state

@@ -1,10 +1,10 @@
 ---
 name: ESPHome
 
-## This workflow exists to keep branch protection happy in the event of no changes being made to the esphome directory.
+## This workflow exists to keep branch protection happy in the event of
+## no changes being made to the esphome directory.
 
-# yamllint disable-line rule:truthy
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
     paths-ignore:
       - 'esphome/**'
