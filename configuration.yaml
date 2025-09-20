@@ -51,6 +51,12 @@ homeassistant:
       icon: mdi:thermometer
     sensor.next_bin:
       icon: mdi:delete-empty
+    sensor.days_until_black_bin:
+      icon: mdi:delete
+    sensor.days_until_blue_bin:
+      icon: mdi:delete
+    sensor.days_until_brown_bin:
+      icon: mdi:delete
     light.kyles_bedside:
       icon: mdi:hotel
     light.sideboard:
