@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: Master Bedroom light toggle
+    id: master_bedroom_light_toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
@@ -29,6 +30,7 @@ automation:
           transition: 1
 
   - alias: Master Bedroom light double toggle
+    id: master_bedroom_light_double_toggle
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -48,6 +50,7 @@ automation:
           message: "Double master bedroom light"
 
   - alias: "Bedtime lights off"
+    id: bedtime_lights_off
     trigger:
       - platform: time
         at: '01:00:00'
@@ -62,6 +65,7 @@ automation:
           - light.twig_lights
 
   - alias: Bedside light toggle
+    id: bedside_light_toggle
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -77,6 +81,7 @@ automation:
           message: "Toggling bedside lights"
 
   - alias: "Bedtime lights on"
+    id: bedtime_lights_on
     trigger:
       - platform: time
         at: '21:00:00'
@@ -93,6 +98,7 @@ automation:
           transition: 30
 
   - alias: "Off wakup lights"
+    id: off_wakup_lights
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level

@@ -55,6 +55,7 @@ automation:
           - group.bedroom_2
 
   - alias: Goodnight process reset
+    id: goodnight_process_reset
     trigger:
       - platform: time
         at: '04:00:00'

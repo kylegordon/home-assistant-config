@@ -1,4 +1,5 @@
 alias: "Home in the dark"
+id: home_in_the_dark
 trigger:
   - platform: state
     entity_id: binary_sensor.home_occupied

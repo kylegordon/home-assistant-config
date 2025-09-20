@@ -1,4 +1,5 @@
 alias: "Home Day Time"
+id: home_day_time
 trigger:
   - platform: state
     entity_id: binary_sensor.home_occupied

@@ -131,6 +131,7 @@ automation:
           transition: 1
 
   - alias: Living Room - sunlight timeout
+    id: living_room_sunlight_timeout
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level

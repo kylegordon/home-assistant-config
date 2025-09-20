@@ -1,4 +1,5 @@
 alias: "Charlotte Car Finder Refresh"
+id: charlotte_car_finder_refresh
 trigger:
   platform: state
   entity_id: input_select.charlotte_status
