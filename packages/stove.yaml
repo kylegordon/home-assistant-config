@@ -23,18 +23,19 @@ sensor:
           {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
           {%- set temp = states.sensor.hwam_smart_stove_temperature.state %}
           {%- set timer = states.sensor.hwam_smart_stove_time_to_new_firewood.state %}
+          {%- set refill_timer = (timer | int(0) // 60) ~ ' min' %}
           {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
-          {%- if phase == 'Burn' %}
+          {%- if phase == 'burn' %}
             {{ temp }} °C
-          {%- elif phase == 'Standby' %}
+          {%- elif phase == 'standby' %}
             Standby
-          {%- elif phase == 'Ignition' %}
+          {%- elif phase == 'ignition' %}
             Start
           {%- elif refuel == 'on' %}
             Refuel now!
           {%- else -%}
             Refuel in
-            {{ timer }}
+            {{ refill_timer }}
           {%- endif %}
         # yamllint enable rule:line-length
 

@@ -24,25 +24,32 @@ automation:
           device_name: hall_dual_switch_touchpad_2
           click_type: single
     action:
+      # Turn on the rainbow effect for 5 seconds
+      # to show the button press was registered
       - service: light.turn_on
+        target:
+          entity_id:
+            - light.hall_single_switch_light_eu
         data:
-          entity_id: light.hall_single_switch_light_eu
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id:
-          - switch.hall_single_switch_relay
-          - switch.hall_dual_switch_relay_1
+        target:
+          entity_id:
+            - switch.hall_single_switch_relay
+            - switch.hall_dual_switch_relay_1
       - service: light.toggle
-        data_template:
-          entity_id: light.hall
+        target:
+          entity_id:
+            - light.hall
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling hallway lights"
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.hall_single_switch_light_eu
+          entity_id:
+            - light.hall_single_switch_light_eu
         data:
           transition: 1
 
@@ -64,12 +71,12 @@ automation:
         state: "on"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning hall lights on"
           entity_id: light.hall
       - service: light.turn_on
-        data_template:
+        target:
           entity_id:
             - light.hall
 
@@ -88,13 +95,16 @@ automation:
         state: "Night"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning hall lights off"
           entity_id: light.hall
-          transition: 120
       - service: light.turn_off
-        entity_id: light.hall
+        target:
+          entity_id:
+            - light.hall
+        data:
+          transition: 120
 
   - alias: Hallway motion - 10 minute timeout
     trigger:
@@ -107,13 +117,16 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning hall lights off"
           entity_id: light.hall
-          transition: 600
       - service: light.turn_off
-        entity_id: light.hall
+        target:
+          entity_id:
+            - light.hall
+        data:
+          transition: 600
 
   - alias: Hallway - sunlight timeout
     trigger:
@@ -124,12 +137,14 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning hallway lights off"
           entity_id: light.hall
           domain: light
-      - service: homeassistant.turn_off
-        entity_id: light.hall
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.hall
         data:
           transition: 600

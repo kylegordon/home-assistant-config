@@ -36,9 +36,10 @@ automation:
       - trigger: template
         value_template: "{{ 'states.sensor.hwam_smart_stove_temperature' != 'unknown' }}"
     action:
-      - service: mypyllant.clear_quick_veto
+      - service: mypyllant.cancel_quick_veto
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
+      - delay: "00:00:02"
       - service: climate.set_hvac_mode
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
