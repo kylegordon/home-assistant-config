@@ -10,6 +10,7 @@ input_number:
 
 automation:
   - alias: Boot Room light toggle
+    id: boot_room_light_toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
@@ -31,6 +32,7 @@ automation:
           domain: light
 
   - alias: Boot room light motion
+    id: boot_room_light_motion
     initial_state: true
     trigger:
       - platform: state
@@ -63,6 +65,7 @@ automation:
           entity_id: light.boot_room
 
   - alias: Boot Room motion - sunlight timeout
+    id: boot_room_sunlight_timeout
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
@@ -82,6 +85,7 @@ automation:
           transition: 600
 
   - alias: Boot room light motion - night view
+    id: boot_room_light_motion_night_view
     initial_state: true
     trigger:
       - platform: state
@@ -114,6 +118,7 @@ automation:
           rgb_color: [255, 0, 0]
 
   - alias: Boot room motion - 2 minute timeout
+    id: boot_room_motion_2_minute_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.boot_room_motion_occupancy
@@ -138,6 +143,7 @@ automation:
 
 
   - alias: Boot room motion - 10 minute timeout
+    id: boot_room_motion_10_minute_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.boot_room_motion_occupancy
