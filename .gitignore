@@ -9,3 +9,5 @@ deconz.conf
 .google.token
 google_calendars.yaml
 custom_components/**/__pycache__/
+fullchain.pem
+privkey.pem
