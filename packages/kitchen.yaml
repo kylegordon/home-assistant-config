@@ -81,6 +81,7 @@ automation:
           transition: 1
 
   - alias: Kitchen motion
+    id: kitchen_motion
     trigger:
       - platform: state
         entity_id: binary_sensor.kitchen_motion_occupancy
@@ -103,6 +104,7 @@ automation:
             - light.kitchen_lights_group
 
   - alias: Kitchen motion - 10 minute timeout
+    id: kitchen_motion_10_minute_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.kitchen_motion_occupancy

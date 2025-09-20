@@ -6,6 +6,7 @@ input_boolean:
 
 automation:
   - alias: Night view reset
+    id: night_view_reset
     trigger:
       - platform: time
         at: '04:00:00'
@@ -22,6 +23,7 @@ automation:
         entity_id: input_boolean.night_view
 
   - alias: Night view lights
+    id: night_view_lights
     trigger:
       - platform: state
         entity_id: input_boolean.night_view
