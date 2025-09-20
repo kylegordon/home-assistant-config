@@ -92,8 +92,8 @@
           {% else %}
             unknown
           {% endif %}
-      - name: Days Until Brown Bin
-        unique_id: days_until_brown_bin
+      - name: Days Until Green Bin
+        unique_id: days_until_green_bin
         unit_of_measurement: "days"
         icon: "mdi:delete"
         state: >
@@ -102,7 +102,7 @@
           {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
             {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
               {% set event_title = event.summary | default(event.title | default('')) %}
-              {% if 'Brown' in event_title and not ns.found %}
+              {% if 'Green' in event_title and not ns.found %}
                 {% set event_date = as_datetime(event.start).date() %}
                 {% if event_date >= today %}
                   {% set ns.found = true %}
