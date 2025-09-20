@@ -51,15 +51,18 @@
         state: >
           {% set ns = namespace(found=false, days=999) %}
           {% set today = now().date() %}
-          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
-            {% if 'Black' in event.summary and not ns.found %}
-              {% set event_date = as_datetime(event.start).date() %}
-              {% if event_date >= today %}
-                {% set ns.found = true %}
-                {% set ns.days = (event_date - today).days %}
+          {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+            {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+              {% set event_title = event.summary | default(event.title | default('')) %}
+              {% if 'Black' in event_title and not ns.found %}
+                {% set event_date = as_datetime(event.start).date() %}
+                {% if event_date >= today %}
+                  {% set ns.found = true %}
+                  {% set ns.days = (event_date - today).days %}
+                {% endif %}
               {% endif %}
-            {% endif %}
-          {% endfor %}
+            {% endfor %}
+          {% endif %}
           {% if ns.found %}
             {{ ns.days }}
           {% else %}
@@ -72,15 +75,18 @@
         state: >
           {% set ns = namespace(found=false, days=999) %}
           {% set today = now().date() %}
-          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
-            {% if 'Blue' in event.summary and not ns.found %}
-              {% set event_date = as_datetime(event.start).date() %}
-              {% if event_date >= today %}
-                {% set ns.found = true %}
-                {% set ns.days = (event_date - today).days %}
+          {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+            {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+              {% set event_title = event.summary | default(event.title | default('')) %}
+              {% if 'Blue' in event_title and not ns.found %}
+                {% set event_date = as_datetime(event.start).date() %}
+                {% if event_date >= today %}
+                  {% set ns.found = true %}
+                  {% set ns.days = (event_date - today).days %}
+                {% endif %}
               {% endif %}
-            {% endif %}
-          {% endfor %}
+            {% endfor %}
+          {% endif %}
           {% if ns.found %}
             {{ ns.days }}
           {% else %}
@@ -93,15 +99,18 @@
         state: >
           {% set ns = namespace(found=false, days=999) %}
           {% set today = now().date() %}
-          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
-            {% if 'Brown' in event.summary and not ns.found %}
-              {% set event_date = as_datetime(event.start).date() %}
-              {% if event_date >= today %}
-                {% set ns.found = true %}
-                {% set ns.days = (event_date - today).days %}
+          {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+            {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+              {% set event_title = event.summary | default(event.title | default('')) %}
+              {% if 'Brown' in event_title and not ns.found %}
+                {% set event_date = as_datetime(event.start).date() %}
+                {% if event_date >= today %}
+                  {% set ns.found = true %}
+                  {% set ns.days = (event_date - today).days %}
+                {% endif %}
               {% endif %}
-            {% endif %}
-          {% endfor %}
+            {% endfor %}
+          {% endif %}
           {% if ns.found %}
             {{ ns.days }}
           {% else %}
