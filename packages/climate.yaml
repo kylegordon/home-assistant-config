@@ -75,6 +75,7 @@ automation:
           duration_hours: 3
 
   - alias: Predbat error monitor
+    id: predbat_error_monitor
     description: Alert when Predbat has raised an exception
     trace:
       stored_traces: 20

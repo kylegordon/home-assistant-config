@@ -1,4 +1,5 @@
 alias: "Going to bed - no guests"
+id: going_to_bed_no_guests
 trigger:
     # Guest bedroom
   - platform: mqtt

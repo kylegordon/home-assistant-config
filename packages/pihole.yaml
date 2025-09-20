@@ -42,6 +42,7 @@ switch:
 
 automation:
   - alias: PiHole Daily stats Tweet!
+    id: pihole_daily_stats_tweet
     trigger:
       platform: time
       at: '23:50:00'
@@ -63,6 +64,7 @@ automation:
             ] | random }}
 
   - alias: PiHole Daily Client Tweet!
+    id: pihole_daily_client_tweet
     trigger:
       platform: time
       at: '04:30:00'
