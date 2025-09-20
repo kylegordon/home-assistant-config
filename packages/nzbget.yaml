@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: Completed Download
+    id: completed_download
     trigger:
       platform: event
       event_type: nzbget_download_complete
@@ -17,6 +18,7 @@ automation:
           level: info
 
   - alias: Completed Star Trek Download
+    id: completed_star_trek_download
     trigger:
       platform: event
       event_type: nzbget_download_complete
@@ -32,6 +34,7 @@ automation:
         message: "{{ trigger.event.data.name }} has finished downloading"
 
   - alias: Completed Westworld Download
+    id: completed_westworld_download
     trigger:
       platform: event
       event_type: nzbget_download_complete

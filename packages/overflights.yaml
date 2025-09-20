@@ -8,6 +8,7 @@ mqtt:
 
 automation:
   - alias: 'Flight entry notification - Home'
+    id: flight_entry_notification_home
     trigger:
       platform: event
       event_data:
@@ -25,6 +26,7 @@ automation:
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
 
   - alias: 'Flight entry notification - Uplawmoor'
+    id: flight_entry_notification_uplawmoor
     trigger:
       platform: event
       event_data:
