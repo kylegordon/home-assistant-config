@@ -1,4 +1,5 @@
 alias: "Home late night"
+id: home_late_night
 trigger:
   - platform: state
     entity_id: binary_sensor.home_occupied
