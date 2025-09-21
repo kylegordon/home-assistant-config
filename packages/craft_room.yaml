@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: Craft Room light toggle
+    id: craft_room_light_toggle
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -18,6 +19,7 @@ automation:
           message: "Toggling craft room light"
 
   - alias: Craft room fairy lights toggle
+    id: craft_room_fairy_lights_toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event

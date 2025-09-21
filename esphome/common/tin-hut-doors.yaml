@@ -11,8 +11,8 @@
 # D3 - Boot fails if pulled low
 # D4 - Boot fails if pulled low
 # D5 - SCL
-# D6 - Open input (not working)
-# D7 - Closed input (working)
+# D6 - Open input (works when mode: INPUT_PULLUP - make sure system in garage pulls low when active)
+# D7 - Closed input (works when mode: INPUT_PULLUP - make sure system in garage pulls low when active)
 # D8 - Boot fails if pulled high
 #
 
