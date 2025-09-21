@@ -8,6 +8,6 @@ deconz.conf
 .config_entries.json
 .google.token
 google_calendars.yaml
-custom_components
+custom_components/
 fullchain.pem
 privkey.pem
