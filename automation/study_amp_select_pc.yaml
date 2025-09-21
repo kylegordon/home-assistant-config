@@ -1,4 +1,5 @@
 alias: "Study amp: select PC input"
+id: study_amp_select_pc_input
 
 trigger:
   platform: state
