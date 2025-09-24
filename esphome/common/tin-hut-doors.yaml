@@ -28,6 +28,11 @@ esphome:
   name: $device_name
   comment: $device_description
   friendly_name: $friendly_name
+  on_boot:
+    priority: -100
+    then:
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
 
 # Enable logging
 logger:
@@ -127,7 +132,7 @@ switch:
     id: display_on_off
     internal: false
     optimistic: true
-    restore_mode: ALWAYS_OFF
+    restore_mode: ALWAYS_ON
     turn_on_action:
       - lambda: |-
           id(oled).turn_on();
