@@ -119,6 +119,9 @@ switch:
     id: relay_door
     name: "Relay Door"
     internal: false
+    on_turn_on:
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
   - platform: template
     name: "Display On/Off"
     id: display_on_off
@@ -132,6 +135,13 @@ switch:
       - lambda: |-
           id(oled).turn_off();
 
+script:
+  - id: display_timeout
+    then:
+      - script.stop: display_timeout
+      - delay: 60s
+      - switch.turn_off: display_on_off
+
 binary_sensor:
   - platform: gpio
     id: door_open_sensor
@@ -144,6 +154,18 @@ binary_sensor:
       number: $open_endstop_pin
       inverted: true
       mode: INPUT_PULLUP
+    on_state:
+      - if:
+          condition:
+            binary_sensor.is_on: door_open_sensor
+          then:
+            # Endstop activated - start timeout
+            - switch.turn_on: display_on_off
+            - script.execute: display_timeout
+          else:
+            # Endstop deactivated - turn on display
+            - switch.turn_on: display_on_off
+            - script.execute: display_timeout
 
   - platform: gpio
     id: door_closed_sensor
@@ -156,3 +178,15 @@ binary_sensor:
       number: $close_endstop_pin
       inverted: true
       mode: INPUT_PULLUP
+    on_state:
+      - if:
+          condition:
+            binary_sensor.is_on: door_closed_sensor
+          then:
+            # Endstop activated - start timeout
+            - switch.turn_on: display_on_off
+            - script.execute: display_timeout
+          else:
+            # Endstop deactivated - turn on display
+            - switch.turn_on: display_on_off
+            - script.execute: display_timeout
