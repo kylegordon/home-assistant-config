@@ -68,7 +68,7 @@ dining_nook_lights:
   entities:
     - light.dining_nook
     - light.dining_table_overhead
-    - light.sideboard
+    - light.drinks_cabinet
     - light.train_cabinets
 
 bedroom_1:

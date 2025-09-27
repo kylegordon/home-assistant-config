@@ -23,7 +23,7 @@ automation:
     action:
       - service: light.turn_off
         entity_id:
-          - light.living_room
+          - light.living_room_ceiling
       - condition: state
         entity_id:
           - binary_sensor.everything_presence_lite_2fbc58_zone_2_occupancy
@@ -31,6 +31,6 @@ automation:
       - service: light.turn_off
         entity_id:
           - light.dining_nook
-          - light.sideboard
+          - light.drinks_cabinet
           - light.art
           - light.train_cabinets
