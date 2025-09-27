@@ -31,6 +31,7 @@ automation:
       - service: homeassistant.turn_off
         entity_id:
           - light.living_room
+          - light.living_room_small_lights
           - light.dining_nook
           - light.art
           - group.outside_lights
