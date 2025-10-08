@@ -63,14 +63,6 @@ living_room_lights:
     - light.star_burst
     - light.arc_lamp
 
-dining_nook_lights:
-  name: Dining Nook
-  entities:
-    - light.dining_nook
-    - light.dining_table_overhead
-    - light.sideboard
-    - light.train_cabinets
-
 bedroom_1:
   name: Master bedroom
   entities:
@@ -153,30 +145,10 @@ study_lighting:
     - light.study
     - light.monitor_lights
 
-hall:
-  name: Hall lights
-  entities:
-    - light.hallway_bathroom
-    - light.hallway_bedrooms
-
 bathroom:
   name: Bathroom
   entities:
     - light.master_bathroom
-
-hall_view:
-  name: Hall
-  entities:
-    - light.hall
-    - binary_sensor.hall_rooms_motion_occupancy
-    - sensor.hall_rooms_motion
-    - binary_sensor.hall_door_motion_occupancy
-    - binary_sensor.boot_room_motion_occupancy
-    - sensor.hall_door_motion
-    - sensor.hallway_multi_sensor_temperature
-    - sensor.hallway_multi_sensor_humidity
-    - sensor.hallway_multi_sensor_pressure
-    - binary_sensor.boot_room_door
 
 outside:
   name: Outside
@@ -217,16 +189,6 @@ garage:
     - switch.garage_mesh
     - switch.garage_decorations
 
-people:
-  name: People
-  icon: mdi:account-multiple
-  entities:
-    - person.kyle
-    - person.charlotte
-    - person.ronnie
-    - person.skye
-    - person.iris
-
 ## Item groups ##
 bedside_lights:
   name: Bedside Lights
@@ -248,18 +210,3 @@ people_status:
   entities:
     - sensor.kyle_status
     - sensor.charlotte_status
-
-test:
-  name: Test
-  entities:
-    - switch.tellybox
-    - media_player.living_room_panasonic_tv
-
-other:
-  name: Other
-  entities:
-    - group.lightswitch_relays
-    - switch.energenie_1
-    - switch.energenie_4
-    - group.test
-    - scene.movie_time
