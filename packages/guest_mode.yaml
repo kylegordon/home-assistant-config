@@ -3,6 +3,7 @@ input_boolean:
     name: Guest Mode
     icon: mdi:account-alert
     initial: false
+    unique_id: guest_mode_input_boolean
 
 binary_sensor:
   - platform: template

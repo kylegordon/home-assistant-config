@@ -2,6 +2,7 @@
 group:
   christmas_lights:
     name: Christmas Lights
+    unique_id: christmas_lights_group
     entities:
       - switch.energenie_1
       - switch.energenie_2
