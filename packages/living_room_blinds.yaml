@@ -18,7 +18,6 @@ input_number:
 cover:
   - platform: group
     name: Patio Blinds
-    unique_id: patio_blinds_group
     entities:
       - cover.patio_blinds_left
       - cover.patio_blinds_center

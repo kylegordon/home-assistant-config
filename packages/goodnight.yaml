@@ -10,7 +10,6 @@ input_boolean:
     name: Goodnight process
     icon: mdi:sleep
     initial: false
-    unique_id: goodnight_process_input_boolean
 
 automation:
   - alias: Goodnight process

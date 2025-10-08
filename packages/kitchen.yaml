@@ -11,7 +11,6 @@ input_number:
 light:
   - platform: group
     name: Kitchen Lights Group
-    unique_id: kitchen_lights_group
     entities:
       - light.kitchen_cabinets
       - light.kitchen_worktop_lights

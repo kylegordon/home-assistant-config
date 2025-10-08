@@ -41,46 +41,35 @@ homeassistant:
 input_boolean:
   vacuum_bootroom:
     name: Boot Room
-    unique_id: vacuum_bootroom_input_boolean
     icon: mdi:foot-print
   vacuum_livingroom:
     name: Living Room
-    unique_id: vacuum_livingroom_input_boolean
     icon: mdi:sofa
   vacuum_fronthall:
     name: Front Hall
-    unique_id: vacuum_fronthall_input_boolean
     icon: mdi:bed-empty
   vacuum_kitchen:
     name: Kitchen
-    unique_id: vacuum_kitchen_input_boolean
     icon: mdi:silverware-fork-knife
   vacuum_hallway:
     name: Hallway
-    unique_id: vacuum_hallway_input_boolean
   vacuum_bathroom:
     name: Bathroom
-    unique_id: vacuum_bathroom_input_boolean
     icon: mdi:toilet
   vacuum_study:
     name: Study
-    unique_id: vacuum_study_input_boolean
     icon: mdi:book
   vacuum_craftroom:
     name: Craft Room
-    unique_id: vacuum_craftroom_input_boolean
     icon: mdi:book
   vacuum_guestroom:
     name: Guest Room
-    unique_id: vacuum_guestroom_input_boolean
     icon: mdi:bed
   vacuum_bedroom:
     name: Bedroom
-    unique_id: vacuum_bedroom_input_boolean
     icon: mdi:bed
   vacuum_ensuite:
     name: Ensuite
-    unique_id: vacuum_ensuite_input_boolean
     icon: mdi:toilet
 
 group:
