@@ -10,36 +10,6 @@ bathroom:
   entities:
     - light.master_bathroom
 
-outside:
-  name: Outside
-  entities:
-    - sun.sun
-    - binary_sensor.back_door_pir
-    - binary_sensor.driveway_pir
-    - binary_sensor.front_door_motion
-    - group.climate
-    - group.outside_lights
-    - sensor.driveway_floodlights_signal_level
-    - sensor.front_door_floodlights_signal_level
-    - sensor.back_floodlights_signal_level
-    - camera.iss
-    - camera.driveway
-    - camera.backdoor
-    - camera.garage
-
-climate:
-  name: Climate
-  entities:
-    - climate.rest_of_house_thermostat
-    - sensor.rest_of_house_average_temperature
-    - sensor.house_average_humidity
-    - sensor.weather_station_rainfall
-    - sensor.weather_station_wind_direction
-    - sensor.weather_station_wind_velocity
-    - sensor.weather_station_wind_maximum
-    - sensor.weather_station_temperature
-    - sensor.weather_station_relative_humidity
-
 garage:
   name: Garage
   entities:
