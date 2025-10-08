@@ -3,7 +3,6 @@ input_boolean:
   tv_lights_lockout:
     name: TV lights lockout
     icon: mdi:lock
-    unique_id: tv_lights_lockout_input_boolean
 
 automation:
   - alias: Living Room TV dimmer

@@ -3,7 +3,6 @@ input_boolean:
   radio_classic_fm:
     name: Radio Classic FM
     initial: false
-    unique_id: radio_classic_fm_input_boolean
 
 automation:
   - alias: "Play Classic FM"

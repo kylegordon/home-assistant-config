@@ -10,12 +10,10 @@ homeassistant:
 input_boolean:
   openup_process:
     name: Open tin hut process
-    unique_id: openup_process_input_boolean
     icon: mdi:sleep
     initial: false
   lockup_process:
     name: Lockup process
-    unique_id: lockup_process_input_boolean
     icon: mdi:sleep
     initial: false
 
