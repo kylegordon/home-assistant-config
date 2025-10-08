@@ -1,65 +1,81 @@
 - platform: switch
   name: "Garage Lights"
+  unique_id: garage_lights_light
   entity_id: switch.garage_lights_relay
 
 - platform: switch
   name: "Front Floodlights"
+  unique_id: front_floodlights_light
   entity_id: switch.front_floodlights_relay
 
 - platform: switch
   name: "Driveway Floodlights"
+  unique_id: driveway_floodlights_light
   entity_id: switch.driveway_floodlights_relay
 
 - platform: switch
   name: "Back Floodlights"
+  unique_id: back_floodlights_light
   entity_id: switch.back_floodlights_relay
 
 - platform: switch
   name: "Garden Steps Floodlight"
+  unique_id: garden_steps_floodlight_light
   entity_id: switch.garden_steps_floodlight_relay
 
 - platform: switch
   name: "Edison Lamp"
+  unique_id: edison_lamp_light
   entity_id: switch.edison_lamp
 
 - platform: switch
   name: "Star Burst"
+  unique_id: star_burst_light
   entity_id: switch.star_burst
 
 - platform: switch
   name: "Twig Lights"
+  unique_id: twig_lights_light
   entity_id: switch.twig_lights
 
 - platform: switch
   name: "Craft Room Fairy Lights"
+  unique_id: craft_room_fairy_lights_light
   entity_id: switch.craft_fairy_lights
 
 - platform: switch
   name: "Lava Lamp"
+  unique_id: lava_lamp_light
   entity_id: switch.lava_lamp
 
 - platform: switch
   name: "Monitor Lights"
+  unique_id: monitor_lights_light
   entity_id: switch.monitor_lights_power_plug_switch
 
 - platform: switch
   name: "Christmas Tree"
+  unique_id: christmas_tree_light
   entity_id: switch.christmas_tree
 
 - platform: switch
   name: "Candle Arch"
+  unique_id: candle_arch_light
   entity_id: switch.candle_arch
 
 - platform: switch
   name: "Outside Decorations"
+  unique_id: outside_decorations_light
   entity_id: switch.outside_decorations
 
 - platform: group
   name: Decking Lights
+  unique_id: decking_lights_group
   entities:
     - light.decking_rgbww_flood_east
     - light.decking_rgbww_flood_west
 
 - platform: switch
   name: Octoprint Lighting
+  unique_id: octoprint_lighting_light
   entity_id: switch.octoprint_relay_1

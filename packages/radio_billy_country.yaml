@@ -2,6 +2,7 @@
 input_boolean:
   radio_billy_country:
     name: Billy Country
+    unique_id: radio_billy_country_input_boolean
     initial: false
 
 automation:

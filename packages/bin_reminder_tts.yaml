@@ -9,6 +9,7 @@ homeassistant:
 input_boolean:
   bin_reminder:
     name: Bin reminder
+    unique_id: bin_reminder_input_boolean
     icon: mdi:delete-empty
     initial: true
 

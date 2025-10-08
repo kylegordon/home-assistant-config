@@ -3,6 +3,7 @@ input_boolean:
     name: Night View
     icon: mdi:account-alert
     initial: false
+    unique_id: night_view_input_boolean
 
 automation:
   - alias: Night view reset
