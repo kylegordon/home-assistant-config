@@ -82,3 +82,16 @@
     - light.shellypro3em_ec62609752ec_outside_lights
     - light.outside_rgb_white_channels
 
+- platform: group
+  name: Study Lights
+  unique_id: study_lighting
+  entities:
+    - light.study
+    - light.monitor_lights
+
+- platform: group
+  name: Bedside Lights
+  unique_id: bedside_lights
+  entities:
+    - light.bedside_kyle
+    - light.bedside_charlotte
