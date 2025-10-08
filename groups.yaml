@@ -11,12 +11,3 @@ bedside_lights:
   entities:
     - light.bedside_kyle
     - light.bedside_charlotte
-
-lightswitch_relays:
-  name: Lightswitch Relays
-  entities:
-    - switch.master_bedroom_lightswitch_relay
-    - switch.guest_bedroom_lightswitch_relay
-    - switch.study_lightswitch_relay
-    - switch.craft_room_lightswitch_relay
-    - switch.ensuite_lightswitch_relay
