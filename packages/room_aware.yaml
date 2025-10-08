@@ -2,6 +2,7 @@
 group:
   echos:
     name: All Echos
+    unique_id: echos_group
     entities:
       - media_player.bedroom
       - media_player.kitchen
