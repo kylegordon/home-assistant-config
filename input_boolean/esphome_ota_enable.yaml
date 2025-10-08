@@ -1,3 +1,4 @@
 name: ESPHome OTA Mode
 icon: mdi:AccessPointPlus
 initial: false
+unique_id: esphome_ota_enable_input_boolean

@@ -3,6 +3,7 @@ input_boolean:
   radio_caroline:
     name: Radio Caroline
     initial: false
+    unique_id: radio_caroline_input_boolean
 
 automation:
   - alias: "Play Radio Caroline"
