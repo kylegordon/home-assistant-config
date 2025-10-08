@@ -63,7 +63,7 @@ homeassistant:
       assumed_state: false
     light.front_hall:
       assumed_state: false
-    group.bedside_lights:
+    light.bedside_lights:
       icon: mdi:hotel
     sensor.kyle_status:
       entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg
