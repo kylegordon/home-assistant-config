@@ -65,7 +65,7 @@ all_off:
 
     - service: light.turn_off
       data:
-        entity_id: group.garage
+        entity_id: light.garage_lights
 
     ## Turn off living room switches and lights
     - service: switch.turn_off

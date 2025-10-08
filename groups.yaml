@@ -10,15 +10,6 @@ bathroom:
   entities:
     - light.master_bathroom
 
-garage:
-  name: Garage
-  entities:
-    - sensor.garage_lights_signal_level
-    - light.garage_lights
-    - media_player.garage
-    - switch.garage_mesh
-    - switch.garage_decorations
-
 ## Item groups ##
 bedside_lights:
   name: Bedside Lights
