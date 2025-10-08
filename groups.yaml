@@ -5,11 +5,6 @@ study_lighting:
     - light.study
     - light.monitor_lights
 
-bathroom:
-  name: Bathroom
-  entities:
-    - light.master_bathroom
-
 ## Item groups ##
 bedside_lights:
   name: Bedside Lights

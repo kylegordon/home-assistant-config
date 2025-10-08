@@ -61,7 +61,7 @@ all_off:
     ## Turn off bathroom
     - service: switch.turn_off
       data:
-        entity_id: group.bathroom
+        entity_id: light.master_bathroom
 
     - service: light.turn_off
       data:
