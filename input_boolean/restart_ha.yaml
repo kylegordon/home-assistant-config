@@ -1,4 +1,3 @@
 name: Restart Home Assistant
 icon: mdi:restart
 initial: false
-unique_id: restart_ha_input_boolean
