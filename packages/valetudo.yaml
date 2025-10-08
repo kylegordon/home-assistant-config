@@ -75,7 +75,6 @@ input_boolean:
 group:
   vacuum_rooms:
     name: Vacuum Rooms
-    unique_id: vacuum_rooms_group
     entities:
       - input_boolean.vacuum_bootroom
       - input_boolean.vacuum_fronthall
