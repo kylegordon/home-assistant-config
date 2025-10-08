@@ -61,7 +61,7 @@ automation:
     action:
       - service: light.turn_off
         entity_id:
-          - group.bedside_lights
+          - light.bedside_lights
           - light.twig_lights
 
   - alias: Bedside light toggle
@@ -74,7 +74,7 @@ automation:
           click_type: triple
     action:
       - service: light.toggle
-        entity_id: group.bedside_lights
+        entity_id: light.bedside_lights
       - service: logbook.log
         data_template:
           name: EVENT
@@ -91,7 +91,7 @@ automation:
         state: "on"
     action:
       - service: light.turn_on
-        entity_id: group.bedside_lights
+        entity_id: light.bedside_lights
         data:
           brightness_pct: 75
           color_temp: 400

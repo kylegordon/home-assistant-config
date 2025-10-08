@@ -34,8 +34,8 @@ automation:
           - light.living_room_small_lights
           - light.dining_nook
           - light.art
-          - group.outside_lights
-          - group.front_hall
+          - light.outside_lights
+          - light.front_hall
           - light.kitchen_lights
           - light.hall
           - light.boot_room
