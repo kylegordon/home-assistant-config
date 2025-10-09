@@ -27,6 +27,9 @@ homeassistant:
   country: GB
   currency: GBP
 
+  internal_url: https://viewpoint.house/
+  external_url: https://viewpoint.house/
+
   # Includes
   packages: !include_dir_named packages
 
