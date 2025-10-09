@@ -7,73 +7,54 @@ all_off:
         message: "Nobody is home. Turning everything off."
 
     ## Turn off main bedroom lights and switches
-    - service: switch.turn_off
-      data:
-        entity_id: group.bedroom_1
-    - service: light.turn_off
-      data:
-        entity_id: group.bedroom_1
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Master Bedroom') }}"
 
     ## Turn off guest bedroom lights and switches
-    - service: switch.turn_off
-      data:
-        entity_id: group.bedroom_2
-    - service: light.turn_off
-      data:
-        entity_id: group.bedroom_2
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Guest Bedroom') }}"
 
     ## Turn off study lights and switches
-    - service: switch.turn_off
-      data:
-        entity_id: group.bedroom_3
-    - service: light.turn_off
-      data:
-        entity_id: group.bedroom_3
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Study') }}"
 
-    ## Turn off craft room group
-    - service: switch.turn_off
-      data:
-        entity_id: group.bedroom_4
-    - service: light.turn_off
-      data:
-        entity_id: group.bedroom_4
+    ## Turn off craft room lights and switches
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Craft Room') }}"
 
-    ## Turn off Kitchen group
-    - service: switch.turn_off
-      data:
-        entity_id: group.kitchen
-    - service: light.turn_off
-      data:
-        entity_id: group.kitchen
+    ## Turn off Kitchen lights and switches
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Kitchen') }}"
 
-    - service: light.turn_off
-      data:
-        entity_id: group.front_hall
+    ## Turn off front hall lights
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Front Hall') }}"
 
     ## Turn off Hall switches and lights
-    - service: switch.turn_off
-      data:
-        entity_id: light.hall
-    - service: light.turn_off
-      data:
-        entity_id: light.hall
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Hallway') }}"
 
     ## Turn off bathroom
-    - service: switch.turn_off
-      data:
-        entity_id: light.master_bathroom
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Master Bathroom') }}"
 
-    - service: light.turn_off
-      data:
-        entity_id: light.garage_lights
+    ## Turn off garage lights
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Garage') }}"
 
     ## Turn off living room switches and lights
-    - service: switch.turn_off
-      data:
-        entity_id: group.living_room
-    - service: light.turn_off
-      data:
-        entity_id: group.living_room
+    - service: homeassistant.turn_off
+      target:
+        area_id: "{{ area_id('Living Room') }}"
     - service: media_player.turn_off
       data:
         entity_id: media_player.kodi_living_room
