@@ -63,3 +63,22 @@
 - platform: switch
   name: Octoprint Lighting
   entity_id: switch.octoprint_relay_1
+
+- platform: switch
+  name: outside_rgb_white_channels
+  entity_id: switch.outside_rgb_white_channels
+
+- platform: group
+  name: Outside Lights
+  unique_id: outside_lights
+  entities:
+    - light.front_floodlights
+    - light.driveway_floodlights
+    - light.back_floodlights
+    - light.garden_steps_floodlight
+    - light.decking_lights
+    - light.front_door_dome
+    - light.car_port
+    - light.shellypro3em_ec62609752ec_outside_lights
+    - light.outside_rgb_white_channels
+
