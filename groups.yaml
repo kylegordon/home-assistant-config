@@ -195,19 +195,6 @@ outside:
     - camera.backdoor
     - camera.garage
 
-outside_lights:
-  name: Outside Lights
-  entities:
-    - light.front_floodlights
-    - light.driveway_floodlights
-    - light.back_floodlights
-    - light.garden_steps_floodlight
-    - light.decking_lights
-    - light.front_door_dome
-    - light.car_port
-    - light.shellypro3em_ec62609752ec_outside_lights
-    - switch.outside_rgb_white_channels
-
 climate:
   name: Climate
   entities:
