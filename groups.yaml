@@ -1,7 +1,6 @@
 ---
 default_view:
   name: Home
-  unique_id: default_view_group
   entities:
     - group.people_status
     - group.modes
@@ -16,7 +15,6 @@ default_view:
 
 environment_summary:
   name: Environment Summary
-  unique_id: environment_summary_group
   entities:
     - climate.rest_of_house_thermostat
     - climate.hot_water
@@ -24,7 +22,6 @@ environment_summary:
 
 kitchen:
   name: Kitchen
-  unique_id: kitchen_group
   entities:
     - sensor.kitchen_temperature
     - sensor.kitchen_esp8266_signal_level
@@ -35,7 +32,6 @@ kitchen:
 
 front_hall:
   name: Front Hall
-  unique_id: front_hall_group
   entities:
     - light.front_hall
     - sensor.front_hall_sensor_temperature
@@ -47,7 +43,6 @@ front_hall:
 
 living_room:
   name: Living Room
-  unique_id: living_room_group
   entities:
     - group.living_room_lights
     - media_player.living_room_kodi
@@ -60,7 +55,6 @@ living_room:
 
 living_room_lights:
   name: Living Room Lights
-  unique_id: living_room_lights_group
   entities:
     - light.living_room_1
     - light.living_room_2
@@ -71,7 +65,6 @@ living_room_lights:
 
 dining_nook_lights:
   name: Dining Nook
-  unique_id: dining_nook_lights_group
   entities:
     - light.dining_nook
     - light.dining_table_overhead
@@ -80,7 +73,6 @@ dining_nook_lights:
 
 bedroom_1:
   name: Master bedroom
-  unique_id: bedroom_1_group
   entities:
     - group.bedroom_1_lights
     - group.bedside_lights
@@ -97,7 +89,6 @@ bedroom_1:
 
 ensuite:
   name: Ensuite
-  unique_id: ensuite_group
   entities:
     - sensor.ensuite_lightlevel
     - binary_sensor.ensuite_motion_occupancy
@@ -109,20 +100,17 @@ ensuite:
     - light.ensuite_sink
 
 ensuite_facilities:
-  unique_id: ensuite_facilities_group
   entities:
     - light.ensuite_toilet
     - light.ensuite_sink
 
 bedroom_1_lights:
   name: Bedroom lights
-  unique_id: bedroom_1_lights_group
   entities:
     - light.master_bedroom
 
 bedroom_2:
   name: Guest bedroom
-  unique_id: bedroom_2_group
   entities:
     - light.guest_bedroom
     - sensor.guest_room_multi_sensor_temperature
@@ -131,7 +119,6 @@ bedroom_2:
 
 bedroom_3:
   name: Study
-  unique_id: bedroom_3_group
   entities:
     - media_player.study_ds
     - media_player.study
@@ -146,7 +133,6 @@ bedroom_3:
 
 bedroom_4:
   name: Craft room
-  unique_id: bedroom_4_group
   entities:
     - light.craft_room
     - light.craft_room_fairy_lights
@@ -157,34 +143,29 @@ bedroom_4:
 
 craft_room_lighting:
   name: Craft Room Lights
-  unique_id: craft_room_lighting_group
   entities:
     - light.craft_room
     - light.craft_room_fairy_lights
 
 study_lighting:
   name: Study Lights
-  unique_id: study_lighting_group
   entities:
     - light.study
     - light.monitor_lights
 
 hall:
   name: Hall lights
-  unique_id: hall_group
   entities:
     - light.hallway_bathroom
     - light.hallway_bedrooms
 
 bathroom:
   name: Bathroom
-  unique_id: bathroom_group
   entities:
     - light.master_bathroom
 
 hall_view:
   name: Hall
-  unique_id: hall_view_group
   entities:
     - light.hall
     - binary_sensor.hall_rooms_motion_occupancy
@@ -199,7 +180,6 @@ hall_view:
 
 outside:
   name: Outside
-  unique_id: outside_group
   entities:
     - sun.sun
     - binary_sensor.back_door_pir
@@ -215,23 +195,8 @@ outside:
     - camera.backdoor
     - camera.garage
 
-outside_lights:
-  name: Outside Lights
-  unique_id: outside_lights_group
-  entities:
-    - light.front_floodlights
-    - light.driveway_floodlights
-    - light.back_floodlights
-    - light.garden_steps_floodlight
-    - light.decking_lights
-    - light.front_door_dome
-    - light.car_port
-    - light.shellypro3em_ec62609752ec_outside_lights
-    - switch.outside_rgb_white_channels
-
 climate:
   name: Climate
-  unique_id: climate_group
   entities:
     - climate.rest_of_house_thermostat
     - sensor.rest_of_house_average_temperature
@@ -245,7 +210,6 @@ climate:
 
 garage:
   name: Garage
-  unique_id: garage_group
   entities:
     - sensor.garage_lights_signal_level
     - light.garage_lights
@@ -256,7 +220,6 @@ garage:
 people:
   name: People
   icon: mdi:account-multiple
-  unique_id: people_group
   entities:
     - person.kyle
     - person.charlotte
@@ -267,14 +230,12 @@ people:
 ## Item groups ##
 bedside_lights:
   name: Bedside Lights
-  unique_id: bedside_lights_group
   entities:
     - light.bedside_kyle
     - light.bedside_charlotte
 
 lightswitch_relays:
   name: Lightswitch Relays
-  unique_id: lightswitch_relays_group
   entities:
     - switch.master_bedroom_lightswitch_relay
     - switch.guest_bedroom_lightswitch_relay
@@ -284,21 +245,18 @@ lightswitch_relays:
 
 people_status:
   name: People Status
-  unique_id: people_status_group
   entities:
     - sensor.kyle_status
     - sensor.charlotte_status
 
 test:
   name: Test
-  unique_id: test_group
   entities:
     - switch.tellybox
     - media_player.living_room_panasonic_tv
 
 other:
   name: Other
-  unique_id: other_group
   entities:
     - group.lightswitch_relays
     - switch.energenie_1

@@ -2,7 +2,6 @@
 light:
   - platform: group
     name: Glow Orbs
-    unique_id: glow_orbs_group
     entities:
       - light.sense_gloworb_1_ring
       - light.sense_gloworb_2_ring
