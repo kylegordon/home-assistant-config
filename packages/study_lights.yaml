@@ -18,7 +18,7 @@ automation:
       - service: switch.turn_on
         entity_id: switch.study_switch_relay_1
       - service: light.toggle
-        entity_id: light.study_lighting
+        entity_id: light.study_lights
       - service: logbook.log
         data_template:
           name: EVENT
