@@ -28,12 +28,13 @@ automation:
       - service: cover.close_cover
         entity_id:
           - cover.patio_blinds
+          - cover.front_hall_blinds
       - service: homeassistant.turn_off
         entity_id:
           - light.outside_lights
           - light.twig_lights
           - light.under_bed_lights
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         target:
           area_id:
             - "{{ area_id('Living Room') }}"
@@ -52,7 +53,7 @@ automation:
           - condition: state
             entity_id: binary_sensor.guest_mode
             state: 'off'
-      - service: homeassistant.turn_off
+      - service: light.turn_off
         target:
           area_id:
             - "{{ area_id('Guest Bedroom') }}"
