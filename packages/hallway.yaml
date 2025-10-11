@@ -80,6 +80,8 @@ automation:
         target:
           entity_id:
             - light.hall
+        data:
+          transition: 30
 
   - alias: Hallway motion - 2 minute night timeout
     id: hallway_motion_2_minute_night_timeout
