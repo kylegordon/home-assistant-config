@@ -1,3 +1,4 @@
+---
 - platform: switch
   name: "Garage Lights"
   entity_id: switch.garage_lights_relay
@@ -56,6 +57,7 @@
 
 - platform: group
   name: Decking Lights
+  unique_id: decking_lights
   entities:
     - light.decking_rgbww_flood_east
     - light.decking_rgbww_flood_west
