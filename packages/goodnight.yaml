@@ -47,6 +47,7 @@ automation:
             - "{{ area_id('Study') }}"
             - "{{ area_id('Craft Room') }}"
             - "{{ area_id('Ensuite') }}"
+            - "{{ area_id('Outside') }}"
       - condition: or
         # If guests are staying, don't turn off their bedroom lights
         conditions:
