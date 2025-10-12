@@ -15,12 +15,12 @@ automation:
       - condition: or
         conditions:
           - condition: state
-            entity_id: light.living_room_ceiling
+            entity_id: light.living_room
             state: 'on'
     action:
       - service: light.turn_off
         entity_id:
-          - light.living_room_ceiling
+          - light.living_room
       - service: light.turn_on
         entity_id:
           - light.cosy_lights
