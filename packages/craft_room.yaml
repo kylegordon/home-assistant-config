@@ -21,7 +21,7 @@ automation:
       - service: light.toggle
         entity_id: light.craft_room_lighting
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling craft room light"
 
@@ -38,6 +38,6 @@ automation:
       - service: light.toggle
         entity_id: light.craft_room_fairy_lights
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling fairy light"

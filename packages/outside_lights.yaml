@@ -1,14 +1,12 @@
 ---
 # light.outside_lights is a general purpose group defined in lights.yaml
 
-switch:
-  - platform: template
-    switches:
-      outside_rgb_white_channels:
-        friendly_name: Outside White Channels
+template:
+  - switch:
+      - name: Outside White Channels
         unique_id: outside_rgb_white_channels
-        icon_template: mdi:lightbulb-group
-        value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
+        icon: mdi:lightbulb-group
+        state: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
                             or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
                           true
                         {% else %}
@@ -122,7 +120,7 @@ automation:
         state: "below_horizon"
     action:
       - service: script.tweet_engine
-        data_template:
+        data:
           tweet: >
             {{ [
             "Dark outside and motion detected! Scared! Turning on my outside lights!",
