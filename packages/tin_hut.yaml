@@ -17,15 +17,13 @@ input_boolean:
     icon: mdi:sleep
     initial: false
 
-binary_sensor:
-  - platform: template
-    sensors:
-      # This will eventually be replaced a sensor that collates multiple sensors
-      tin_hut_occupied:
-        friendly_name: Tin Hut Occupied
+template:
+  - binary_sensor:
+      - name: Tin Hut Occupied
+        unique_id: tin_hut_occupied
         device_class: occupancy
         delay_off: 0:05:00
-        value_template: "{{
+        state: "{{
           is_state('binary_sensor.presence_lite_tin_hut_occupancy', 'on') or
           is_state('binary_sensor.tin_hut_left_person_occupancy', 'on') or
           is_state('binary_sensor.tin_hut_right_person_occupancy', 'on') or
@@ -107,7 +105,7 @@ automation:
         to: 'on'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Triggering openup process"
           entity_id: input_boolean.open_tin_hut_process
@@ -124,7 +122,7 @@ automation:
         to: 'on'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Triggering lockup process"
           entity_id: input_boolean.lockup_process

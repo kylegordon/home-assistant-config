@@ -55,8 +55,9 @@ automation:
         after: '23:00:00'
         before: '07:00:00'
     action:
-      service_template: light.turn_off
-      entity_id: light.under_bed_lights
+      service: light.turn_off
+      target:
+        entity_id: light.under_bed_lights
       data:
         transition: 30
 
@@ -70,17 +71,18 @@ automation:
         after: '06:00:00'
         before: '01:00:00'
     action:
-      - service_template: light.turn_on
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.sense_gloworb_1_ring
+            - light.sense_gloworb_2_ring
+            - light.sense_gloworb_3_ring
         data:
           brightness: 128
           rgb_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-          entity_id:
-            - light.sense_gloworb_1_ring
-            - light.sense_gloworb_2_ring
-            - light.sense_gloworb_3_ring
 
   - alias: Cheerlights - Under Bed
     id: cheerlights_under_bed
@@ -95,15 +97,16 @@ automation:
         entity_id: input_boolean.goodnight_process
         state: "off"
     action:
-      - service_template: light.turn_on
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.under_bed_lights
         data:
           brightness: 255
           rgb_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-          entity_id:
-            - light.under_bed_lights
 
   - alias: Cheerlights - Outside
     id: cheerlights_outside
