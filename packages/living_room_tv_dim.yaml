@@ -21,13 +21,16 @@ automation:
       - service: light.turn_off
         entity_id:
           - light.living_room_ceiling
+      - service: light.turn_on
+        entity_id:
+          - light.cosy_lights
       - condition: state
         entity_id:
+          # Zone 2 - Dining Nook
           - binary_sensor.presence_lite_living_room_zone_2_occupancy
         state: 'off'
       - service: light.turn_off
         entity_id:
           - light.dining_nook
-          - light.cosy_lights
           - light.art
           - light.train_cabinets
