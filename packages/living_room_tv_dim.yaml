@@ -15,22 +15,19 @@ automation:
       - condition: or
         conditions:
           - condition: state
-            entity_id: light.living_room_1
-            state: 'on'
-          - condition: state
-            entity_id: light.living_room_2
+            entity_id: light.living_room_ceiling
             state: 'on'
     action:
       - service: light.turn_off
         entity_id:
-          - light.living_room
+          - light.living_room_ceiling
       - condition: state
         entity_id:
-          - binary_sensor.everything_presence_lite_2fbc58_zone_2_occupancy
+          - binary_sensor.presence_lite_living_room_zone_2_occupancy
         state: 'off'
       - service: light.turn_off
         entity_id:
           - light.dining_nook
-          - light.sideboard
+          - light.cosy_lights
           - light.art
           - light.train_cabinets
