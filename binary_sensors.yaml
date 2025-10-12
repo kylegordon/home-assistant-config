@@ -21,23 +21,22 @@
 #       device_class: occupancy
 #       value_template: "{{ is_state('binary_sensor.charlotte_bed_sensor'), 'on' }}"
 
-- platform: template
-  sensors:
-    living_room_tv_power:
-      friendly_name: Living Room TV Power
-      device_class: power
-      value_template: "{{ states('sensor.tv_power_plug_power') | float(0) > 100 }}"
-    home_occupied:
-      friendly_name: Home Occupied
-      device_class: occupancy
-      icon_template: >-
-        {% if is_state('binary_sensor.home_occupied','on') %}
-          mdi:home-account
-        {% else %}
-          mdi:home-outline
-        {% endif %}
-      value_template: "{{ is_state('person.kyle','home') or is_state('person.charlotte','home') or is_state('person.ronnie','home') }}"
-    holiday_mode:
-      value_template: "{{ states.calendar.family_calendar.attributes.message == 'Holiday mode' }}"
-      friendly_name: Holiday mode
-      unique_id: binary_sensor.holiday_mode
+template:
+  - binary_sensor:
+      - name: Living Room TV Power
+        unique_id: living_room_tv_power
+        device_class: power
+        state: "{{ states('sensor.tv_power_plug_power') | float(0) > 100 }}"
+      - name: Home Occupied
+        unique_id: home_occupied
+        device_class: occupancy
+        icon: >-
+          {% if is_state('binary_sensor.home_occupied','on') %}
+            mdi:home-account
+          {% else %}
+            mdi:home-outline
+          {% endif %}
+        state: "{{ is_state('person.kyle','home') or is_state('person.charlotte','home') or is_state('person.ronnie','home') }}"
+      - name: Holiday mode
+        unique_id: holiday_mode
+        state: "{{ states.calendar.family_calendar.attributes.message == 'Holiday mode' }}"

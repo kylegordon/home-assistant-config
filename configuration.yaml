@@ -10,7 +10,7 @@ homeassistant:
         - 172.24.32.0/24
         - 127.0.0.1
 
-  whitelist_external_dirs:
+  allowlist_external_dirs:
     - /tmp
 
   # Name of the location where Home Assistant is running
