@@ -28,32 +28,36 @@ automation:
       - service: cover.close_cover
         entity_id:
           - cover.patio_blinds
+          - cover.front_hall_blinds
       - service: homeassistant.turn_off
         entity_id:
-          - light.living_room
-          - light.living_room_small_lights
-          - light.dining_nook
-          - light.art
-          - group.outside_lights
-          - group.front_hall
-          - light.kitchen_lights
-          - light.hall
-          - light.boot_room
+          - light.outside_lights
           - light.twig_lights
-          - light.glow_orbs
           - light.under_bed_lights
-          - group.bedroom_1
-          - group.bedroom_3
-          - group.bedroom_4
+      - service: light.turn_off
+        target:
+          area_id:
+            - "{{ area_id('Living Room') }}"
+            - "{{ area_id('Master Bedroom') }}"
+            - "{{ area_id('Kitchen') }}"
+            - "{{ area_id('Hallway') }}"
+            - "{{ area_id('Front Hall') }}"
+            - "{{ area_id('Dining Nook') }}"
+            - "{{ area_id('Boot Room') }}"
+            - "{{ area_id('Study') }}"
+            - "{{ area_id('Craft Room') }}"
+            - "{{ area_id('Ensuite') }}"
+            - "{{ area_id('Outside') }}"
       - condition: or
         # If guests are staying, don't turn off their bedroom lights
         conditions:
           - condition: state
             entity_id: binary_sensor.guest_mode
             state: 'off'
-      - service: homeassistant.turn_off
-        entity_id:
-          - group.bedroom_2
+      - service: light.turn_off
+        target:
+          area_id:
+            - "{{ area_id('Guest Bedroom') }}"
 
   - alias: Goodnight process reset
     id: goodnight_process_reset

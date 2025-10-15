@@ -17,6 +17,7 @@ input_number:
 
 cover:
   - platform: group
+    unique_id: patio_blinds
     name: Patio Blinds
     entities:
       - cover.patio_blinds_left

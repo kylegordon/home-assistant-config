@@ -51,13 +51,13 @@ action:
         {% endif %}
   - service: light.turn_on
     data:
-      entity_id: group.bedside_lights
+      entity_id: light.bedside_lights
   - service: light.turn_on
     data:
-      entity_id: group.outside_lights
+      entity_id: light.outside_lights
 
   - delay:
       minutes: 5
   - service: light.turn_off
     data:
-      entity_id: group.outside_lights
+      entity_id: light.outside_lights
