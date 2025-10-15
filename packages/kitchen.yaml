@@ -93,7 +93,7 @@ automation:
         target:
           entity_id: light.kitchen_cabinets
         data:
-          transition: 5
+          transition: 5  # 5 seconds
 
   - alias: Kitchen motion - 10 minute timeout
     id: kitchen_motion_10_minute_timeout
@@ -108,4 +108,4 @@ automation:
         target:
           entity_id: light.kitchen_cabinets
         data:
-          transition: 120
+          transition: 120  # 2 minutes
