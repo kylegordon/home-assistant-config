@@ -1,4 +1,5 @@
 alias: Mark Person as extended away
+id: mark_person_as_extended_away
 trigger:
   - platform: state
     entity_id: input_select.kyle_status_dropdown

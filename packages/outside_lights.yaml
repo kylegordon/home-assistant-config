@@ -1,4 +1,6 @@
 ---
+# light.outside_lights is a general purpose group defined in lights.yaml
+
 switch:
   - platform: template
     switches:
@@ -129,7 +131,7 @@ automation:
             ] | random + " https://amzn.to/2CR5mbQ" }}
       - service: homeassistant.turn_on
         entity_id:
-          - group.outside_lights
+          - light.outside_lights
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Motion outside!"
@@ -142,12 +144,12 @@ automation:
 
       - service: homeassistant.turn_on
         entity_id:
-          - group.outside_lights
+          - light.outside_lights
       # If this evaluates to false, the action will stop here.
       - condition: template
         value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
       - service: light.turn_on
-        entity_id: light.front_door_floodlights
+        entity_id: light.front_floodlights
 
   - alias: Outdoor lights off
     id: outdoor_lights_off
@@ -167,4 +169,4 @@ automation:
     action:
       - service: homeassistant.turn_off
         entity_id:
-          - group.outside_lights
+          - light.outside_lights

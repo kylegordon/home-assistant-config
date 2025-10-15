@@ -1,6 +1,14 @@
 ---
+light:
+  - platform: group
+    name: Craft Room Lighting
+    entities:
+      - light.craft_room
+      - light.craft_room_fairy_lights
+
 automation:
   - alias: Craft Room light toggle
+    id: craft_room_light_toggle
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -11,13 +19,14 @@ automation:
       - service: switch.turn_on
         entity_id: switch.craft_room_switch_relay
       - service: light.toggle
-        entity_id: group.craft_room_lighting
+        entity_id: light.craft_room_lighting
       - service: logbook.log
         data_template:
           name: EVENT
           message: "Toggling craft room light"
 
   - alias: Craft room fairy lights toggle
+    id: craft_room_fairy_lights_toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event

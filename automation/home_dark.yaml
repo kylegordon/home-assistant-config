@@ -1,4 +1,5 @@
 alias: "Home in the dark"
+id: home_in_the_dark
 trigger:
   - platform: state
     entity_id: binary_sensor.home_occupied
@@ -28,10 +29,10 @@ action:
       entity_id: light.uplighter
   - service: light.turn_on
     data:
-      entity_id: group.outside_lights
+      entity_id: light.outside_lights
 
   - delay:
       minutes: 5
   - service: light.turn_off
     data:
-      entity_id: group.outside_lights
+      entity_id: light.outside_lights

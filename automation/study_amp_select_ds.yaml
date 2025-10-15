@@ -1,4 +1,5 @@
 alias: "Study amp: select DS input"
+id: study_amp_select_ds_input
 
 trigger:
   platform: state

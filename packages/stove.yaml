@@ -5,8 +5,8 @@ sensor:
       stove_sensor:
         friendly_name: Hwam Stove
         icon_template: >
-          {%- set phase = states.sensor.phase_living_room.state %}
-          {%- set refuel = states.binary_sensor.refill_alarm_living_room.state %}
+          {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
+          {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
           {%- if phase == 'Burn' %}
             mdi:fire
           {%- elif phase == 'Standby' %}
@@ -19,21 +19,22 @@ sensor:
             mdi:blur
           {%- endif %}
         value_template: >
-          {%- set phase = states.sensor.phase_living_room.state %}
-          {%- set temp = states.sensor.stove_temperature_living_room.state %}
-          {%- set timer = states.sensor.time_to_new_fire_wood_living_room.state %}
-          {%- set refuel = states.binary_sensor.refill_alarm_living_room.state %}
-          {%- if phase == 'Burn' %}
+          {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
+          {%- set temp = states.sensor.hwam_smart_stove_temperature.state %}
+          {%- set timer = states.sensor.hwam_smart_stove_time_to_new_firewood.state %}
+          {%- set refill_timer = (timer | int(0) // 60) ~ ' min' %}
+          {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
+          {%- if phase == 'burn' %}
             {{ temp }} °C
-          {%- elif phase == 'Standby' %}
+          {%- elif phase == 'standby' %}
             Standby
-          {%- elif phase == 'Ignition' %}
+          {%- elif phase == 'ignition' %}
             Start
           {%- elif refuel == 'on' %}
             Refuel now!
           {%- else -%}
             Refuel in
-            {{ timer }}
+            {{ refill_timer }}
           {%- endif %}
 
 automation:
@@ -41,7 +42,7 @@ automation:
     id: time_to_new_fire_wood
     trigger:
       - platform: state
-        entity_id: binary_sensor.refill_alarm_living_room
+        entity_id: binary_sensor.hwam_smart_stove_refill_needed
         from: "off"
         to: "on"
     condition:
