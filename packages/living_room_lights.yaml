@@ -193,7 +193,7 @@ automation:
 
   - alias: Living Room Sofa - presence timeout
     ### When no presence on sofa, Zone 1, turn off lights after timeout
-    id: living_room_presence_timeout
+    id: living_room_sofa_presence_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.presence_lite_living_room_zone_1_occupancy
