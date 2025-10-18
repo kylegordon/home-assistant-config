@@ -56,7 +56,7 @@ homeassistant:
       icon: mdi:delete-empty
     light.kyles_bedside:
       icon: mdi:hotel
-    light.sideboard:
+    light.drinks_cabinet:
       assumed_state: false
     light.lava_lamp:
       assumed_state: false
