@@ -15,7 +15,7 @@ automation:
           entity_id: light.masterbedroom_switch_light_eu
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id: switch.master_bedroom_switch_relay
+        entity_id: switch.masterbedroom_switch_relay_1
       - service: light.toggle
         entity_id: light.master_bedroom
       - service: logbook.log
@@ -39,7 +39,7 @@ automation:
           click_type: double
     action:
       - service: switch.turn_on
-        entity_id: switch.master_bedroom_lightswitch_relay
+        entity_id: switch.masterbedroom_lightswitch_relay_1
       - service: light.toggle
         entity_id: light.master_bedroom
       - service: light.toggle

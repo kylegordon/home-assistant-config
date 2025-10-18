@@ -11,6 +11,7 @@ input_number:
 light:
   - platform: group
     name: Kitchen Lights Group
+    unique_id: kitchen_lights_group
     entities:
       - light.kitchen_cabinets
       - light.kitchen_worktop_lights
@@ -120,3 +121,32 @@ automation:
       service: homeassistant.turn_off
       entity_id:
         - light.kitchen_lights_group
+
+  - alias: Kitchen cabinet lights - presence on
+    id: kitchen_cabinet_lights_presence_on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.presence_lite_kitchen_occupancy
+        to: 'on'
+        from: 'off'
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.kitchen_cabinets
+        data:
+          transition: 5  # 5 seconds
+
+  - alias: Kitchen cabinet lights - presence off
+    id: kitchen_cabinet_lights_presence_off
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.presence_lite_kitchen_occupancy
+        to: 'off'
+        for:
+          minutes: 10
+    action:
+      - service: light.turn_off
+        target:
+          entity_id: light.kitchen_cabinets
+        data:
+          transition: 120  # 2 minutes

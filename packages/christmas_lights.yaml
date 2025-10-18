@@ -48,7 +48,7 @@ automation:
             {{ [
             "It's getting dark and it's near Christmas! Time to turn on the outside decorations!",
             "That christmas feeling! Turning on the outside Christmas decorations!",
-            ] | random + " #christmas #homeautomation Status:({{states.sensor.server_pihole.state}}) https://amzn.to/2KU3Z2d"}}
+            ] | random + " #christmas #homeautomation https://amzn.to/2KU3Z2d"}}
           image: >-
             {{ [
             "/config/www/custom_ui/images/xmas/bauble.jpg",
@@ -73,7 +73,7 @@ automation:
             {{ [
             "It's a dark morning and near Christmas! Time to turn on the outside decorations!",
             "That christmas feeling! Turning on the outside Christmas decorations!",
-            ] | random + " #christmas #homeautomation Status:({{states.sensor.server_pihole.state}}) https://amzn.to/2KU3Z2d"}}
+            ] | random + " #christmas #homeautomation https://amzn.to/2KU3Z2d"}}
           image: >-
             {{ [
             "/config/www/custom_ui/images/xmas/bauble.jpg",
