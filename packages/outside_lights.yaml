@@ -61,6 +61,16 @@ automation:
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
+            image: >
+              {% if 'back_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
+              {% elif 'front_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
+              {% elif 'driveway' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% elif 'gates' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% endif %}
 
 
   - alias: "Outside night lights on"
@@ -139,6 +149,16 @@ automation:
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
+            image: >
+              {% if 'back_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
+              {% elif 'front_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
+              {% elif 'driveway' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% elif 'gates' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% endif %}
 
       - service: homeassistant.turn_on
         entity_id:
