@@ -293,12 +293,15 @@ automation:
               state: "off"
     action:
       - service: light.turn_on
-        data_template:
+        data:
           entity_id: >
             {% if states('sensor.time_of_day') == "Morning" %}
-            light.living_room, light.dining_nook
+              - light.living_room
+              - light.dining_nook
             {% else %}
-            light.cosy_lights, light.art, light.train_cabinets
+              - light.cosy_lights
+              - light.art
+              - light.train_cabinets
             {% endif %}
 
 
