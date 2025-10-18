@@ -149,6 +149,7 @@ automation:
         - light.george_usb_switch_relay_1
 
   - alias: Living Room Sofa Presence
+    ### When there is presence on the sofa, Zone 1, turn on lights
     id: living_room_sofa_presence
     trigger:
       - platform: state
@@ -187,10 +188,11 @@ automation:
       - service: light.turn_on
         data_template:
           entity_id:
-            - light.living_room
+            - light.cosy_lights
             - light.george_usb_switch_relay_1
 
   - alias: Living Room Sofa - presence timeout
+    ### When no presence on sofa, Zone 1, turn off lights after timeout
     id: living_room_presence_timeout
     trigger:
       - platform: state
@@ -201,7 +203,7 @@ automation:
     action:
       service: homeassistant.turn_off
       entity_id:
-        - light.living_room
+        - light.cosy_lights
         - light.george_usb_switch_relay_1
 
   - alias: Dining Nook Presence
