@@ -82,6 +82,13 @@ automation:
             - light.hall
         data:
           transition: 30
+          {%- if states('sensor.time_of_day') == "Night" %}
+          brightness: 64
+          {%- elif states('sensor.time_of_day') == "Morning" %}
+          brightness: 128
+          {%- else %}
+          brightness: 255
+          {%- endif %}
 
   - alias: Hallway motion - 2 minute night timeout
     id: hallway_motion_2_minute_night_timeout
