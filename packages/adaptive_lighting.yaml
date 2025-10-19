@@ -3,8 +3,11 @@
 
 adaptive_lighting:
   - name: "Hallway adaptive lighting"
+    ### Hallway lights need listed individually as the Z2M group does not behave correctly
+    ### Initial start values are ignored.
     lights:
-      - light.hall
+      - light.hallway_bedrooms
+      - light.hallway_bathroom
       - light.boot_room
       - light.front_hall
     prefer_rgb_color: false

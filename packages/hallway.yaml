@@ -76,7 +76,10 @@ automation:
           name: EVENT
           message: "Turning hall lights on"
           entity_id: light.hall
-      # Use choose to set brightness based on time of day
+      ### Use choose to set brightness based on time of day
+      ### Could be improved with adaptive lighting?
+      ### Hallway bedrooms and bathroom lights need listed individually as the
+      ### Z2M group does not behave correctly. Initial start values are ignored.
       - choose:
           - conditions:
               - condition: state
@@ -86,7 +89,8 @@ automation:
               - service: light.turn_on
                 target:
                   entity_id:
-                    - light.hall
+                    - light.hallway_bedrooms
+                    - light.hallway_bathroom
                 data:
                   brightness: 64
                   transition: 30
@@ -98,7 +102,8 @@ automation:
               - service: light.turn_on
                 target:
                   entity_id:
-                    - light.hall
+                    - light.hallway_bedrooms
+                    - light.hallway_bathroom
                 data:
                   brightness: 128
                   transition: 30
@@ -106,7 +111,8 @@ automation:
           - service: light.turn_on
             target:
               entity_id:
-                - light.hall
+                - light.hallway_bedrooms
+                - light.hallway_bathroom
             data:
               brightness: 255
               transition: 30
