@@ -34,7 +34,7 @@ script:
             {%- if room == "kitchen" -%}
               light.kitchen
             {%- elif room == "study" -%}
-              group.study_lighting
+              light.study_lighting
             {%- elif room == "bedroom" -%}
               light.master_bedroom
             {%- elif room == "garage" -%}
@@ -58,7 +58,7 @@ script:
             {%- if room == "kitchen" -%}
               light.kitchen
             {%- elif room == "study" -%}
-              group.study_lighting
+              light.study_lighting
             {%- elif room == "bedroom" -%}
               light.master_bedroom
             {%- elif room == "garage" -%}

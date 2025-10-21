@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: Master Bedroom light toggle
+    id: master_bedroom_light_toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
@@ -14,7 +15,7 @@ automation:
           entity_id: light.masterbedroom_switch_light_eu
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id: switch.master_bedroom_switch_relay
+        entity_id: switch.masterbedroom_switch_relay_1
       - service: light.toggle
         entity_id: light.master_bedroom
       - service: logbook.log
@@ -29,6 +30,7 @@ automation:
           transition: 1
 
   - alias: Master Bedroom light double toggle
+    id: master_bedroom_light_double_toggle
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -37,7 +39,7 @@ automation:
           click_type: double
     action:
       - service: switch.turn_on
-        entity_id: switch.master_bedroom_lightswitch_relay
+        entity_id: switch.masterbedroom_lightswitch_relay_1
       - service: light.toggle
         entity_id: light.master_bedroom
       - service: light.toggle
@@ -48,6 +50,7 @@ automation:
           message: "Double master bedroom light"
 
   - alias: "Bedtime lights off"
+    id: bedtime_lights_off
     trigger:
       - platform: time
         at: '01:00:00'
@@ -58,10 +61,11 @@ automation:
     action:
       - service: light.turn_off
         entity_id:
-          - group.bedside_lights
+          - light.bedside_lights
           - light.twig_lights
 
   - alias: Bedside light toggle
+    id: bedside_light_toggle
     trigger:
       - platform: event
         event_type: esphome.button_pressed
@@ -70,13 +74,14 @@ automation:
           click_type: triple
     action:
       - service: light.toggle
-        entity_id: group.bedside_lights
+        entity_id: light.bedside_lights
       - service: logbook.log
         data_template:
           name: EVENT
           message: "Toggling bedside lights"
 
   - alias: "Bedtime lights on"
+    id: bedtime_lights_on
     trigger:
       - platform: time
         at: '21:00:00'
@@ -86,13 +91,14 @@ automation:
         state: "on"
     action:
       - service: light.turn_on
-        entity_id: group.bedside_lights
+        entity_id: light.bedside_lights
         data:
           brightness_pct: 75
           color_temp: 400
           transition: 30
 
   - alias: "Off wakup lights"
+    id: off_wakup_lights
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
