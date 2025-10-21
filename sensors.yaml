@@ -1,32 +1,4 @@
 ---
-# !include travel_times.yaml
-
-# Improve with https://github.com/bah2830/Home-Assistant-Configs/blob/master/includes/automation/notifications.yaml
-
-# - platform: google_travel_time
-#   name: Kyle Work Travel
-#   api_key: !secret google_api
-#   origin: device_tracker.bagpuss_a0001
-#   destination: zone.kyle_work
-
-# - platform: google_travel_time
-#   name: Charlotte Work Travel
-#   api_key: !secret google_api
-#   origin: zone.home
-#   destination: zone.charlotte_work
-
-# - platform: google_travel_time
-#   name: Kyle To Home
-#   api_key: !secret google_api
-#   origin: device_tracker.bagpuss_a0001
-#   destination: zone.home
-
-# - platform: google_travel_time
-#   name: Charlotte To Home
-#   api_key: !secret google_api
-#   origin: device_tracker.charlotte_thea
-#   destination: zone.home
-
 - platform: template
   sensors:
     last_alexa:
@@ -34,12 +6,8 @@
         {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
 
     next_bin:
-      # value_template: "{{ states.calendar.next_bin.attributes.message }}"
-      # value_template: "{{ states.calendar.family_calendar.attributes.message|replace(' bin','') }}"
-      value_template: "{{ states.calendar.garbage_collection.attributes.message|replace('bin','') }}"
+      value_template: "{{ states.calendar.east_renfrewshire_council.attributes.message }}"
       friendly_name: Next Bin
-      # friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
-      # entity_id: calendar.next_bin
       unique_id: calendar.next_bin
 
     kyle_status:
@@ -53,40 +21,6 @@
       friendly_name: 'Charlotte'
       # entity_id: input_select.charlotte_status_dropdown
       unique_id: input_select.charlotte_status_dropdown
-
-    stove_sensor:
-      friendly_name: Hwam Stove
-      icon_template: >
-        {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
-        {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
-        {%- if phase == 'Burn' %}
-          mdi:fire
-        {%- elif phase == 'Standby' %}
-          mdi:power
-        {%- elif phase == 'Ignition' %}
-          mdi:circle-outline
-        {%- elif refuel == 'on' %}
-          mdi:autorenew
-        {%- else -%}
-          mdi:blur
-        {%- endif %}
-      value_template: >
-        {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
-        {%- set temp = states.sensor.hwam_smart_stove_temperature .state %}
-        {%- set timer = states.sensor.hwam_smart_stove_time_to_new_firewood.state %}
-        {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
-        {%- if phase == 'Burn' %}
-          {{ temp }} °C
-        {%- elif phase == 'Standby' %}
-          Standby
-        {%- elif phase == 'Ignition' %}
-          Start
-        {%- elif refuel == 'on' %}
-          Refuel now!
-        {%- else -%}
-          Refuel in
-          {{ timer }}
-        {%- endif %}
 
 - platform: integration
   source: sensor.elec2_cm119_160_db_92_instantaneous_power
