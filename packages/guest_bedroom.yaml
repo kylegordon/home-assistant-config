@@ -16,6 +16,6 @@ automation:
       - service: light.toggle
         entity_id: light.guest_bedroom
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling guest room light"

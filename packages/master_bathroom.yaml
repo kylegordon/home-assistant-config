@@ -1,17 +1,16 @@
 ---
-binary_sensor:
-  - platform: template
-    sensors:
-      bathroom_window:
-        friendly_name: Bathroom Window
+template:
+  - binary_sensor:
+      - name: Bathroom Window
+        unique_id: bathroom_window
         device_class: window
-        icon_template: >-
+        icon: >-
           {% if is_state('binary_sensor.bathroom_window','on') %}
             mdi:window-open
           {% else %}
             mdi:window-closed
           {% endif %}
-        value_template: "{{ is_state('binary_sensor.bathroom_window_contact','on') or is_state('binary_sensor.bathroom_window_vibration','on') }}"
+        state: "{{ is_state('binary_sensor.bathroom_window_contact','on') or is_state('binary_sensor.bathroom_window_vibration','on') }}"
 
 light:
   - platform: group
@@ -36,9 +35,9 @@ automation:
         entity_id:
           - switch.hall_dual_switch_relay_2
       - service: light.toggle
-        data_template:
+        data:
           entity_id: light.master_bathroom
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling bathroom light"

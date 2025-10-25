@@ -25,7 +25,7 @@ automation:
       - service: light.toggle
         entity_id: light.boot_room
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling boot room light"
           entity_id: light.boot_room
@@ -55,13 +55,13 @@ automation:
         state: "on"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights on"
           entity_id: light.boot_room
           domain: light
       - service: light.turn_on
-        data_template:
+        data:
           entity_id: light.boot_room
 
   - alias: Boot Room motion - sunlight timeout
@@ -74,7 +74,7 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights off"
           entity_id: light.boot_room
@@ -105,13 +105,13 @@ automation:
         below: 1000
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights to night mode"
           entity_id: light.boot_room
           domain: light
       - service: light.turn_on
-        data_template:
+        data:
           entity_id: light.boot_room
           brightness_pct: 30
           transition: 10
@@ -131,7 +131,7 @@ automation:
         state: "Night"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights off"
           entity_id: light.boot_room
@@ -152,7 +152,7 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights off"
           entity_id: light.boot_room

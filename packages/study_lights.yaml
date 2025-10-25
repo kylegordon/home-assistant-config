@@ -20,7 +20,7 @@ automation:
       - service: light.toggle
         entity_id: light.study_lights
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling study light"
       - delay: "00:00:05"
@@ -48,7 +48,7 @@ automation:
       - service: light.toggle
         entity_id: light.study_bead_lights_usb_switch_relay_3
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling decorative study lights"
       - delay: "00:00:05"

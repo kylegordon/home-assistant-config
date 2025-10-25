@@ -19,7 +19,7 @@ automation:
       - service: light.toggle
         entity_id: light.master_bedroom
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling master bedroom light"
       - delay: "00:00:05"
@@ -45,7 +45,7 @@ automation:
       - service: light.toggle
         entity_id: light.ensuite
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Double master bedroom light"
 
@@ -76,7 +76,7 @@ automation:
       - service: light.toggle
         entity_id: light.bedside_lights
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling bedside lights"
 

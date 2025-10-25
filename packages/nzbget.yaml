@@ -9,11 +9,11 @@ automation:
         category: tv
     action:
       - service: notify.email_kyle
-        data_template:
+        data:
           title: "Download completed!"
           message: "{{trigger.event.data.name}}"
       - service: system_log.write
-        data_template:
+        data:
           message: "{{trigger.event.data.name}}"
           level: info
 
@@ -29,7 +29,7 @@ automation:
       value_template: '{% if trigger.event.data.name | regex_search("star.trek", ignorecase=True) %}True{% endif %}'  # yamllint disable-line rule:line-length
     action:
       service: notify.email_kyle
-      data_template:
+      data:
         title: "Star Trek download completed!"
         message: "{{ trigger.event.data.name }} has finished downloading"
 
@@ -45,7 +45,7 @@ automation:
       value_template: '{% if trigger.event.data.name | regex_search("westworld", ignorecase=True) %}True{% endif %}'  # yamllint disable-line rule:line-length
     action:
       - service: notify.email_kyle
-        data_template:
+        data:
           title: "Westworld download completed!"
           message: "{{ trigger.event.data.name }} has finished downloading"
       - service: notify.alexa_media

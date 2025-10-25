@@ -78,6 +78,6 @@ automation:
             {% endif %}
     action:
       - service: notify.email_kyle
-        data_template:
+        data:
           message: '{{trigger.to_state.attributes.friendly_name}} has gone offline. Please check the status of this device as some features may stop functioning.'
           title: Device Alert

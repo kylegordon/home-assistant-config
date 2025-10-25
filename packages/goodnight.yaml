@@ -20,7 +20,7 @@ automation:
         to: 'on'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Triggering goodnight mode"
           entity_id: input_boolean.goodnight_process
@@ -66,7 +66,7 @@ automation:
         at: '04:00:00'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Resetting goodnight mode"
           entity_id: input_boolean.goodnight_process

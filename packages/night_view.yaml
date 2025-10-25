@@ -16,7 +16,7 @@ automation:
         state: 'on'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Resetting night view mode"
       - service: input_boolean.turn_off
@@ -31,7 +31,7 @@ automation:
         to: 'on'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Enabling night view mode"
       - service: automation.trigger
@@ -44,7 +44,7 @@ automation:
           rgb_color: [255, 0, 0]
           transition: 5
       - service: notify.alexa_media
-        data_template:
+        data:
           target: '{{ states.sensor.last_alexa.state }}'
           data:
             type: announce

@@ -151,7 +151,7 @@ automation:
         to: "Defrost"
     action:
       - service: notify.alexa_media
-        data_template:
+        data:
           target:
             - media_player.kitchen
           data:

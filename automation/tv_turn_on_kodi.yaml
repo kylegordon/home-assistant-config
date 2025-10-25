@@ -7,7 +7,7 @@ trigger:
     to: 'on'
 action:
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: "Turning on Hi-Fi system"
   - service: media_player.select_source
