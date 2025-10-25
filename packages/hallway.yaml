@@ -35,7 +35,7 @@ automation:
       - service: switch.turn_on
         target:
           entity_id:
-            - switch.hall_single_switch_relay
+            - switch.hall_single_switch_relay_1
             - switch.hall_dual_switch_relay_1
       - service: light.toggle
         target:
