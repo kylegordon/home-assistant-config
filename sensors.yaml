@@ -1,24 +1,4 @@
 ---
-template:
-  - sensor:
-      - name: Last Alexa
-        unique_id: last_alexa
-        state: >
-          {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
-
-      - name: Next Bin
-        unique_id: next_bin
-        state: "{{ states.calendar.east_renfrewshire_council.attributes.message }}"
-
-      - name: Kyle
-        unique_id: kyle_status
-        state: '{{ states.input_select.kyle_status_dropdown.state }}'
-
-      - name: Charlotte
-        unique_id: charlotte_status
-        state: '{{ states.input_select.charlotte_status_dropdown.state }}'
-
-sensor:
 
 - platform: integration
   source: sensor.elec2_cm119_160_db_92_instantaneous_power
