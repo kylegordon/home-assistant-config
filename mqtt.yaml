@@ -89,6 +89,8 @@ climate:
     min_temp: 20
     precision: 0.5
     temp_step: 1
+    # Vaillant modes observed in HwcOpMode: "Time controlled"=auto, "Manual"=day, "Off"=off
+    # Cylinder boost does not result in any change to HwcOpMode
     modes:
       - auto
       - heat
@@ -118,6 +120,7 @@ climate:
     # has the value 020103002200 instead of 020003001400, or 2200 instead of 1400
   - name: Heating (eBUS)
     unique_id: ebus_heating
+    # Vaillant modes observed in z1OpMode: "Heat/Cool"=day, "Off"=off
     modes:
       - 'off'
       - 'auto'
