@@ -81,7 +81,7 @@ camera:
     topic: octoPrint/camera
 
 climate:
-    - name: EBUS Hot Water
+    - name: Hot Water (eBUS)
       max_temp: 100
       min_temp: 20
       precision: 0.5
@@ -106,6 +106,9 @@ climate:
       # temperature_high_command_template: "{{ value_json }}"
       current_temperature_topic: "ebusd/700/HWCwatertempcorrected"
 
+      # The following climate entity requires that within the ebus service config
+      # ebusd-2.1.x/en/vaillant/15.700.csv be modified such that Z1ActualRoomTempDesired
+      # has the value 020103002200 instead of 020003001400, or 2200 instead of 1400
     - name: Heating (eBUS)
       unique_id: ebus_heating
       modes:
