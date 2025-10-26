@@ -101,13 +101,14 @@ climate:
       {% set values = { 'auto':'auto', 'heat':'day', 'off':'off'} %}
       {{ values[value] if value in values.keys() else 'auto' }}
     mode_command_topic: "ebusd/basv/HwcOpMode/set"
+    temperature_command_topic: "ebusd/basv/HwcTempDesired/set"
     temperature_state_topic: "ebusd/basv/HwcTempDesired"
     temperature_state_template: "{{ value_json.tempv.value }}"
     # temperature_low_state_topic: "ebusd/basv/z1NightTemp"
-    temperature_high_state_topic: "ebusd/basv/HwcTempDesired"
-    temperature_high_state_template: "{{ value_json.tempv.value }}"
+    # temperature_high_state_topic: "ebusd/basv/HwcTempDesired"
+    # temperature_high_state_template: "{{ value_json.tempv.value }}"
     # temperature_low_command_topic: "ebusd/basv/z1NightTemp/set"
-    temperature_high_command_topic: "ebusd/basv/HwcTempDesired/set"
+    # temperature_high_command_topic: "ebusd/basv/HwcTempDesired/set"
     # temperature_high_command_template: "{{ value_json }}"
     current_temperature_topic: "ebusd/basv/HwcStorageTemp"
     current_temperature_template: "{{ value_json.tempv.value }}"
