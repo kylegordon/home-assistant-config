@@ -19,7 +19,7 @@ automation:
         value_template: "{{ trigger.event.data.altitude <= 10000 }}"
     action:
       - service: notify.email_kyle
-        data_template:
+        data:
           title: "Overflight event"
           message: 'Flight {{ trigger.event.data.callsign }} is passing nearby at {{ trigger.event.data.altitude }} meters.
 
@@ -34,14 +34,14 @@ automation:
       event_type: opensky_entry
     action:
       - service: notify.email_kyle
-        data_template:
+        data:
           title: "{{ trigger.event.data.callsign }} Overflight - Uplawmoor"
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
 
       - service: notify.mastodon_overuplawmoor
-        data_template:
+        data:
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'

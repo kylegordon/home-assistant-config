@@ -1,10 +1,9 @@
 ---
-sensor:
-  - platform: template
-    sensors:
-      stove_sensor:
-        friendly_name: Hwam Stove
-        icon_template: >
+template:
+  - sensor:
+      - name: Hwam Stove
+        unique_id: stove_sensor
+        icon: >
           {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
           {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
           {%- if phase == 'Burn' %}
@@ -18,7 +17,7 @@ sensor:
           {%- else -%}
             mdi:blur
           {%- endif %}
-        value_template: >
+        state: >
           {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
           {%- set temp = states.sensor.hwam_smart_stove_temperature.state %}
           {%- set timer = states.sensor.hwam_smart_stove_time_to_new_firewood.state %}
@@ -53,7 +52,7 @@ automation:
             state: "Night"
     action:
       - service: notify.alexa_media
-        data_template:
+        data:
           target:
             - media_player.living_room
           data:
@@ -66,7 +65,7 @@ automation:
           message: >
             The stove is running low on wood. Refuel now.
       - service: script.tweet_engine
-        data_template:
+        data:
           tweet: >
             {{ [
             "The stove is running low on fuel!",

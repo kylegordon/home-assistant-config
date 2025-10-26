@@ -1,26 +1,4 @@
 ---
-- platform: template
-  sensors:
-    last_alexa:
-      value_template: >
-        {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
-
-    next_bin:
-      value_template: "{{ states.calendar.east_renfrewshire_council.attributes.message }}"
-      friendly_name: Next Bin
-      unique_id: calendar.next_bin
-
-    kyle_status:
-      value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
-      friendly_name: 'Kyle'
-      # entity_id: input_select.kyle_status_dropdown
-      unique_id: input_select.kyle_status_dropdown
-
-    charlotte_status:
-      value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
-      friendly_name: 'Charlotte'
-      # entity_id: input_select.charlotte_status_dropdown
-      unique_id: input_select.charlotte_status_dropdown
 
 - platform: integration
   source: sensor.elec2_cm119_160_db_92_instantaneous_power
