@@ -81,6 +81,7 @@ camera:
     topic: octoPrint/camera
 
 # eBUS control info lifted from https://community.home-assistant.io/t/mqtt-climate-card-broken-for-temperature-changes-ebusd/656133
+# Need to monitor various modes and presets, populate accordingly
 climate:
   - name: Hot Water (eBUS)
     unique_id: ebus_hot_water
