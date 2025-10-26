@@ -28,12 +28,12 @@ condition:
     below: 500
 action:
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: "Time to waken up!"
   # Trigger the morning lighting sequence
   - service: script.tweet_engine
-    data_template:
+    data:
       tweet: >
         {{ [
         "This is way early.  We need some lights on. (http://amzn.to/2DFAd9w)",
