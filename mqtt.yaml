@@ -83,6 +83,7 @@ camera:
 # eBUS control info lifted from https://community.home-assistant.io/t/mqtt-climate-card-broken-for-temperature-changes-ebusd/656133
 climate:
   - name: Hot Water (eBUS)
+    unique_id: ebus_hot_water
     max_temp: 100
     min_temp: 20
     precision: 0.5
@@ -100,12 +101,15 @@ climate:
       {{ values[value] if value in values.keys() else 'auto' }}
     mode_command_topic: "ebusd/basv/HwcOpMode/set"
     temperature_state_topic: "ebusd/basv/HwcTempDesired"
+    temperature_state_template: "{{ value_json.tempv.value }}"
     # temperature_low_state_topic: "ebusd/basv/z1NightTemp"
     temperature_high_state_topic: "ebusd/basv/HwcTempDesired"
+    temperature_high_state_template: "{{ value_json.tempv.value }}"
     # temperature_low_command_topic: "ebusd/basv/z1NightTemp/set"
     temperature_high_command_topic: "ebusd/basv/HwcTempDesired/set"
     # temperature_high_command_template: "{{ value_json }}"
     current_temperature_topic: "ebusd/basv/HwcStorageTemp"
+    current_temperature_template: "{{ value_json.tempv.value }}"
 
     # The following climate entity requires that within the ebus service config
     # ebusd-2.1.x/en/vaillant/15.700.csv be modified such that Z1ActualRoomTempDesired
