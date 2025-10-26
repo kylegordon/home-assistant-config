@@ -79,3 +79,53 @@ camera:
     topic: frigate/driveway/car/snapshot
   - name: octoPrint camera
     topic: octoPrint/camera
+
+climate:
+    - name: EBUS Hot Water
+      max_temp: 100
+      min_temp: 20
+      precision: 0.5
+      temp_step: 1
+      modes:
+       - auto
+       - heat
+       - 'off'
+      mode_state_template: >-
+        {% set values = { 'auto':'auto',  'day':'heat', 'off':'off'} %}
+        {{ values[value] if value in values.keys() else 'off' }}
+      mode_state_topic:  "ebusd/700/HwcOpMode"
+      mode_command_template: >-
+        {% set values = { 'auto':'auto', 'heat':'day', 'off':'off'} %}
+        {{ values[value] if value in values.keys() else 'auto' }}
+      mode_command_topic: "ebusd/700/HwcOpMode/set"
+      temperature_state_topic: "ebusd/700/HwcTempDesired"
+      # temperature_low_state_topic: "ebusd/700/z1NightTemp"
+      temperature_high_state_topic: "ebusd/700/HwcTempDesired"
+      # temperature_low_command_topic: "ebusd/700/z1NightTemp/set"
+      temperature_high_command_topic: "ebusd/700/HwcTempDesired/set"
+      # temperature_high_command_template: "{{ value_json }}"
+      current_temperature_topic: "ebusd/700/HWCwatertempcorrected"
+
+    - name: Heating (eBUS)
+      unique_id: ebus_heating
+      modes:
+        - 'off'
+        - 'auto'
+      mode_state_template: >-
+        {% set values = { 'day':'auto', 'off':'off'} %}
+        {% set value = value_json.opmode.value %}
+        {{ values[value] if value in values.keys() else 'off' }}
+      mode_state_topic: "ebusd/basv/z1OpMode"
+      mode_command_template: >-
+        {% set values = { 'auto':'day', 'off':'off'} %}
+        {{ values[value] if value in values.keys() else 'auto' }}
+      mode_command_topic: "ebusd/basv/z1OpMode/set"
+      current_temperature_topic: "ebusd/basv/z1RoomTemp"
+      current_temperature_template: "{{ value_json.tempv.value }}"
+      temperature_command_topic: "ebusd/basv/z1ActualRoomTempDesired/set"
+      temperature_state_topic: "ebusd/basv/z1ActualRoomTempDesired"
+      temperature_state_template: "{{ value_json.tempv.value }}"
+      min_temp: 5
+      max_temp: 30
+      temp_step: 0.5
+      precision: 0.1
