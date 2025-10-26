@@ -80,6 +80,7 @@ camera:
   - name: octoPrint camera
     topic: octoPrint/camera
 
+# eBUS control info lifted from https://community.home-assistant.io/t/mqtt-climate-card-broken-for-temperature-changes-ebusd/656133
 climate:
   - name: Hot Water (eBUS)
     max_temp: 100
@@ -93,18 +94,18 @@ climate:
     mode_state_template: >-
       {% set values = { 'auto':'auto',  'day':'heat', 'off':'off'} %}
       {{ values[value] if value in values.keys() else 'off' }}
-    mode_state_topic: "ebusd/700/HwcOpMode"
+    mode_state_topic: "ebusd/basv/HwcOpMode"
     mode_command_template: >-
       {% set values = { 'auto':'auto', 'heat':'day', 'off':'off'} %}
       {{ values[value] if value in values.keys() else 'auto' }}
-    mode_command_topic: "ebusd/700/HwcOpMode/set"
-    temperature_state_topic: "ebusd/700/HwcTempDesired"
-    # temperature_low_state_topic: "ebusd/700/z1NightTemp"
-    temperature_high_state_topic: "ebusd/700/HwcTempDesired"
-    # temperature_low_command_topic: "ebusd/700/z1NightTemp/set"
-    temperature_high_command_topic: "ebusd/700/HwcTempDesired/set"
+    mode_command_topic: "ebusd/basv/HwcOpMode/set"
+    temperature_state_topic: "ebusd/basv/HwcTempDesired"
+    # temperature_low_state_topic: "ebusd/basv/z1NightTemp"
+    temperature_high_state_topic: "ebusd/basv/HwcTempDesired"
+    # temperature_low_command_topic: "ebusd/basv/z1NightTemp/set"
+    temperature_high_command_topic: "ebusd/basv/HwcTempDesired/set"
     # temperature_high_command_template: "{{ value_json }}"
-    current_temperature_topic: "ebusd/700/HWCwatertempcorrected"
+    current_temperature_topic: "ebusd/basv/HwcStorageTemp"
 
     # The following climate entity requires that within the ebus service config
     # ebusd-2.1.x/en/vaillant/15.700.csv be modified such that Z1ActualRoomTempDesired
