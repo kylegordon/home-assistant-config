@@ -120,7 +120,7 @@ climate:
     # has the value 020103002200 instead of 020003001400, or 2200 instead of 1400
   - name: Heating (eBUS)
     unique_id: ebus_heating
-    # Vaillant modes observed in z1OpMode: "Heat/Cool"=day, "Off"=off
+    # Vaillant modes observed in z1OpMode: "Auto"=auto, "Heat/Cool"=day, "Off"=off
     modes:
       - 'off'
       - 'auto'
