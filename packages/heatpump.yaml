@@ -103,3 +103,8 @@ mqtt:
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['DisplaySystemPressure']['value'] }}"
       unit_of_measurement: "bar"
+
+    - name: "Heat Pump HMU RunDataHighPressure"
+      state_topic: "ebusd/hmu/RunDataHighPressure"
+      value_template: "{{ value_json['pressv']['value'] }}"
+      unit_of_measurement: "bar"
