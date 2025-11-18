@@ -103,4 +103,3 @@ mqtt:
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['DisplaySystemPressure']['value'] }}"
       unit_of_measurement: "bar"
-
