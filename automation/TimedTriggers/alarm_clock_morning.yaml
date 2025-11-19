@@ -32,13 +32,6 @@ action:
       name: EVENT
       message: "Time to waken up!"
   # Trigger the morning lighting sequence
-  - service: script.tweet_engine
-    data:
-      tweet: >
-        {{ [
-        "This is way early.  We need some lights on. (http://amzn.to/2DFAd9w)",
-        "Time to wake up the house with some gentle lighting. (http://amzn.to/2Bsko4x)"
-        ] | random + " #Hue #Lifx"}}
   - service: light.turn_on
     entity_id: light.master_bedroom, light.bedside_charlotte, light.bedside_kyle
     data:

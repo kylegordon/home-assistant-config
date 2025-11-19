@@ -26,15 +26,3 @@ action:
       name: EVENT
       message: >
         {{ trigger.to_state.attributes.friendly_name }} has just arrived at the house.
-
-  - service: script.tweet_engine
-    data:
-      tweet: >
-        {{ [
-        "Yay! Company!",
-        "A resident has just arrived!"
-         ] | random + " http://amzn.to/2D3J8jW" }}
-
-  - service: notify.mastodon_viewpoint
-    data:
-      message: "A resident has just arrived!"
