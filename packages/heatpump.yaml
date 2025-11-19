@@ -8,6 +8,7 @@
 mqtt:
   sensor:
     - name: "Heat Pump Flow Rate"
+      unique_id: "heatpump_flow_rate"
       state_topic: "ebusd/hmu/WaterThroughput"
       value_template: "{{ value_json['0']['value'] }}"
 
@@ -25,28 +26,34 @@ mqtt:
     ###
 
     - name: "Heat Pump Defrost"
+      unique_id: "heatpump_defrost"
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['Defrost']['value'] }}"
 
     - name: "Heat Pump Heating State"
+      unique_id: "heatpump_heating_state"
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['HeatingState']['value'] }}"
 
     - name: "S00_SupplyTemp"
+      unique_id: "heatpump_s00_supply_temp"
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['S00_SupplyTemp']['value'] }}"
       unit_of_measurement: "°C"
 
     - name: "S00_CompressorModulation"
+      unique_id: "heatpump_s00_compressor_modulation"
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['S00_CompressorModulation']['value'] }}"
       unit_of_measurement: "%"
 
     - name: "S00_CompressorPower"
+      unique_id: "heatpump_s00_compressor_power"
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['S00_CompressorPower']['value'] }}"
 
     - name: "S00_CompressorState"
+      unique_id: "heatpump_s00_compressor_state"
       state_topic: "ebusd/hmu/State00"
       value_template: "{{ value_json['CompressorState']['value'] }}"
 
@@ -62,11 +69,13 @@ mqtt:
     #     "5": {"name": "pumpstate", "value": "off"}}
 
     - name: "Heat Pump Flow Temperature"
+      unique_id: "heatpump_flow_temperature"
       state_topic: "ebusd/hmu/State01"
       unit_of_measurement: "°C"
       value_template: "{{ value_json['0']['value'] }}"
 
     - name: "Heat Pump Return Temperature"
+      unique_id: "heatpump_return_temperature"
       unit_of_measurement: "°C"
       state_topic: "ebusd/hmu/State01"
       value_template: "{{ value_json['1']['value'] }}"
@@ -84,27 +93,33 @@ mqtt:
 
     # This is a %age of capacity
     - name: "Heat Pump Energy Usage Level"
+      unique_id: "heatpump_energy_usage_level"
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['0']['value'] }}"
 
     - name: "Heat Pump Daily Energy"
+      unique_id: "heatpump_daily_energy"
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['1']['value'] }}"
 
     - name: "Heat Pump Mode"
+      unique_id: "heatpump_mode"
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['2']['value'] }}"
 
     - name: "Heat Pump Task"
+      unique_id: "heatpump_task"
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['3']['value'] }}"
 
     - name: "Heat Pump System Pressure"
+      unique_id: "heatpump_system_pressure"
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['DisplaySystemPressure']['value'] }}"
       unit_of_measurement: "bar"
 
     - name: "Heat Pump HMU RunDataHighPressure"
+      unique_id: "heatpump_hmu_rundatahighpressure"
       state_topic: "ebusd/hmu/RunDataHighPressure"
       value_template: "{{ value_json['pressv']['value'] }}"
       unit_of_measurement: "bar"
