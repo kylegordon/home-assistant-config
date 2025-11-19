@@ -19,6 +19,8 @@ logger:
 
 web_server:
 
+psram:
+
 # AI-Thinker template from ESPHome docs
 esp32_camera:
   external_clock:
