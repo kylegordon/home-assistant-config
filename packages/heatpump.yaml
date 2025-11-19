@@ -123,3 +123,8 @@ mqtt:
       state_topic: "ebusd/hmu/RunDataHighPressure"
       value_template: "{{ value_json['pressv']['value'] }}"
       unit_of_measurement: "bar"
+
+    - name: "Heat Pump Error Code"
+      unique_id: "heatpump_error_code"
+      state_topic: "ebusd/hmu/currenterror"
+      value_template: "{{ value_json['error']['value'] }}"
