@@ -9,7 +9,9 @@ template:
           {%- if phase == 'Burn' %}
             mdi:fire
           {%- elif phase == 'Standby' %}
-            mdi:power
+            mdi:power-off
+          {%- elif phase == 'off' %}
+            mdi:power-off
           {%- elif phase == 'Ignition' %}
             mdi:circle-outline
           {%- elif refuel == 'on' %}
@@ -26,6 +28,8 @@ template:
           {%- if phase == 'Burn' %}
             {{ temp }} °C
           {%- elif phase == 'Standby' %}
+            Standby
+          {%- elif phase == 'off' %}
             Standby
           {%- elif phase == 'Ignition' %}
             Start
