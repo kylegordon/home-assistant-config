@@ -79,3 +79,66 @@ camera:
     topic: frigate/driveway/car/snapshot
   - name: octoPrint camera
     topic: octoPrint/camera
+
+# eBUS control info lifted from https://community.home-assistant.io/t/mqtt-climate-card-broken-for-temperature-changes-ebusd/656133
+# Need to monitor various modes and presets, populate accordingly
+climate:
+  - name: Hot Water (eBUS)
+    unique_id: ebus_hot_water
+    max_temp: 100
+    min_temp: 20
+    precision: 0.5
+    temp_step: 1
+    # Vaillant modes observed in HwcOpMode: "Time controlled"=auto, "Manual"=day, "Off"=off
+    # Cylinder boost does not result in any change to HwcOpMode
+    modes:
+      - auto
+      - heat
+      - 'off'
+    mode_state_template: >-
+      {% set values = { 'auto':'auto',  'day':'heat', 'off':'off'} %}
+      {{ values[value] if value in values.keys() else 'off' }}
+    mode_state_topic: "ebusd/basv/HwcOpMode"
+    mode_command_template: >-
+      {% set values = { 'auto':'auto', 'heat':'day', 'off':'off'} %}
+      {{ values[value] if value in values.keys() else 'auto' }}
+    mode_command_topic: "ebusd/basv/HwcOpMode/set"
+    temperature_command_topic: "ebusd/basv/HwcTempDesired/set"
+    temperature_state_topic: "ebusd/basv/HwcTempDesired"
+    temperature_state_template: "{{ value_json.tempv.value }}"
+    # temperature_low_state_topic: "ebusd/basv/z1NightTemp"
+    # temperature_high_state_topic: "ebusd/basv/HwcTempDesired"
+    # temperature_high_state_template: "{{ value_json.tempv.value }}"
+    # temperature_low_command_topic: "ebusd/basv/z1NightTemp/set"
+    # temperature_high_command_topic: "ebusd/basv/HwcTempDesired/set"
+    # temperature_high_command_template: "{{ value_json }}"
+    current_temperature_topic: "ebusd/basv/HwcStorageTemp"
+    current_temperature_template: "{{ value_json.tempv.value }}"
+
+    # The following climate entity requires that within the ebus service config
+    # ebusd-2.1.x/en/vaillant/15.700.csv be modified such that Z1ActualRoomTempDesired
+    # has the value 020103002200 instead of 020003001400, or 2200 instead of 1400
+  - name: Heating (eBUS)
+    unique_id: ebus_heating
+    # Vaillant modes observed in z1OpMode: "Auto"=auto, "Heat/Cool"=day, "Off"=off
+    modes:
+      - 'off'
+      - 'auto'
+    mode_state_template: >-
+      {% set values = { 'day':'auto', 'off':'off'} %}
+      {% set value = value_json.opmode.value %}
+      {{ values[value] if value in values.keys() else 'off' }}
+    mode_state_topic: "ebusd/basv/z1OpMode"
+    mode_command_template: >-
+      {% set values = { 'auto':'day', 'off':'off'} %}
+      {{ values[value] if value in values.keys() else 'auto' }}
+    mode_command_topic: "ebusd/basv/z1OpMode/set"
+    current_temperature_topic: "ebusd/basv/z1RoomTemp"
+    current_temperature_template: "{{ value_json.tempv.value }}"
+    temperature_command_topic: "ebusd/basv/z1ActualRoomTempDesired/set"
+    temperature_state_topic: "ebusd/basv/z1ActualRoomTempDesired"
+    temperature_state_template: "{{ value_json.tempv.value }}"
+    min_temp: 5
+    max_temp: 30
+    temp_step: 0.5
+    precision: 0.1
