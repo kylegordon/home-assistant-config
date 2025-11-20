@@ -23,11 +23,11 @@ template:
           {%- set timer = states.sensor.hwam_smart_stove_time_to_new_firewood.state %}
           {%- set refill_timer = (timer | int(0) // 60) ~ ' min' %}
           {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
-          {%- if phase == 'burn' %}
+          {%- if phase == 'Burn' %}
             {{ temp }} °C
-          {%- elif phase == 'standby' %}
+          {%- elif phase == 'Standby' %}
             Standby
-          {%- elif phase == 'ignition' %}
+          {%- elif phase == 'Ignition' %}
             Start
           {%- elif refuel == 'on' %}
             Refuel now!
