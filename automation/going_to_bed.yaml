@@ -17,7 +17,7 @@ condition:
 
 action:
 - service: logbook.log
-  data_template:
+  data:
     name: EVENT
     message: "Going to bed triggered."
 

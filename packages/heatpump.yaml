@@ -98,3 +98,12 @@ mqtt:
     - name: "Heat Pump Task"
       state_topic: "ebusd/hmu/State07"
       value_template: "{{ value_json['3']['value'] }}"
+
+    - name: "Heat Pump System Pressure"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['DisplaySystemPressure']['value'] }}"
+      unit_of_measurement: "bar"
+
+    - name: "Heat Pump Error Code"
+      state_topic: "ebusd/hmu/currenterror"
+      value_template: "{{ value_json['error']['value'] }}"

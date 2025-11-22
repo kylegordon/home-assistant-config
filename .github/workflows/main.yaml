@@ -92,3 +92,24 @@ jobs:
         uses: "docker://homeassistant/home-assistant:rc"
         with:
           args: python -m homeassistant --config ./ --script check_config --info all
+  home_assistant_dev:
+    runs-on: ubuntu-latest
+    needs: [yamllint, remarklint]
+    steps:
+      - name: Getting your configuration from GitHub
+        uses: actions/checkout@v5
+      - name: Copy stub files into configuration folder
+        run: |
+          cp -R travis_secrets.yaml secrets.yaml
+          sudo mkdir -p /github/workspace/tmp
+          sudo touch fullchain.pem
+          sudo touch privkey.pem
+      - name: Home Assistant Version
+        uses: "docker://homeassistant/home-assistant:dev"
+        with:
+          args: |
+            python -m homeassistant --version
+      - name: Home Assistant Check
+        uses: "docker://homeassistant/home-assistant:dev"
+        with:
+          args: python -m homeassistant --config ./ --script check_config --info all
