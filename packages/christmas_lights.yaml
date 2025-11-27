@@ -13,13 +13,12 @@ group:
       - light.christmas_star
       - switch.small_christmas_star
 
-binary_sensor:
-  - platform: template
-    sensors:
-      christmastime:
-        friendly_name: Christmas Time
+template:
+  - binary_sensor:
+      - name: Christmas Time
+        unique_id: christmastime
         # Use %j to get the day of the year, force from string to integer, and return true if after December 1st or before January 6th
-        value_template: >
+        state: >
             {% if now().strftime("%j") | int >= 336 or now().strftime("%j") | int <= 6 %}
             true
             {% else %}
@@ -42,18 +41,6 @@ automation:
     action:
       - service: homeassistant.turn_on
         entity_id: light.outside_decorations
-      - service: script.tweet_engine_image
-        data_template:
-          tweet: >
-            {{ [
-            "It's getting dark and it's near Christmas! Time to turn on the outside decorations!",
-            "That christmas feeling! Turning on the outside Christmas decorations!",
-            ] | random + " #christmas #homeautomation https://amzn.to/2KU3Z2d"}}
-          image: >-
-            {{ [
-            "/config/www/custom_ui/images/xmas/bauble.jpg",
-            "/config/www/custom_ui/images/xmas/lights-house.jpg"
-            ] | random }}
 
   - alias: Outside decorations - on morning
     id: outside_decorations_on_morning
@@ -67,18 +54,6 @@ automation:
     action:
       - service: homeassistant.turn_on
         entity_id: light.outside_decorations
-      - service: script.tweet_engine_image
-        data_template:
-          tweet: >
-            {{ [
-            "It's a dark morning and near Christmas! Time to turn on the outside decorations!",
-            "That christmas feeling! Turning on the outside Christmas decorations!",
-            ] | random + " #christmas #homeautomation https://amzn.to/2KU3Z2d"}}
-          image: >-
-            {{ [
-            "/config/www/custom_ui/images/xmas/bauble.jpg",
-            "/config/www/custom_ui/images/xmas/lights-house.jpg"
-            ] | random }}
 
   - alias: Outside decorations - off
     id: outside_decorations_off

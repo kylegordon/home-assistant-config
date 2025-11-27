@@ -16,7 +16,7 @@ condition:
     value_template: "{% if states('sensor.kyle_status') != 'sleeping' and states('sensor.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
 action:
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: "Home late..."
   - service: notify.email_kyle

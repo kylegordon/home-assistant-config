@@ -1,17 +1,16 @@
 ---
-binary_sensor:
-  - platform: template
-    sensors:
-      ensuite_window:
-        friendly_name: Ensuite Window
+template:
+  - binary_sensor:
+      - name: Ensuite Window
+        unique_id: ensuite_window
         device_class: window
-        icon_template: >-
+        icon: >-
           {% if is_state('binary_sensor.ensuite_window','on') %}
             mdi:window-open
           {% else %}
             mdi:window-closed
           {% endif %}
-        value_template: "{{ is_state('binary_sensor.ensuite_window_opening_contact','on') or is_state('binary_sensor.ensuite_window_vibration','on') }}"
+        state: "{{ is_state('binary_sensor.ensuite_window_opening_contact','on') or is_state('binary_sensor.ensuite_window_vibration','on') }}"
 
 automation:
   - alias: Ensuite light toggle
@@ -28,7 +27,7 @@ automation:
         entity_id:
           - switch.ensuite_switch_relay
       - service: light.toggle
-        data_template:
+        data:
           entity_id: >
             {% if states('sensor.time_of_day') == "Morning" %}
             light.ensuite_facilities
@@ -38,7 +37,7 @@ automation:
             light.ensuite
             {% endif %}
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling ensuite light"
 
@@ -50,7 +49,7 @@ automation:
         to: 'on'
     action:
       - service: light.turn_on
-        data_template:
+        data:
           entity_id: >
             {% if states('sensor.time_of_day') == "Morning" %}
             light.ensuite_facilities

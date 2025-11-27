@@ -40,7 +40,7 @@ automation:
       - service: light.toggle
         entity_id: light.kitchen_ceiling_lights
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling kitchen ceiling light"
       - delay: "00:00:05"
@@ -71,7 +71,7 @@ automation:
       - service: light.toggle
         entity_id: light.kitchen_worktop_lights
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling kitchen worktop lights"
       - delay: "00:00:05"
@@ -89,7 +89,7 @@ automation:
         to: 'on'
         from: 'off'
       - platform: state
-        entity_id: binary_sensor.presence_lite_kitchen_occupancy
+        entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
         to: 'on'
         from: 'off'
     condition:
@@ -100,7 +100,7 @@ automation:
         #   minutes: 10
     action:
       - service: homeassistant.turn_on
-        data_template:
+        data:
           entity_id:
             - light.kitchen_lights_group
 
@@ -113,7 +113,7 @@ automation:
         for:
           minutes: 10
       - platform: state
-        entity_id: binary_sensor.presence_lite_kitchen_occupancy
+        entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
         to: 'off'
         for:
           minutes: 10
@@ -126,7 +126,7 @@ automation:
     id: kitchen_cabinet_lights_presence_on
     trigger:
       - platform: state
-        entity_id: binary_sensor.presence_lite_kitchen_occupancy
+        entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
         to: 'on'
         from: 'off'
     action:
@@ -140,7 +140,7 @@ automation:
     id: kitchen_cabinet_lights_presence_off
     trigger:
       - platform: state
-        entity_id: binary_sensor.presence_lite_kitchen_occupancy
+        entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
         to: 'off'
         for:
           minutes: 10

@@ -1,10 +1,9 @@
 ---
-sensor:
-  - platform: template
-    sensors:
-      battery_status:
-        friendly_name: "Battery status"
-        value_template: >
+template:
+  - sensor:
+      - name: "Battery status"
+        unique_id: battery_status
+        state: >
           {%- set power_draw = states('sensor.battery_power') | int(0) %}
           {%- if power_draw < 0 %}
             Charging
@@ -15,7 +14,7 @@ sensor:
           {%- else -%}
             Indeterminate
           {%- endif %}
-        icon_template: >-
+        icon: >-
           {%- set power_draw = states('sensor.battery_power') | int(0) %}
           {%- if power_draw < 0 %}
             mdi:battery-charging
@@ -25,20 +24,19 @@ sensor:
             mdi:battery
           {%- endif %}
 
-      grid_all:
-        friendly_name: "Grid Usage"
-        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+      - name: "Grid Usage"
+        unique_id: grid_all
+        state: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
         unit_of_measurement: 'W'
 
-      pv_all:
-        friendly_name: "PV Usage"
-        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+      - name: "PV Usage"
+        unique_id: pv_all
+        state: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
         unit_of_measurement: 'W'
 
-      ashp_heating_cop:
+      - name: "ASHP Heating COP"
         unique_id: ashp_heating_cop
-        friendly_name: "ASHP Heating COP"
-        value_template: >
+        state: >
           {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') | int %}
           {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
           {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
@@ -49,10 +47,9 @@ sensor:
             {{ heat_generated / consumed_electricity }}
           {%- endif %}
 
-      ashp_hot_water_cop:
+      - name: "ASHP Hot Water COP"
         unique_id: ashp_hot_water_cop
-        friendly_name: "ASHP Hot Water COP"
-        value_template: >
+        state: >
           {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int %}
           {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
           {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
@@ -64,6 +61,8 @@ sensor:
           {%- endif %}
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
+
+sensor:
 
   - platform: integration
     source: sensor.grid_all
