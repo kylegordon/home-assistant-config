@@ -142,8 +142,8 @@ switch:
 
 script:
   - id: display_timeout
+    mode: restart
     then:
-      - script.stop: display_timeout
       - delay: 60s
       - switch.turn_off: display_on_off
 
