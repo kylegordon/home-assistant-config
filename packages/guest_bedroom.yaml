@@ -29,4 +29,4 @@ automation:
         target:
           entity_id: light.guestbedroom_switch_light_eu
         data:
-          transition: 1
+          transition: "1"
