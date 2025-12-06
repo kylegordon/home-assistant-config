@@ -11,6 +11,7 @@ input_number:
 automation:
   - alias: Hallway light toggle
     id: hallway_light_toggle
+    mode: parallel
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
@@ -19,10 +20,11 @@ automation:
           device_name: hall_single_switch
           action: click
       - platform: event
-        event_type: esphome.button_pressed
+        event_type: esphome.tx_ultimate_easy
         event_data:
-          device_name: hall_dual_switch_touchpad_2
-          click_type: single
+          device_name: hall_dual_switch
+          action: click
+          button_id: "2"
     action:
       # Turn on the rainbow effect for 5 seconds
       # to show the button press was registered
@@ -30,6 +32,7 @@ automation:
         target:
           entity_id:
             - light.hall_single_switch_light_eu
+            - light.hall_dual_switch_light_eu
         data:
           effect: "Rainbow - Fast"
       - service: switch.turn_on
@@ -50,6 +53,7 @@ automation:
         target:
           entity_id:
             - light.hall_single_switch_light_eu
+            - light.hall_dual_switch_light_eu
         data:
           transition: 1
 
