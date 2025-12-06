@@ -9,35 +9,57 @@ light:
 automation:
   - alias: Craft Room light toggle
     id: craft_room_light_toggle
+    mode: parallel
     trigger:
       - platform: event
-        event_type: esphome.button_pressed
+        event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: craftroom_switch
-          click_type: single
+          action: click
     action:
+      - service: light.turn_on
+        data:
+          entity_id: light.craftroom_switch_light_eu
+          effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id: switch.craft_room_switch_relay
+        entity_id: switch.craft_room_switch_relay_1
       - service: light.toggle
         entity_id: light.craft_room_lighting
       - service: logbook.log
         data:
           name: EVENT
           message: "Toggling craft room light"
+      - delay: "00:00:05"
+      - service: light.turn_off
+        target:
+          entity_id: light.craftroom_switch_light_eu
+        data:
+          transition: 1
 
   - alias: Craft room fairy lights toggle
     id: craft_room_fairy_lights_toggle
+    mode: parallel
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
-        event_type: esphome.button_pressed
+        event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: craftroom_switch
-          click_type: double
+          action: double_click
     action:
+      - service: light.turn_on
+        data:
+          entity_id: light.craftroom_switch_light_eu
+          effect: "Rainbow - Fast"
       - service: light.toggle
         entity_id: light.craft_room_fairy_lights
       - service: logbook.log
         data:
           name: EVENT
           message: "Toggling fairy light"
+      - delay: "00:00:05"
+      - service: light.turn_off
+        target:
+          entity_id: light.craftroom_switch_light_eu
+        data:
+          transition: 1
