@@ -34,7 +34,7 @@ automation:
         target:
           entity_id: light.craftroom_switch_light_eu
         data:
-          transition: "1"
+          transition: 1
 
   - alias: Craft room fairy lights toggle
     id: craft_room_fairy_lights_toggle
@@ -62,4 +62,4 @@ automation:
         target:
           entity_id: light.craftroom_switch_light_eu
         data:
-          transition: "1"
+          transition: 1

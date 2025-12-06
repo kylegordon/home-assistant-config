@@ -55,7 +55,7 @@ automation:
             - light.hall_single_switch_light_eu
             - light.hall_dual_switch_light_eu
         data:
-          transition: "1"
+          transition: 1
 
   - alias: Hallway light motion
     id: hallway_light_motion
