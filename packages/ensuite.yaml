@@ -30,7 +30,7 @@ automation:
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id:
-          - switch.ensuite_switch_relay
+          - switch.ensuite_switch_relay_1
       - service: light.toggle
         data:
           entity_id: >
