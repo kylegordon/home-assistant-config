@@ -17,7 +17,8 @@ automation:
           - binary_sensor.front_door_motion
           - binary_sensor.washing_machine_power_plug_status
           - binary_sensor.dishwasher_power_plug_status
-          - binary_sensor.shower_pump_power_plug_status
+          - binary_sensor.workbench_lights_power_plug_status
+          - binary_sensor.hot_tap_power_plug_status
           - binary_sensor.tv_power_plug_status
           - binary_sensor.craft_room_window
           - binary_sensor.ensuite_window_vibration
