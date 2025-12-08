@@ -1,6 +1,6 @@
 ---
 packages:
-  plug: !include common/teckin_sp23_common.yaml
+  plug: !include common/localbytes_plug_pm_common.yaml
   common: !include common/power_plug_common.yaml
 
 substitutions:
