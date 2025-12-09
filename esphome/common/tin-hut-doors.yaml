@@ -28,6 +28,11 @@ esphome:
   name: $device_name
   comment: $device_description
   friendly_name: $friendly_name
+  on_boot:
+    priority: -100
+    then:
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
 
 # Enable logging
 logger:
@@ -119,12 +124,15 @@ switch:
     id: relay_door
     name: "Relay Door"
     internal: false
+    on_turn_on:
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
   - platform: template
     name: "Display On/Off"
     id: display_on_off
     internal: false
     optimistic: true
-    restore_mode: ALWAYS_OFF
+    restore_mode: ALWAYS_ON
     turn_on_action:
       - lambda: |-
           id(oled).turn_on();
@@ -132,11 +140,18 @@ switch:
       - lambda: |-
           id(oled).turn_off();
 
+script:
+  - id: display_timeout
+    mode: restart
+    then:
+      - delay: 60s
+      - switch.turn_off: display_on_off
+
 binary_sensor:
   - platform: gpio
     id: door_open_sensor
     name: "Open Endstop Sensor"
-    internal: false
+    internal: true
     filters:
       - delayed_on: 1s
       - delayed_off: 1s
@@ -144,11 +159,23 @@ binary_sensor:
       number: $open_endstop_pin
       inverted: true
       mode: INPUT_PULLUP
+    on_state:
+      - if:
+          condition:
+            binary_sensor.is_on: door_open_sensor
+          then:
+            # Endstop activated - start timeout
+            - switch.turn_on: display_on_off
+            - script.execute: display_timeout
+          else:
+            # Endstop deactivated - turn on display
+            - switch.turn_on: display_on_off
+            - script.execute: display_timeout
 
   - platform: gpio
     id: door_closed_sensor
     name: "Closed Endstop Sensor"
-    internal: false
+    internal: true
     filters:
       - delayed_on: 1s
       - delayed_off: 1s
@@ -156,3 +183,15 @@ binary_sensor:
       number: $close_endstop_pin
       inverted: true
       mode: INPUT_PULLUP
+    on_state:
+      - if:
+          condition:
+            binary_sensor.is_on: door_closed_sensor
+          then:
+            # Endstop activated - start timeout
+            - switch.turn_on: display_on_off
+            - script.execute: display_timeout
+          else:
+            # Endstop deactivated - turn on display
+            - switch.turn_on: display_on_off
+            - script.execute: display_timeout
