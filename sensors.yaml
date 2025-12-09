@@ -1,21 +1,4 @@
 ---
-
-- platform: integration
-  source: sensor.elec2_cm119_160_db_92_instantaneous_power
-  name: energy_spent
-  unit_prefix: k
-  round: 2
-- platform: integration
-  source: sensor.tv_power_plug_power
-  name: energy_spent_tv
-  unit_prefix: k
-  round: 2
-- platform: integration
-  source: sensor.shower_power_plug_power
-  name: energy_spent_shower
-  unit_prefix: k
-  round: 2
-
 - platform: min_max
   name: Average External Light Level
   unique_id: average_external_light_level

@@ -48,7 +48,7 @@ automation:
       - service: homeassistant.turn_on
         entity_id:
           - switch.tin_hut_lights_relay
-          - switch.shower_pump_workbench_lighting
+          - switch.workbench_lighting
           - light.tin_hut_shelf_lights_bench
           - light.tin_hut_shelf_lights_left
           - light.tin_hut_shelf_lights_right
@@ -87,7 +87,7 @@ automation:
       - service: homeassistant.turn_off
         entity_id:
           - switch.tin_hut_lights_relay
-          - switch.shower_pump_workbench_lighting
+          - switch.workbench_lighting
           - light.tin_hut_shelf_lights_bench
           - light.tin_hut_shelf_lights_left
           - light.tin_hut_shelf_lights_right

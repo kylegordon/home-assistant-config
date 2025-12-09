@@ -4,8 +4,8 @@ packages:
   common: !include common/power_plug_common.yaml
 
 substitutions:
-  device_name: hot_tap
-  device_description: Hot Tap Power Plug
-  friendly_name: Hot Tap Power Plug
+  device_name: tin_hut_it
+  device_description: Tin Hut IT Power Plug
+  friendly_name: Tin Hut IT Power Plug
   default_state: "RESTORE_DEFAULT_ON"
   main_icon: power-socket-uk

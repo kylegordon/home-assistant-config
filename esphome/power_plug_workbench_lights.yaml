@@ -4,8 +4,8 @@ packages:
   common: !include common/power_plug_common.yaml
 
 substitutions:
-  device_name: tv
-  device_description: TV Power Plug
-  friendly_name: TV Power Plug
+  device_name: workbench_lights
+  device_description: Workbench Lights Power Plug
+  friendly_name: Workbench Lights Power Plug
   default_state: "RESTORE_DEFAULT_ON"
   main_icon: power-socket-uk
