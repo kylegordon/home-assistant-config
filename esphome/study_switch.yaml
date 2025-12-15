@@ -3,6 +3,8 @@ substitutions:
   name: "study_switch"
   friendly_name: "Study Switch"
   device_description: "Study Light Switch"
+  model: EU
+  gangs: 1
 
 packages:
   remote_package:
@@ -12,7 +14,8 @@ packages:
     files:
       - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml                  # Core (essential) packages
       - ESPHome/TX-Ultimate-Easy-ESPHome_standard.yaml              # Non-essential, but recommended packages. Includes hw_relays, hw_vibration, and media_player
-      # - ESPHome/TX-Ultimate-Easy-ESPHome_addon_ble_proxy.yaml     # Adds BLE proxy support - may induce some unreliability
+
+bluetooth_proxy:
 
 wifi:
   ssid: !secret wifi_ssid
