@@ -10,7 +10,7 @@ substitutions:
 packages:
   remote_package:
     url: https://github.com/edwardtfn/TX-Ultimate-Easy
-    ref: main  # Or you can specify a version, like `ref: v2024.12.6` or `ref: latest` to the latest non-stable
+    ref: v9999.99.9  # Or you can specify a version, like `ref: v2024.12.6` or `ref: latest` to the latest non-stable
     refresh: 5min
     files:
       - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml      # Core (essential) packages
