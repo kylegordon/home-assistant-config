@@ -26,7 +26,7 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.ensuite_switch_light_eu
+          entity_id: light.ensuite_switch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id:
@@ -48,7 +48,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.ensuite_switch_light_eu
+          entity_id: light.ensuite_switch_lights_all
         data:
           transition: 1
 

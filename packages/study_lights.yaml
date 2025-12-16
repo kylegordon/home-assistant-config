@@ -13,7 +13,7 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.study_switch_light_eu
+          entity_id: light.study_switch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id: switch.study_switch_relay_1
@@ -26,7 +26,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.study_switch_light_eu
+          entity_id: light.study_switch_lights_all
         data:
           transition: 1
 
@@ -43,7 +43,7 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.study_switch_light_eu
+          entity_id: light.study_switch_lights_all
           effect: "Rainbow - Fast"
       - service: light.toggle
         entity_id: light.study_bead_lights_usb_switch_relay_3
@@ -54,7 +54,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.study_switch_light_eu
+          entity_id: light.study_switch_lights_all
         data:
           transition: 1
 
