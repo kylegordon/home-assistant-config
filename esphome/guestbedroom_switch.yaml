@@ -5,16 +5,19 @@ substitutions:
   device_description: Guest Bedroom Lightswitch
   friendly_name: Guest Bedroom Switch
   default_state: "RESTORE_DEFAULT_ON"
+  model: EU
+  gangs: 1
 
 packages:
   remote_package:
     url: https://github.com/edwardtfn/TX-Ultimate-Easy
-    ref: main  # Or you can specify a version, like `ref: v2024.12.6` or `ref: latest` to the latest non-stable
+    ref: v9999.99.9  # Or you can specify a version, like `ref: v2024.12.6` or `ref: latest` to the latest non-stable
     refresh: 5min
     files:
       - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml                  # Core (essential) packages
       - ESPHome/TX-Ultimate-Easy-ESPHome_standard.yaml              # Non-essential, but recommended packages. Includes hw_relays, hw_vibration, and media_player
-      # - ESPHome/TX-Ultimate-Easy-ESPHome_addon_ble_proxy.yaml     # Adds BLE proxy support - may induce some unreliability
+
+bluetooth_proxy:
 
 wifi:
   ssid: !secret wifi_ssid
