@@ -48,7 +48,9 @@ automation:
           entity_id: light.study_switch_lights_all
           effect: "Rainbow - Fast"
       - service: light.toggle
-        entity_id: light.study_bead_lights_usb_switch_relay_3
+        entity_id:
+          - light.study_bead_lights_usb_switch_relay_3
+          - light.monitor_rgbww_lights
       - service: logbook.log
         data:
           name: EVENT
