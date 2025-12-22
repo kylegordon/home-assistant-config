@@ -3,8 +3,8 @@ substitutions:
   name: "hall_single_switch"
   friendly_name: "Hall Single Switch"
   device_description: "Hall Single Light Switch"
-  model: EU
-  gangs: 1
+  device_format: EU
+  gang_count: 1
 
 packages:
   remote_package:

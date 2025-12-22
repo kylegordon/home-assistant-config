@@ -3,8 +3,8 @@ substitutions:
   name: "study_switch"
   friendly_name: "Study Switch"
   device_description: "Study Light Switch"
-  model: EU
-  gangs: 1
+  device_format: EU
+  gang_count: 1
 
 packages:
   remote_package:
