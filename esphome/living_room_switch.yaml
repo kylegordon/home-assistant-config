@@ -3,8 +3,8 @@ substitutions:
   name: "living_room_switch"
   friendly_name: "Living Room Switch"
   device_description: "Living Room Light Switch"
-  model: EU
-  gangs: 3
+  device_format: EU
+  gang_count: 3
 
 packages:
   remote_package:

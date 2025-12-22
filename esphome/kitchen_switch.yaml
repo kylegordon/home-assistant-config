@@ -3,8 +3,8 @@ substitutions:
   name: "kitchen_switch"
   friendly_name: "Kitchen Switch"
   device_description: "Kitchen Light Switch"
-  model: EU
-  gangs: 2
+  device_format: EU
+  gang_count: 2
 
 packages:
   remote_package:
