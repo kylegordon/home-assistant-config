@@ -5,8 +5,8 @@ substitutions:
   device_description: Guest Bedroom Lightswitch
   friendly_name: Guest Bedroom Switch
   default_state: "RESTORE_DEFAULT_ON"
-  model: EU
-  gangs: 1
+  device_format: EU
+  gang_count: 1
 
 packages:
   remote_package:
