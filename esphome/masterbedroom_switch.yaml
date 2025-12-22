@@ -3,8 +3,8 @@ substitutions:
   name: "masterbedroom_switch"
   friendly_name: "Master Bedroom Lightswitch"
   device_description: "Master Bedroom Light Switch"
-  model: EU
-  gangs: 1
+  device_format: EU
+  gang_count: 1
 
 packages:
   remote_package:

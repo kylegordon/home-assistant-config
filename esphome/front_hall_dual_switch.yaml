@@ -4,8 +4,8 @@ substitutions:
   friendly_name: "Front Hall Dual Switch"
   device_description: "Front Hall Dual Light Switch"
   default_state: "RESTORE_DEFAULT_ON"
-  model: EU
-  gangs: 2
+  device_format: EU
+  gang_count: 2
 
 packages:
   remote_package:
