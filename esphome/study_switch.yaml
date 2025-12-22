@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "study_switch"
-  friendly_name: "Study Switch"
-  device_description: "Study Light Switch"
+  name: "study_lightswitch"
+  friendly_name: "Study Lightswitch"
+  device_description: "Study Lightswitch"
   device_format: EU
   gang_count: 1
 

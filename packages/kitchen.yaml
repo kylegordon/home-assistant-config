@@ -27,16 +27,16 @@ automation:
       - platform: event
         event_type: esphome.tx_ultimate_easy
         event_data:
-          device_name: kitchen_switch
+          device_name: kitchen_lightswitch
           action: click
           button_id: "1"
     action:
       - service: light.turn_on
         data:
-          entity_id: light.kitchen_switch_lights_all
+          entity_id: light.kitchen_lightswitch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id: switch.kitchen_switch_relay_1
+        entity_id: switch.kitchen_lightswitch_relay_1
       - service: light.toggle
         entity_id: light.kitchen_ceiling_lights
       - service: logbook.log
@@ -46,7 +46,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.kitchen_switch_lights_all
+          entity_id: light.kitchen_lightswitch_lights_all
         data:
           transition: 1
 
@@ -58,16 +58,16 @@ automation:
       - platform: event
         event_type: esphome.tx_ultimate_easy
         event_data:
-          device_name: kitchen_switch
+          device_name: kitchen_lightswitch
           action: click
           button_id: "2"
     action:
       - service: light.turn_on
         data:
-          entity_id: light.kitchen_switch_lights_all
+          entity_id: light.kitchen_lightswitch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id: switch.kitchen_switch_relay_2
+        entity_id: switch.kitchen_lightswitch_relay_2
       - service: light.toggle
         entity_id: light.kitchen_worktop_lights
       - service: logbook.log
@@ -77,7 +77,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.kitchen_switch_lights_all
+          entity_id: light.kitchen_lightswitch_lights_all
         data:
           transition: 1
 

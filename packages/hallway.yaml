@@ -17,12 +17,12 @@ automation:
       - platform: event
         event_type: esphome.tx_ultimate_easy
         event_data:
-          device_name: hall_single_switch
+          device_name: hall_single_lightswitch
           action: click
       - platform: event
         event_type: esphome.tx_ultimate_easy
         event_data:
-          device_name: hall_dual_switch
+          device_name: hall_dual_lightswitch
           action: click
           button_id: "2"
     action:
@@ -31,15 +31,15 @@ automation:
       - service: light.turn_on
         target:
           entity_id:
-            - light.hall_single_switch_lights_all
-            - light.hall_dual_switch_lights_all
+            - light.hall_single_lightswitch_lights_all
+            - light.hall_dual_lightswitch_lights_all
         data:
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         target:
           entity_id:
-            - switch.hall_single_switch_relay_1
-            - switch.hall_dual_switch_relay_1
+            - switch.hall_single_lightswitch_relay_1
+            - switch.hall_dual_lightswitch_relay_1
       - service: light.toggle
         target:
           entity_id:
@@ -52,8 +52,8 @@ automation:
       - service: light.turn_off
         target:
           entity_id:
-            - light.hall_single_switch_lights_all
-            - light.hall_dual_switch_lights_all
+            - light.hall_single_lightswitch_lights_all
+            - light.hall_dual_lightswitch_lights_all
         data:
           transition: 1
 

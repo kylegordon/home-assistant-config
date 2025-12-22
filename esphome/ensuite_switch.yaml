@@ -1,9 +1,9 @@
 ---
 substitutions:
-  name: "ensuite_switch"
-  device_name: ensuite_switch
+  name: "ensuite_lightswitch"
+  device_name: ensuite_lightswitch
   device_description: Ensuite Lightswitch
-  friendly_name: Ensuite Switch
+  friendly_name: Ensuite Lightswitch
   default_state: "RESTORE_DEFAULT_ON"
   device_format: EU
   gang_count: 1
