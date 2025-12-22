@@ -11,3 +11,5 @@ google_calendars.yaml
 custom_components/
 fullchain.pem
 privkey.pem
+.esphome/
+.vscode/

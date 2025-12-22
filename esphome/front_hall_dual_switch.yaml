@@ -1,12 +1,11 @@
 ---
 substitutions:
-  name: "guestbedroom_switch"
-  device_name: guestbedroom_switch
-  device_description: Guest Bedroom Lightswitch
-  friendly_name: Guest Bedroom Switch
+  name: "front_hall_dual_switch"
+  friendly_name: "Front Hall Dual Switch"
+  device_description: "Front Hall Dual Light Switch"
   default_state: "RESTORE_DEFAULT_ON"
   device_format: EU
-  gang_count: 1
+  gang_count: 2
 
 packages:
   remote_package:
@@ -14,8 +13,8 @@ packages:
     ref: v9999.99.9  # Or you can specify a version, like `ref: v2024.12.6` or `ref: latest` to the latest non-stable
     refresh: 5min
     files:
-      - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml                  # Core (essential) packages
-      - ESPHome/TX-Ultimate-Easy-ESPHome_standard.yaml              # Non-essential, but recommended packages. Includes hw_relays, hw_vibration, and media_player
+      - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml      # Core (essential) packages
+      - ESPHome/TX-Ultimate-Easy-ESPHome_standard.yaml  # Non-essential, but recommended packages. Includes hw_relays, hw_vibration, and media_player
 
 bluetooth_proxy:
 

@@ -23,7 +23,7 @@ trigger:
 condition:
 action:
   - service: input_select.select_option
-    data_template:
+    data:
       entity_id: >
         {% if trigger.entity_id == 'input_select.kyle_status_dropdown' %}
           input_select.kyle_status_dropdown
@@ -33,7 +33,7 @@ action:
       option: Home
 
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: >
         {% if trigger.entity_id == 'input_select.kyle_status_dropdown' %}

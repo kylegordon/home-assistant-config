@@ -42,23 +42,23 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.living_room_switch_light_eu
+          entity_id: light.living_room_switch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id:
           - switch.living_room_switch_relay_1
       - service: light.toggle
-        data_template:
+        data:
           entity_id:
             - light.living_room
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling living room lights"
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.living_room_switch_light_eu
+          entity_id: light.living_room_switch_lights_all
         data:
           transition: "1"
 
@@ -76,23 +76,23 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.living_room_switch_light_eu
+          entity_id: light.living_room_switch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id:
           - switch.living_room_switch_relay_2
       - service: light.toggle
-        data_template:
+        data:
           entity_id:
             - light.dining_nook
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling dining nook lights"
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.living_room_switch_light_eu
+          entity_id: light.living_room_switch_lights_all
         data:
           transition: 1
 
@@ -110,23 +110,23 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.living_room_switch_light_eu
+          entity_id: light.living_room_switch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id:
           - switch.living_room_switch_relay_3
       - service: light.toggle
-        data_template:
+        data:
           entity_id:
             - light.art
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling art lights"
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.living_room_switch_light_eu
+          entity_id: light.living_room_switch_lights_all
         data:
           transition: 1
 
@@ -186,7 +186,7 @@ automation:
               state: "off"
     action:
       - service: light.turn_on
-        data_template:
+        data:
           entity_id:
             - light.cosy_lights
             - light.george_usb_switch_relay_1
@@ -229,7 +229,7 @@ automation:
           state: "on"
     action:
       - service: light.turn_on
-        data_template:
+        data:
           entity_id:
             - light.dining_nook
             - light.cosy_lights

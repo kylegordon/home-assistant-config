@@ -20,7 +20,7 @@ trigger:
     to: 'Charlotte Work'
 action:
   - service: input_select.select_option
-    data_template:
+    data:
       entity_id: >
         {% if trigger.entity_id == 'person.kyle' %}
           input_select.kyle_status_dropdown
@@ -30,7 +30,7 @@ action:
       option: Just Left
 
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: >
         {{ trigger.to_state.attributes.friendly_name }} has just left the house.

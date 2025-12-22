@@ -1,14 +1,12 @@
 ---
 # light.outside_lights is a general purpose group defined in lights.yaml
 
-switch:
-  - platform: template
-    switches:
-      outside_rgb_white_channels:
-        friendly_name: Outside White Channels
+template:
+  - switch:
+      - name: Outside White Channels
         unique_id: outside_rgb_white_channels
-        icon_template: mdi:lightbulb-group
-        value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
+        icon: mdi:lightbulb-group
+        state: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
                             or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
                           true
                         {% else %}
@@ -142,14 +140,6 @@ automation:
         data:
           media_content_id: amzn_sfx_doorbell_chime_02
           media_content_type: sound
-      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            {{ [
-            "Dark outside and motion detected! Scared! Turning on my outside lights!",
-            "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
-            "Did you hear that? I can't see a thing. Turning on the outside lights"
-            ] | random + " https://amzn.to/2CR5mbQ" }}
       - service: homeassistant.turn_on
         entity_id:
           - light.outside_lights

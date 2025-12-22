@@ -12,20 +12,20 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.masterbedroom_switch_light_eu
+          entity_id: light.master_bedroom_switch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id: switch.masterbedroom_switch_relay_1
       - service: light.toggle
         entity_id: light.master_bedroom
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling master bedroom light"
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.masterbedroom_switch_light_eu
+          entity_id: light.master_bedroom_switch_lights_all
         data:
           transition: 1
 
@@ -45,7 +45,7 @@ automation:
       - service: light.toggle
         entity_id: light.ensuite
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Double master bedroom light"
 
@@ -76,7 +76,7 @@ automation:
       - service: light.toggle
         entity_id: light.bedside_lights
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling bedside lights"
 
