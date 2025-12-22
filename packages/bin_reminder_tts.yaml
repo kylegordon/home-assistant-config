@@ -14,6 +14,7 @@ input_boolean:
 
 automation:
   - alias: Bin Reminder TTS
+    id: bin_reminder_tts
     condition:
       - condition: or
         conditions:
@@ -41,7 +42,7 @@ automation:
         to: 'on'
     action:
       - service: notify.alexa_media
-        data_template:
+        data:
           target:
             - media_player.kitchen
           data:
@@ -50,6 +51,7 @@ automation:
           message: "Hello! It's {{ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][now().weekday()] }}. Don't forget to take the {{ states.calendar.garbage_collection.attributes.message }} out. If you wish to disable this message, just ask me to 'turn off bin reminder'"
 
   - alias: Bin reminder reset
+    id: bin_reminder_reset
     condition:
       - condition: time
         weekday:

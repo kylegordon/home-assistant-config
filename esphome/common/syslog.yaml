@@ -1,0 +1,14 @@
+---
+udp:
+  id: esphome_udp_syslog
+  addresses: 172.24.32.13
+
+syslog:
+  udp_id: esphome_udp_syslog
+  time_id: esptime
+  port: 515
+
+# Time synchronization from Home Assistant
+time:
+  - platform: homeassistant
+    id: esptime

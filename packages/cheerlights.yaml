@@ -31,15 +31,15 @@ automation:
         after: '23:00:00'
         before: '07:00:00'
     action:
-      - service_template: light.turn_on
-        data_template:
+      - service: light.turn_on
+        target:
+          entity_id: light.under_bed_lights
+        data:
           brightness: 255
           rgb_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-        entity_id: light.under_bed_lights
-        data:
           transition: 2
 
   - alias: Under Bed Cheerlights Motion - 2 minute timeout
@@ -55,8 +55,9 @@ automation:
         after: '23:00:00'
         before: '07:00:00'
     action:
-      service_template: light.turn_off
-      entity_id: light.under_bed_lights
+      service: light.turn_off
+      target:
+        entity_id: light.under_bed_lights
       data:
         transition: 30
 
@@ -70,17 +71,18 @@ automation:
         after: '06:00:00'
         before: '01:00:00'
     action:
-      - service_template: light.turn_on
-        data_template:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.sense_gloworb_1_ring
+            - light.sense_gloworb_2_ring
+            - light.sense_gloworb_3_ring
+        data:
           brightness: 128
           rgb_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-          entity_id:
-            - light.sense_gloworb_1_ring
-            - light.sense_gloworb_2_ring
-            - light.sense_gloworb_3_ring
 
   - alias: Cheerlights - Under Bed
     id: cheerlights_under_bed
@@ -95,15 +97,16 @@ automation:
         entity_id: input_boolean.goodnight_process
         state: "off"
     action:
-      - service_template: light.turn_on
-        data_template:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.under_bed_lights
+        data:
           brightness: 255
           rgb_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-          entity_id:
-            - light.under_bed_lights
 
   - alias: Cheerlights - Outside
     id: cheerlights_outside
@@ -123,32 +126,33 @@ automation:
     action:
       - service: light.turn_on
         # Adjust the RGB values, and keep existing white channels
-        data_template:
+        data:
           entity_id: light.decking_lights
           brightness: 170
           rgbww_color:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int(0,16) }}"
+            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int(0,16) }}"
 
   - alias: Cheerlights - Tin Hut
     id: cheerlights_tin_hut
     trigger:
-      platform: mqtt
-      topic: cheerlightsRGB
+      - platform: mqtt
+        topic: cheerlightsRGB
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        from: "off"
+        to: "on"
     condition:
-      #- condition: numeric_state
-      #  entity_id: sensor.average_external_light_level
-      #  below: 300
-      - condition: time
-        after: '16:00:00'
-        before: '23:00:00'
+      - condition: state
+        entity_id: binary_sensor.tin_hut_occupied
+        state: "on"
     action:
       - service: light.turn_on
         # Adjust the RGB values, and keep existing white channels
-        data_template:
+        data:
           entity_id:
             - light.tin_hut_shelf_lights_bench
             - light.tin_hut_shelf_lights_left
@@ -158,8 +162,11 @@ automation:
             - "{{ states('sensor.cheerlights_red') }}"
             - "{{ states('sensor.cheerlights_green') }}"
             - "{{ states('sensor.cheerlights_blue') }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
-            - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
+            - 0
+            - 0
+            # - "{{ state_attr('light.decking_lights', 'rgbww_color')[3] | int(0,16) }}"
+            # - "{{ state_attr('light.decking_lights', 'rgbww_color')[4] | int(0,16) }}"
+            # ^^ not sure wtf is going on and why garage shelving is tracking outside lights # FIXME
 
   - alias: Cheerlights - off
     id: cheerlights_off
@@ -176,6 +183,21 @@ automation:
           - light.decking_lights
           - light.under_bed_lights
           - light.glow_orbs
-          #- light.tin_hut_shelving
+        data:
+          transition: 10
+
+  - alias: Cheerlights - Tin Hut Off
+    id: cheerlights_tin_hut_off
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.tin_hut_occupied
+        from: "on"
+        to: "off"
+    action:
+      - service: homeassistant.turn_off
+        entity_id:
+          - light.tin_hut_shelf_lights_bench
+          - light.tin_hut_shelf_lights_left
+          - light.tin_hut_shelf_lights_right
         data:
           transition: 10

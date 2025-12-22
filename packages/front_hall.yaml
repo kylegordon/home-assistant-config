@@ -27,13 +27,13 @@ automation:
         state: "on"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning front hall lights on"
           entity_id: light.front_hall
           domain: light
       - service: homeassistant.turn_on
-        data_template:
+        data:
           entity_id:
             - light.front_hall
 
@@ -51,13 +51,15 @@ automation:
         state: "Night"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning front hall lights off"
           entity_id: light.front_hall
           domain: light
       - service: light.turn_off
         entity_id: light.front_hall
+        data:
+          transition: 120
 
   - alias: Front hall - 10 minute timeout
     id: front_hall_motion_10_minute
@@ -69,10 +71,12 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning front hall lights off"
           entity_id: light.front_hall
           domain: light
       - service: light.turn_off
         entity_id: light.front_hall
+        data:
+          transition: 600

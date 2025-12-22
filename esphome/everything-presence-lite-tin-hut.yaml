@@ -1,0 +1,18 @@
+---
+substitutions:
+  name: presence-lite-tin-hut
+  friendly_name: Everything Presence Lite - Tin Hut
+packages:
+  EverythingSmartTechnology.Everything_Presence_Lite: github://everythingsmarthome/everything-presence-lite/everything-presence-lite-ha.yaml@main
+esphome:
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
+api:
+  encryption:
+    key: l+vAp84dgSL8apHbgSZw7RfxQIJOyhd8/k/RcLdABIQ=
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password

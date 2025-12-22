@@ -1,7 +1,10 @@
 - platform: generic_thermostat
-  name: House
+  unique_id: rest_of_house_thermostat
+  name: Rest of House Thermostat
   heater: input_boolean.call_for_rad_heat
-  target_sensor: sensor.house_average_temperature
+  precision: 0.5
+  target_sensor: sensor.rest_of_house_average_temperature
+  target_temp_step: 0.5
   min_temp: 10
   max_temp: 25
   away_temp: 15
@@ -9,9 +12,10 @@
   hot_tolerance: 0.2
 
 - platform: generic_thermostat
+  unique_id: hot_water_thermostat
   name: Hot Water
   heater: switch.boiler_valve_controls_relay_1
   target_sensor: sensor.hot_tank_temperature
   max_temp: 80
   away_temp: 20
-  cold_tolerance: 10
+  cold_tolerance: 5

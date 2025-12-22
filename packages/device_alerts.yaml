@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: Alert when a critical device goes offline
+    id: alert_when_a_critical_device_goes_offline
     trigger:
       - platform: state
         entity_id:
@@ -16,7 +17,8 @@ automation:
           - binary_sensor.front_door_motion
           - binary_sensor.washing_machine_power_plug_status
           - binary_sensor.dishwasher_power_plug_status
-          - binary_sensor.shower_pump_power_plug_status
+          - binary_sensor.workbench_lights_power_plug_status
+          - binary_sensor.hot_tap_power_plug_status
           - binary_sensor.tv_power_plug_status
           - binary_sensor.craft_room_window
           - binary_sensor.ensuite_window_vibration
@@ -77,6 +79,6 @@ automation:
             {% endif %}
     action:
       - service: notify.email_kyle
-        data_template:
+        data:
           message: '{{trigger.to_state.attributes.friendly_name}} has gone offline. Please check the status of this device as some features may stop functioning.'
           title: Device Alert

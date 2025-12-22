@@ -10,6 +10,7 @@ input_number:
 
 automation:
   - alias: Boot Room light toggle
+    id: boot_room_light_toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event
@@ -24,13 +25,14 @@ automation:
       - service: light.toggle
         entity_id: light.boot_room
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Toggling boot room light"
           entity_id: light.boot_room
           domain: light
 
   - alias: Boot room light motion
+    id: boot_room_light_motion
     initial_state: true
     trigger:
       - platform: state
@@ -53,16 +55,17 @@ automation:
         state: "on"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights on"
           entity_id: light.boot_room
           domain: light
       - service: light.turn_on
-        data_template:
+        data:
           entity_id: light.boot_room
 
   - alias: Boot Room motion - sunlight timeout
+    id: boot_room_motion_sunlight_timeout
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
@@ -71,15 +74,18 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights off"
           entity_id: light.boot_room
           domain: light
       - service: homeassistant.turn_off
         entity_id: light.boot_room
+        data:
+          transition: 600
 
   - alias: Boot room light motion - night view
+    id: boot_room_light_motion_night_view
     initial_state: true
     trigger:
       - platform: state
@@ -99,19 +105,20 @@ automation:
         below: 1000
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights to night mode"
           entity_id: light.boot_room
           domain: light
       - service: light.turn_on
-        data_template:
+        data:
           entity_id: light.boot_room
           brightness_pct: 30
           transition: 10
           rgb_color: [255, 0, 0]
 
   - alias: Boot room motion - 2 minute timeout
+    id: boot_room_motion_2_minute_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.boot_room_motion_occupancy
@@ -124,16 +131,19 @@ automation:
         state: "Night"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights off"
           entity_id: light.boot_room
           domain: light
       - service: light.turn_off
         entity_id: light.boot_room
+        data:
+          transition: 120
 
 
   - alias: Boot room motion - 10 minute timeout
+    id: boot_room_motion_10_minute_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.boot_room_motion_occupancy
@@ -142,10 +152,12 @@ automation:
           minutes: 10
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Turning boot room lights off"
           entity_id: light.boot_room
           domain: light
-      - service: light.turn_off
+      - service: homeassistant.turn_off
         entity_id: light.boot_room
+        data:
+          transition: 600

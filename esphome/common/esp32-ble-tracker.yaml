@@ -5,8 +5,13 @@ packages:
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP32
+  friendly_name: ${friendly_name}
+  # platform: ESP32
+
+esp32:
   board: esp32dev
+  framework:
+    type: esp-idf
 
 # Enable logging
 logger:
@@ -16,9 +21,9 @@ captive_portal:
 web_server:
   port: 80
 
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
+# syslog:
+#   ip_address: 172.24.32.13
+#   port: 515
 
 
 esp32_ble_tracker:
@@ -56,45 +61,45 @@ text_sensor:
     name: "BLE Devices Scanner"
 
 sensor:
-  # https://esphome.io/components/sensor/xiaomi_ble.html#lywsd03mmc
-  - platform: pvvx_mithermometer
-    mac_address: "A4:C1:38:D0:BF:A7"
-    temperature:
-      name: "Study BLE Temperature"
-    humidity:
-      name: "Study BLE Humidity"
-    battery_level:
-      name: "Study BLE Battery-Level"
-    battery_voltage:
-      name: "Study BLE Battery-Voltage"
-    signal_strength:
-      name: "Study BLE Signal"
+  # # https://esphome.io/components/sensor/xiaomi_ble.html#lywsd03mmc
+  # - platform: pvvx_mithermometer
+  #   mac_address: "A4:C1:38:D0:BF:A7"
+  #   temperature:
+  #     name: "Study BLE Temperature"
+  #   humidity:
+  #     name: "Study BLE Humidity"
+  #   battery_level:
+  #     name: "Study BLE Battery-Level"
+  #   battery_voltage:
+  #     name: "Study BLE Battery-Voltage"
+  #   signal_strength:
+  #     name: "Study BLE Signal"
 
-  - platform: pvvx_mithermometer
-    mac_address: "A4:C1:38:81:CB:79"
-    temperature:
-      name: "Front Hall BLE Temperature"
-    humidity:
-      name: "Front Hall BLE Humidity"
-    battery_level:
-      name: "Front Hall BLE Battery-Level"
-    battery_voltage:
-      name: "Front Hall BLE Battery-Voltage"
-    signal_strength:
-      name: "Front Hall BLE Signal"
+  # - platform: pvvx_mithermometer
+  #   mac_address: "A4:C1:38:81:CB:79"
+  #   temperature:
+  #     name: "Front Hall BLE Temperature"
+  #   humidity:
+  #     name: "Front Hall BLE Humidity"
+  #   battery_level:
+  #     name: "Front Hall BLE Battery-Level"
+  #   battery_voltage:
+  #     name: "Front Hall BLE Battery-Voltage"
+  #   signal_strength:
+  #     name: "Front Hall BLE Signal"
 
-  - platform: pvvx_mithermometer
-    mac_address: "A4:C1:38:31:85:12"
-    temperature:
-      name: "Ensuite BLE Temperature"
-    humidity:
-      name: "Ensuite BLE Humidity"
-    battery_level:
-      name: "Ensuite BLE Battery-Level"
-    battery_voltage:
-      name: "Ensuite BLE Battery-Voltage"
-    signal_strength:
-      name: "Ensuite BLE Signal"
+  # - platform: pvvx_mithermometer
+  #   mac_address: "A4:C1:38:31:85:12"
+  #   temperature:
+  #     name: "Ensuite BLE Temperature"
+  #   humidity:
+  #     name: "Ensuite BLE Humidity"
+  #   battery_level:
+  #     name: "Ensuite BLE Battery-Level"
+  #   battery_voltage:
+  #     name: "Ensuite BLE Battery-Voltage"
+  #   signal_strength:
+  #     name: "Ensuite BLE Signal"
 
 binary_sensor:
   - platform: ble_presence

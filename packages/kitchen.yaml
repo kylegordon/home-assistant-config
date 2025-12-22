@@ -8,13 +8,90 @@ input_number:
     max: 10000
     step: 1
 
+light:
+  - platform: group
+    name: Kitchen Lights Group
+    unique_id: kitchen_lights_group
+    entities:
+      - light.kitchen_cabinets
+      - light.kitchen_worktop_lights
+      - light.kitchen_ceiling_lights
+
 automation:
-  - alias: Kitchen motion
+
+  - alias: Kitchen ceiling lights toggle
+    id: kitchen_ceiling_toggle
+    mode: parallel
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
-      platform: state
-      entity_id: binary_sensor.kitchen_motion_occupancy
-      to: 'on'
-      from: 'off'
+      - platform: event
+        event_type: esphome.tx_ultimate_easy
+        event_data:
+          device_name: kitchen_switch
+          action: click
+          button_id: "1"
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.kitchen_switch_lights_all
+          effect: "Rainbow - Fast"
+      - service: switch.turn_on
+        entity_id: switch.kitchen_switch_relay_1
+      - service: light.toggle
+        entity_id: light.kitchen_ceiling_lights
+      - service: logbook.log
+        data:
+          name: EVENT
+          message: "Toggling kitchen ceiling light"
+      - delay: "00:00:05"
+      - service: light.turn_off
+        target:
+          entity_id: light.kitchen_switch_lights_all
+        data:
+          transition: 1
+
+  - alias: Kitchen worktop lights toggle
+    id: kitchen_worktop_toggle
+    mode: parallel
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    trigger:
+      - platform: event
+        event_type: esphome.tx_ultimate_easy
+        event_data:
+          device_name: kitchen_switch
+          action: click
+          button_id: "2"
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.kitchen_switch_lights_all
+          effect: "Rainbow - Fast"
+      - service: switch.turn_on
+        entity_id: switch.kitchen_switch_relay_2
+      - service: light.toggle
+        entity_id: light.kitchen_worktop_lights
+      - service: logbook.log
+        data:
+          name: EVENT
+          message: "Toggling kitchen worktop lights"
+      - delay: "00:00:05"
+      - service: light.turn_off
+        target:
+          entity_id: light.kitchen_switch_lights_all
+        data:
+          transition: 1
+
+  - alias: Kitchen motion
+    id: kitchen_motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion_occupancy
+        to: 'on'
+        from: 'off'
+      - platform: state
+        entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
+        to: 'on'
+        from: 'off'
     condition:
       - condition: numeric_state
         entity_id: sensor.average_external_light_level
@@ -23,20 +100,53 @@ automation:
         #   minutes: 10
     action:
       - service: homeassistant.turn_on
-        data_template:
+        data:
           entity_id:
-            - light.kitchen_cabinets
-            - light.kitchen
+            - light.kitchen_lights_group
 
   - alias: Kitchen motion - 10 minute timeout
+    id: kitchen_motion_10_minute_timeout
     trigger:
-      platform: state
-      entity_id: binary_sensor.kitchen_motion_occupancy
-      to: 'off'
-      for:
-        minutes: 10
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion_occupancy
+        to: 'off'
+        for:
+          minutes: 10
+      - platform: state
+        entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
+        to: 'off'
+        for:
+          minutes: 10
     action:
       service: homeassistant.turn_off
       entity_id:
-        - light.kitchen_cabinets
-        - light.kitchen
+        - light.kitchen_lights_group
+
+  - alias: Kitchen cabinet lights - presence on
+    id: kitchen_cabinet_lights_presence_on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
+        to: 'on'
+        from: 'off'
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.kitchen_cabinets
+        data:
+          transition: 5  # 5 seconds
+
+  - alias: Kitchen cabinet lights - presence off
+    id: kitchen_cabinet_lights_presence_off
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
+        to: 'off'
+        for:
+          minutes: 10
+    action:
+      - service: light.turn_off
+        target:
+          entity_id: light.kitchen_cabinets
+        data:
+          transition: 120  # 2 minutes

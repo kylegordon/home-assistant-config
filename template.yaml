@@ -1,0 +1,157 @@
+---
+- trigger:
+    - platform: time_pattern
+      minutes: "/30"
+  action:
+    - service: weather.get_forecasts
+      data:
+        type: daily
+      target:
+        entity_id: weather.pirateweather
+      response_variable: daily
+  sensor:
+    - name: Pirate Weather Daily
+      unique_id: pirateweather_daily
+      state: "{{ daily['weather.pirateweather'].forecast[0].condition }}"
+      attributes:
+        forecast: "{{ daily['weather.pirateweather'].forecast }}"
+- trigger:
+    - platform: time_pattern
+      minutes: "/30"
+  action:
+    - service: weather.get_forecasts
+      data:
+        type: hourly
+      target:
+        entity_id: weather.pirateweather
+      response_variable: hourly
+  sensor:
+    - name: Pirate Weather Hourly
+      unique_id: pirateweather_hourly
+      state: "{{ hourly['weather.pirateweather'].forecast[0].condition }}"
+      attributes:
+        forecast: "{{ hourly['weather.pirateweather'].forecast[:24] }}"
+- trigger:
+    - platform: time_pattern
+      hours: "/1"
+    - platform: homeassistant
+      event: start
+  action:
+    - service: calendar.get_events
+      target:
+        entity_id: calendar.east_renfrewshire_council
+      data:
+        duration:
+          days: 30
+      response_variable: calendar_events
+  sensor:
+    - name: Days Until Black Bin
+      unique_id: days_until_black_bin
+      unit_of_measurement: "days"
+      icon: "mdi:delete"
+      state: >
+        {% set ns = namespace(found=false, days=999) %}
+        {% set today = now().date() %}
+        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+            {% set event_title = event.summary | default(event.title | default('')) %}
+            {% if 'Black' in event_title and not ns.found %}
+              {% set event_date = as_datetime(event.start).date() %}
+              {% if event_date >= today %}
+                {% set ns.found = true %}
+                {% set ns.days = (event_date - today).days %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if ns.found %}
+          {{ ns.days }}
+        {% else %}
+          unknown
+        {% endif %}
+    - name: Days Until Blue Bin
+      unique_id: days_until_blue_bin
+      unit_of_measurement: "days"
+      icon: "mdi:delete"
+      state: >
+        {% set ns = namespace(found=false, days=999) %}
+        {% set today = now().date() %}
+        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+            {% set event_title = event.summary | default(event.title | default('')) %}
+            {% if 'Blue' in event_title and not ns.found %}
+              {% set event_date = as_datetime(event.start).date() %}
+              {% if event_date >= today %}
+                {% set ns.found = true %}
+                {% set ns.days = (event_date - today).days %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if ns.found %}
+          {{ ns.days }}
+        {% else %}
+          unknown
+        {% endif %}
+    - name: Days Until Green Bin
+      unique_id: days_until_green_bin
+      unit_of_measurement: "days"
+      icon: "mdi:delete"
+      state: >
+        {% set ns = namespace(found=false, days=999) %}
+        {% set today = now().date() %}
+        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+            {% set event_title = event.summary | default(event.title | default('')) %}
+            {% if 'Green' in event_title and not ns.found %}
+              {% set event_date = as_datetime(event.start).date() %}
+              {% if event_date >= today %}
+                {% set ns.found = true %}
+                {% set ns.days = (event_date - today).days %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if ns.found %}
+          {{ ns.days }}
+        {% else %}
+          unknown
+        {% endif %}
+
+- sensor:
+    - name: Last Alexa
+      unique_id: last_alexa
+      state: >
+        {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
+
+    - name: Next Bin
+      unique_id: next_bin
+      state: "{{ states.calendar.east_renfrewshire_council.attributes.message }}"
+
+    - name: Kyle
+      unique_id: kyle_status
+      state: '{{ states.input_select.kyle_status_dropdown.state }}'
+
+    - name: Charlotte
+      unique_id: charlotte_status
+      state: '{{ states.input_select.charlotte_status_dropdown.state }}'
+  binary_sensor:
+    - name: Living Room TV Power
+      unique_id: living_room_tv_power
+      device_class: power
+      state: "{{ states('sensor.tv_power_plug_power') | float(0) > 100 }}"
+    - name: Home Occupied
+      unique_id: home_occupied
+      device_class: occupancy
+      icon: >-
+        {% if is_state('binary_sensor.home_occupied','on') %}
+          mdi:home-account
+        {% else %}
+          mdi:home-outline
+        {% endif %}
+      state: >-
+        {{ is_state('person.kyle','home') or is_state('person.charlotte','home') or is_state('person.ronnie','home') }}
+    - name: Holiday mode
+      unique_id: holiday_mode
+      state: >-
+        {{ states.calendar.family_calendar.attributes.message == 'Holiday mode' }}

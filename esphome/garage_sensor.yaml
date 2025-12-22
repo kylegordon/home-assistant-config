@@ -1,17 +1,20 @@
+---
 substitutions:
   device_name: garage_sensor
   device_description: Garage Temperature Sensor
   friendly_name: Garage Temperature Sensor
 
+esp8266:
+  board: d1_mini
+
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP8266
-  board: d1_mini
+  friendly_name: ${friendly_name}
 
 wifi:
   ssid: !secret wifi_ssid
-  password: !secret wifi_pass
+  password: !secret wifi_password
 
 # Enable logging
 logger:
@@ -20,6 +23,7 @@ logger:
 api:
 
 ota:
+  platform: esphome
 
 web_server:
 
@@ -37,8 +41,9 @@ button:
   - platform: restart
     name: "${friendly_name} Restart"
 
-dallas:
-  - pin: GPIO2
+one_wire:
+  - platform: gpio
+    pin: D4
 
 sensor:
   - platform: wifi_signal
@@ -50,7 +55,7 @@ sensor:
     filters:
       - lambda: return x / 60.0;
     unit_of_measurement: minutes
-  - platform: dallas
+  - platform: dallas_temp
     address: 0xE40000031D87AC28
     name: "Garage Temperature"
 #   - platform: dallas
@@ -61,7 +66,8 @@ output:
   # Register the blue LED as a dimmable output ....
   - platform: esp8266_pwm
     id: blue_led
-    pin: D4
+    pin: D5  # Nothing is really connected to D5.
+    # The built-in blue LED is connected to D4, but I stupidly picked that for I2C and don't want to change it.
     inverted: true
 
 light:

@@ -1,4 +1,6 @@
+---
 alias: "Home in the dark"
+id: home_in_the_dark
 trigger:
   - platform: state
     entity_id: binary_sensor.home_occupied
@@ -14,7 +16,7 @@ condition:
     value_template: "{% if states('sensor.kyle_status') != 'sleeping' and states('sensor.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
 action:
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: "Home in the dark."
   - service: notify.email_kyle
@@ -22,16 +24,13 @@ action:
       message: "Home in the dark."
   - service: light.turn_on
     data:
-      entity_id: light.sideboard
+      entity_id: light.cosy_lights
   - service: light.turn_on
     data:
-      entity_id: light.uplighter
-  - service: light.turn_on
-    data:
-      entity_id: group.outside_lights
+      entity_id: light.outside_lights
 
   - delay:
       minutes: 5
   - service: light.turn_off
     data:
-      entity_id: group.outside_lights
+      entity_id: light.outside_lights

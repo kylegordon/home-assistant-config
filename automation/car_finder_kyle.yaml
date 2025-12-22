@@ -1,4 +1,5 @@
 alias: "Kyle Car Finder"
+id: kyle_car_finder
 trigger:
   platform: state
   entity_id: input_select.kyle_status
@@ -7,8 +8,8 @@ trigger:
   for:
     seconds: 10
 action:
-  service_template: mqtt.publish
-  data_template:
+  service: mqtt.publish
+  data:
     topic: >
       {% if is_state('sensor.car_driving_kyle', 'Prius') %}
         owntracks/bagpuss/prius
