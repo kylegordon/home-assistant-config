@@ -57,7 +57,7 @@ All switches use the TX-Ultimate-Easy package from https://github.com/edwardtfn/
 - **RGB LED Feedback**: Rainbow effects show when button presses are registered
 - **Multi-gang Support**: Single or dual gang configurations
 - **Bluetooth Proxy**: All switches include Bluetooth proxy functionality
-- **API Failsafe Mode**: Switches are configured to operate in "API Failsafe only" mode, allowing them to function as normal switches when WiFi or Home Assistant is offline. The physical relay is always activated regardless of connectivity status.
+- **API Failsafe Mode**: Switches are configured to operate in "API Failsafe only" mode, allowing them to function as normal switches when WiFi or Home Assistant is offline. The physical relay is activated on every button press regardless of connectivity status.
 - **Event-based**: Switches fire events that trigger automations
 
 ### Integration with Home Assistant
@@ -130,7 +130,7 @@ This provides immediate visual confirmation that the button press was registered
 The switches are configured to operate in **API Failsafe only** mode. This means:
 
 - **Offline Operation**: If WiFi or Home Assistant becomes unavailable, the switches continue to function as normal physical switches
-- **Relay Activation**: The automation always activates the physical relay (step 2 above), ensuring the connected lights can be controlled locally
+- **Relay Activation**: The automation activates the physical relay during button press events (step 2 above), ensuring the connected lights can be controlled locally
 - **Service Resume**: When Home Assistant service resumes, the relay state is synchronized, keeping the switch and light states consistent
 - **No Dependency**: Physical switch operation does not depend on API connectivity
 
