@@ -130,8 +130,8 @@ This provides immediate visual confirmation that the button press was registered
 The switches are configured to operate in **API Failsafe only** mode. This means:
 
 - **Offline Operation**: If WiFi or Home Assistant becomes unavailable, the switches continue to function as normal physical switches
-- **Relay Activation**: The automation activates the physical relay during button press events (step 2 above), ensuring the connected lights can be controlled locally
+- **Relay Activation**: When connected to Home Assistant, the automation activates the physical relay during button press events (step 2 above), ensuring the connected lights can be controlled by Home Assistant if they have been locally turned off during an outage.
 - **Service Resume**: When Home Assistant service resumes, the relay state is synchronized, keeping the switch and light states consistent
 - **No Dependency**: Physical switch operation does not depend on API connectivity
 
-This failsafe approach is based on the configuration from [Home Assistant Community](https://community.home-assistant.io/t/make-esphome-node-fallback-when-not-connected-to-ha-api/116615/16), ensuring reliable operation even during network outages.
+This setup ensures reliable local control of lighting while integrating seamlessly with Home Assistant for enhanced automation and feedback.
