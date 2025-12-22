@@ -57,7 +57,7 @@ All switches use the TX-Ultimate-Easy package from https://github.com/edwardtfn/
 - **RGB LED Feedback**: Rainbow effects show when button presses are registered
 - **Multi-gang Support**: Single or dual gang configurations
 - **Bluetooth Proxy**: All switches include Bluetooth proxy functionality
-- **Local Control**: Switches can operate locally when not connected to Home Assistant
+- **API Failsafe Mode**: Switches are configured to operate in "API Failsafe only" mode, allowing them to function as normal switches when WiFi or Home Assistant is offline. The physical relay is always activated regardless of connectivity status.
 - **Event-based**: Switches fire events that trigger automations
 
 ### Integration with Home Assistant
@@ -119,8 +119,19 @@ automation:
 
 When a button is pressed, the switch:
 1. Shows a "Rainbow - Fast" LED effect
-2. Activates the relay
+2. Activates the relay (ensuring the physical switch operates even if HA goes offline)
 3. Performs the associated action (toggle lights, etc.)
 4. Fades the LED effect after 5 seconds
 
 This provides immediate visual confirmation that the button press was registered and processed.
+
+### API Failsafe Mode
+
+The switches are configured to operate in **API Failsafe only** mode. This means:
+
+- **Offline Operation**: If WiFi or Home Assistant becomes unavailable, the switches continue to function as normal physical switches
+- **Relay Activation**: The automation always activates the physical relay (step 2 above), ensuring the connected lights can be controlled locally
+- **Service Resume**: When Home Assistant service resumes, the relay state is synchronized, keeping the switch and light states consistent
+- **No Dependency**: Physical switch operation does not depend on API connectivity
+
+This failsafe approach is based on the configuration from [Home Assistant Community](https://community.home-assistant.io/t/make-esphome-node-fallback-when-not-connected-to-ha-api/116615/16), ensuring reliable operation even during network outages.
