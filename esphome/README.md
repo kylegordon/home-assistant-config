@@ -49,7 +49,7 @@ The following TX-Ultimate-Easy switch devices are configured in this directory:
 - `living_room_switch.yaml` - Switch in the living room
 - `craftroom_switch.yaml` - Switch in the craft room
 
-All switches use the TX-Ultimate-Easy package from https://github.com/edwardtfn/TX-Ultimate-Easy
+All switches use the TX-Ultimate-Easy package from https://github.com/edwardtfn/TX-Ultimate-Easy (ref: v9999.99.9)
 
 ### Features
 
@@ -106,6 +106,8 @@ automation:
         data:
           entity_id: light.room_switch_lights_all
           effect: "Rainbow - Fast"
+      - service: switch.turn_on
+        entity_id: switch.room_switch_relay_1
       - service: light.toggle
         entity_id: light.room_lights
       - delay: "00:00:05"
@@ -116,8 +118,8 @@ automation:
 ### Visual Feedback
 
 When a button is pressed, the switch:
-1. Activates the relay
-2. Shows a "Rainbow - Fast" LED effect
+1. Shows a "Rainbow - Fast" LED effect
+2. Activates the relay
 3. Performs the associated action (toggle lights, etc.)
 4. Fades the LED effect after 5 seconds
 
