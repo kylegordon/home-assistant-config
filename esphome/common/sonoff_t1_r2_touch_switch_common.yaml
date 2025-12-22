@@ -2,11 +2,13 @@
 packages:
   common: !include common.yaml
 
+esp8266:
+  board: esp01_1m
+
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP8266
-  board: esp01_1m
+  friendly_name: ${friendly_name}
 
 captive_portal:
 
@@ -120,6 +122,7 @@ switch:
     id: sonoff_touch_relay
     name: "${friendly_name} Relay"
     pin: GPIO12
+    restore_mode: "${default_state}"
 
 output:
   # Register the blue LED as a dimmable output ....

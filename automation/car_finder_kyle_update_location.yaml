@@ -1,4 +1,5 @@
 alias: "Kyle Car Finder Refresh"
+id: kyle_car_finder_refresh
 trigger:
   platform: state
   entity_id: input_select.kyle_status

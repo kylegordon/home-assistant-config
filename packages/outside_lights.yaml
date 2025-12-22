@@ -1,0 +1,193 @@
+---
+# light.outside_lights is a general purpose group defined in lights.yaml
+
+template:
+  - switch:
+      - name: Outside White Channels
+        unique_id: outside_rgb_white_channels
+        icon: mdi:lightbulb-group
+        state: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
+                            or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
+                          true
+                        {% else %}
+                          false
+                        {% endif %}"
+        turn_on:
+          service: light.turn_on
+          # Set the white channel values to maximum
+          data:
+            entity_id: light.decking_lights
+            rgbww_color:
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - 255
+              - 255
+        turn_off:
+          service: light.turn_on
+          # Set the white channel values to zero
+          data:
+            entity_id: light.decking_lights
+            rgbww_color:
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[0] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[1] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - "{{ state_attr('light.decking_lights', 'rgbww_color')[2] | default(0) | int }}"  # yamllint disable-line rule:line-length
+              - 0
+              - 0
+
+automation:
+  - alias: Outside person detected
+    id: outside_person_detected
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.back_door_pir
+          - binary_sensor.driveway_pir
+          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.driveway_tin_hut_person_occupancy
+          - binary_sensor.back_door_person_occupancy
+          - binary_sensor.gates_person_occupancy
+          - binary_sensor.front_door_person_occupancy
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "above_horizon"
+    action:
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Person outside!"
+          message: >
+            Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+            image: >
+              {% if 'back_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
+              {% elif 'front_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
+              {% elif 'driveway' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% elif 'gates' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% endif %}
+
+
+  - alias: "Outside night lights on"
+    id: outside_night_lights_on
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        below: input_number.blinds_evening
+        for:
+          minutes: 10
+    condition:
+      - condition: state
+        entity_id: binary_sensor.home_occupied
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id:
+          - light.car_port
+          - light.front_door_dome
+        data:
+          brightness_pct: 100
+          color_temp: 400
+          transition: 30
+
+  - alias: Outside night lights off
+    id: outside_night_lights_off
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.average_external_light_level
+        above: input_number.blinds_morning
+        for:
+          minutes: 10
+    action:
+      - service: light.turn_off
+        entity_id:
+          - light.car_port
+          - light.front_door_dome
+
+  - alias: Outside lights on
+    id: outside_lights_on
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.back_door_pir
+          - binary_sensor.driveway_pir
+          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.driveway_tin_hut_person_occupancy
+          - binary_sensor.back_door_person_occupancy
+          - binary_sensor.gates_person_occupancy
+          - binary_sensor.front_door_person_occupancy
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: input_boolean.night_view
+        state: "off"
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+    action:
+      - service: media_player.play_media
+        target:
+          entity_id:
+            - media_player.living_room
+            - media_player.kitchen
+            - media_player.study
+        data:
+          media_content_id: amzn_sfx_doorbell_chime_02
+          media_content_type: sound
+      - service: homeassistant.turn_on
+        entity_id:
+          - light.outside_lights
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Person outside!"
+          message: >
+            Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Turning on outside lights
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+            image: >
+              {% if 'back_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
+              {% elif 'front_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
+              {% elif 'driveway' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% elif 'gates' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% endif %}
+
+      - service: homeassistant.turn_on
+        entity_id:
+          - light.outside_lights
+      # If this evaluates to false, the action will stop here.
+      - condition: template
+        value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
+      - service: light.turn_on
+        entity_id: light.front_floodlights
+
+  - alias: Outside lights off
+    id: outside_lights_off
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.back_door_pir
+          - binary_sensor.driveway_pir
+          - binary_sensor.front_door_motion
+          - binary_sensor.back_door_person_occupancy
+          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.driveway_tin_hut_person_occupancy
+          - binary_sensor.gates_person_occupancy
+        to: 'off'
+        for:
+          seconds: 300
+    action:
+      - service: homeassistant.turn_off
+        entity_id:
+          - light.outside_lights

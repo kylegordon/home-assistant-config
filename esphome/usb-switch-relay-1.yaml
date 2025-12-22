@@ -1,0 +1,7 @@
+---
+substitutions:
+  device_name: usb_switch_relay_1
+  device_description: USB Switch Relay 1
+  friendly_name: USB Switch Relay 1
+
+<<: !include common/usb_switch_relay_common.yaml

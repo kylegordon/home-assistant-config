@@ -1,9 +1,10 @@
+---
 - platform: switch
   name: "Garage Lights"
   entity_id: switch.garage_lights_relay
 
 - platform: switch
-  name: "Front Door Floodlights"
+  name: "Front Floodlights"
   entity_id: switch.front_floodlights_relay
 
 - platform: switch
@@ -15,8 +16,8 @@
   entity_id: switch.back_floodlights_relay
 
 - platform: switch
-  name: "Mini Deck Floodlight"
-  entity_id: switch.mini_deck_floodlight_relay
+  name: "Garden Steps Floodlight"
+  entity_id: switch.garden_steps_floodlight_relay
 
 - platform: switch
   name: "Edison Lamp"
@@ -56,6 +57,7 @@
 
 - platform: group
   name: Decking Lights
+  unique_id: decking_lights
   entities:
     - light.decking_rgbww_flood_east
     - light.decking_rgbww_flood_west
@@ -64,9 +66,35 @@
   name: Octoprint Lighting
   entity_id: switch.octoprint_relay_1
 
+- platform: switch
+  name: outside_rgb_white_channels
+  entity_id: switch.outside_rgb_white_channels
+
 - platform: group
-  name: Tin Hut Shelving
+  name: Outside Lights
+  unique_id: outside_lights
   entities:
-    - light.tin_hut_shelf_lights_left
-    - light.tin_hut_shelf_lights_right
-    - light.tin_hut_shelf_lights_bench
+    - light.front_floodlights
+    - light.driveway_floodlights
+    - light.back_floodlights
+    - light.garden_steps_floodlight
+    - light.decking_lights
+    - light.front_door_dome
+    - light.car_port
+    - light.shellypro3em_ec62609752ec_outside_lights
+    - light.outside_rgb_white_channels
+
+- platform: group
+  name: Study Lights
+  unique_id: study_lighting
+  entities:
+    - light.study
+    - light.monitor_lights
+    - light.study_bead_lights_usb_switch_relay_3
+
+- platform: group
+  name: Bedside Lights
+  unique_id: bedside_lights
+  entities:
+    - light.bedside_kyle
+    - light.bedside_charlotte

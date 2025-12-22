@@ -1,0 +1,103 @@
+---
+template:
+  - sensor:
+      - name: "Battery status"
+        unique_id: battery_status
+        state: >
+          {%- set power_draw = states('sensor.battery_power') | int(0) %}
+          {%- if power_draw < 0 %}
+            Charging
+          {%- elif power_draw == 0 %}
+            Balanced
+          {%- elif power_draw > 0 %}
+            Draining
+          {%- else -%}
+            Indeterminate
+          {%- endif %}
+        icon: >-
+          {%- set power_draw = states('sensor.battery_power') | int(0) %}
+          {%- if power_draw < 0 %}
+            mdi:battery-charging
+          {%- elif power_draw > 0 %}
+            mdi:battery-minus
+          {%- else -%}
+            mdi:battery
+          {%- endif %}
+
+      - name: "Grid Usage"
+        unique_id: grid_all
+        state: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        unit_of_measurement: 'W'
+
+      - name: "PV Usage"
+        unique_id: pv_all
+        state: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+        unit_of_measurement: 'W'
+
+      - name: "ASHP Heating COP"
+        unique_id: ashp_heating_cop
+        state: >
+          {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') | int %}
+          {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
+          {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
+            unavailable
+          {%- elif heat_generated == unknown or consumed_electricity == unknown %}
+            unknown
+          {%- else %}
+            {{ heat_generated / consumed_electricity }}
+          {%- endif %}
+
+      - name: "ASHP Hot Water COP"
+        unique_id: ashp_hot_water_cop
+        state: >
+          {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int %}
+          {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
+          {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
+            unavailable
+          {%- elif heat_generated == unknown or consumed_electricity == unknown %}
+            unknown
+          {%- else %}
+            {{ heat_generated / consumed_electricity }}
+          {%- endif %}
+
+        # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
+
+sensor:
+
+  - platform: integration
+    source: sensor.grid_all
+    method: left
+    name: grid_daily_usage
+    unit_prefix: k
+    round: 2
+
+  - platform: integration
+    source: sensor.pv_all
+    method: left
+    name: pv_daily_usage
+    unit_prefix: k
+    round: 2
+
+#  - platform: template
+#    #name: grid_all
+#    #friendly_name: "Grid Usage"
+#    value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"
+#    unit_of_measurement: 'W'
+
+automation:
+  - alias: Boost hot water
+    id: boost_hot_water
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.grid_export_power
+        above: 500
+        for:
+          minutes: 10
+    action:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.viewpoint_domestic_hot_water_0_boost
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Hot water boost triggered"
+          message: "Hot water boost triggered whilst exporting."

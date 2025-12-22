@@ -1,78 +1,7 @@
 ---
-# !include travel_times.yaml
-
-# Improve with https://github.com/bah2830/Home-Assistant-Configs/blob/master/includes/automation/notifications.yaml
-
-# - platform: google_travel_time
-#   name: Kyle Work Travel
-#   api_key: !secret google_api
-#   origin: device_tracker.bagpuss_a0001
-#   destination: zone.kyle_work
-
-# - platform: google_travel_time
-#   name: Charlotte Work Travel
-#   api_key: !secret google_api
-#   origin: zone.home
-#   destination: zone.charlotte_work
-
-# - platform: google_travel_time
-#   name: Kyle To Home
-#   api_key: !secret google_api
-#   origin: device_tracker.bagpuss_a0001
-#   destination: zone.home
-
-# - platform: google_travel_time
-#   name: Charlotte To Home
-#   api_key: !secret google_api
-#   origin: device_tracker.charlotte_thea
-#   destination: zone.home
-
-- platform: bulb_energy
-  postcode: "G78 3AX"
-  payplan: "monthly"  # or legacyPrepay or smartPayg
-  eco7: false
-
-- platform: template
-  sensors:
-    next_bin:
-      # value_template: "{{ states.calendar.next_bin.attributes.message }}"
-      # value_template: "{{ states.calendar.family_calendar.attributes.message|replace(' bin','') }}"
-      value_template: "{{ states.calendar.garbage_collection.attributes.message|replace('bin','') }}"
-      friendly_name: Next Bin
-      # friendly_name_template: "{{ states.calendar.next_bin.attributes.message }}"
-      # entity_id: calendar.next_bin
-      unique_id: calendar.next_bin
-
-    kyle_status:
-      value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
-      friendly_name: 'Kyle'
-      # entity_id: input_select.kyle_status_dropdown
-      unique_id: input_select.kyle_status_dropdown
-
-    charlotte_status:
-      value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'
-      friendly_name: 'Charlotte'
-      # entity_id: input_select.charlotte_status_dropdown
-      unique_id: input_select.charlotte_status_dropdown
-
-- platform: integration
-  source: sensor.elec2_cm119_160_db_92_instantaneous_power
-  name: energy_spent
-  unit_prefix: k
-  round: 2
-- platform: integration
-  source: sensor.tv_power_plug_power
-  name: energy_spent_tv
-  unit_prefix: k
-  round: 2
-- platform: integration
-  source: sensor.shower_power_plug_power
-  name: energy_spent_shower
-  unit_prefix: k
-  round: 2
-
 - platform: min_max
   name: Average External Light Level
+  unique_id: average_external_light_level
   type: median
   entity_ids:
     - sensor.lux_meter_1_level
@@ -81,8 +10,10 @@
 
 - platform: min_max
   name: House Average Temperature
+  unique_id: house_average_temperature
   type: mean
   entity_ids:
+    - sensor.front_hall_lywsd03mmc_temperature
     - sensor.kitchen_temperature
     - sensor.craft_room_multi_sensor_temperature
     - sensor.living_room_multi_sensor_temperature
@@ -90,13 +21,25 @@
     - sensor.nook_multi_sensor_temperature
     - sensor.hallway_multi_sensor_temperature
     - sensor.study_multi_sensor_temperature
+    - sensor.study_lywsd03mmc_temperature
     - sensor.bathroom_multi_sensor_temperature
+    - sensor.ensuite_lywsd03mmc_temperature
+
+- platform: min_max
+  name: Rest of House Average Temperature
+  unique_id: rest_of_house_average_temperature
+  type: mean
+  entity_ids:
+    - sensor.master_bedroom_multi_sensor_temperature
+    - sensor.bathroom_multi_sensor_temperature
+    - sensor.ensuite_lywsd03mmc_temperature
 
 - platform: min_max
   name: House Average Humidity
+  unique_id: house_average_humidity
   type: median
   entity_ids:
-    - sensor.front_hall_multi_sensor_humidity
+    - sensor.front_hall_lywsd03mmc_humidity
     - sensor.craft_room_multi_sensor_humidity
     - sensor.guest_room_multi_sensor_humidity
     - sensor.living_room_multi_sensor_humidity
@@ -104,7 +47,18 @@
     - sensor.nook_multi_sensor_humidity
     - sensor.hallway_multi_sensor_humidity
     - sensor.study_multi_sensor_humidity
+    - sensor.study_lywsd03mmc_humidity
     - sensor.bathroom_multi_sensor_humidity
+    - sensor.ensuite_lywsd03mmc_humidity
+
+- platform: min_max
+  name: Study Average Temperature
+  unique_id: study_average_temperature
+  type: median
+  entity_ids:
+    - sensor.study_lywsd03mmc_temperature
+    - sensor.study_multi_sensor_temperature
+
 
 - platform: time_date
   display_options:
@@ -138,7 +92,7 @@
       value_template: "{{state_attr('weather.openweathermap', 'forecast')[12].temperature}}"
 
     house_target_temperature:
-      value_template: "{{state_attr('climate.house', 'temperature')}}"
+      value_template: "{{state_attr('climate.rest_of_house_thermostat', 'temperature')}}"
 
 - platform: thermal_comfort
   sensors:
@@ -165,8 +119,8 @@
     front_hall:
       friendly_name: Front Hall
       unique_id: front_hall_thermal_comfort
-      temperature_sensor: sensor.front_hall_multi_sensor_temperature
-      humidity_sensor: sensor.front_hall_multi_sensor_humidity
+      temperature_sensor: sensor.front_hall_lywsd03mmc_temperature
+      humidity_sensor: sensor.front_hall_lywsd03mmc_humidity
     craft_room:
       friendly_name: Craft Room
       unique_id: craft_room_thermal_comfort

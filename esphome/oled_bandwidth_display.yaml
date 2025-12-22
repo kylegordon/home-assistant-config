@@ -1,3 +1,4 @@
+---
 packages:
   common: !include common/common.yaml
 
@@ -9,7 +10,8 @@ substitutions:
 esphome:
   name: ${device_name}
   comment: ${device_description}
-  platform: ESP8266
+
+esp8266:
   board: d1_mini
 
 captive_portal:
@@ -21,18 +23,23 @@ web_server:
   port: 80
 
 sensor:
-- platform: homeassistant
-  id: internet_speed_in
-  entity_id: sensor.internet_speed_in
-  internal: true
+  - platform: homeassistant
+    id: internet_speed_in
+    entity_id: sensor.internet_speed_in
+    internal: true
 
-- platform: homeassistant
-  id: internet_speed_out
-  entity_id: sensor.internet_speed_out
-  internal: true
+  - platform: homeassistant
+    id: internet_speed_out
+    entity_id: sensor.internet_speed_out
+    internal: true
 
 syslog:
-  ip_address: 172.24.32.13
+  udp_id: esphome_udp_syslog
+  time_id: esptime
+
+udp:
+  id: esphome_udp_syslog
+  addresses: 172.24.32.13
   port: 515
 
 time:
@@ -41,19 +48,20 @@ time:
     timezone: Europe/London
 
 font:
-  - file: 'slkscr.ttf'
+  - file: 'common/fonts/slkscr.ttf'
     id: font1
     size: 8
 
-  - file: 'BebasNeue-Regular.ttf'
+  - file: 'common/fonts/BebasNeue-Regular.ttf'
     id: font2
     size: 20
 
-  - file: 'arial.ttf'
+  - file: 'common/fonts/arial.ttf'
     id: font3
     size: 14
 
 i2c:
+  frequency: 800kHz
   sda: GPIO4
   scl: GPIO5
   scan: false

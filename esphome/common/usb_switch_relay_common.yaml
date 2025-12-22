@@ -1,0 +1,176 @@
+---
+# https://devices.esphome.io/devices/Sinilink-XY-WFUSB-USB-Switch-Relay
+
+packages:
+  common: !include common.yaml
+
+esphome:
+  name: ${device_name}
+  friendly_name: "${friendly_name}"
+
+esp8266:
+  board: esp01_1m
+  restore_from_flash: true
+
+logger:
+
+captive_portal:
+
+# Enable web server
+web_server:
+  port: 80
+
+time:
+  - platform: homeassistant
+
+# Blue LED
+status_led:
+  pin:
+    number: GPIO16
+
+output:
+  # Relay
+  - platform: gpio
+    id: switch_relay
+    pin: GPIO5
+
+  # Green LED
+  - platform: gpio
+    pin: GPIO14
+    id: green_led
+    inverted: true  # start on
+
+  # Binary Output template to link relay and green LED states
+  # LED is on when relay is off
+  - platform: template
+    type: binary
+    id: relay
+    write_action:
+      if:
+        condition:
+          lambda: return state;
+        then:
+          - output.turn_on: switch_relay
+          - output.turn_on: green_led
+        else:
+          - output.turn_off: switch_relay
+          - output.turn_off: green_led
+
+# Button
+binary_sensor:
+  - platform: gpio
+    id: hardware_button
+    pin:
+      number: GPIO04
+      mode: INPUT_PULLUP
+      inverted: true
+    on_press:
+      light.toggle: "${device_name}"
+
+light:
+  - platform: binary
+    name: "${friendly_name}"
+    id: "${device_name}"
+    output: relay
+
+# # Relay
+# switch:
+#   - platform: gpio
+#     id: switch_relay
+#     pin: GPIO5
+
+#   # Green LED
+#   - platform: gpio
+#     pin: GPIO14
+#     id: green_led
+#     inverted: true # start on
+
+#   # Switch template to link relay and green LED states
+#   # LED is on when relay is off
+#   - platform: template
+#     id: relay
+#     name: "${friendly_name}"
+#     lambda: |-
+#       if (id(switch_relay).state) {
+#         return true;
+#       } else {
+#         return false;
+#       }
+#     turn_on_action:
+#         - switch.turn_on:
+#             id: green_led
+#         - switch.turn_on:
+#             id: switch_relay
+#     turn_off_action:
+#         - switch.turn_off:
+#             id: green_led
+#         - switch.turn_off:
+#             id: switch_relay
+
+# # # Button
+# # binary_sensor:
+# #   - platform: gpio
+# #     id: hardware_button
+# #     pin:
+# #       number: GPIO04
+# #       mode: INPUT_PULLUP
+# #       inverted: True
+# #     on_press:
+# #       - switch.toggle: relay
+
+# # WiFi Signal Sensor
+# sensor:
+#   - platform: wifi_signal
+#     name: "WiFi Status"
+#     update_interval: 60s
+
+# # Restart button
+# button:
+#   - platform: restart
+#     name: "Restart"
+
+
+# output:
+#   # Relay
+#   - platform: gpio
+#     id: switch_relay
+#     pin: GPIO5
+
+#   # Green LED
+#   - platform: gpio
+#     pin: GPIO14
+#     id: green_led
+#     inverted: true # start on
+
+#   # Binary Output template to link relay and green LED states
+#   # LED is on when relay is off
+#   - platform: template
+#     type: binary
+#     id: relay
+#     write_action:
+#       if:
+#         condition:
+#           lambda: return state;
+#         then:
+#           - output.turn_on: switch_relay
+#           - output.turn_on: green_led
+#         else:
+#           - output.turn_off: switch_relay
+#           - output.turn_off: green_led
+
+# # Button
+# binary_sensor:
+#   - platform: gpio
+#     id: hardware_button
+#     pin:
+#       number: GPIO04
+#       mode: INPUT_PULLUP
+#       inverted: True
+#     on_press:
+#       light.toggle: "${name}"
+
+# light:
+#   - platform: binary
+#     name: "${friendly_name}"
+#     id: "${name}"
+#     output: relay

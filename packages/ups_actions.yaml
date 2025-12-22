@@ -1,5 +1,6 @@
 automation:
   - alias: "UPS Not OK"
+    id: ups_not_ok
     trigger:
       - platform: template
         value_template: "{{ not is_state('sensor.apc1000_status_data', '0L') }}"
@@ -9,7 +10,7 @@ automation:
           entity_id: camera.driveway, camera.backdoor
           filename: /tmp/{{ entity_id.entity_id }}_snapshot.jpg
       - service: notify.email_kyle
-        data_template:
+        data:
           title: 'Power failure - UPS responding'
           message: "Cameras summary"
           data:
@@ -37,6 +38,7 @@ automation:
               </html>
 
   - alias: "UPS Shutdown Imminent"
+    id: ups_shutdown_imminent
     trigger:
       - platform: numeric_state
         entity_id: sensor.apc1000_battery_runtime
@@ -47,7 +49,7 @@ automation:
           entity_id: camera.driveway, camera.backdoor
           filename: /tmp/{{ entity_id.entity_id }}_snapshot.jpg
       - service: notify.email_kyle
-        data_template:
+        data:
           title: 'Power outage - UPS shutting down'
           message: "Cameras summary"
           data:
@@ -75,6 +77,7 @@ automation:
               </html>
 
   - alias: "UPS Recovery"
+    id: ups_recovery
     trigger:
       - platform: template
         value_template: "{{ is_state('sensor.apc1000_status_data', '0L') }}"
@@ -84,7 +87,7 @@ automation:
           entity_id: camera.driveway, camera.backdoor
           filename: /tmp/{{ entity_id.entity_id }}_snapshot.jpg
       - service: notify.email_kyle
-        data_template:
+        data:
           title: 'Power outage - UPS has recovered'
           message: "Cameras summary"
           data:

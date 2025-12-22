@@ -1,0 +1,158 @@
+---
+### TODO
+
+## Display On/Off when doors moving
+## Restore last state of display
+
+# https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
+# D0 -
+# D1 - Cover switch relay
+# D2 - SDA
+# D3 - Boot fails if pulled low
+# D4 - Boot fails if pulled low
+# D5 - SCL
+# D6 - Open input (works when mode: INPUT_PULLUP - make sure system in garage pulls low when active)
+# D7 - Closed input (works when mode: INPUT_PULLUP - make sure system in garage pulls low when active)
+# D8 - Boot fails if pulled high
+#
+
+# Change internal: false to true when operational and reliable
+
+packages:
+  syslog: !include syslog.yaml
+
+esp8266:
+  board: $board
+
+esphome:
+  name: $device_name
+  comment: $device_description
+  friendly_name: $friendly_name
+
+# Enable logging
+logger:
+
+web_server:
+
+captive_portal:
+
+font:
+  - file: 'common/fonts/slkscr.ttf'
+    id: font1
+    size: 8
+
+i2c:
+  frequency: 800kHz
+  sda: D2
+  scl: D5
+  scan: true
+
+display:
+  - platform: ssd1306_i2c
+    id: oled
+    model: "SH1106 128x64"
+    # reset_pin: D0
+    address: 0x3C
+    lambda: |-
+      static int yorigin = 0;
+      static int lineheight = 9;
+
+      //it.line(0, 0, 128, 0); // Top line
+      //it.line(0, 0, 0, 128); // Left line
+      //it.line(127, 0, 127, 64); // Right line
+      //it.line(0, 63, 127, 63); // Bottom line
+
+      int y = yorigin;
+      // Print "viewpoint.house" in top center.
+      it.printf(64, y, id(font1), TextAlign::TOP_CENTER, "Viewpoint.House");
+      y = y+lineheight;
+      it.line(25, y-1, it.get_width()-25, y-1);
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "IP: %s", id(ip_address).state.c_str());
+      y = y+lineheight;
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "HA: %s", id(connection_status).state ? "Connected" : "Disconnected");
+      y = y+lineheight;
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Relay state: %s", id(relay_door).state ? "Open" : "Closed");
+      y = y+lineheight;
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Closed Endstop: %s", id(door_closed_sensor).state ? "Closed" : "Open");
+      y = y+lineheight;
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Open Endstop: %s", id(door_open_sensor).state ? "Open" : "Closed");
+
+      // Print time in HH:MM format
+      it.strftime(0, 60, id(font1), TextAlign::BASELINE_LEFT, "%H:%M", id(esptime).now());
+
+# D0 == GPIO16 == Optional internal PullDOWN
+# D1 == GPIO5 == Optional internal Pullup
+# D2 == GPIO4 == Optional internal Pullup
+# D3 == GPIO0 == Optional internal Pullup
+# D4 == GPIO2 == Optional internal Pullup
+# D5 == GPIO14 == Optional internal Pullup
+# D6 == GPIO12 == Optional internal Pullup
+# D7 == GPIO13 == Optional internal Pullup
+# D8 == GPIO15 == Optional internal Pullup
+
+cover:
+  - platform: feedback
+    name: $friendly_name
+    id: cover_switch
+    device_class: Garage
+    open_action:
+      - switch.turn_on: relay_door
+      - delay: 500ms
+      - switch.turn_off: relay_door
+    close_action:
+      - switch.turn_on: relay_door
+      - delay: 500ms
+      - switch.turn_off: relay_door
+    stop_action:
+      - switch.turn_on: relay_door
+      - delay: 500ms
+      - switch.turn_off: relay_door
+    close_endstop: door_closed_sensor
+    open_endstop: door_open_sensor
+    open_duration: 12s
+    close_duration: 12s
+    has_built_in_endstop: true
+
+switch:
+  - platform: gpio
+    pin: $cover_switch_pin
+    id: relay_door
+    name: "Relay Door"
+    internal: false
+  - platform: template
+    name: "Display On/Off"
+    id: display_on_off
+    internal: false
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+    turn_on_action:
+      - lambda: |-
+          id(oled).turn_on();
+    turn_off_action:
+      - lambda: |-
+          id(oled).turn_off();
+
+binary_sensor:
+  - platform: gpio
+    id: door_open_sensor
+    name: "Open Endstop Sensor"
+    internal: false
+    filters:
+      - delayed_on: 1s
+      - delayed_off: 1s
+    pin:
+      number: $open_endstop_pin
+      inverted: true
+      mode: INPUT_PULLUP
+
+  - platform: gpio
+    id: door_closed_sensor
+    name: "Closed Endstop Sensor"
+    internal: false
+    filters:
+      - delayed_on: 1s
+      - delayed_off: 1s
+    pin:
+      number: $close_endstop_pin
+      inverted: true
+      mode: INPUT_PULLUP

@@ -1,0 +1,130 @@
+---
+
+## Data from a Vaillant Arotherm Plus heat pump, via ebusd
+
+## The ebusd discovery seems to be broken, in that when HA is restarted all the ebusd devices are unavailable.
+## Declaring all relevant sensors here seems to work instead.
+
+mqtt:
+  sensor:
+    - name: "Heat Pump Flow Rate"
+      unique_id: "heatpump_flow_rate"
+      state_topic: "ebusd/hmu/WaterThroughput"
+      value_template: "{{ value_json['0']['value'] }}"
+
+    ### Converts the following message into individual sensors
+    # State00 is too large to squeeze into a top level state or set of attributes
+    # ebusd/hmu/State00 {
+    #     "S00_SupplyTemp": {"value": 14.56},
+    #     "field2": {"value": 19},
+    #     "S00_CompressorModulation": {"value": 0.0},
+    #     "CompressorState": {"value": "off"},
+    #     "HeatingState": {"value": 0},
+    #     "field6": {"value": 0},
+    #     "Defrost": {"value": "inactive"},
+    #     "S00_CompressorPower": {"value": 0.0}}
+    ###
+
+    - name: "Heat Pump Defrost"
+      unique_id: "heatpump_defrost"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['Defrost']['value'] }}"
+
+    - name: "Heat Pump Heating State"
+      unique_id: "heatpump_heating_state"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['HeatingState']['value'] }}"
+
+    - name: "S00_SupplyTemp"
+      unique_id: "heatpump_s00_supply_temp"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['S00_SupplyTemp']['value'] }}"
+      unit_of_measurement: "°C"
+
+    - name: "S00_CompressorModulation"
+      unique_id: "heatpump_s00_compressor_modulation"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['S00_CompressorModulation']['value'] }}"
+      unit_of_measurement: "%"
+
+    - name: "S00_CompressorPower"
+      unique_id: "heatpump_s00_compressor_power"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['S00_CompressorPower']['value'] }}"
+
+    - name: "S00_CompressorState"
+      unique_id: "heatpump_s00_compressor_state"
+      state_topic: "ebusd/hmu/State00"
+      value_template: "{{ value_json['CompressorState']['value'] }}"
+
+      # Check MQTT message on ebusd/hmu/State01 to inspect the rest of the State01 array
+      # The message is too large to squeeze into a top level state
+
+    # ebusd/hmu/State01 {
+    #     "0": {"name": "temp1", "value": 14.5},
+    #     "1": {"name": "temp1", "value": 17.5},
+    #     "2": {"name": "temp2", "value": null},
+    #     "3": {"name": "temp1", "value": null},
+    #     "4": {"name": "temp1", "value": null},
+    #     "5": {"name": "pumpstate", "value": "off"}}
+
+    - name: "Heat Pump Flow Temperature"
+      unique_id: "heatpump_flow_temperature"
+      state_topic: "ebusd/hmu/State01"
+      unit_of_measurement: "°C"
+      value_template: "{{ value_json['0']['value'] }}"
+
+    - name: "Heat Pump Return Temperature"
+      unique_id: "heatpump_return_temperature"
+      unit_of_measurement: "°C"
+      state_topic: "ebusd/hmu/State01"
+      value_template: "{{ value_json['1']['value'] }}"
+
+    ### The installers advised the following data is as described below
+    # ebusd/hmu/State07 {
+    #      "0": {"name": "power", "value": 0},
+    #      "1": {"name": "energy", "value": 3.0},
+    #      "2": {"name": "state", "value": "Normal mode HP off"},
+    #      "3": {"name": "state", "value": "ready"}}
+
+    # - name: "Heat Pump State07"
+    #   state_topic: "ebusd/hmu/State07"
+    #   json_attributes_topic: "ebusd/hmu/State07"
+
+    # This is a %age of capacity
+    - name: "Heat Pump Energy Usage Level"
+      unique_id: "heatpump_energy_usage_level"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['0']['value'] }}"
+
+    - name: "Heat Pump Daily Energy"
+      unique_id: "heatpump_daily_energy"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['1']['value'] }}"
+
+    - name: "Heat Pump Mode"
+      unique_id: "heatpump_mode"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['2']['value'] }}"
+
+    - name: "Heat Pump Task"
+      unique_id: "heatpump_task"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['3']['value'] }}"
+
+    - name: "Heat Pump System Pressure"
+      unique_id: "heatpump_system_pressure"
+      state_topic: "ebusd/hmu/State07"
+      value_template: "{{ value_json['DisplaySystemPressure']['value'] }}"
+      unit_of_measurement: "bar"
+
+    - name: "Heat Pump HMU RunDataHighPressure"
+      unique_id: "heatpump_hmu_rundatahighpressure"
+      state_topic: "ebusd/hmu/RunDataHighPressure"
+      value_template: "{{ value_json['pressv']['value'] }}"
+      unit_of_measurement: "bar"
+
+    - name: "Heat Pump Error Code"
+      unique_id: "heatpump_error_code"
+      state_topic: "ebusd/hmu/currenterror"
+      value_template: "{{ value_json['0']['value'] }}"

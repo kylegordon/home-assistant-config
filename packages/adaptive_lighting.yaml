@@ -3,8 +3,11 @@
 
 adaptive_lighting:
   - name: "Hallway adaptive lighting"
+    ### Hallway lights need listed individually as the Z2M group does not behave correctly
+    ### Initial start values are ignored.
     lights:
-      - light.hall
+      - light.hallway_bedrooms
+      - light.hallway_bathroom
       - light.boot_room
       - light.front_hall
     prefer_rgb_color: false
@@ -87,8 +90,7 @@ adaptive_lighting:
 
   - name: "Kitchen adaptive lighting"
     lights:
-      - light.kitchen
-      - light.kitchen_cabinets
+      - light.kitchen_lights_group
     prefer_rgb_color: false
     transition: 45  # seconds
     initial_transition: 5  # seconds
@@ -118,6 +120,26 @@ adaptive_lighting:
     max_brightness: 100  # percentage
     min_color_temp: 2300  # Might be able to reduce to 2200
     max_color_temp: 8500
+    sleep_brightness: 1
+    sleep_color_temp: 1500
+    # sunrise_time: "08:00:00"  # override the sunrise time
+    # sunrise_offset: '00:00:00'
+    # sunset_time:
+    sunset_offset: '00:00:00'  # in seconds or '00:15:00'
+    take_over_control: true
+    only_once: false
+
+  - name: "Living Room Cosy adaptive lighting"
+    lights:
+      - light.cosy_lights
+    prefer_rgb_color: false
+    transition: 45  # seconds
+    initial_transition: 5  # seconds
+    interval: 30  # seconds
+    min_brightness: 10  # percentage
+    max_brightness: 100  # percentage
+    min_color_temp: 2000
+    max_color_temp: 4000
     sleep_brightness: 1
     sleep_color_temp: 1500
     # sunrise_time: "08:00:00"  # override the sunrise time

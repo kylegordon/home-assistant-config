@@ -1,0 +1,326 @@
+---
+homeassistant:
+  customize:
+    input_boolean.vacuum_fronthall:
+      room_id: "1"
+      mode: "vacuum_and_mop"
+    input_boolean.vacuum_livingroom:
+      room_id: "11"
+      mode: "vacuum_and_mop"
+    input_boolean.vacuum_bootroom:
+      room_id: "4"
+      mode: "vacuum_and_mop"
+    input_boolean.vacuum_kitchen:
+      room_id: "2"
+      mode: "vacuum_and_mop"
+    input_boolean.vacuum_hallway:
+      room_id: "10"
+      mode: "vacuum_and_mop"
+    input_boolean.vacuum_bathroom:
+      room_id: "3"
+      mode: "vacuum_and_mop"
+    input_boolean.vacuum_study:
+      room_id: "8"
+      mode: "vacuum"
+    input_boolean.vacuum_craftroom:
+      room_id: "6"
+      mode: "vacuum"
+    input_boolean.vacuum_guestroom:
+      room_id: "12"
+      mode: "vacuum"
+    input_boolean.vacuum_bedroom:
+      room_id: "9"
+      mode: "vacuum"
+    input_boolean.vacuum_ensuite:
+      room_id: "7"
+      mode: "vacuum_and_mop"
+
+# Error handling
+# https://github.com/oncleben31/home-assistant-config/blob/31fc1c21af4338d865361d189a1dda9fe01f04c9/config/entities/sensors/vacuum_error.yaml#L3
+
+input_boolean:
+  vacuum_bootroom:
+    name: Boot Room
+    icon: mdi:foot-print
+  vacuum_livingroom:
+    name: Living Room
+    icon: mdi:sofa
+  vacuum_fronthall:
+    name: Front Hall
+    icon: mdi:bed-empty
+  vacuum_kitchen:
+    name: Kitchen
+    icon: mdi:silverware-fork-knife
+  vacuum_hallway:
+    name: Hallway
+  vacuum_bathroom:
+    name: Bathroom
+    icon: mdi:toilet
+  vacuum_study:
+    name: Study
+    icon: mdi:book
+  vacuum_craftroom:
+    name: Craft Room
+    icon: mdi:book
+  vacuum_guestroom:
+    name: Guest Room
+    icon: mdi:bed
+  vacuum_bedroom:
+    name: Bedroom
+    icon: mdi:bed
+  vacuum_ensuite:
+    name: Ensuite
+    icon: mdi:toilet
+
+group:
+  vacuum_rooms:
+    name: Vacuum Rooms
+    entities:
+      - input_boolean.vacuum_bootroom
+      - input_boolean.vacuum_fronthall
+      - input_boolean.vacuum_kitchen
+      - input_boolean.vacuum_livingroom
+      - input_boolean.vacuum_hallway
+      - input_boolean.vacuum_bathroom
+      - input_boolean.vacuum_study
+      - input_boolean.vacuum_craftroom
+      - input_boolean.vacuum_guestroom
+      - input_boolean.vacuum_bedroom
+      - input_boolean.vacuum_ensuite
+
+script:
+  vacuum_clean_segments:
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("group.vacuum_rooms") | selectattr("state","eq","on")
+              | map(attribute="attributes.room_id") | list | to_json}}'
+    mode: single
+    alias: vacuum_clean_segments
+    icon: mdi:arrow-right
+  vacuum_clean_segments_message:
+    # Creates the MQTT message for Valetudo
+    alias: vacuum_clean_segments_message
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: valetudo/ConfusedMeaslyRaccoon/OperationModeControlCapability/preset/set
+          payload_template: "{{mode|default('vacuum_and_mop')}}"
+      - service: mqtt.publish
+        data:
+          topic: valetudo/ConfusedMeaslyRaccoon/MapSegmentationCapability/clean/set
+          payload_template: '{"segment_ids": {{segments}}}'
+    mode: single
+
+  # A series of script calls to clean rooms. Called from the scheduler component.
+  vacuum_clean_fronthall:
+    alias: vacuum_clean_fronthall
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_fronthall") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_fronthall.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the front hall has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_livingroom:
+    alias: vacuum_clean_livingroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_livingroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_livingroom.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the living room has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_bootroom:
+    alias: vacuum_clean_bootroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bootroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_bootroom.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the boot room has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_kitchen:
+    alias: vacuum_clean_kitchen
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_kitchen") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_kitchen.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the kitchen has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_hallway:
+    alias: vacuum_clean_hallway
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_hallway") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_hallway.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the hallway has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_bathroom:
+    alias: vacuum_clean_bathroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bathroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_bathroom.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the bathroom has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_study:
+    alias: vacuum_clean_study
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_study") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_study.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the study has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_craftroom:
+    alias: vacuum_clean_craftroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_craftroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_craftroom.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the craft room has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_guestroom:
+    alias: vacuum_clean_guestroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_guestroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_guestroom.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the guest room has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_bedroom:
+    alias: vacuum_clean_bedroom
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_bedroom") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_bedroom.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the bedroom has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"
+
+  vacuum_clean_ensuite:
+    alias: vacuum_clean_ensuite
+    mode: single
+    sequence:
+      - service: script.turn_on
+        target:
+          entity_id: script.vacuum_clean_segments_message
+        data:
+          variables:
+            segments: '{{expand("input_boolean.vacuum_ensuite") | map(attribute="attributes.room_id") | list | to_json }}'
+            mode: '{{ states.input_boolean.vacuum_ensuite.attributes.mode }}'
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Vacuuming"
+          message: "Vacuuming of the ensuite has started."
+          data:
+            clickAction: "/lovelace/vacuum"
+            url: "/lovelace/vacuum"

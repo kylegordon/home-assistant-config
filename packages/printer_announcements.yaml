@@ -42,6 +42,7 @@ binary_sensor:
 
 automation:
   - alias: 3D printer started printing
+    id: 3d_printer_started_printing
     trigger:
       - platform: state
         entity_id: sensor.octoprint_print_status
@@ -55,7 +56,7 @@ automation:
             state: "Night"
     action:
       - service: notify.alexa_media
-        data_template:
+        data:
           target:
             - media_player.study
           data:
@@ -64,6 +65,7 @@ automation:
           message: "3D printer has started printing."
 
   - alias: 3D printer finishing printing
+    id: 3d_printer_finishing_printing
     trigger:
       - platform: state
         entity_id: sensor.octoprint_print_status
@@ -77,7 +79,7 @@ automation:
             state: "Night"
     action:
       - service: notify.alexa_media
-        data_template:
+        data:
           target:
             - media_player.study
           data:
@@ -86,6 +88,7 @@ automation:
           message: "3D printer has finished printing."
 
   - alias: 3D printer bed warming up
+    id: 3d_printer_bed_warming_up
     trigger:
       - platform: state
         entity_id: binary_sensor.octoprint_bed_heating
@@ -98,7 +101,7 @@ automation:
             state: "Night"
     action:
       - service: notify.alexa_media
-        data_template:
+        data:
           target:
             - media_player.study
           data:
@@ -106,6 +109,7 @@ automation:
           message: Warming the print bed
 
   - alias: 3D printer hot end warming up
+    id: 3d_printer_hot_end_warming_up
     trigger:
       - platform: state
         entity_id: binary_sensor.octoprint_tool_heating
@@ -118,7 +122,7 @@ automation:
             state: "Night"
     action:
       - service: notify.alexa_media
-        data_template:
+        data:
           target:
             - media_player.study
           data:
