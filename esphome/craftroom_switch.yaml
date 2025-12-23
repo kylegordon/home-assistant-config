@@ -1,9 +1,9 @@
 ---
 substitutions:
-  name: "craftroom_switch"
-  device_name: craftroom_switch
+  name: "craftroom_lightswitch"
+  device_name: craftroom_lightswitch
   device_description: Craft Room Lightswitch
-  friendly_name: Craft Room Switch
+  friendly_name: Craft Room Lightswitch
   default_state: "RESTORE_DEFAULT_ON"
   device_format: EU
   gang_count: 1

@@ -11,8 +11,18 @@
   name: Lightswitch Relays
   unique_id: lightswitch_relays
   entities:
-    - switch.master_bedroom_lightswitch_relay
-    - switch.guest_bedroom_lightswitch_relay
-    - switch.study_lightswitch_relay
-    - switch.craft_room_lightswitch_relay
-    - switch.ensuite_lightswitch_relay
+    - switch.masterbedroom_lightswitch_relay_1
+    - switch.guestbedroom_lightswitch_relay_1
+    - switch.study_lightswitch_relay_1
+    - switch.craftroom_lightswitch_relay_1
+    - switch.ensuite_lightswitch_relay_1
+    - switch.kitchen_lightswitch_relay_1
+    - switch.kitchen_lightswitch_relay_2
+    - switch.living_room_lightswitch_relay_1
+    - switch.living_room_lightswitch_relay_2
+    - switch.living_room_lightswitch_relay_3
+    - switch.hall_single_lightswitch_relay_1
+    - switch.hall_dual_lightswitch_relay_1
+    - switch.hall_dual_lightswitch_relay_2
+    - switch.front_hall_dual_lightswitch_relay_1
+    - switch.front_hall_dual_lightswitch_relay_2

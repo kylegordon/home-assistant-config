@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "hall_dual_switch"
-  friendly_name: "Hall Dual Switch"
-  device_description: "Hall Dual Light Switch"
+  name: "hall_dual_lightswitch"
+  friendly_name: "Hall Dual Lightswitch"
+  device_description: "Hall Dual Lightswitch"
   default_state: "RESTORE_DEFAULT_ON"
   device_format: EU
   gang_count: 2

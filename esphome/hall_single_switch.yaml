@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "hall_single_switch"
-  friendly_name: "Hall Single Switch"
-  device_description: "Hall Single Light Switch"
+  name: "hall_single_lightswitch"
+  friendly_name: "Hall Single Lightswitch"
+  device_description: "Hall Single Lightswitch"
   device_format: EU
   gang_count: 1
 

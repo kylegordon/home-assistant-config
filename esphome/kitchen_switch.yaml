@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "kitchen_switch"
-  friendly_name: "Kitchen Switch"
-  device_description: "Kitchen Light Switch"
+  name: "kitchen_lightswitch"
+  friendly_name: "Kitchen Lightswitch"
+  device_description: "Kitchen Lightswitch"
   device_format: EU
   gang_count: 2
 
