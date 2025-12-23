@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "front_hall_dual_switch"
-  friendly_name: "Front Hall Dual Switch"
-  device_description: "Front Hall Dual Light Switch"
+  name: "front_hall_dual_lightswitch"
+  friendly_name: "Front Hall Dual Lightswitch"
+  device_description: "Front Hall Dual Lightswitch"
   default_state: "RESTORE_DEFAULT_ON"
   device_format: EU
   gang_count: 2

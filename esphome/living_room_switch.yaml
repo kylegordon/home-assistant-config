@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "living_room_switch"
-  friendly_name: "Living Room Switch"
-  device_description: "Living Room Light Switch"
+  name: "living_room_lightswitch"
+  friendly_name: "Living Room Lightswitch"
+  device_description: "Living Room Lightswitch"
   device_format: EU
   gang_count: 3
 

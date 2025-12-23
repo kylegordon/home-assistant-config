@@ -1,8 +1,8 @@
 ---
 substitutions:
-  name: "masterbedroom_switch"
+  name: "masterbedroom_lightswitch"
   friendly_name: "Master Bedroom Lightswitch"
-  device_description: "Master Bedroom Light Switch"
+  device_description: "Master Bedroom Lightswitch"
   device_format: EU
   gang_count: 1
 

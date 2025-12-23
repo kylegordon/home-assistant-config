@@ -1,9 +1,9 @@
 ---
 substitutions:
-  name: "guestbedroom_switch"
-  device_name: guestbedroom_switch
+  name: "guestbedroom_lightswitch"
+  device_name: guestbedroom_lightswitch
   device_description: Guest Bedroom Lightswitch
-  friendly_name: Guest Bedroom Switch
+  friendly_name: Guest Bedroom Lightswitch
   default_state: "RESTORE_DEFAULT_ON"
   device_format: EU
   gang_count: 1
