@@ -12,10 +12,10 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: light.masterbedroom_lightswitch_lights_all
+          entity_id: light.master_bedroom_lightswitch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id: switch.masterbedroom_lightswitch_relay_1
+        entity_id: switch.master_bedroom_lightswitch_relay_1
       - service: light.toggle
         entity_id: light.master_bedroom
       - service: logbook.log
@@ -25,7 +25,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.masterbedroom_lightswitch_lights_all
+          entity_id: light.master_bedroom_lightswitch_lights_all
         data:
           transition: 1
 
@@ -39,7 +39,7 @@ automation:
           click_type: double
     action:
       - service: switch.turn_on
-        entity_id: switch.masterbedroom_lightswitch_relay_1
+        entity_id: switch.master_bedroom_lightswitch_relay_1
       - service: light.toggle
         entity_id: light.master_bedroom
       - service: light.toggle
