@@ -24,7 +24,9 @@ automation:
       - service: switch.turn_on
         entity_id: switch.craftroom_lightswitch_relay_1
       - service: light.toggle
-        entity_id: light.craft_room_lighting
+        entity_id:
+          - light.craft_room_lighting
+          - light.usb_switch_relay_2_usb_switch_relay_2
       - service: logbook.log
         data:
           name: EVENT
