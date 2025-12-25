@@ -19,7 +19,7 @@ This repository contains the complete configuration for a Home Assistant install
 ## Deployment
 
 This configuration is deployed through docker-compose using the service description available at:
-- **Deployment Stack**: <https://github.com/kylegordon/ha-stack>
+- **Docker Compose Configuration**: <https://github.com/kylegordon/ha-stack>
 
 ## Repository Structure
 
@@ -115,6 +115,7 @@ Extensive ESPHome integration with 70+ devices:
 
 1. Clone this repository
 2. Copy `travis_secrets.yaml` to `secrets.yaml` and update with your values
+   (Note: The file is named `travis_secrets.yaml` for historical CI/CD reasons, but it serves as a template for all secrets)
 3. Deploy using docker-compose from <https://github.com/kylegordon/ha-stack>
 4. Configure ESPHome devices to connect to Home Assistant
 5. Set up integrations requiring authentication (InfluxDB, MQTT, etc.)
@@ -196,7 +197,7 @@ Please test changes locally before submitting PRs.
 
 This configuration draws inspiration from many sources:
 
-- **BRUH Automation**: <https://github.com/bruhautomation/BRUH2-Home-Assistant-Configuration>
+- **BRUH Automation**: <https://github.com/bruhautomation/BRUH2-Home-Assistant-Configuration> (archived but historically influential)
 - **Home Assistant Community**: Countless forum posts and shared configurations
 - **ESPHome Documentation**: Device configuration examples
 - **Custom Integrations**: HWAM Stove, Valetudo, and HACS community
