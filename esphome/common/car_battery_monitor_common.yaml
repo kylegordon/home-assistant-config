@@ -56,11 +56,22 @@ binary_sensor:
               - logger.log: "Allowing deep sleep, Home Assistant activated"
               - deep_sleep.enter: deep_sleep_1
 
+  - platform: template
+    name: "${friendly_name} Low Battery"
+    id: low_battery_alert
+    device_class: problem
+    lambda: |-
+      return id(battery_voltage).state < 12.0;
+
 sensor:
   - platform: adc
     pin: A0
     name: "${friendly_name} Voltage"
     id: battery_voltage
+    device_class: voltage
+    unit_of_measurement: "V"
+    accuracy_decimals: 2
+    state_class: measurement
     update_interval: 15s
     filters:
       # This might need to be adjusted for your device
@@ -68,9 +79,10 @@ sensor:
 
   - platform: template
     name: "${friendly_name} Battery Percentage"
+    device_class: battery
     unit_of_measurement: "%"
     accuracy_decimals: 0
-    icon: "mdi:battery"
+    state_class: measurement
     lambda: |-
       // Car battery voltage to percentage mapping
       // 12.6V+ = 100%, 12.4V = 75%, 12.2V = 50%, 12.0V = 25%, <11.8V = 0%
@@ -81,14 +93,6 @@ sensor:
       if (voltage >= 12.0) return 25 + ((voltage - 12.0) / 0.2 * 25);
       if (voltage >= 11.8) return ((voltage - 11.8) / 0.2 * 25);
       return 0;
-    update_interval: 15s
-
-  - platform: template
-    name: "${friendly_name} Low Battery"
-    id: low_battery_alert
-    icon: "mdi:battery-alert"
-    lambda: |-
-      return id(battery_voltage).state < 12.0;
     update_interval: 15s
 
 output:
@@ -102,7 +106,7 @@ light:
   # ... and then make a light out of it.
   - platform: monochromatic
     id: blue_led_light
-    name: "Wemos Blue LED"
+    name: "${friendly_name} Status LED"
     output: blue_led
 
 # Consolidated LED status indicator - checks WiFi, API, and OTA status
