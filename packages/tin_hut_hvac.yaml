@@ -14,8 +14,12 @@ climate:
     hvac_modes:
       - "off"
       - "heat"
-    current_temperature_template: "{{ states('sensor.tin_hut_sensor_temperature') | float }}"
-    target_temperature_template: "{{ state_attr('climate.tin_hut_hvac', 'temperature') | float(16) }}"
+    current_temperature_template: >
+      {% set temp = states('sensor.tin_hut_sensor_temperature') %}
+      {{ temp | float(0) if temp not in ['unavailable', 'unknown', 'none'] else none }}
+    target_temperature_template: >
+      {% set temp = state_attr('climate.tin_hut_hvac', 'temperature') %}
+      {{ temp | float(16) if temp not in [none, 'unavailable', 'unknown'] else 16 }}
     set_hvac_mode:
       service: climate.set_hvac_mode
       target:
