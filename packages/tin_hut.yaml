@@ -75,6 +75,24 @@ automation:
         target:
           entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
 
+  - alias: Tin Hut Door Opened Outdoor Lights
+    id: tin_hut_door_opened_outdoor_lights
+    trigger:
+      - platform: state
+        entity_id: cover.tin_hut_door_left_tin_hut_door_left
+        to: 'open'
+      - platform: state
+        entity_id: cover.tin_hut_door_right_tin_hut_door_right
+        to: 'open'
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.average_external_light_level
+        below: input_number.blinds_evening
+    action:
+      - service: homeassistant.turn_on
+        entity_id:
+          - light.outside_lights
+
   - alias: Tin Hut Not Occupied
     id: tin_hut_not_occupied
     trigger:
