@@ -1,0 +1,112 @@
+---
+# Common configuration for Wemos D1 Mini with magnetic reed switch
+# 
+# Reed switches are typically used for door/window monitoring
+# This common package provides base configuration for a binary sensor
+# connected to a GPIO pin with appropriate pull-up resistor configuration
+#
+# IMPORTANT: Many reed switches are NORMALLY CLOSED (NC) and open when
+# the magnet is present. This configuration assumes a NC reed switch.
+# Adjust the 'inverted' setting if your switch is normally open (NO).
+#
+# Recommended Pin: D2 (GPIO4) - supports internal pull-up
+# Alternative pins: D1, D5, D6, D7 (all support internal pull-up)
+# Avoid: D3, D4, D8 (can cause boot issues if pulled incorrectly)
+
+packages:
+  common: !include common.yaml
+  syslog: !include syslog.yaml
+
+esp8266:
+  board: d1_mini
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  friendly_name: ${friendly_name}
+
+# Enable logging
+logger:
+
+web_server:
+
+# Binary sensor for the reed switch
+# Default configuration uses D2 with INPUT_PULLUP
+# The switch is expected to be normally closed (NC) and opens when magnet is present
+# With inverted: true, the sensor will report:
+#   - OFF when switch is closed (no magnet, door closed)
+#   - ON when switch is open (magnet present, door open)
+binary_sensor:
+  - platform: gpio
+    name: "${friendly_name} Door"
+    id: door_sensor
+    device_class: door
+    pin:
+      number: ${reed_switch_pin}
+      mode: INPUT_PULLUP
+      inverted: true
+    filters:
+      # Debounce to avoid false triggers from mechanical bouncing
+      - delayed_on: ${debounce_time}
+      - delayed_off: ${debounce_time}
+
+output:
+  # Register the blue LED as a dimmable output
+  - platform: esp8266_pwm
+    id: blue_led
+    pin: D4
+    inverted: true
+
+light:
+  # Make a light out of the blue LED for status indication
+  - platform: monochromatic
+    name: "${friendly_name} Blue LED"
+    id: blue_led_light
+    output: blue_led
+    internal: true
+
+# Blink the LED if we aren't connected to WiFi
+interval:
+  - interval: 5000ms
+    id: no_wifi
+    then:
+      - if:
+          condition:
+            not:
+              wifi.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 100%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 0ms
+            - delay: 250ms
+  - interval: 5000ms
+    id: no_api
+    then:
+      - if:
+          condition:
+            not:
+              api.connected:
+          then:
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 100%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 0ms
+            - delay: 250ms
+            - light.turn_on:
+                id: blue_led_light
+                brightness: 100%
+                transition_length: 0s
+            - delay: 250ms
+            - light.turn_off:
+                id: blue_led_light
+                transition_length: 0ms
+            - delay: 250ms

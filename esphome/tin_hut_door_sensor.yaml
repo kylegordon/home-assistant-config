@@ -1,0 +1,36 @@
+---
+# Tin Hut Door Reed Switch Sensor
+#
+# This device monitors a magnetic reed switch attached to a door in the tin hut.
+# The reed switch is NORMALLY CLOSED (NC) - it conducts when the magnet is away,
+# and opens when the magnet is present.
+#
+# Hardware Setup:
+#   - Wemos D1 Mini (ESP8266)
+#   - Magnetic reed switch (NC type)
+#   - Reed switch connected between D2 (GPIO4) and GND
+#   - Internal pull-up resistor enabled on D2
+#
+# Operation:
+#   - When door is CLOSED: magnet near reed switch → switch OPEN → sensor reads HIGH → reports "OPEN" (door open)
+#   - When door is OPEN: magnet away from switch → switch CLOSED → sensor reads LOW → reports "CLOSED" (door closed)
+#   
+# NOTE: The inverted logic in the common config handles the NC reed switch behavior
+# so that Home Assistant sees logical door states (open/closed) correctly.
+#
+# This sensor will be used for lighting automations in the tin hut and outside lights.
+
+substitutions:
+  device_name: tin-hut-door-sensor
+  device_description: Tin Hut Door Reed Switch Sensor
+  friendly_name: Tin Hut Door Sensor
+  
+  # Reed switch configuration
+  # D2 (GPIO4) is recommended as it supports internal pull-up and is safe for boot
+  # Alternative pins: D1 (GPIO5), D5 (GPIO14), D6 (GPIO12), D7 (GPIO13)
+  reed_switch_pin: D2
+  
+  # Debounce time to filter mechanical switch bouncing
+  debounce_time: 50ms
+
+<<: !include common/wemos_reed_switch_common.yaml
