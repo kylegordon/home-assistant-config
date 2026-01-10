@@ -18,7 +18,7 @@
 # Operation:
 #   - When door is OPEN: magnet away from switch → switch CLOSED (conducts) → sensor reads LOW → reports "ON"
 #   - When door is CLOSED: magnet near reed switch → switch OPEN → sensor reads HIGH → reports "OFF"
-#   
+#
 # NOTE: The inverted logic in the common config handles the NC reed switch behavior
 # so that Home Assistant sees logical door states (open/closed) correctly.
 #
@@ -28,12 +28,12 @@ substitutions:
   device_name: tin-hut-door-sensor
   device_description: Tin Hut Pedestrian Door Reed Switch Sensor
   friendly_name: Tin Hut Pedestrian Door
-  
+
   # Reed switch configuration
   # D2 (GPIO4) is recommended as it supports internal pull-up and is safe for boot
   # Alternative pins: D1 (GPIO5), D5 (GPIO14), D6 (GPIO12), D7 (GPIO13)
   reed_switch_pin: D2
-  
+
   # Debounce time to filter mechanical switch bouncing
   debounce_time: 50ms
 

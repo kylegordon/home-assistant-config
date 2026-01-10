@@ -1,6 +1,6 @@
 ---
 # Common configuration for Wemos D1 Mini with magnetic reed switch
-# 
+#
 # Reed switches are typically used for door/window monitoring
 # This common package provides base configuration for a binary sensor
 # connected to a GPIO pin with appropriate pull-up resistor configuration
