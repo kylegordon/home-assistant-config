@@ -1,8 +1,5 @@
 ---
-### TODO
-
-## Display On/Off when doors moving
-## Restore last state of display
+# TODO: Restore last state of display
 
 # https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 # D0 -
