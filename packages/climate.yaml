@@ -35,6 +35,11 @@ automation:
         below: 100
       - trigger: template
         value_template: "{{ 'states.sensor.hwam_smart_stove_temperature' != 'unknown' }}"
+      - trigger: state
+        entity_id: binary_sensor.home_occupied
+        to: 'on'
+        for:
+          minutes: 5
     action:
       - service: mypyllant.cancel_quick_veto
         target:
@@ -63,7 +68,7 @@ automation:
         above: 100
       - trigger: state
         entity_id: binary_sensor.home_occupied
-        to: 'on'
+        to: 'off'
         for:
           minutes: 5
     action:
