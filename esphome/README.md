@@ -185,8 +185,8 @@ Simple 2-wire connection:
   - Status LED indicators for WiFi/API connectivity
   - Includes common monitoring sensors (WiFi signal, uptime, etc.)
 
-- **`tin_hut_door_sensor.yaml`** - Tin Hut door sensor configuration
-  - Monitors door state for tin hut
+- **`tin_hut_door_sensor.yaml`** - Tin Hut pedestrian door sensor configuration
+  - Monitors pedestrian door state for tin hut
   - Used for lighting automations in the tin hut and outside lights
   - Pin: D2 (GPIO4)
   - Debounce: 50ms

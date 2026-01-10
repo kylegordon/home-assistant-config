@@ -1,7 +1,7 @@
 ---
-# Tin Hut Door Reed Switch Sensor
+# Tin Hut Pedestrian Door Reed Switch Sensor
 #
-# This device monitors a magnetic reed switch attached to a door in the tin hut.
+# This device monitors a magnetic reed switch attached to the pedestrian door in the tin hut.
 # The reed switch is NORMALLY CLOSED (NC) - it conducts when the magnet is away,
 # and opens when the magnet is present.
 #
@@ -26,8 +26,8 @@
 
 substitutions:
   device_name: tin-hut-door-sensor
-  device_description: Tin Hut Door Reed Switch Sensor
-  friendly_name: Tin Hut Door Sensor
+  device_description: Tin Hut Pedestrian Door Reed Switch Sensor
+  friendly_name: Tin Hut Pedestrian Door
   
   # Reed switch configuration
   # D2 (GPIO4) is recommended as it supports internal pull-up and is safe for boot
