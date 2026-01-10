@@ -82,7 +82,7 @@ interval:
             - delay: 250ms
             - light.turn_off:
                 id: blue_led_light
-                transition_length: 0ms
+                transition_length: 0s
             - delay: 250ms
   - interval: 5000ms
     id: no_api
@@ -99,7 +99,7 @@ interval:
             - delay: 250ms
             - light.turn_off:
                 id: blue_led_light
-                transition_length: 0ms
+                transition_length: 0s
             - delay: 250ms
             - light.turn_on:
                 id: blue_led_light
@@ -108,5 +108,5 @@ interval:
             - delay: 250ms
             - light.turn_off:
                 id: blue_led_light
-                transition_length: 0ms
+                transition_length: 0s
             - delay: 250ms
