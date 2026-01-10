@@ -149,13 +149,15 @@ This project includes configurations for magnetic reed switch sensors used for d
 
 ### Important: Normally Closed (NC) Reed Switches
 
-**CRITICAL NOTE:** Many reed switches are **Normally Closed (NC)**, meaning:
+**CRITICAL NOTE:** This configuration is designed for **Normally Closed (NC)** reed switches, meaning:
 - The switch **conducts** (closed circuit) when the magnet is **away**
 - The switch **opens** (open circuit) when the magnet is **present**
 
-This is counterintuitive but common in security applications. The configuration accounts for this by using `inverted: true` so that Home Assistant reports logical door states correctly:
-- **Door Closed** (magnet near switch) → Sensor reports "CLOSED"
-- **Door Open** (magnet away) → Sensor reports "OPEN"
+**Important:** Alarm/security reed switches are typically **Normally Open (NO)**, which is the opposite behavior. NO switches keep the alarm circuit conductive when doors are shut and allow detection of cut wires. NC switches like this one are NOT suitable for alarm applications but work fine for non-critical door monitoring.
+
+The configuration accounts for NC behavior by using `inverted: true` so that Home Assistant reports logical door states correctly:
+- **Door Open** (magnet away, switch closed/conducting) → Sensor reports "OPEN"
+- **Door Closed** (magnet near, switch open) → Sensor reports "CLOSED"
 
 ### Pin Recommendations
 

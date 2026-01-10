@@ -5,8 +5,11 @@
 # This common package provides base configuration for a binary sensor
 # connected to a GPIO pin with appropriate pull-up resistor configuration
 #
-# IMPORTANT: Many reed switches are NORMALLY CLOSED (NC) and open when
-# the magnet is present. This configuration assumes a NC reed switch.
+# IMPORTANT: This configuration is designed for NORMALLY CLOSED (NC) reed switches.
+# NC switches conduct when the magnet is away and open when the magnet is present.
+# Note: Alarm/security reed switches are typically NORMALLY OPEN (NO), which is the
+# opposite behavior. NC switches like this one are NOT suitable for alarm applications
+# but work fine for non-critical door monitoring.
 # Adjust the 'inverted' setting if your switch is normally open (NO).
 #
 # Recommended Pin: D2 (GPIO4) - supports internal pull-up
@@ -32,10 +35,12 @@ web_server:
 
 # Binary sensor for the reed switch
 # Default configuration uses D2 with INPUT_PULLUP
-# The switch is expected to be normally closed (NC) and opens when magnet is present
+# This is configured for a NORMALLY CLOSED (NC) reed switch:
+#   - Switch CLOSED (conducts) when magnet is AWAY (door open)
+#   - Switch OPEN when magnet is PRESENT (door closed)
 # With inverted: true, the sensor will report:
-#   - OFF when switch is closed (no magnet, door closed)
-#   - ON when switch is open (magnet present, door open)
+#   - ON when switch is closed (no magnet, door open)
+#   - OFF when switch is open (magnet present, door closed)
 binary_sensor:
   - platform: gpio
     name: "${friendly_name} Door"

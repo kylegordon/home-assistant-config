@@ -5,6 +5,10 @@
 # The reed switch is NORMALLY CLOSED (NC) - it conducts when the magnet is away,
 # and opens when the magnet is present.
 #
+# NOTE: Alarm/security reed switches are typically NORMALLY OPEN (NO), which is the
+# opposite behavior. This NC switch is NOT suitable for alarm applications but works
+# fine for non-critical door monitoring.
+#
 # Hardware Setup:
 #   - Wemos D1 Mini (ESP8266)
 #   - Magnetic reed switch (NC type)
@@ -12,8 +16,8 @@
 #   - Internal pull-up resistor enabled on D2
 #
 # Operation:
-#   - When door is CLOSED: magnet near reed switch → switch OPEN → sensor reads HIGH → reports "OPEN" (door open)
-#   - When door is OPEN: magnet away from switch → switch CLOSED → sensor reads LOW → reports "CLOSED" (door closed)
+#   - When door is OPEN: magnet away from switch → switch CLOSED (conducts) → sensor reads LOW → reports "ON"
+#   - When door is CLOSED: magnet near reed switch → switch OPEN → sensor reads HIGH → reports "OFF"
 #   
 # NOTE: The inverted logic in the common config handles the NC reed switch behavior
 # so that Home Assistant sees logical door states (open/closed) correctly.
