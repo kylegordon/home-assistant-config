@@ -90,8 +90,9 @@ automation:
         below: input_number.blinds_evening
     action:
       - service: homeassistant.turn_on
-        entity_id:
-          - light.outside_lights
+        target:
+          entity_id:
+            - light.outside_lights
 
   - alias: Tin Hut Not Occupied
     id: tin_hut_not_occupied
