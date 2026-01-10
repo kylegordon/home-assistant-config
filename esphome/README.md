@@ -135,3 +135,92 @@ The switches are configured to operate in **API Failsafe only** mode. This means
 - **No Dependency**: Physical switch operation does not depend on API connectivity
 
 This setup ensures reliable local control of lighting while integrating seamlessly with Home Assistant for enhanced automation and feedback.
+
+## Reed Switch Door Sensors
+
+This project includes configurations for magnetic reed switch sensors used for door/window monitoring. These sensors provide binary states (open/closed) to Home Assistant for use in automations and monitoring.
+
+### Hardware
+
+- **Wemos D1 Mini** (ESP8266)
+- **Magnetic reed switch** (Normally Closed type - NC)
+- Connects reed switch between GPIO pin and GND
+- Uses internal pull-up resistor
+
+### Important: Normally Closed (NC) Reed Switches
+
+**CRITICAL NOTE:** Many reed switches are **Normally Closed (NC)**, meaning:
+- The switch **conducts** (closed circuit) when the magnet is **away**
+- The switch **opens** (open circuit) when the magnet is **present**
+
+This is counterintuitive but common in security applications. The configuration accounts for this by using `inverted: true` so that Home Assistant reports logical door states correctly:
+- **Door Closed** (magnet near switch) → Sensor reports "CLOSED"
+- **Door Open** (magnet away) → Sensor reports "OPEN"
+
+### Pin Recommendations
+
+**Recommended Pin: D2 (GPIO4)**
+- Supports internal pull-up resistor
+- Safe during ESP8266 boot sequence
+- Not used by other critical functions
+
+**Alternative Pins:** D1 (GPIO5), D5 (GPIO14), D6 (GPIO12), D7 (GPIO13)
+
+**Avoid:** D3 (GPIO0), D4 (GPIO2), D8 (GPIO15) - these can cause boot issues if pulled incorrectly
+
+### Wiring
+
+Simple 2-wire connection:
+1. Connect one wire from reed switch to the GPIO pin (e.g., D2)
+2. Connect other wire from reed switch to GND
+3. Internal pull-up resistor enabled in software (no external resistor needed)
+
+### Configuration Files
+
+- **`common/wemos_reed_switch_common.yaml`** - Common package for all reed switch sensors
+  - Provides base ESP8266 configuration
+  - Binary sensor with debouncing
+  - Status LED indicators for WiFi/API connectivity
+  - Includes common monitoring sensors (WiFi signal, uptime, etc.)
+
+- **`tin_hut_door_sensor.yaml`** - Tin Hut door sensor configuration
+  - Monitors door state for tin hut
+  - Used for lighting automations in the tin hut and outside lights
+  - Pin: D2 (GPIO4)
+  - Debounce: 50ms
+
+### Creating New Reed Switch Sensors
+
+To add a new reed switch sensor, create a new YAML file with:
+
+```yaml
+---
+substitutions:
+  device_name: my-door-sensor
+  device_description: My Door Reed Switch Sensor
+  friendly_name: My Door Sensor
+  reed_switch_pin: D2
+  debounce_time: 50ms
+
+<<: !include common/wemos_reed_switch_common.yaml
+```
+
+### Home Assistant Integration
+
+The sensor will automatically appear in Home Assistant as:
+- **Binary Sensor:** `binary_sensor.<device_name>_door` with device class `door`
+- **Status Sensors:** WiFi signal strength, uptime, connection status
+- **Controls:** Restart button, status LED
+
+Use in automations for:
+- Triggering lights when door opens
+- Security monitoring
+- Notifications
+- Climate control (e.g., turn off heating when door open)
+
+### Testing
+
+The configuration includes visual feedback via the built-in blue LED:
+- **Single blink (5s interval):** Not connected to WiFi
+- **Double blink (5s interval):** Not connected to Home Assistant API
+- **LED off:** Connected and operational
