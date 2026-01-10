@@ -160,17 +160,9 @@ binary_sensor:
       inverted: true
       mode: INPUT_PULLUP
     on_state:
-      - if:
-          condition:
-            binary_sensor.is_on: door_open_sensor
-          then:
-            # Endstop activated - start timeout
-            - switch.turn_on: display_on_off
-            - script.execute: display_timeout
-          else:
-            # Endstop deactivated - turn on display
-            - switch.turn_on: display_on_off
-            - script.execute: display_timeout
+      # Turn on display on any state change
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
 
   - platform: gpio
     id: door_closed_sensor
@@ -184,14 +176,6 @@ binary_sensor:
       inverted: true
       mode: INPUT_PULLUP
     on_state:
-      - if:
-          condition:
-            binary_sensor.is_on: door_closed_sensor
-          then:
-            # Endstop activated - start timeout
-            - switch.turn_on: display_on_off
-            - script.execute: display_timeout
-          else:
-            # Endstop deactivated - turn on display
-            - switch.turn_on: display_on_off
-            - script.execute: display_timeout
+      # Turn on display on any state change
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
