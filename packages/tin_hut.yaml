@@ -85,9 +85,12 @@ automation:
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
     condition:
-      - condition: numeric_state
-        entity_id: sensor.average_external_light_level
-        below: input_number.blinds_evening
+      - condition: state
+        entity_id: input_boolean.night_view
+        state: "off"
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
     action:
       - service: homeassistant.turn_on
         target:
