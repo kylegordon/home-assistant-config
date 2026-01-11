@@ -84,6 +84,9 @@ automation:
       - platform: state
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
+      - platform: state
+        entity_id: binary_sensor.tin_hut_pedestrian_door_door
+        to: 'on'
     condition:
       - condition: state
         entity_id: input_boolean.night_view
