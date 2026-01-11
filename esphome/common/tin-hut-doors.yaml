@@ -1,9 +1,4 @@
 ---
-### TODO
-
-## Display On/Off when doors moving
-## Restore last state of display
-
 # https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 # D0 -
 # D1 - Cover switch relay
@@ -28,6 +23,11 @@ esphome:
   name: $device_name
   comment: $device_description
   friendly_name: $friendly_name
+  on_boot:
+    priority: -100
+    then:
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
 
 # Enable logging
 logger:
@@ -73,12 +73,11 @@ display:
       y = y+lineheight;
       it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Relay state: %s", id(relay_door).state ? "Open" : "Closed");
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Closed Endstop: %s", id(door_closed_sensor).state ? "Closed" : "Open");
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Upper Endstop: %s", id(door_open_sensor).state ? "Active" : "Inactive");
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Open Endstop: %s", id(door_open_sensor).state ? "Open" : "Closed");
-
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Lower Endstop: %s", id(door_closed_sensor).state ? "Active" : "Inactive");
       // Print time in HH:MM format
-      it.strftime(0, 60, id(font1), TextAlign::BASELINE_LEFT, "%H:%M", id(esptime).now());
+      it.strftime(0, 60, id(font1), TextAlign::BASELINE_LEFT, "%H:%M:%S", id(esptime).now());
 
 # D0 == GPIO16 == Optional internal PullDOWN
 # D1 == GPIO5 == Optional internal Pullup
@@ -119,12 +118,15 @@ switch:
     id: relay_door
     name: "Relay Door"
     internal: false
+    on_turn_on:
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
   - platform: template
     name: "Display On/Off"
     id: display_on_off
     internal: false
     optimistic: true
-    restore_mode: ALWAYS_OFF
+    restore_mode: ALWAYS_ON
     turn_on_action:
       - lambda: |-
           id(oled).turn_on();
@@ -132,11 +134,18 @@ switch:
       - lambda: |-
           id(oled).turn_off();
 
+script:
+  - id: display_timeout
+    mode: restart
+    then:
+      - delay: 60s
+      - switch.turn_off: display_on_off
+
 binary_sensor:
   - platform: gpio
     id: door_open_sensor
     name: "Open Endstop Sensor"
-    internal: false
+    internal: true
     filters:
       - delayed_on: 1s
       - delayed_off: 1s
@@ -144,11 +153,15 @@ binary_sensor:
       number: $open_endstop_pin
       inverted: true
       mode: INPUT_PULLUP
+    on_state:
+      # Turn on display on any state change
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
 
   - platform: gpio
     id: door_closed_sensor
     name: "Closed Endstop Sensor"
-    internal: false
+    internal: true
     filters:
       - delayed_on: 1s
       - delayed_off: 1s
@@ -156,3 +169,7 @@ binary_sensor:
       number: $close_endstop_pin
       inverted: true
       mode: INPUT_PULLUP
+    on_state:
+      # Turn on display on any state change
+      - switch.turn_on: display_on_off
+      - script.execute: display_timeout
