@@ -44,6 +44,9 @@ automation:
       - platform: state
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
+      - platform: state
+        entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door
+        to: 'open'
     action:
       - service: homeassistant.turn_on
         entity_id:
@@ -85,7 +88,7 @@ automation:
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
       - platform: state
-        entity_id: binary_sensor.tin_hut_pedestrian_door_door
+        entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door
         to: 'on'
     condition:
       - condition: state
