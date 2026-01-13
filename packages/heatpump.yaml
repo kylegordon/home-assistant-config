@@ -10,7 +10,10 @@ mqtt:
     - name: "Heat Pump Flow Rate"
       unique_id: "heatpump_flow_rate"
       state_topic: "ebusd/hmu/WaterThroughput"
-      value_template: "{{ value_json['0']['value'] }}"
+      value_template: "{{ value_json['0']['value'] | int }}"
+      device_class: volume_flow_rate
+      state_class: measurement
+      unit_of_measurement: "L/h"
 
     ### Converts the following message into individual sensors
     # State00 is too large to squeeze into a top level state or set of attributes

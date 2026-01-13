@@ -4,7 +4,7 @@ reset_ikea:
   sequence:
     - service: switch.turn_off
       target:
-        entity_id: switch.hall_single_switch_relay_1
+        entity_id: switch.hall_single_lightswitch_relay_1
     - delay:
         hours: 0
         minutes: 0
@@ -15,7 +15,7 @@ reset_ikea:
         sequence:
           - service: switch.turn_on
             target:
-              entity_id: switch.hall_single_switch_relay_1
+              entity_id: switch.hall_single_lightswitch_relay_1
           - delay:
               hours: 0
               minutes: 0
@@ -23,7 +23,7 @@ reset_ikea:
               milliseconds: 400
           - service: switch.turn_off
             target:
-              entity_id: switch.hall_single_switch_relay_1
+              entity_id: switch.hall_single_lightswitch_relay_1
           - delay:
               hours: 0
               minutes: 0
@@ -31,5 +31,5 @@ reset_ikea:
               milliseconds: 500
     - service: switch.turn_on
       target:
-        entity_id: switch.hall_single_switch_relay_1
+        entity_id: switch.hall_single_lightswitch_relay_1
   mode: single

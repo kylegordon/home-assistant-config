@@ -14,17 +14,19 @@ automation:
       - platform: event
         event_type: esphome.tx_ultimate_easy
         event_data:
-          device_name: craftroom_switch
+          device_name: craftroom_lightswitch
           action: click
     action:
       - service: light.turn_on
         data:
-          entity_id: light.craftroom_switch_lights_all
+          entity_id: light.craftroom_lightswitch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id: switch.craft_room_switch_relay_1
+        entity_id: switch.craftroom_lightswitch_relay_1
       - service: light.toggle
-        entity_id: light.craft_room_lighting
+        entity_id:
+          - light.craft_room_lighting
+          - light.usb_switch_relay_2_usb_switch_relay_2
       - service: logbook.log
         data:
           name: EVENT
@@ -32,7 +34,7 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.craftroom_switch_lights_all
+          entity_id: light.craftroom_lightswitch_lights_all
         data:
           transition: 1
 
@@ -44,12 +46,12 @@ automation:
       - platform: event
         event_type: esphome.tx_ultimate_easy
         event_data:
-          device_name: craftroom_switch
+          device_name: craftroom_lightswitch
           action: double_click
     action:
       - service: light.turn_on
         data:
-          entity_id: light.craft_room_switch_lights_all
+          entity_id: light.craftroom_lightswitch_lights_all
           effect: "Rainbow - Fast"
       - service: light.toggle
         entity_id: light.craft_room_fairy_lights
@@ -60,6 +62,6 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.craft_room_switch_lights_all
+          entity_id: light.craftroom_lightswitch_lights_all
         data:
           transition: 1
