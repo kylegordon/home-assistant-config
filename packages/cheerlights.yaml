@@ -6,6 +6,8 @@ light:
       - light.sense_gloworb_1_ring
       - light.sense_gloworb_2_ring
       - light.sense_gloworb_3_ring
+      - light.34b7da58ad2c_led_strip
+      - light.34b7da58b95c_ledstrip1
 
 mqtt:
   sensor:
@@ -77,6 +79,8 @@ automation:
             - light.sense_gloworb_1_ring
             - light.sense_gloworb_2_ring
             - light.sense_gloworb_3_ring
+            - light.34b7da58ad2c_led_strip
+            - light.34b7da58b95c_ledstrip1
         data:
           brightness: 128
           rgb_color:
