@@ -17,10 +17,26 @@ automation:
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id: switch.study_lightswitch_relay_1
-      - service: light.toggle
-        entity_id:
-          - light.study_lights
-          - light.monitor_rgbww_lights
+      - choose:
+          - conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: light.study_lights
+                    state: 'on'
+                  - condition: state
+                    entity_id: light.monitor_rgbww_lights
+                    state: 'on'
+            sequence:
+              - service: light.turn_off
+                entity_id:
+                  - light.study_lights
+                  - light.monitor_rgbww_lights
+        default:
+          - service: light.turn_on
+            entity_id:
+              - light.study_lights
+              - light.monitor_rgbww_lights
       - service: logbook.log
         data:
           name: EVENT
@@ -47,10 +63,26 @@ automation:
         data:
           entity_id: light.study_lightswitch_lights_all
           effect: "Rainbow - Fast"
-      - service: light.toggle
-        entity_id:
-          - light.study_bead_lights_usb_switch_relay_3
-          - light.monitor_rgbww_lights
+      - choose:
+          - conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: light.study_bead_lights_usb_switch_relay_3
+                    state: 'on'
+                  - condition: state
+                    entity_id: light.monitor_rgbww_lights
+                    state: 'on'
+            sequence:
+              - service: light.turn_off
+                entity_id:
+                  - light.study_bead_lights_usb_switch_relay_3
+                  - light.monitor_rgbww_lights
+        default:
+          - service: light.turn_on
+            entity_id:
+              - light.study_bead_lights_usb_switch_relay_3
+              - light.monitor_rgbww_lights
       - service: logbook.log
         data:
           name: EVENT
