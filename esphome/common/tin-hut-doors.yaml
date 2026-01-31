@@ -145,7 +145,7 @@ binary_sensor:
   - platform: gpio
     id: door_open_sensor
     name: "Open Endstop Sensor"
-    internal: true
+    internal: false
     filters:
       - delayed_on: 1s
       - delayed_off: 1s
@@ -161,7 +161,7 @@ binary_sensor:
   - platform: gpio
     id: door_closed_sensor
     name: "Closed Endstop Sensor"
-    internal: true
+    internal: false
     filters:
       - delayed_on: 1s
       - delayed_off: 1s
