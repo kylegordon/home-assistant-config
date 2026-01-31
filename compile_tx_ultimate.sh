@@ -54,12 +54,13 @@ for file in "${FILE_ARRAY[@]}"; do
     # Upload if requested
     if [[ "$UPLOAD_MODE" == true ]]; then
         echo "Uploading $file..."
-        if docker run --rm --privileged --net host -v "${PWD}":/config esphome/esphome:${ESPHOME_VERSION} upload "$file"; then
-            UPLOAD_RESULTS["$file"]=0
+        docker run --rm --privileged --net host -v "${PWD}":/config esphome/esphome:${ESPHOME_VERSION} upload "$file"
+        rc=$?
+        UPLOAD_RESULTS["$file"]=$rc
+        if [[ $rc -eq 0 ]]; then
             echo "✓ Upload successful for $file"
         else
-            UPLOAD_RESULTS["$file"]=$?
-            echo "ERROR: Upload failed for $file"
+            echo "ERROR: Upload failed for $file (exit code: $rc)"
         fi
         echo ""
     fi
