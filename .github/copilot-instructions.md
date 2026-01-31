@@ -1,5 +1,8 @@
 # GitHub Copilot Instructions - Home Assistant Configuration
 
+## Special Instructions for Copilot
+Whenever you run a command in the terminal, pipe the output to a file, output.txt, that you can read from. Make sure to overwrite each time so that it doesn't grow too big. There is a bug in the current version of Copilot that causes it to not read the output of commands correctly. This workaround allows you to read the output from the temporary file instead.
+
 ## Repository Overview
 
 This is a **Home Assistant configuration repository** (27MB, 221 YAML files) for a comprehensive smart home deployment. It is **NOT a software development project** - it's a declarative configuration repository for Home Assistant deployed via Docker Compose.
