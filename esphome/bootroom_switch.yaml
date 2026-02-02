@@ -1,8 +1,8 @@
 ---
 substitutions:
-  device_name: bootroom_switch
+  device_name: bootroom_lightswitch
   device_description: Boot Room Lightswitch
-  friendly_name: Boot Room Switch
+  friendly_name: Boot Room Lightswitch
   default_state: "RESTORE_DEFAULT_ON"
 
 <<: !include common/sonoff_touch_switch_common.yaml
