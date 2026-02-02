@@ -22,11 +22,27 @@ automation:
           entity_id: light.craft_room_lightswitch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
-        entity_id: switch.craft_room_lightswitch_relay_1
-      - service: light.toggle
-        entity_id:
-          - light.craft_room_lighting
-          - light.usb_switch_relay_2_usb_switch_relay_2
+        entity_id: switch.craftroom_lightswitch_relay_1
+      - choose:
+          - conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: light.craft_room_lighting
+                    state: 'on'
+                  - condition: state
+                    entity_id: light.usb_switch_relay_2_usb_switch_relay_2
+                    state: 'on'
+            sequence:
+              - service: light.turn_off
+                entity_id:
+                  - light.craft_room_lighting
+                  - light.usb_switch_relay_2_usb_switch_relay_2
+        default:
+          - service: light.turn_on
+            entity_id:
+              - light.craft_room_lighting
+              - light.usb_switch_relay_2_usb_switch_relay_2
       - service: logbook.log
         data:
           name: EVENT
