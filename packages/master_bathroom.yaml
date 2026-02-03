@@ -29,17 +29,17 @@ automation:
       - platform: event
         event_type: esphome.tx_ultimate_easy
         event_data:
-          device_name: hall_dual_switch
+          device_name: hall_dual_lightswitch
           action: click
           button_id: "1"
     action:
       - service: light.turn_on
         data:
-          entity_id: light.hall_dual_switch_lights_all
+          entity_id: light.hall_dual_lightswitch_lights_all
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         entity_id:
-          - switch.hall_dual_switch_relay_2
+          - switch.hall_dual_lightswitch_relay_2
       - service: light.toggle
         data:
           entity_id: light.master_bathroom
@@ -50,6 +50,6 @@ automation:
       - delay: "00:00:05"
       - service: light.turn_off
         target:
-          entity_id: light.hall_dual_switch_lights_all
+          entity_id: light.hall_dual_lightswitch_lights_all
         data:
           transition: 1

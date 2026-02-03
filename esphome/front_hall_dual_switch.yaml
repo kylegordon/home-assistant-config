@@ -1,26 +1,10 @@
 ---
 substitutions:
-  name: "front_hall_dual_switch"
-  friendly_name: "Front Hall Dual Switch"
-  device_description: "Front Hall Dual Light Switch"
+  name: "front_hall_dual_lightswitch"
+  friendly_name: "Front Hall Dual Lightswitch"
+  device_description: "Front Hall Dual Lightswitch"
   default_state: "RESTORE_DEFAULT_ON"
   device_format: EU
   gang_count: 2
 
-packages:
-  remote_package:
-    url: https://github.com/edwardtfn/TX-Ultimate-Easy
-    ref: v9999.99.9  # Or you can specify a version, like `ref: v2024.12.6` or `ref: latest` to the latest non-stable
-    refresh: 5min
-    files:
-      - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml      # Core (essential) packages
-      - ESPHome/TX-Ultimate-Easy-ESPHome_standard.yaml  # Non-essential, but recommended packages. Includes hw_relays, hw_vibration, and media_player
-
-bluetooth_proxy:
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  ap:
-    ssid: ${friendly_name} AP
-    password: !secret wifi_password
+<<: !include common/tx_ultimate_easy_common.yaml

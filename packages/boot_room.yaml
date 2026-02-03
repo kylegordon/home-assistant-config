@@ -16,7 +16,7 @@ automation:
       - platform: event
         event_type: esphome.button_pressed
         event_data:
-          device_name: bootroom_switch
+          device_name: bootroom_lightswitch
           click_type: single
     action:
       - service: switch.turn_on
