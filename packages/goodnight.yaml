@@ -35,6 +35,8 @@ automation:
           - light.twig_lights
           - light.under_bed_lights
           - light.art
+          - light.dining_nook
+          - light.ensuite
           - light.star_burst
       - service: light.turn_off
         target:
