@@ -135,6 +135,31 @@
     - name: Charlotte
       unique_id: charlotte_status
       state: '{{ states.input_select.charlotte_status_dropdown.state }}'
+
+    - name: Days Owned
+      unique_id: days_owned
+      state: '{{ (now() - as_datetime("2025-12-31") | as_local).days }}'
+
+    - name: Number of Full Cycles
+      unique_id: no_full_cycles
+      state: '{{ (states("sensor.total_battery_charged") | float(0) / 100) | round(2) }}'
+
+    - name: Age of Car
+      unique_id: age_of_car
+      state: '{{ (states("sensor.days_owned") | float / 365) | round(1) }}'
+
+    - name: EV Battery Health Estimate
+      unique_id: ev_battery_health_estimate
+      state: '{% set cycles = states("sensor.no_of_full_cycles") | float(0) %} {% set days = states("sensor.days_owned") | float(0) %}   {# --- Physics Parameters --- #} {# NMC degradation is non-linear; it slows down as the battery ages (t^0.5) #} {% set expected_cycle_life = 2000 %} {% set heat_penalty = 1.05 %} {% set nmc_curve_exponent = 0.5 %} {# The "Slower curve with age" factor #}   {# --- Cycle Aging (Non-Linear) --- #} {# We apply a slight power factor (1.1) because the last cycles are harder than the first #} {% set cycle_impact = (cycles / expected_cycle_life) ** 1.1 %} {% set cycle_degradation = cycle_impact * 20 * heat_penalty %}   {# --- Calendar Aging (Power Law) --- #} {# This simulates the rapid early drop and subsequent leveling off #} {# 2.5 is the scaling factor to reach ~10-12% loss over 8-10 years #} {% set calendar_coefficient = 2.5 %} {% set calendar_degradation = ((days / 365) ** nmc_curve_exponent) * calendar_coefficient %}   {# --- Total Health Calculation --- #} {% set health = 100 - cycle_degradation - calendar_degradation %}   {# Output: Percentage of SOH #} {{ ([0, health, 100] | sort)[1] | round(2) }}'
+
+    - name: Service Booking Deadline
+      unique_id: service_booking_deadline
+      state: '{% set days_remaining = states("sensor.polestar_2660_days_to_service") | int(0) %} {% set buffer_days = 49 %} {% set lead_time = days_remaining - buffer_days %} {{ (now() + timedelta(days = lead_time)).strftime("%d-%m-%Y") }}'
+
+    - name: EV Range Lost to Degradation
+      unique_id: ev_range_lost_to_degradation
+      state: '{# 1. Set your factory range or own estimate (e.g., 620km for Long Range, 590 for dual motor for P4) #} {% set factory_range = 590 %}   {# 2. Get the Health % from our first helper #} {% set health_pct = states("sensor.ev_battery_health_estimate") | float(100) %}   {# 3. Calculate how many km are gone forever #} {% set lost_km = factory_range * (1 - (health_pct / 100)) %}   {{ lost_km | round(1) }}'
+
   binary_sensor:
     - name: Living Room TV Power
       unique_id: living_room_tv_power
