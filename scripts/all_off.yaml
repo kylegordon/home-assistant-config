@@ -21,7 +21,9 @@ all_off:
       target:
         area_id: "{{ area_id('Study') }}"
 
-    ## Explicitly turn off monitor lights (in case not assigned to Study area)
+    ## Explicitly turn off monitor lights
+    ## Note: Area assignments are in HA's .storage files, not in this config repo.
+    ## This ensures monitor lights turn off regardless of area assignment.
     - service: homeassistant.turn_off
       target:
         entity_id: light.monitor_lights
