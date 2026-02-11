@@ -140,7 +140,7 @@
       unique_id: days_owned
       state: '{{ (now() - as_datetime("2025-12-31") | as_local).days }}'
 
-    - name: Number of Full Cycles
+    - name: No of Full Cycles
       unique_id: no_full_cycles
       state: '{{ (states("sensor.total_battery_charged") | float(0) / 100) | round(2) }}'
 
