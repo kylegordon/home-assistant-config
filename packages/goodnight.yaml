@@ -36,6 +36,8 @@ automation:
           - light.under_bed_lights
           - light.art
           - light.star_burst
+          - light.craft_room_lighting
+          - light.usb_switch_relay_2_usb_switch_relay_2
       - service: light.turn_off
         target:
           area_id:
