@@ -21,6 +21,11 @@ all_off:
       target:
         area_id: "{{ area_id('Study') }}"
 
+    ## Explicitly turn off monitor lights (in case not assigned to Study area)
+    - service: homeassistant.turn_off
+      target:
+        entity_id: light.monitor_lights
+
     ## Turn off craft room lights and switches
     - service: homeassistant.turn_off
       target:
