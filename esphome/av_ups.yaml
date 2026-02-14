@@ -1,0 +1,218 @@
+---
+substitutions:
+  device_name: av-ups
+  device_description: AV UPS ES700
+  friendly_name: AV UPS
+
+packages:
+  common: !include common/common.yaml
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  comment: ${device_description}
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: esp-idf
+
+# External components for UPS monitoring
+external_components:
+  - source: github://bullshit/esphome-components
+    components: [ups_hid, nut_server]
+
+# UPS HID component for USB monitoring
+ups_hid:
+  id: ups_monitor
+  update_interval: 30s
+  protocol: auto
+
+# NUT Server component for reporting to main NUT server
+nut_server:
+  ups_hid_id: ups_monitor
+  port: 3493
+  ups_name: "av-ups"
+  username: "monitor"
+  password: !secret nut_password
+  max_clients: 5
+
+# Essential UPS sensors
+sensor:
+  # Battery level percentage
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Battery Level"
+    type: battery_level
+    unit_of_measurement: "%"
+    device_class: battery
+    state_class: measurement
+    accuracy_decimals: 0
+
+  # Input voltage from mains
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Input Voltage"
+    type: input_voltage
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 1
+
+  # Output voltage to load
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Output Voltage"
+    type: output_voltage
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 1
+
+  # Load percentage
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Load"
+    type: load_percent
+    unit_of_measurement: "%"
+    state_class: measurement
+    accuracy_decimals: 0
+
+  # Battery runtime remaining
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Runtime Remaining"
+    type: runtime
+    unit_of_measurement: "min"
+    device_class: duration
+    state_class: measurement
+    accuracy_decimals: 0
+
+  # Battery voltage
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Battery Voltage"
+    type: battery_voltage
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 1
+
+  # Input frequency
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Input Frequency"
+    type: frequency
+    unit_of_measurement: "Hz"
+    state_class: measurement
+    accuracy_decimals: 1
+
+# UPS status binary sensors
+binary_sensor:
+  # UPS online status
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Online Status"
+    type: online
+    device_class: connectivity
+
+  # On battery status
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "On Battery"
+    type: on_battery
+
+  # Low battery warning
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Low Battery"
+    type: low_battery
+    device_class: battery
+
+  # Battery charging status
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Charging"
+    type: charging
+    device_class: battery_charging
+
+  # Fault status
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Fault"
+    type: fault
+    device_class: problem
+
+  # Overload status
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Overload"
+    type: overload
+    device_class: problem
+
+# UPS information text sensors
+text_sensor:
+  # UPS status string
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Status"
+    type: status
+
+  # UPS manufacturer
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Manufacturer"
+    type: manufacturer
+
+  # UPS model
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Model"
+    type: model
+
+  # UPS serial number
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Serial Number"
+    type: serial_number
+
+# UPS control buttons
+button:
+  # Beeper control
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Enable Beeper"
+    beeper_action: enable
+    icon: "mdi:volume-high"
+
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Disable Beeper"
+    beeper_action: disable
+    icon: "mdi:volume-off"
+
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Mute Beeper"
+    beeper_action: mute
+    icon: "mdi:volume-mute"
+
+  # Battery test controls
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Quick Battery Test"
+    test_action: battery_quick
+    icon: "mdi:battery-check"
+
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Deep Battery Test"
+    test_action: battery_deep
+    icon: "mdi:battery-plus"
+
+  - platform: ups_hid
+    ups_hid_id: ups_monitor
+    name: "Stop Battery Test"
+    test_action: battery_stop
+    icon: "mdi:battery-remove"
