@@ -85,7 +85,6 @@ sensor:
     name: "Runtime Remaining"
     type: runtime
     unit_of_measurement: "min"
-    device_class: duration
     state_class: measurement
     accuracy_decimals: 0
 
