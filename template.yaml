@@ -158,7 +158,14 @@
 
     - name: EV Range Lost to Degradation
       unique_id: ev_range_lost_to_degradation
-      state: '{# 1. Set your factory range or own estimate (e.g., 620km for Long Range, 590 for dual motor for P4) #} {% set factory_range = 590 %}   {# 2. Get the Health % from our first helper #} {% set health_pct = states("sensor.ev_battery_health_estimate") | float(100) %}   {# 3. Calculate how many km are gone forever #} {% set lost_km = factory_range * (1 - (health_pct / 100)) %}   {{ lost_km | round(1) }}'
+      state: >-
+        {# 1. Set your factory range or own estimate (e.g., 620km for Long Range, 590 for dual motor for P4) #}
+        {% set factory_range = 590 %}
+        {# 2. Get the Health % from our first helper #}
+        {% set health_pct = states("sensor.ev_battery_health_estimate") | float(100) %}
+        {# 3. Calculate how many km are gone forever #}
+        {% set lost_km = factory_range * (1 - (health_pct / 100)) %}
+        {{ lost_km | round(1) }}
 
   binary_sensor:
     - name: Living Room TV Power
