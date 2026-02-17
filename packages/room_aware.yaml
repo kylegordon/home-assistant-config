@@ -1,7 +1,6 @@
 ---
 group:
   echos:
-    name: All Echos
     entities:
       - media_player.bedroom
       - media_player.kitchen
