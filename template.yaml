@@ -154,7 +154,7 @@
 
     - name: Service Booking Deadline
       unique_id: service_booking_deadline
-      state: '{% set days_remaining = states("sensor.polestar_2660_days_to_service") | int(0) %} {% set buffer_days = 49 %} {% set lead_time = days_remaining - buffer_days %} {{ (now() + timedelta(days = lead_time)).strftime("%d-%m-%Y") }}'
+      state: '{% set src = states("sensor.polestar_2660_days_to_service") %} {% if (src | is_number) and not is_state("sensor.polestar_2660_days_to_service","unavailable") %} {% set days_remaining = src | int(0) %} {% set buffer_days = 49 %} {% set lead_time = days_remaining - buffer_days %} {{ (now() + timedelta(days = lead_time)).strftime("%d-%m-%Y") }} {% else %} unknown {% endif %}'
 
     - name: EV Range Lost to Degradation
       unique_id: ev_range_lost_to_degradation
