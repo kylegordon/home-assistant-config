@@ -1,0 +1,45 @@
+---
+substitutions:
+  device_name: bed_sensor
+  device_description: Bed Sensor
+  friendly_name: Bed Sensor
+
+packages:
+  common: !include common/common.yaml
+
+esphome:
+  name: ${device_name}
+  comment: ${device_description}
+  platform: ESP8266
+  board: d1_mini
+
+# Enable logging
+logger:
+
+web_server:
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D4
+      mode: INPUT_PULLUP
+    filters:
+      - invert:
+    name: "Bed Contact Sensor 1"
+  - platform: gpio
+    pin:
+      number: D3
+      mode: INPUT_PULLUP
+    filters:
+      - invert:
+    name: "Bed Contact Sensor 2"
+
+sensor:
+  - platform: wifi_signal
+    name: "Bed Sensor WiFi signal"
+    update_interval: 60s
+
+status_led:
+  pin:
+    number: D8
+    inverted: yes
