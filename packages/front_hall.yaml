@@ -98,13 +98,13 @@ automation:
       - service: light.turn_on
         target:
           entity_id:
-            - light.front_hall_single_lightswitch_lights_all
+            - light.front_hall_dual_switch_lights_all
         data:
           effect: "Rainbow - Fast"
       - service: switch.turn_on
         target:
           entity_id:
-            - switch.front_hall_dual_lightswitch_relay_1
+            - switch.front_hall_dual_switch_relay_1
       - service: light.toggle
         target:
           entity_id:
@@ -117,6 +117,6 @@ automation:
       - service: light.turn_off
         target:
           entity_id:
-            - light.front_hall_dual_lightswitch_lights_all
+            - light.front_hall_dual_switch_lights_all
         data:
           transition: 1
