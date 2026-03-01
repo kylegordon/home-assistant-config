@@ -80,3 +80,43 @@ automation:
         entity_id: light.front_hall
         data:
           transition: 600
+
+  - alias: Front Hall light toggle
+    id: front_hall_light_toggle
+    mode: parallel
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    trigger:
+      - platform: event
+        event_type: esphome.tx_ultimate_easy
+        event_data:
+          device_name: front_hall_dual_lightswitch
+          action: click
+          button_id: "1"
+    action:
+      # Turn on the rainbow effect for 5 seconds
+      # to show the button press was registered
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.front_hall_dual_switch_lights_all
+        data:
+          effect: "Rainbow - Fast"
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.front_hall_dual_switch_relay_1
+      - service: light.toggle
+        target:
+          entity_id:
+            - light.front_hall
+      - service: logbook.log
+        data:
+          name: EVENT
+          message: "Toggling front hall lights"
+      - delay: "00:00:05"
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.front_hall_dual_switch_lights_all
+        data:
+          transition: 1
