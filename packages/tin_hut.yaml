@@ -216,6 +216,48 @@ automation:
                 entity_id: cover.tin_hut_door_right_tin_hut_door_right
                 state: "closed"
 
+  - alias: Tin Hut Door Close Re-sync
+    # If a close command causes a door to open instead (due to Somfy controller
+    # being out of sync after a mid-travel stop), detect the wrong direction and
+    # re-issue the close command.
+    id: tin_hut_door_close_resync
+    mode: parallel
+    trigger:
+      - platform: state
+        entity_id:
+          - cover.tin_hut_door_left_tin_hut_door_left
+          - cover.tin_hut_door_right_tin_hut_door_right
+        from: closing
+        to: opening
+    action:
+      - delay: '00:00:02'
+      - condition: template
+        value_template: "{{ is_state(trigger.entity_id, 'opening') }}"
+      - service: cover.close_cover
+        target:
+          entity_id: "{{ trigger.entity_id }}"
+
+  - alias: Tin Hut Door Open Re-sync
+    # If an open command causes a door to close instead (due to Somfy controller
+    # being out of sync after a mid-travel stop), detect the wrong direction and
+    # re-issue the open command.
+    id: tin_hut_door_open_resync
+    mode: parallel
+    trigger:
+      - platform: state
+        entity_id:
+          - cover.tin_hut_door_left_tin_hut_door_left
+          - cover.tin_hut_door_right_tin_hut_door_right
+        from: opening
+        to: closing
+    action:
+      - delay: '00:00:02'
+      - condition: template
+        value_template: "{{ is_state(trigger.entity_id, 'closing') }}"
+      - service: cover.open_cover
+        target:
+          entity_id: "{{ trigger.entity_id }}"
+
   - alias: Tin Hut Doors Opening
     id: tin_hut_doors_opening
     trigger:
