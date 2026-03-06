@@ -24,16 +24,6 @@ template:
             mdi:battery
           {%- endif %}
 
-      - name: "Grid Usage"
-        unique_id: grid_all
-        state: "{{ states('sensor.givtcp_fd2308f368_export_power') | float + states('sensor.givtcp_fd2308f368_load_power') | float }}"
-        unit_of_measurement: 'W'
-
-      - name: "PV Usage"
-        unique_id: pv_all
-        state: "{{ states('sensor.givtcp_fd2308f368_export_power') | float + states('sensor.givtcp_fd2308f368_load_power') | float }}"
-        unit_of_measurement: 'W'
-
       - name: "ASHP Heating COP"
         unique_id: ashp_heating_cop
         state: >
@@ -61,28 +51,6 @@ template:
           {%- endif %}
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
-
-sensor:
-
-  - platform: integration
-    source: sensor.grid_all
-    method: left
-    name: grid_daily_usage
-    unit_prefix: k
-    round: 2
-
-  - platform: integration
-    source: sensor.pv_all
-    method: left
-    name: pv_daily_usage
-    unit_prefix: k
-    round: 2
-
-#  - platform: template
-#    #name: grid_all
-#    #friendly_name: "Grid Usage"
-#    value_template: "{{ states('sensor.givtcp_fd2308f368_export_power') | float + states('sensor.givtcp_fd2308f368_load_power') | float }}"
-#    unit_of_measurement: 'W'
 
 automation:
   - alias: Boost hot water
