@@ -1,0 +1,20 @@
+---
+# Package: polestar_charging.yaml
+# Binary sensor indicating if the Polestar car is charging at home.
+#
+# Logic:
+# - Uses device_tracker.polestar_4 to check if the car is 'home'
+# - Uses sensor.polestar_2660_charging_status to check if charging
+#
+# Sensor is 'on' when both conditions are true.
+
+binary_sensor:
+  - name: "Polestar Charging At Home"
+    unique_id: polestar_charging_at_home
+    state: >
+      {{ states('sensor.polestar_2660_charging_status') == 'charging' and
+         states('device_tracker.polestar_4') == 'home' }}
+    icon: mdi:ev-station
+    attributes:
+      charging_status: "{{ states('sensor.polestar_2660_charging_status') }}"
+      location: "{{ states('device_tracker.polestar_4') }}"
