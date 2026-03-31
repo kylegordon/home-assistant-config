@@ -8,7 +8,7 @@ sensor:
     resource: https://api.axle.energy/vpp/home-assistant/event
     scan_interval: 600
     headers:
-      Authorization: "Bearer YOUR_TOKEN_HERE"
+      Authorization: !secret axle_energy_token
     json_attributes:
       - start_time
       - end_time
