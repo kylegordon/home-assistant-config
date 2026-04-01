@@ -2,7 +2,7 @@
 
 # Home Assistant configuration for Axle Energy integration
 # This configuration defines a REST sensor to fetch event data from the Axle Energy API.
-rest:
+template:
   - sensor:
     name: Axle Event
     resource: https://api.axle.energy/vpp/home-assistant/event
