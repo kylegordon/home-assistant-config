@@ -31,6 +31,8 @@ esphome:
 
 esp32:
   board: nodemcu-32s
+  framework:
+    type: esp-idf
 
 captive_portal:
 
@@ -159,22 +161,22 @@ sensor:
 
   - platform: homeassistant
     id: battery_percent
-    entity_id: sensor.battery_percent
+    entity_id: sensor.givtcp_fd2308f368_soc
     internal: true
 
   - platform: homeassistant
     id: pv_power
-    entity_id: sensor.pv_power
+    entity_id: sensor.givtcp_fd2308f368_pv_power
     internal: true
 
   - platform: homeassistant
     id: consumption_power
-    entity_id: sensor.consumption_power
+    entity_id: sensor.givtcp_fd2308f368_load_power
     internal: true
 
   - platform: homeassistant
     id: grid_export_power
-    entity_id: sensor.grid_export_power
+    entity_id: sensor.givtcp_fd2308f368_grid_power
     internal: true
 
 text_sensor:
