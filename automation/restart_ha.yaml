@@ -1,8 +1,8 @@
 alias: "Restart HA"
 id: restart_ha
 trigger:
-  platform: state
-  entity_id: input_boolean.restart_ha
-  to: 'on'
+  - platform: state
+    entity_id: input_boolean.restart_ha
+    to: 'on'
 action:
   service: script.restart_ha

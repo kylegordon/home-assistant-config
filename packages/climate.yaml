@@ -25,17 +25,17 @@ automation:
       Turn on ASHP if stove is off
       and all the openings are shut
     trigger:
-      - trigger: state
+      - platform: state
         entity_id: binary_sensor.climate_openings
         to: 'off'
         for:
           minutes: 5
-      - trigger: numeric_state
+      - platform: numeric_state
         entity_id: sensor.hwam_smart_stove_temperature
         below: 100
-      - trigger: template
-        value_template: "{{ 'states.sensor.hwam_smart_stove_temperature' != 'unknown' }}"
-      - trigger: state
+      - platform: template
+        value_template: "{{ states('sensor.hwam_smart_stove_temperature') != 'unknown' }}"
+      - platform: state
         entity_id: binary_sensor.home_occupied
         to: 'on'
         for:
@@ -58,15 +58,15 @@ automation:
       or any of the openings are open
       or home is not occupied
     trigger:
-      - trigger: state
+      - platform: state
         entity_id: binary_sensor.climate_openings
         to: 'on'
         for:
           minutes: 5
-      - trigger: numeric_state
+      - platform: numeric_state
         entity_id: sensor.hwam_smart_stove_temperature
         above: 100
-      - trigger: state
+      - platform: state
         entity_id: binary_sensor.home_occupied
         to: 'off'
         for:
@@ -85,7 +85,7 @@ automation:
     trace:
       stored_traces: 20
     trigger:
-      - trigger: template
+      - platform: template
         alias: Predbat status contains 'Error' for 5 minutes
         value_template: "{{ 'Error' in states('predbat.status') }}"
         for:
@@ -94,7 +94,7 @@ automation:
           alert_text: >-
             predbat status is {{ states('predbat.status') }}, error={{
             state_attr('predbat.status', 'error') }}
-      - trigger: state
+      - platform: state
         alias: Predbat is in error status for 5 minutes
         entity_id: predbat.status
         attribute: error
@@ -105,7 +105,7 @@ automation:
           alert_text: >-
             predbat status is {{ states('predbat.status') }}, error={{
             state_attr('predbat.status', 'error') }}
-      - trigger: state
+      - platform: state
         alias: Predbat status.last_updated has not changed for 20 minutes
         entity_id: predbat.status
         attribute: last_updated
@@ -118,7 +118,7 @@ automation:
             %H:%M') }}', unchanged for 20 mins; Status='{{ states('predbat.status')
             }}'
           restart_predbat: "Y"
-      - trigger: state
+      - platform: state
         entity_id: binary_sensor.predbat_running
         to: "off"
         for:
@@ -151,7 +151,7 @@ automation:
     description: >-
       Announce defrost cycle
     trigger:
-      - trigger: state
+      - platform: state
         entity_id: sensor.s00_compressorstate
         to: "Defrost"
     action:

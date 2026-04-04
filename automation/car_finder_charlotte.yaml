@@ -1,12 +1,12 @@
 alias: "Charlotte Car Finder"
 id: charlotte_car_finder
 trigger:
-  platform: state
-  entity_id: input_select.charlotte_status
-  from: "driving"
-  to: "standby"
-  for:
-    seconds: 10
+  - platform: state
+    entity_id: input_select.charlotte_status
+    from: "driving"
+    to: "standby"
+    for:
+      seconds: 10
 action:
   service: mqtt.publish
   data:

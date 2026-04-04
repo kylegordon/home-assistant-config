@@ -2,9 +2,9 @@ alias: "Study amp: select PC input"
 id: study_amp_select_pc_input
 
 trigger:
-  platform: state
-  entity_id: input_select.study_amplifier_input
-  to: "PC"
+  - platform: state
+    entity_id: input_select.study_amplifier_input
+    to: "PC"
 
 action:
   service: broadlink.send_packet_172_24_32_41

@@ -2,9 +2,9 @@ alias: "Study amp: select DS input"
 id: study_amp_select_ds_input
 
 trigger:
-  platform: state
-  entity_id: input_select.study_amplifier_input
-  to: "DS"
+  - platform: state
+    entity_id: input_select.study_amplifier_input
+    to: "DS"
 
 action:
   service: broadlink.send_packet_172_24_32_41

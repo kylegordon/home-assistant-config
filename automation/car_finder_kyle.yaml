@@ -1,12 +1,12 @@
 alias: "Kyle Car Finder"
 id: kyle_car_finder
 trigger:
-  platform: state
-  entity_id: input_select.kyle_status
-  from: "Driving"
-  to: "Standby"
-  for:
-    seconds: 10
+  - platform: state
+    entity_id: input_select.kyle_status
+    from: "Driving"
+    to: "Standby"
+    for:
+      seconds: 10
 action:
   service: mqtt.publish
   data:
