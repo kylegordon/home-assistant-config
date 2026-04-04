@@ -24,7 +24,7 @@ automation:
     description: >-
       Turn on ASHP if stove is off
       and all the openings are shut
-    triggers:
+    trigger:
       - trigger: state
         entity_id: binary_sensor.climate_openings
         to: 'off'
@@ -57,7 +57,7 @@ automation:
       Turn off ASHP if stove is on
       or any of the openings are open
       or home is not occupied
-    triggers:
+    trigger:
       - trigger: state
         entity_id: binary_sensor.climate_openings
         to: 'on'
@@ -84,7 +84,7 @@ automation:
     description: Alert when Predbat has raised an exception
     trace:
       stored_traces: 20
-    triggers:
+    trigger:
       - trigger: template
         alias: Predbat status contains 'Error' for 5 minutes
         value_template: "{{ 'Error' in states('predbat.status') }}"
@@ -150,7 +150,7 @@ automation:
     id: announce_defrost_cycle
     description: >-
       Announce defrost cycle
-    triggers:
+    trigger:
       - trigger: state
         entity_id: sensor.s00_compressorstate
         to: "Defrost"
