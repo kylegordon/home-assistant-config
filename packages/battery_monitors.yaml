@@ -2,8 +2,8 @@
 automation:
   - alias: 'Battery Voltage Low Alert'
     id: battery_voltage_low_alert
-    trigger:
-      - platform: numeric_state
+    triggers:
+      - trigger: numeric_state
         entity_id:
           - sensor.land_rover_battery_monitor_voltage
           - sensor.volvo_battery_monitor_voltage
@@ -27,8 +27,8 @@ automation:
 
   - alias: 'Battery Voltage High Alert'
     id: battery_voltage_high_alert
-    trigger:
-      - platform: numeric_state
+    triggers:
+      - trigger: numeric_state
         entity_id:
           - sensor.land_rover_battery_monitor_voltage
           - sensor.volvo_battery_monitor_voltage

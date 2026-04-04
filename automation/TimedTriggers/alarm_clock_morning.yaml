@@ -1,8 +1,8 @@
 ---
 alias: "Wakeup transition"
 id: wakeup_transition
-trigger:
-  - platform: time
+triggers:
+  - trigger: time
     at: '07:15:00'
 condition:
   - condition: state

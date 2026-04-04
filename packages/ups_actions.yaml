@@ -1,8 +1,8 @@
 automation:
   - alias: "UPS Not OK"
     id: ups_not_ok
-    trigger:
-      - platform: template
+    triggers:
+      - trigger: template
         value_template: "{{ not is_state('sensor.apc1000_status_data', '0L') }}"
     action:
       - service: camera.snapshot
@@ -39,8 +39,8 @@ automation:
 
   - alias: "UPS Shutdown Imminent"
     id: ups_shutdown_imminent
-    trigger:
-      - platform: numeric_state
+    triggers:
+      - trigger: numeric_state
         entity_id: sensor.apc1000_battery_runtime
         below: 600
     action:
@@ -78,8 +78,8 @@ automation:
 
   - alias: "UPS Recovery"
     id: ups_recovery
-    trigger:
-      - platform: template
+    triggers:
+      - trigger: template
         value_template: "{{ is_state('sensor.apc1000_status_data', '0L') }}"
     action:
       - service: camera.snapshot

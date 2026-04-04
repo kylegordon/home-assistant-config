@@ -1,22 +1,22 @@
 ---
 alias: Mark Person as home
 id: mark_person_as_home
-trigger:
-  - platform: state
+triggers:
+  - trigger: state
     entity_id: input_select.kyle_status_dropdown
     to: 'Just Arrived'
     for:
       minutes: 10
-  - platform: state
+  - trigger: state
     entity_id: input_select.charlotte_status_dropdown
     to: 'Just Arrived'
     for:
       minutes: 10
-  - platform: state
+  - trigger: state
     entity_id: input_select.kyle_status_dropdown
     from: 'Just Left'
     to: 'Just Arrived'
-  - platform: state
+  - trigger: state
     entity_id: input_select.charlotte_status_dropdown
     from: 'Just Left'
     to: 'Just Arrived'

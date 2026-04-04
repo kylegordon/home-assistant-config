@@ -1,7 +1,7 @@
 alias: "Kyle Car Finder"
 id: kyle_car_finder
-trigger:
-  - platform: state
+triggers:
+  - trigger: state
     entity_id: input_select.kyle_status
     from: "Driving"
     to: "Standby"

@@ -14,8 +14,8 @@ input_boolean:
 automation:
   - alias: Goodnight process
     id: goodnight_process
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.goodnight_process
         to: 'on'
     action:
@@ -63,8 +63,8 @@ automation:
 
   - alias: Goodnight process reset
     id: goodnight_process_reset
-    trigger:
-      - platform: time
+    triggers:
+      - trigger: time
         at: '04:00:00'
     action:
       - service: logbook.log

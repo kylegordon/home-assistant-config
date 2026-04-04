@@ -43,8 +43,8 @@ binary_sensor:
 automation:
   - alias: 3D printer started printing
     id: 3d_printer_started_printing
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.octoprint_print_status
         from: "Operational"
         to: "Printing"
@@ -66,8 +66,8 @@ automation:
 
   - alias: 3D printer finishing printing
     id: 3d_printer_finishing_printing
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.octoprint_print_status
         from: "Printing"
         to: "Finishing"
@@ -89,8 +89,8 @@ automation:
 
   - alias: 3D printer bed warming up
     id: 3d_printer_bed_warming_up
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.octoprint_bed_heating
         to: "on"
     condition:
@@ -110,8 +110,8 @@ automation:
 
   - alias: 3D printer hot end warming up
     id: 3d_printer_hot_end_warming_up
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.octoprint_tool_heating
         to: "on"
     condition:

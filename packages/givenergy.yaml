@@ -55,8 +55,8 @@ template:
 automation:
   - alias: Boost hot water
     id: boost_hot_water
-    trigger:
-      - platform: numeric_state
+    triggers:
+      - trigger: numeric_state
         entity_id: sensor.givtcp_fd2308f368_export_power
         above: 500
         for:

@@ -2,7 +2,7 @@
 automation:
   - alias: Completed Download
     id: completed_download
-    trigger:
+    triggers:
       platform: event
       event_type: nzbget_download_complete
       event_data:
@@ -19,7 +19,7 @@ automation:
 
   - alias: Completed Star Trek Download
     id: completed_star_trek_download
-    trigger:
+    triggers:
       platform: event
       event_type: nzbget_download_complete
       event_data:
@@ -35,7 +35,7 @@ automation:
 
   - alias: Completed Westworld Download
     id: completed_westworld_download
-    trigger:
+    triggers:
       platform: event
       event_type: nzbget_download_complete
       event_data:

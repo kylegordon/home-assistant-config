@@ -7,8 +7,8 @@ input_boolean:
 automation:
   - alias: Living Room TV dimmer
     id: living_room_tv_dimmer
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: media_player.living_room_kodi
         to: 'playing'
     condition:

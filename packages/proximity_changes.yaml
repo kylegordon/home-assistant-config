@@ -2,8 +2,8 @@ automation:
   - id: 'proximity_kyle'
     initial_state: true
     alias: Notification - Kyle Approaching Home
-    trigger:
-    - platform: numeric_state
+    triggers:
+    - trigger: numeric_state
       entity_id: sensor.home_kyle_distance  # The sensor is in meters
       below: '2000'
     condition:

@@ -34,17 +34,17 @@ template:
 automation:
   - alias: Tin Hut Occupied
     id: tin_hut_occupied
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.tin_hut_occupied
         to: 'on'
-      - platform: state
+      - trigger: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
         to: 'open'
-      - platform: state
+      - trigger: state
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door
         to: 'on'
     action:
@@ -80,14 +80,14 @@ automation:
 
   - alias: Tin Hut Door Opened Outdoor Lights
     id: tin_hut_door_opened_outdoor_lights
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
         to: 'open'
-      - platform: state
+      - trigger: state
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door
         to: 'on'
     condition:
@@ -105,8 +105,8 @@ automation:
 
   - alias: Tin Hut Not Occupied
     id: tin_hut_not_occupied
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.tin_hut_occupied
         to: 'off'
         for:
@@ -127,8 +127,8 @@ automation:
   - alias: Open tin hut process
     # This is used by Alexa
     id: open_tin_hut_process
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.open_tin_hut_process
         to: 'on'
     action:
@@ -144,8 +144,8 @@ automation:
   - alias: Close tin hut process
     # This is used by Alexa
     id: close_tin_hut_process
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: input_boolean.lockup_process
         to: 'on'
     action:
@@ -164,11 +164,11 @@ automation:
 
   - alias: Tin Hut Doors Announce
     id: tin_hut_doors_announce
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
         to: 'open'
-      - platform: state
+      - trigger: state
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
     action:
@@ -189,11 +189,11 @@ automation:
 
   - alias: Tin Hut Doors Closing
     id: tin_hut_doors_closing
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
         to: 'closing'
-      - platform: state
+      - trigger: state
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'closing'
     action:
@@ -218,11 +218,11 @@ automation:
 
   - alias: Tin Hut Doors Opening
     id: tin_hut_doors_opening
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: cover.tin_hut_door_left_tin_hut_door_left
         to: 'opening'
-      - platform: state
+      - trigger: state
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'opening'
     action:

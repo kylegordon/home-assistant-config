@@ -1,12 +1,12 @@
 alias: "Going to bed - no guests"
 id: going_to_bed_no_guests
-trigger:
+triggers:
     # Guest bedroom
-  - platform: mqtt
+  - trigger: mqtt
     topic: devices/60019485412a/button/event
     payload: 'TRIPLE'
     # Master bedroom
-  - platform: mqtt
+  - trigger: mqtt
     topic: devices/60019485376d/button/event
     payload: 'TRIPLE'
 

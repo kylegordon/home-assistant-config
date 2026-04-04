@@ -1,7 +1,7 @@
 alias: TV turn off Hi-Fi
 id: tv_turn_off_hi_fi
-trigger:
-  - platform: state
+triggers:
+  - trigger: state
     entity_id: media_player.living_room_television
     from: 'on'
     to: 'off'

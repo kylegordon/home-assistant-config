@@ -10,7 +10,7 @@ template:
 automation:
   - id: scale_percentage
     alias: Bandwidthometer Value
-    trigger:
+    triggers:
       platform: state
       entity_id: sensor.bandwidth_in_as_percentage
     action:
@@ -25,7 +25,7 @@ automation:
 
   - id: scale_backlight_up
     alias: Bandwidthometer Backlight On
-    trigger:
+    triggers:
       platform: numeric_state
       entity_id: sensor.bandwidth_in_as_percentage
       above: 80
@@ -41,7 +41,7 @@ automation:
 
   - id: scale_backlight_down
     alias: Bandwidthometer Backlight Off
-    trigger:
+    triggers:
       platform: numeric_state
       entity_id: sensor.bandwidth_in_as_percentage
       below: 80

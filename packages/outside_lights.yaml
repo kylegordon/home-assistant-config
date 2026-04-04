@@ -38,8 +38,8 @@ template:
 automation:
   - alias: Outside person detected
     id: outside_person_detected
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - binary_sensor.back_door_pir
           - binary_sensor.driveway_pir
@@ -76,8 +76,8 @@ automation:
 
   - alias: "Outside night lights on"
     id: outside_night_lights_on
-    trigger:
-      - platform: numeric_state
+    triggers:
+      - trigger: numeric_state
         entity_id: sensor.average_external_light_level
         below: input_number.blinds_evening
         for:
@@ -98,8 +98,8 @@ automation:
 
   - alias: Outside night lights off
     id: outside_night_lights_off
-    trigger:
-      - platform: numeric_state
+    triggers:
+      - trigger: numeric_state
         entity_id: sensor.average_external_light_level
         above: input_number.blinds_morning
         for:
@@ -112,8 +112,8 @@ automation:
 
   - alias: Outside lights on
     id: outside_lights_on
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - binary_sensor.back_door_pir
           - binary_sensor.driveway_pir
@@ -174,8 +174,8 @@ automation:
 
   - alias: Outside lights off
     id: outside_lights_off
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - binary_sensor.back_door_pir
           - binary_sensor.driveway_pir
@@ -196,8 +196,8 @@ automation:
     id: front_hall_outside_lights_toggle
     mode: parallel
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
-    trigger:
-      - platform: event
+    triggers:
+      - trigger: event
         event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: front_hall_dual_lightswitch

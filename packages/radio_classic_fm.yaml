@@ -7,7 +7,7 @@ input_boolean:
 automation:
   - alias: "Play Classic FM"
     id: play_radio_classic_fm
-    trigger:
+    triggers:
       platform: state
       entity_id: input_boolean.radio_classic_fm
       from: 'off'

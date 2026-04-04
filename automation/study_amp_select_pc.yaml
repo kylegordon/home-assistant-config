@@ -1,8 +1,8 @@
 alias: "Study amp: select PC input"
 id: study_amp_select_pc_input
 
-trigger:
-  - platform: state
+triggers:
+  - trigger: state
     entity_id: input_select.study_amplifier_input
     to: "PC"
 

@@ -24,8 +24,8 @@ mqtt:
 automation:
   - alias: Under Bed Cheerlights Motion
     id: under_bed_cheerlights_motion
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.under_bed_motion_sensor
         to: 'on'
     condition:
@@ -46,8 +46,8 @@ automation:
 
   - alias: Under Bed Cheerlights Motion - 2 minute timeout
     id: under_bed_cheerlights_motion_timeout
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.under_bed_motion_sensor
         to: 'off'
         for:
@@ -65,7 +65,7 @@ automation:
 
   - alias: Cheerlights - Glow Orbs
     id: cheerlights_glow_orbs
-    trigger:
+    triggers:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
@@ -90,7 +90,7 @@ automation:
 
   - alias: Cheerlights - Under Bed
     id: cheerlights_under_bed
-    trigger:
+    triggers:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
@@ -114,7 +114,7 @@ automation:
 
   - alias: Cheerlights - Outside
     id: cheerlights_outside
-    trigger:
+    triggers:
       platform: mqtt
       topic: cheerlightsRGB
     condition:
@@ -142,10 +142,10 @@ automation:
 
   - alias: Cheerlights - Tin Hut
     id: cheerlights_tin_hut
-    trigger:
-      - platform: mqtt
+    triggers:
+      - trigger: mqtt
         topic: cheerlightsRGB
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.tin_hut_occupied
         from: "off"
         to: "on"
@@ -174,12 +174,12 @@ automation:
 
   - alias: Cheerlights - off
     id: cheerlights_off
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.home_occupied
         from: "on"
         to: "off"
-      - platform: time
+      - trigger: time
         at: "23:00:00"
     action:
       - service: homeassistant.turn_off
@@ -192,8 +192,8 @@ automation:
 
   - alias: Cheerlights - Tin Hut Off
     id: cheerlights_tin_hut_off
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.tin_hut_occupied
         from: "on"
         to: "off"

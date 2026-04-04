@@ -2,8 +2,8 @@
 automation:
   - alias: Alarm sensor state change notification
     id: alarm_sensor_state_change_notification
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - binary_sensor.back_door
           - binary_sensor.front_door
@@ -45,8 +45,8 @@ automation:
 
   - alias: "Alarm Set Away"
     id: alarm_set_away
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.home_occupied
         from: "on"
         to: "off"
@@ -72,8 +72,8 @@ automation:
 
   - alias: "Alarm Set Home"
     id: alarm_set_home
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.home_occupied
         from: "off"
         to: "on"
@@ -93,11 +93,11 @@ automation:
 
   - alias: "Alarm Set Sleeping"
     id: alarm_set_sleeping
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.kyle_status
         to: "Sleeping"
-      - platform: state
+      - trigger: state
         entity_id: sensor.charlotte_status
         to: "Sleeping"
     condition:

@@ -9,7 +9,7 @@ mqtt:
 automation:
   - alias: 'Flight entry notification - Home'
     id: flight_entry_notification_home
-    trigger:
+    triggers:
       platform: event
       event_data:
         sensor: opensky_home
@@ -27,7 +27,7 @@ automation:
 
   - alias: 'Flight entry notification - Uplawmoor'
     id: flight_entry_notification_uplawmoor
-    trigger:
+    triggers:
       platform: event
       event_data:
         sensor: opensky_uplawmoor

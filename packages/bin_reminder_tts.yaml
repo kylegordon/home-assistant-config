@@ -33,11 +33,11 @@ automation:
       - condition: state
         entity_id: input_boolean.bin_reminder
         state: 'on'
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.front_hall_door_contact
         to: 'on'
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.front_hall_motion
         to: 'on'
     action:
@@ -57,8 +57,8 @@ automation:
         weekday:
           - tue
           - sat
-    trigger:
-      - platform: time
+    triggers:
+      - trigger: time
         at: '01:00:00'
     action:
       - service: homeassistant.turn_on

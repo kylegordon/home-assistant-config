@@ -1,15 +1,15 @@
 ---
 alias: "Media stopped at night"
 id: media_stopped_night
-trigger:
-  - platform: state
+triggers:
+  - trigger: state
     entity_id: media_player.living_room_kodi
     to: "off"
-  - platform: state
+  - trigger: state
     entity_id: media_player.living_room_kodi
     from: "playing"
     to: "idle"
-  - platform: state
+  - trigger: state
     entity_id: media_player.living_room_kodi
     from: "playing"
     to: "paused"

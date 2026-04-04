@@ -13,13 +13,13 @@ automation:
     id: hallway_light_toggle
     mode: parallel
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
-    trigger:
-      - platform: event
+    triggers:
+      - trigger: event
         event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: hall_single_lightswitch
           action: click
-      - platform: event
+      - trigger: event
         event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: hall_dual_lightswitch
@@ -60,8 +60,8 @@ automation:
   - alias: Hallway light motion
     id: hallway_light_motion
     initial_state: true
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - binary_sensor.hallway_rooms_occupancy
           - binary_sensor.hallway_bathroom_occupancy
@@ -123,8 +123,8 @@ automation:
 
   - alias: Hallway motion - 2 minute night timeout
     id: hallway_motion_2_minute_night_timeout
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - binary_sensor.hallway_rooms_occupancy
           - binary_sensor.hallway_bathroom_occupancy
@@ -150,8 +150,8 @@ automation:
 
   - alias: Hallway motion - 10 minute timeout
     id: hallway_motion_10_minute_timeout
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - binary_sensor.hallway_rooms_occupancy
           - binary_sensor.hallway_bathroom_occupancy
@@ -173,8 +173,8 @@ automation:
 
   - alias: Hallway - sunlight timeout
     id: hallway_sunlight_timeout
-    trigger:
-      - platform: numeric_state
+    triggers:
+      - trigger: numeric_state
         entity_id: sensor.average_external_light_level
         above: input_number.hallway_light_level_trigger
         for:

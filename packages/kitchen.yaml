@@ -23,8 +23,8 @@ automation:
     id: kitchen_ceiling_toggle
     mode: parallel
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
-    trigger:
-      - platform: event
+    triggers:
+      - trigger: event
         event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: kitchen_lightswitch
@@ -54,8 +54,8 @@ automation:
     id: kitchen_worktop_toggle
     mode: parallel
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
-    trigger:
-      - platform: event
+    triggers:
+      - trigger: event
         event_type: esphome.tx_ultimate_easy
         event_data:
           device_name: kitchen_lightswitch
@@ -83,12 +83,12 @@ automation:
 
   - alias: Kitchen motion
     id: kitchen_motion
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.kitchen_motion_occupancy
         to: 'on'
         from: 'off'
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
         to: 'on'
         from: 'off'
@@ -106,13 +106,13 @@ automation:
 
   - alias: Kitchen motion - 10 minute timeout
     id: kitchen_motion_10_minute_timeout
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.kitchen_motion_occupancy
         to: 'off'
         for:
           minutes: 10
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
         to: 'off'
         for:
@@ -124,8 +124,8 @@ automation:
 
   - alias: Kitchen cabinet lights - presence on
     id: kitchen_cabinet_lights_presence_on
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
         to: 'on'
         from: 'off'
@@ -138,8 +138,8 @@ automation:
 
   - alias: Kitchen cabinet lights - presence off
     id: kitchen_cabinet_lights_presence_off
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.presence_lite_kitchen_zone_1_occupancy
         to: 'off'
         for:

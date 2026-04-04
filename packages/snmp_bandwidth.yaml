@@ -75,7 +75,7 @@ input_number:
 automation:
   - id: snmp_monitor_traffic_in
     alias: Monitor Traffic In
-    trigger:
+    triggers:
       platform: state
       entity_id: sensor.snmp_wan_in
     action:
@@ -86,7 +86,7 @@ automation:
 
   - id: snmp_monitor_traffic_out
     alias: Monitor Traffic Out
-    trigger:
+    triggers:
       platform: state
       entity_id: sensor.snmp_wan_out
     action:

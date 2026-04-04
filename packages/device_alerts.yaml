@@ -2,8 +2,8 @@
 automation:
   - alias: Alert when a critical device goes offline
     id: alert_when_a_critical_device_goes_offline
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.kitchen_temperature
           - binary_sensor.front_hall_sensor_status

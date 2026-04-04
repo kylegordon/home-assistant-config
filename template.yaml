@@ -1,6 +1,6 @@
 ---
 - trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       minutes: "/30"
   action:
     - service: weather.get_forecasts
@@ -16,7 +16,7 @@
       attributes:
         forecast: "{{ daily['weather.pirateweather'].forecast }}"
 - trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       minutes: "/30"
   action:
     - service: weather.get_forecasts
@@ -32,9 +32,9 @@
       attributes:
         forecast: "{{ hourly['weather.pirateweather'].forecast[:24] }}"
 - trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: "/1"
-    - platform: homeassistant
+    - trigger: homeassistant
       event: start
   action:
     - service: calendar.get_events

@@ -7,7 +7,7 @@ input_boolean:
 automation:
   - alias: "Play Billy Country"
     id: play_radio_billy_country
-    trigger:
+    triggers:
       platform: state
       entity_id: input_boolean.billy_country
       from: 'off'

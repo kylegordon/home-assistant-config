@@ -43,8 +43,8 @@ template:
 automation:
   - alias: More wood
     id: time_to_new_fire_wood
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: binary_sensor.hwam_smart_stove_refill_needed
         from: "off"
         to: "on"

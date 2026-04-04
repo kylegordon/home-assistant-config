@@ -4,15 +4,15 @@ automation:
     id: valetudo_notifications
     description: Sends notifications for Snowwhite vacuum.
     mode: queued
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: vacuum.valetudo_confusedmeaslyraccoon
         from: cleaning
         to: returning
         id: cleaning_finished
         variables:
           msg_type: success_msg
-      - platform: state
+      - trigger: state
         entity_id: vacuum.valetudo_confusedmeaslyraccoon
         to: error
         for:
