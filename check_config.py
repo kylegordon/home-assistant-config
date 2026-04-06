@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Monkey patch HA helpers as workaround for hass.data KeyError bugs, then run config check."""
 
+import re
 import subprocess
 import sys
 
@@ -67,9 +68,10 @@ sys.stderr.flush()
 # HA's check_config exits 0 even when it finds component-level config errors
 # (automations with invalid keys, etc.).  Detect them via Python logging output
 # which uses the format "LEVEL:logger:message".
+_HA_ERROR_RE = re.compile(r"^ERROR:[a-zA-Z0-9._-]+:")
 error_lines = [
     line for line in (result.stdout + result.stderr).splitlines()
-    if line.startswith("ERROR:")
+    if _HA_ERROR_RE.match(line)
 ]
 
 if error_lines:
