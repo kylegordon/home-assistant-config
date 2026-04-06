@@ -1,36 +1,55 @@
 #!/usr/bin/env python3
-"""Monkey patch HA trigger.py as workaround for issue #167066, then run config check."""
+"""Monkey patch HA helpers as workaround for hass.data KeyError bugs, then run config check."""
 
 import subprocess
 import sys
 
-TRIGGER_FILE = "/usr/src/homeassistant/homeassistant/helpers/trigger.py"
+
+def apply_patch(filepath, search, replace):
+    """Apply a text patch to a file; silently skip if pattern absent or file missing."""
+    try:
+        with open(filepath) as f:
+            content = f.read()
+        if search in content:
+            with open(filepath, "w") as f:
+                f.write(content.replace(search, replace))
+            print(f"Patch applied to {filepath}")
+        else:
+            print(f"Patch pattern not found in {filepath} - may already be fixed upstream")
+    except FileNotFoundError:
+        print(f"Warning: {filepath} not found - skipping patch")
+
 
 # Workaround for https://github.com/home-assistant/core/issues/167066
 # Patch _register_trigger_platform to initialise hass.data dicts before accessing them.
-# NOTE: SEARCH matches the exact indentation/formatting from HA core commit ee4c941.
+# NOTE: SEARCH matches the exact indentation/formatting from HA core.
 # If upstream reformats the code this pattern may need updating.
-SEARCH = "    new_triggers: set[str] = set()\n    triggers = hass.data[TRIGGERS]"
-REPLACE = (
-    "    new_triggers: set[str] = set()\n"
-    "    if TRIGGERS not in hass.data:\n"
-    "        hass.data[TRIGGERS] = {}\n"
-    "    if TRIGGER_PLATFORM_SUBSCRIPTIONS not in hass.data:\n"
-    "        hass.data[TRIGGER_PLATFORM_SUBSCRIPTIONS] = []\n"
-    "    triggers = hass.data[TRIGGERS]"
+apply_patch(
+    "/usr/src/homeassistant/homeassistant/helpers/trigger.py",
+    "    new_triggers: set[str] = set()\n    triggers = hass.data[TRIGGERS]",
+    (
+        "    new_triggers: set[str] = set()\n"
+        "    if TRIGGERS not in hass.data:\n"
+        "        hass.data[TRIGGERS] = {}\n"
+        "    if TRIGGER_PLATFORM_SUBSCRIPTIONS not in hass.data:\n"
+        "        hass.data[TRIGGER_PLATFORM_SUBSCRIPTIONS] = []\n"
+        "    triggers = hass.data[TRIGGERS]"
+    ),
 )
 
-try:
-    with open(TRIGGER_FILE) as f:
-        content = f.read()
-    if SEARCH in content:
-        with open(TRIGGER_FILE, "w") as f:
-            f.write(content.replace(SEARCH, REPLACE))
-        print(f"Patch applied to {TRIGGER_FILE}")
-    else:
-        print(f"Patch pattern not found in {TRIGGER_FILE} - may already be fixed upstream")
-except FileNotFoundError:
-    print(f"Warning: {TRIGGER_FILE} not found - skipping patch")
+# Same bug in _register_condition_platform (condition.py) - KeyError: 'conditions'
+apply_patch(
+    "/usr/src/homeassistant/homeassistant/helpers/condition.py",
+    "    new_conditions: set[str] = set()\n    conditions = hass.data[CONDITIONS]",
+    (
+        "    new_conditions: set[str] = set()\n"
+        "    if CONDITIONS not in hass.data:\n"
+        "        hass.data[CONDITIONS] = {}\n"
+        "    if CONDITION_PLATFORM_SUBSCRIPTIONS not in hass.data:\n"
+        "        hass.data[CONDITION_PLATFORM_SUBSCRIPTIONS] = []\n"
+        "    conditions = hass.data[CONDITIONS]"
+    ),
+)
 
 sys.exit(
     subprocess.run(
