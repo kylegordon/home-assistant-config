@@ -7,7 +7,9 @@ import sys
 TRIGGER_FILE = "/usr/src/homeassistant/homeassistant/helpers/trigger.py"
 
 # Workaround for https://github.com/home-assistant/core/issues/167066
-# Patch _register_trigger_platform to initialise hass.data dicts before accessing them
+# Patch _register_trigger_platform to initialise hass.data dicts before accessing them.
+# NOTE: SEARCH matches the exact indentation/formatting from HA core commit ee4c941.
+# If upstream reformats the code this pattern may need updating.
 SEARCH = "    new_triggers: set[str] = set()\n    triggers = hass.data[TRIGGERS]"
 REPLACE = (
     "    new_triggers: set[str] = set()\n"
@@ -32,6 +34,7 @@ except FileNotFoundError:
 
 sys.exit(
     subprocess.run(
-        ["python", "-m", "homeassistant", "--config", "./", "--script", "check_config", "--info", "all"]
+        ["python", "-m", "homeassistant", "--config", "./", "--script", "check_config", "--info", "all"],
+        check=False,
     ).returncode
 )
