@@ -46,7 +46,7 @@ automation:
         to: 'open'
       - platform: state
         entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door
-        to: 'open'
+        to: 'on'
     action:
       - service: homeassistant.turn_on
         entity_id:
