@@ -80,27 +80,27 @@
 
     forecast_2_hours:
       value_template: >-
-        {% set f = state_attr('weather.openweathermap', 'forecast') %}
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
         {{ f[2].temperature if f and f | length >= 3 else none }}
     forecast_4_hours:
       value_template: >-
-        {% set f = state_attr('weather.openweathermap', 'forecast') %}
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
         {{ f[4].temperature if f and f | length >= 5 else none }}
     forecast_6_hours:
       value_template: >-
-        {% set f = state_attr('weather.openweathermap', 'forecast') %}
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
         {{ f[6].temperature if f and f | length >= 7 else none }}
     forecast_8_hours:
       value_template: >-
-        {% set f = state_attr('weather.openweathermap', 'forecast') %}
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
         {{ f[8].temperature if f and f | length >= 9 else none }}
     forecast_10_hours:
       value_template: >-
-        {% set f = state_attr('weather.openweathermap', 'forecast') %}
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
         {{ f[10].temperature if f and f | length >= 11 else none }}
     forecast_12_hours:
       value_template: >-
-        {% set f = state_attr('weather.openweathermap', 'forecast') %}
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
         {{ f[12].temperature if f and f | length >= 13 else none }}
 
     house_target_temperature:
