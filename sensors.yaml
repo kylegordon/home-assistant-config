@@ -153,3 +153,11 @@
       unique_id: master_bedroom_thermal_comfort
       temperature_sensor: sensor.master_bedroom_temperature
       humidity_sensor: sensor.master_bedroom_humidity
+
+- platform: integration
+  source: sensor.polestar_4_442660_charging_power
+  name: Polestar 4 Charging Energy
+  unique_id: polestar_4_442660_charging_energy
+  unit_of_measurement: kWh
+  round: 2
+  method: left
