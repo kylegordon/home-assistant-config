@@ -189,5 +189,11 @@ utility_meter:
   monthly_energy_tv:
     source: sensor.energy_spent_tv
     cycle: monthly
+  daily_energy_polestar_4:
+    source: sensor.polestar_4_442660_charging_energy
+    cycle: daily
+  monthly_energy_polestar_4:
+    source: sensor.polestar_4_442660_charging_energy
+    cycle: monthly
 
 smartir:
