@@ -16,14 +16,14 @@ substitutions:
   device_description: ILI9341 Display
   friendly_name: ILI9341 Display
   internal_temp_sensor: sensor.house_average_temperature  # entity from Home Assistant
-  outside_temp_sensor: sensor.openweathermap_temperature  # entity from Home Assistant
-  weather_entity: weather.openweathermap  # entity from Home Assistant
+  outside_temp_sensor: sensor.pirateweather_temperature  # entity from Home Assistant
+  weather_entity: weather.pirateweather  # entity from Home Assistant
   todays_forecast_high_entity: sensor.todays_forecast_high  # entity from Home Assistant
   todays_forecast_low_entity: sensor.todays_forecast_low  # entity from Home Assistant
-  todays_forecast_condition_entity: sensor.openweathermap_forecast_condition
+  todays_forecast_condition_entity: sensor.pirateweather_forecast_condition
   tomorrows_forecast_high_entity: sensor.tomorrows_forecast_high
   tomorrows_forecast_low_entity: sensor.tomorrows_forecast_low
-  tomorrows_forecast_condition_entity: sensor.openweathermap_forecast_condition
+  tomorrows_forecast_condition_entity: sensor.pirateweather_forecast_condition
 
 esphome:
   name: ${device_name}
