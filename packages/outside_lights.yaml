@@ -60,8 +60,8 @@ automation:
           message: >
             Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
           data:
-            clickAction: "/lovelace/outside"
-            url: "/lovelace/outside"
+            clickAction: "https://viewpoint.house/lovelace/outside"
+            url: "https://viewpoint.house/lovelace/outside"
             image: >
               {% if 'back_door' in trigger.entity_id %}
                 /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
@@ -150,8 +150,8 @@ automation:
             Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
             Turning on outside lights
           data:
-            clickAction: "/lovelace/outside"
-            url: "/lovelace/outside"
+            clickAction: "https://viewpoint.house/lovelace/outside"
+            url: "https://viewpoint.house/lovelace/outside"
             image: >
               {% if 'back_door' in trigger.entity_id %}
                 /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
