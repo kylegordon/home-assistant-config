@@ -2,21 +2,21 @@
 
 # Home Assistant configuration for Axle Energy integration
 # This configuration defines a REST sensor to fetch event data from the Axle Energy API.
-template:
-  - sensor:
-    name: Axle Event
-    resource: https://api.axle.energy/vpp/home-assistant/event
+rest:
+  - resource: https://api.axle.energy/vpp/home-assistant/event
     scan_interval: 600
     headers:
       Authorization: !secret axle_energy_token
-    json_attributes:
-      - start_time
-      - end_time
-      - import_export
-      - updated_at
-    value_template: >-
-      {% if value_json is defined and value_json.start_time is defined %}
-        {{ value_json.start_time }}
-      {% else %}
-        {{ none }}
-      {% endif %}
+    sensor:
+      - name: Axle Event
+        json_attributes:
+          - start_time
+          - end_time
+          - import_export
+          - updated_at
+        value_template: >-
+          {% if value_json is defined and value_json.start_time is defined %}
+            {{ value_json.start_time }}
+          {% else %}
+            {{ none }}
+          {% endif %}
