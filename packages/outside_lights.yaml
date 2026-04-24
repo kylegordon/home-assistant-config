@@ -93,7 +93,7 @@ automation:
           - light.front_door_dome
         data:
           brightness_pct: 100
-          color_temp: 400
+          color_temp_kelvin: 2500
           transition: 30
 
   - alias: Outside night lights off

@@ -41,13 +41,13 @@ action:
         {% elif states('sensor.time_of_day') == "Night" %}
         5
         {% endif %}
-      color_temp: >
+      color_temp_kelvin: >
         {% if states('sensor.time_of_day') == "Morning" %}
-        200
+        5000
         {% elif states('sensor.time_of_day') == "Day" %}
-        300
+        3333
         {% elif states('sensor.time_of_day') == "Night" %}
-        375
+        2667
         {% endif %}
   - service: light.turn_on
     data:
