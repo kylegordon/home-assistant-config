@@ -3,24 +3,33 @@ update_tx_ultimate_switches:
   description: >-
     Sequentially updates firmware on all TX Ultimate Easy switches.
     Each device is updated one at a time to avoid overloading the
-    ESPHome compilation process. Discovers devices by finding
-    TX Ultimate Easy firmware version sensors, then locates the
-    corresponding update entities via the device registry.
+    ESPHome compilation process. Discovers ESPHome update entities
+    by matching known device name patterns.
   mode: single
   icon: mdi:cellphone-arrow-down
   sequence:
     - variables:
         tx_switch_entities: >-
+          {% set patterns = [
+            'craftroom_switch',
+            'ensuite_lightswitch',
+            'front_hall_dual_switch',
+            'guest_bedroom_lightswitch',
+            'hall_dual_lightswitch',
+            'hall_single_lightswitch',
+            'kitchen_lightswitch',
+            'living_room_lightswitch',
+            'master_bedroom_lightswitch',
+            'study_lightswitch'
+          ] %}
           {% set ns = namespace(found=[]) %}
-          {% for sensor in states.sensor
-            if 'tx_ultimate_easy_firmware_version' in sensor.entity_id %}
-            {% set dev = device_id(sensor.entity_id) %}
-            {% if dev %}
-              {% for entity in device_entities(dev)
-                if entity.startswith('update.') %}
+          {% for entity in states.update
+            | map(attribute='entity_id') | list %}
+            {% for pattern in patterns %}
+              {% if pattern in entity %}
                 {% set ns.found = ns.found + [entity] %}
-              {% endfor %}
-            {% endif %}
+              {% endif %}
+            {% endfor %}
           {% endfor %}
           {{ ns.found }}
     - choose:
