@@ -3,38 +3,26 @@ update_tx_ultimate_switches:
   description: >-
     Sequentially updates firmware on all TX Ultimate Easy switches.
     Each device is updated one at a time to avoid overloading the
-    ESPHome compilation process. Update entities are discovered
-    dynamically by matching device friendly names.
+    ESPHome compilation process. Discovers devices by finding
+    TX Ultimate Easy firmware version sensors, then locates the
+    corresponding update entities via the device registry.
   mode: single
   icon: mdi:cellphone-arrow-down
   sequence:
     - variables:
-        tx_friendly_names:
-          - "Craft Room Lightswitch"
-          - "Ensuite Lightswitch"
-          - "Front Hall Dual Lightswitch"
-          - "Guest Bedroom Lightswitch"
-          - "Hall Dual Lightswitch"
-          - "Hall Single Lightswitch"
-          - "Kitchen Lightswitch"
-          - "Living Room Lightswitch"
-          - "Master Bedroom Lightswitch"
-          - "Study Lightswitch"
-    - variables:
         tx_switch_entities: >-
           {% set ns = namespace(found=[]) %}
-          {% for state in states.update %}
-            {% set dev_id = device_id(state.entity_id) %}
-            {% if dev_id %}
-              {% set dev_name = device_attr(dev_id, 'name') %}
-              {% if dev_name in tx_friendly_names %}
-                {% set ns.found = ns.found + [state.entity_id] %}
-              {% endif %}
+          {% for sensor in states.sensor
+            if 'tx_ultimate_easy_firmware_version' in sensor.entity_id %}
+            {% set dev = device_id(sensor.entity_id) %}
+            {% if dev %}
+              {% for entity in device_entities(dev)
+                if entity.startswith('update.') %}
+                {% set ns.found = ns.found + [entity] %}
+              {% endfor %}
             {% endif %}
           {% endfor %}
           {{ ns.found }}
-        all_update_entities: >-
-          {{ states.update | map(attribute='entity_id') | list }}
     - choose:
         - conditions:
             - condition: template
@@ -45,9 +33,10 @@ update_tx_ultimate_switches:
               data:
                 title: "TX Ultimate Update Script"
                 message: >-
-                  No TX Ultimate update entities found.
-                  Available update entities:
-                  {{ all_update_entities | join(', ') }}
+                  No update entities found for TX Ultimate devices.
+                  Ensure the ESPHome Dashboard add-on is installed
+                  and the device configs are present in its
+                  configuration directory.
                 notification_id: tx_ultimate_update_failed
             - stop: "No TX Ultimate update entities found"
     - action: logbook.log
