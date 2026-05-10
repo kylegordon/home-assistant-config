@@ -3,22 +3,36 @@ update_tx_ultimate_switches:
   description: >-
     Sequentially updates firmware on all TX Ultimate Easy switches.
     Each device is updated one at a time to avoid overloading the
-    ESPHome compilation process.
+    ESPHome compilation process. Update entities are discovered
+    dynamically by matching known device names.
   mode: single
   icon: mdi:cellphone-arrow-down
   sequence:
+    - variables:
+        tx_switch_entities: >-
+          {% set patterns = [
+            'craftroom_lightswitch',
+            'ensuite_lightswitch',
+            'front_hall_dual_lightswitch',
+            'guestbedroom_lightswitch',
+            'hall_dual_lightswitch',
+            'hall_single_lightswitch',
+            'kitchen_lightswitch',
+            'living_room_lightswitch',
+            'masterbedroom_lightswitch',
+            'study_lightswitch'
+          ] %}
+          {% set ns = namespace(found=[]) %}
+          {% for entity in states.update | map(attribute='entity_id') | list %}
+            {% for pattern in patterns %}
+              {% if pattern in entity %}
+                {% set ns.found = ns.found + [entity] %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {{ ns.found }}
     - repeat:
-        for_each:
-          - update.craftroom_lightswitch_firmware
-          - update.ensuite_lightswitch_firmware
-          - update.front_hall_dual_lightswitch_firmware
-          - update.guestbedroom_lightswitch_firmware
-          - update.hall_dual_lightswitch_firmware
-          - update.hall_single_lightswitch_firmware
-          - update.kitchen_lightswitch_firmware
-          - update.living_room_lightswitch_firmware
-          - update.masterbedroom_lightswitch_firmware
-          - update.study_lightswitch_firmware
+        for_each: "{{ tx_switch_entities }}"
         sequence:
           - action: update.install
             target:
