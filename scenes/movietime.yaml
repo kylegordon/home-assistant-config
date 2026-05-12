@@ -1,31 +1,30 @@
 name: Movie time
 entities:
   light.kitchen_cabinets:
-    state: off
+    state: false
   light.uplighter:
-    state: off
+    state: false
   light.utility_room:
-    state: off
+    state: false
   light.sideboard:
-    state: off
+    state: false
   light.candle_arch:
-    state: off
+    state: false
   light.living_room:
-    state: off
+    state: false
   light.arc_lamp:
-    state: off
+    state: false
   light.lava_lamp:
-    state: off
+    state: false
   light.star_burst:
-    state: off
+    state: false
   light.edison_lamp:
-    state: off
+    state: false
   light.front_door:
-    state: off
+    state: false
   light.hall_entrance:
-    state: off
+    state: false
   light.hallway:
-    state: off
+    state: false
   light.hall_bedrooms:
-    state: off
-
+    state: false
