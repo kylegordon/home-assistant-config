@@ -27,27 +27,27 @@ template:
       - name: "ASHP Heating COP"
         unique_id: ashp_heating_cop
         state: >
-          {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') | int %}
-          {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
-          {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
+          {%- set heat_generated_state = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') %}
+          {%- set consumed_electricity_state = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') %}
+          {%- if not (heat_generated_state | is_number) or not (consumed_electricity_state | is_number) %}
             unavailable
-          {%- elif heat_generated == unknown or consumed_electricity == unknown %}
+          {%- elif consumed_electricity_state | float == 0 %}
             unknown
           {%- else %}
-            {{ heat_generated / consumed_electricity }}
+            {{ heat_generated_state | float / consumed_electricity_state | float }}
           {%- endif %}
 
       - name: "ASHP Hot Water COP"
         unique_id: ashp_hot_water_cop
         state: >
-          {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int %}
-          {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
-          {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
+          {%- set heat_generated_state = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') %}
+          {%- set consumed_electricity_state = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') %}
+          {%- if not (heat_generated_state | is_number) or not (consumed_electricity_state | is_number) %}
             unavailable
-          {%- elif heat_generated == unknown or consumed_electricity == unknown %}
+          {%- elif consumed_electricity_state | float == 0 %}
             unknown
           {%- else %}
-            {{ heat_generated / consumed_electricity }}
+            {{ heat_generated_state | float / consumed_electricity_state | float }}
           {%- endif %}
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
