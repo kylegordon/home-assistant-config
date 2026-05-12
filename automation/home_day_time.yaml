@@ -1,5 +1,6 @@
 ---
 alias: "Home Day Time"
+id: home_day_time
 trigger:
   - platform: state
     entity_id: binary_sensor.home_occupied
@@ -8,7 +9,7 @@ trigger:
 condition:
   - condition: numeric_state
     entity_id: sun.sun
-    value_template: '{{ state.attributes.elevation }}'
+    attribute: elevation
     above: 30
   - condition: template
     value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"  # yamllint disable-line rule:line-length

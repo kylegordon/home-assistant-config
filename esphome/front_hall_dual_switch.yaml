@@ -1,0 +1,10 @@
+---
+substitutions:
+  name: "front_hall_dual_lightswitch"
+  friendly_name: "Front Hall Dual Lightswitch"
+  device_description: "Front Hall Dual Lightswitch"
+  default_state: "RESTORE_DEFAULT_ON"
+  device_format: EU
+  gang_count: 2
+
+<<: !include common/tx_ultimate_easy_common.yaml

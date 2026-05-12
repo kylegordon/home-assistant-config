@@ -1,28 +1,9 @@
 ---
 substitutions:
-  name: "masterbedroom_switch"
+  name: "masterbedroom_lightswitch"
   friendly_name: "Master Bedroom Lightswitch"
-  device_description: "Master Bedroom Light Switch"
+  device_description: "Master Bedroom Lightswitch"
+  device_format: EU
+  gang_count: 1
 
-packages:
-  remote_package:
-    url: https://github.com/edwardtfn/TX-Ultimate-Easy
-    # Or you can specify a version, like `ref: v2024.12.6`
-    # or `ref: latest` to the latest non-stable
-    ref: main
-    refresh: 5min
-    files:
-      # Core (essential) packages
-      - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml
-      # Non-essential, but recommended packages.
-      # Includes hw_relays, hw_vibration, and media_player
-      - ESPHome/TX-Ultimate-Easy-ESPHome_standard.yaml
-      # Adds BLE proxy support - may induce some unreliability
-      # - ESPHome/TX-Ultimate-Easy-ESPHome_addon_ble_proxy.yaml
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  ap:
-    ssid: ${friendly_name} AP
-    password: !secret wifi_password
+<<: !include common/tx_ultimate_easy_common.yaml

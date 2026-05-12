@@ -1,7 +1,6 @@
 ---
 group:
   echos:
-    name: All Echos
     entities:
       - media_player.bedroom
       - media_player.kitchen
@@ -31,7 +30,7 @@ script:
     alias: Alexa Turn On The Lights
     sequence:
       - service: homeassistant.turn_on
-        data_template:
+        data:
           entity_id: >-
             {# Use the name of each Echo to determine which room the
               command likely came from. #}
@@ -42,7 +41,7 @@ script:
             {%- if room == "kitchen" -%}
               light.kitchen
             {%- elif room == "study" -%}
-              group.study_lighting
+              light.study_lighting
             {%- elif room == "bedroom" -%}
               light.master_bedroom
             {%- elif room == "garage" -%}
@@ -58,7 +57,7 @@ script:
     alias: Alexa Turn Off The Lights
     sequence:
       - service: homeassistant.turn_off
-        data_template:
+        data:
           entity_id: >-
             {# Use the name of each Echo to determine which room the
               command likely came from. #}
@@ -69,7 +68,7 @@ script:
             {%- if room == "kitchen" -%}
               light.kitchen
             {%- elif room == "study" -%}
-              group.study_lighting
+              light.study_lighting
             {%- elif room == "bedroom" -%}
               light.master_bedroom
             {%- elif room == "garage" -%}

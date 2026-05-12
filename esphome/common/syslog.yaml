@@ -1,5 +1,4 @@
 ---
-
 udp:
   id: esphome_udp_syslog
   addresses: 172.24.32.13

@@ -1,5 +1,6 @@
 ---
 alias: "Away"
+id: away
 trigger:
   - platform: state
     entity_id: binary_sensor.home_occupied

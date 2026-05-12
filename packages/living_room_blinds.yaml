@@ -17,6 +17,7 @@ input_number:
 
 cover:
   - platform: group
+    unique_id: patio_blinds
     name: Patio Blinds
     entities:
       - cover.patio_blinds_left
@@ -25,6 +26,7 @@ cover:
 
 automation:
   - alias: Control Blinds
+    id: control_blinds
     trigger:
       - platform: mqtt
         topic: "zigbee2mqtt/Blind Remote 2/action"
@@ -55,6 +57,7 @@ automation:
                   entity_id: cover.patio_blinds
 
   - alias: Close blinds when dark
+    id: close_blinds_when_dark
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level
@@ -68,6 +71,7 @@ automation:
           - cover.front_hall_blind
 
   - alias: Open blinds when bright
+    id: open_blinds_when_bright
     trigger:
       - platform: numeric_state
         entity_id: sensor.average_external_light_level

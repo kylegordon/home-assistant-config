@@ -1,0 +1,12 @@
+---
+substitutions:
+  device_name: monitor_lights
+  device_description: Monitor lights
+  friendly_name: Monitor lights
+  red: GPIO15
+  green: GPIO12
+  blue: GPIO13
+  cold_white: GPIO14
+  warm_white: GPIO04
+
+<<: !include common/h801_rgbww_common.yaml

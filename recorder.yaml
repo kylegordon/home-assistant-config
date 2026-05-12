@@ -1,6 +1,7 @@
----
 db_url: !secret db_url
-purge_keep_days: 21
+purge_keep_days: 7  # Reduced from 21 — InfluxDB handles long-term
+commit_interval: 30  # Batch writes, huge reduction in I/O
+
 exclude:
   domains:
     - automation
@@ -9,13 +10,105 @@ exclude:
     - zha
     - zwave
     - script
+    - update   # HACS/HA update entities
+    - button   # Momentary press, no history value
+    - scene
+
+  entity_globs:
+    # ===== mmWave / Presence tracking (top offenders: 350K-852K records each) =====
+    # These are continuous sub-second tracking sensors with no historical value
+    - sensor.presence_lite_*_target_*_distance
+    - sensor.presence_lite_*_target_*_angle
+    - sensor.presence_lite_*_target_*_x
+    - sensor.presence_lite_*_target_*_y
+    - sensor.presence_lite_*_target_*_speed
+
+    # ===== Daily energy accumulators (316K records — should be near-static) =====
+    - sensor.*_daily_energy
+    - sensor.*_monthly_energy
+    - sensor.*_hourly_energy
+    - sensor.*_quarter_hourly_energy
+
+    # ===== Power plug high-frequency telemetry =====
+    - sensor.*_power_plug_power
+    - sensor.*_power_plug_voltage
+    - sensor.*_power_plug_current
+
+    # ===== Lux meters (218K-258K each) =====
+    - sensor.lux_meter_*_level
+
+    # ===== Internet traffic / bandwidth (47K-189K each) =====
+    - input_number.internet_traffic_delta_*
+    - sensor.bandwidth_*
+    - sensor.internet_speed_*
+    - sensor.wan_traffic_*
+    - sensor.freebsd_router_*
+
+    # ===== Shelly 3EM high-frequency power metering =====
+    - sensor.shellypro3em_*_apparent_power
+    - sensor.shellypro3em_*_active_power
+    - sensor.shellypro3em_*_power_factor
+    - sensor.shellypro3em_*_current
+
+    # ===== GivTCP inverter telemetry =====
+    - sensor.givtcp_*_last_updated_time
+    - sensor.givtcp_*_invertor_time
+    - sensor.givtcp_*_time_since_last_update
+    - sensor.givtcp_*_phase_*_power
+    - sensor.givtcp_*_phase_*_current
+    - sensor.givtcp_*_phase_*_power_factor
+    - sensor.givtcp_meter_*
+
+    # ===== Adaptive lighting switches (63K-71K each) =====
+    - switch.adaptive_lighting_*
+
+    # ===== Device trackers (63K each - excessive polling) =====
+    - device_tracker.polestar_4_*
+    - device_tracker.luba_*
+
+    # ===== Frigate object detection counters =====
+    - sensor.*_all_count
+    - sensor.*_all_objects
+    - sensor.*_car_count
+    - sensor.*_person_count
+
+    # ===== HWAM stove heartbeat/timestamp entities =====
+    - sensor.hwam_*_message_id
+    - datetime.hwam_*
+
+    # ===== OctoPrint temperatures (only useful during active prints) =====
+    - sensor.octoprint_actual_*
+
+    # ===== JetKVM diagnostics =====
+    - sensor.jetkvm_*_temperature
+    - binary_sensor.jetkvm_*_hdd_led
+
+    # ===== ESPHome device diagnostics (WiFi/uptime across 70+ devices) =====
+    - sensor.*_wifi_signal
+    - sensor.*_rssi
+    - sensor.*_uptime
+    - sensor.*_ip_address
+    - sensor.*_free_heap
+
+    # ===== Misc noisy sensors =====
+    - sensor.snowball_battery_plus
+    - sensor.nothing_phone_*_ble_distance
+    - sensor.luba_*_distance
+    - sensor.surface_photoframe_cpuload
+    - sensor.cpu1_inference_speed
+    - sensor.ebusd_global_uptime
+    - light.bandwidthometer_display
+
   entities:
     - sun.sun
+    - sensor.time
+    - sensor.snmp_wan_out
+    - sensor.snmp_wan_in
     - media_player.kitchen
     - media_player.bedroom
     - media_player.study
     - media_player.garage
     - media_player.living_room
-    - sensor.time
-    - sensor.snmp_wan_out
-    - sensor.snmp_wan_in
+    - sensor.hot_tap_power
+    - sensor.hot_tap_voltage
+    - sensor.average_external_light_level

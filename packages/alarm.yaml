@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: Alarm sensor state change notification
+    id: alarm_sensor_state_change_notification
     trigger:
       - platform: state
         entity_id:
@@ -29,7 +30,7 @@ automation:
             0.2
             {% endif %}
       - service: notify.alexa_media
-        data_template:
+        data:
           target:
             - media_player.kitchen
           data:
@@ -43,6 +44,7 @@ automation:
             {% endif %}
 
   - alias: "Alarm Set Away"
+    id: alarm_set_away
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
@@ -56,21 +58,20 @@ automation:
         state: 'off'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Away mode. Setting alarm."
       - service: notify.email_kyle
-        # yamllint disable rule:line-length
-        data_template:
+        data:
           title: >
             {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
           message: >
             {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
             Away mode. Setting alarm.
-        # yamllint enable rule:line-length
       - service: alarm_control_panel.alarm_arm_away
 
   - alias: "Alarm Set Home"
+    id: alarm_set_home
     trigger:
       - platform: state
         entity_id: binary_sensor.home_occupied
@@ -78,21 +79,20 @@ automation:
         to: "on"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Away mode. Setting alarm."
       - service: notify.email_kyle
-        # yamllint disable rule:line-length
-        data_template:
+        data:
           title: >
             {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
           message: >
             {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
             Home is occupied. Disarming alarm.
-        # yamllint enable rule:line-length
       - service: alarm_control_panel.alarm_disarm
 
   - alias: "Alarm Set Sleeping"
+    id: alarm_set_sleeping
     trigger:
       - platform: state
         entity_id: sensor.kyle_status
@@ -106,7 +106,7 @@ automation:
         state: "off"
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Sleeping. Setting alarm."
       - service: notify.email_kyle

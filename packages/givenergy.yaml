@@ -1,11 +1,10 @@
 ---
-sensor:
-  - platform: template
-    sensors:
-      battery_status:
-        friendly_name: "Battery status"
-        value_template: >
-          {%- set power_draw = states('sensor.battery_power') | int(0) %}
+template:
+  - sensor:
+      - name: "Battery status"
+        unique_id: battery_status
+        state: >
+          {%- set power_draw = states('sensor.givtcp_fd2308f368_battery_power') | int(0) %}
           {%- if power_draw < 0 %}
             Charging
           {%- elif power_draw == 0 %}
@@ -15,8 +14,8 @@ sensor:
           {%- else -%}
             Indeterminate
           {%- endif %}
-        icon_template: >-
-          {%- set power_draw = states('sensor.battery_power') | int(0) %}
+        icon: >-
+          {%- set power_draw = states('sensor.givtcp_fd2308f368_battery_power') | int(0) %}
           {%- if power_draw < 0 %}
             mdi:battery-charging
           {%- elif power_draw > 0 %}
@@ -25,21 +24,9 @@ sensor:
             mdi:battery
           {%- endif %}
 
-      grid_all:
-        friendly_name: "Grid Usage"
-        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"  # yamllint disable-line rule:line-length
-        unit_of_measurement: 'W'
-
-      pv_all:
-        friendly_name: "PV Usage"
-        value_template: "{{ states('sensor.grid_export_power') | float + states('sensor.consumption_power') | float }}"  # yamllint disable-line rule:line-length
-        unit_of_measurement: 'W'
-
-      ashp_heating_cop:
+      - name: "ASHP Heating COP"
         unique_id: ashp_heating_cop
-        friendly_name: "ASHP Heating COP"
-        # yamllint disable rule:line-length
-        value_template: >
+        state: >
           {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') | int %}
           {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
           {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
@@ -49,13 +36,10 @@ sensor:
           {%- else %}
             {{ heat_generated / consumed_electricity }}
           {%- endif %}
-        # yamllint enable rule:line-length
 
-      ashp_hot_water_cop:
+      - name: "ASHP Hot Water COP"
         unique_id: ashp_hot_water_cop
-        friendly_name: "ASHP Hot Water COP"
-        # yamllint disable rule:line-length
-        value_template: >
+        state: >
           {%- set heat_generated = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int %}
           {%- set consumed_electricity = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') | int %}
           {%- if heat_generated == unavailable or consumed_electricity == unavailable %}
@@ -67,37 +51,13 @@ sensor:
           {%- endif %}
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
-        # yamllint enable rule:line-length
-
-  - platform: integration
-    source: sensor.grid_all
-    method: left
-    name: grid_daily_usage
-    unit_prefix: k
-    round: 2
-
-  - platform: integration
-    source: sensor.pv_all
-    method: left
-    name: pv_daily_usage
-    unit_prefix: k
-    round: 2
-
-#  - platform: template
-#    #name: grid_all
-#    #friendly_name: "Grid Usage"
-#    value_template: >
-#     "{{ states('sensor.grid_export_power')
-#     | float + states('sensor.consumption_power')
-#     | float }}"
-#    unit_of_measurement: 'W'
 
 automation:
   - alias: Boost hot water
     id: boost_hot_water
     trigger:
       - platform: numeric_state
-        entity_id: sensor.grid_export_power
+        entity_id: sensor.givtcp_fd2308f368_export_power
         above: 500
         for:
           minutes: 10

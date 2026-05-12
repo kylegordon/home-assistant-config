@@ -1,74 +1,4 @@
 ---
-# !include travel_times.yaml
-
-# yamllint disable-line rule:line-length
-# Improve with https://github.com/bah2830/Home-Assistant-Configs/blob/master/includes/automation/notifications.yaml
-
-# - platform: google_travel_time
-#   name: Kyle Work Travel
-#   api_key: !secret google_api
-#   origin: device_tracker.bagpuss_a0001
-#   destination: zone.kyle_work
-
-# - platform: google_travel_time
-#   name: Charlotte Work Travel
-#   api_key: !secret google_api
-#   origin: zone.home
-#   destination: zone.charlotte_work
-
-# - platform: google_travel_time
-#   name: Kyle To Home
-#   api_key: !secret google_api
-#   origin: device_tracker.bagpuss_a0001
-#   destination: zone.home
-
-# - platform: google_travel_time
-#   name: Charlotte To Home
-#   api_key: !secret google_api
-#   origin: device_tracker.charlotte_thea
-#   destination: zone.home
-
-- platform: template
-  sensors:
-    last_alexa:
-      value_template: >
-        {{ states.media_player | selectattr('attributes.last_called','eq',True)
-          | map(attribute='entity_id')
-          | first }}
-
-    next_bin:
-      value_template: "{{ states.calendar.garbage_collection.attributes.message|replace('bin','') }}"  # yamllint disable-line rule:line-length
-      friendly_name: Next Bin
-      unique_id: calendar.next_bin
-
-    kyle_status:
-      value_template: '{{ states.input_select.kyle_status_dropdown.state }}'
-      friendly_name: 'Kyle'
-      # entity_id: input_select.kyle_status_dropdown
-      unique_id: input_select.kyle_status_dropdown
-
-    charlotte_status:
-      value_template: '{{ states.input_select.charlotte_status_dropdown.state }}'  # yamllint disable-line rule:line-length
-      friendly_name: 'Charlotte'
-      # entity_id: input_select.charlotte_status_dropdown
-      unique_id: input_select.charlotte_status_dropdown
-
-- platform: integration
-  source: sensor.elec2_cm119_160_db_92_instantaneous_power
-  name: energy_spent
-  unit_prefix: k
-  round: 2
-- platform: integration
-  source: sensor.tv_power_plug_power
-  name: energy_spent_tv
-  unit_prefix: k
-  round: 2
-- platform: integration
-  source: sensor.shower_power_plug_power
-  name: energy_spent_shower
-  unit_prefix: k
-  round: 2
-
 - platform: min_max
   name: Average External Light Level
   unique_id: average_external_light_level
@@ -149,20 +79,32 @@
         {% endif %}
 
     forecast_2_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[2].temperature}}"  # yamllint disable-line rule:line-length
+      value_template: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[2].temperature if f and f | length >= 3 else none }}
     forecast_4_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[4].temperature}}"  # yamllint disable-line rule:line-length
+      value_template: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[4].temperature if f and f | length >= 5 else none }}
     forecast_6_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[6].temperature}}"  # yamllint disable-line rule:line-length
+      value_template: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[6].temperature if f and f | length >= 7 else none }}
     forecast_8_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[8].temperature}}"  # yamllint disable-line rule:line-length
+      value_template: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[8].temperature if f and f | length >= 9 else none }}
     forecast_10_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[10].temperature}}"  # yamllint disable-line rule:line-length
+      value_template: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[10].temperature if f and f | length >= 11 else none }}
     forecast_12_hours:
-      value_template: "{{state_attr('weather.openweathermap', 'forecast')[12].temperature}}"  # yamllint disable-line rule:line-length
+      value_template: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[12].temperature if f and f | length >= 13 else none }}
 
     house_target_temperature:
-      value_template: "{{state_attr('climate.rest_of_house_thermostat', 'temperature')}}"  # yamllint disable-line rule:line-length
+      value_template: "{{state_attr('climate.rest_of_house_thermostat', 'temperature')}}"
 
 - platform: thermal_comfort
   sensors:
@@ -211,3 +153,10 @@
       unique_id: master_bedroom_thermal_comfort
       temperature_sensor: sensor.master_bedroom_temperature
       humidity_sensor: sensor.master_bedroom_humidity
+
+- platform: integration
+  source: sensor.polestar_4_442660_charging_power
+  name: Polestar 4 Charging Energy
+  unique_id: polestar_4_442660_charging_energy
+  round: 2
+  method: left

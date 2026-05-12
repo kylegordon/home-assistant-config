@@ -74,7 +74,6 @@ input_boolean:
 
 group:
   vacuum_rooms:
-    name: Vacuum Rooms
     entities:
       - input_boolean.vacuum_bootroom
       - input_boolean.vacuum_fronthall
@@ -96,10 +95,8 @@ script:
           entity_id: script.vacuum_clean_segments_message
         data:
           variables:
-            segments: '{{expand("group.vacuum_rooms")
-                        | selectattr("state","eq","on")
-                        | map(attribute="attributes.room_id")
-                        | list | to_json}}'
+            segments: '{{expand("group.vacuum_rooms") | selectattr("state","eq","on")
+              | map(attribute="attributes.room_id") | list | to_json}}'
     mode: single
     alias: vacuum_clean_segments
     icon: mdi:arrow-right
@@ -117,8 +114,7 @@ script:
           payload_template: '{"segment_ids": {{segments}}}'
     mode: single
 
-  # A series of script calls to clean rooms.
-  # Called from the scheduler component.
+  # A series of script calls to clean rooms. Called from the scheduler component.
   vacuum_clean_fronthall:
     alias: vacuum_clean_fronthall
     mode: single
@@ -129,11 +125,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_fronthall") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_fronthall.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to mop and clean the floor of the front hall!"
+            mode: '{{ states.input_boolean.vacuum_fronthall.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -152,11 +144,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_livingroom") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_livingroom.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to mop and clean the living room!"
+            mode: '{{ states.input_boolean.vacuum_livingroom.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -175,11 +163,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_bootroom") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_bootroom.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to mop and clean the boot room floor!"
+            mode: '{{ states.input_boolean.vacuum_bootroom.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -198,11 +182,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_kitchen") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_kitchen.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to mop and clean the kitchen floor!"
+            mode: '{{ states.input_boolean.vacuum_kitchen.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -221,11 +201,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_hallway") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_hallway.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to mop and clean the hallway!"
+            mode: '{{ states.input_boolean.vacuum_hallway.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -244,11 +220,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_bathroom") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_bathroom.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to mop and clean the bathroom!"
+            mode: '{{ states.input_boolean.vacuum_bathroom.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -267,11 +239,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_study") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_study.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to clean the study carpet!"
+            mode: '{{ states.input_boolean.vacuum_study.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -290,11 +258,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_craftroom") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_craftroom.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to clean the craft room carpet!"
+            mode: '{{ states.input_boolean.vacuum_craftroom.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -313,11 +277,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_guestroom") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_guestroom.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to clean the guest room!"
+            mode: '{{ states.input_boolean.vacuum_guestroom.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -336,11 +296,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_bedroom") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_bedroom.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to clean the bedroom!"
+            mode: '{{ states.input_boolean.vacuum_bedroom.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"
@@ -359,11 +315,7 @@ script:
         data:
           variables:
             segments: '{{expand("input_boolean.vacuum_ensuite") | map(attribute="attributes.room_id") | list | to_json }}'
-            mode: '{{ states.input_boolean.vacuum_ensuite.attributes.mode }}'      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            "Dispatching my minion, Snowwhite the vacuum,
-            to mop and clean the ensuite!"
+            mode: '{{ states.input_boolean.vacuum_ensuite.attributes.mode }}'
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Vacuuming"

@@ -52,6 +52,8 @@ light:
     cold_white: pwm_w1
     warm_white: pwm_w2
     id: thelight
+    cold_white_color_temperature: 6500 K
+    warm_white_color_temperature: 2700 K
     effects:
       - random:
       - strobe:
