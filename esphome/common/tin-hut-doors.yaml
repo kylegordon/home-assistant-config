@@ -28,6 +28,17 @@ esphome:
     then:
       - switch.turn_on: display_on_off
       - script.execute: display_timeout
+      # Wait for endstop sensors to settle (they have 1s debounce filters)
+      - delay: 2s
+      # Read endstop states and publish correct cover position on startup
+      - lambda: |-
+          if (id(door_closed_sensor).state) {
+            id(cover_switch).position = cover::COVER_CLOSED;
+            id(cover_switch).publish_state();
+          } else if (id(door_open_sensor).state) {
+            id(cover_switch).position = cover::COVER_OPEN;
+            id(cover_switch).publish_state();
+          }
 
 # Enable logging
 logger:
