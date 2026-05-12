@@ -104,7 +104,8 @@
         {{ f[12].temperature if f and f | length >= 13 else none }}
 
     house_target_temperature:
-      value_template: "{{state_attr('climate.rest_of_house_thermostat', 'temperature')}}"
+      value_template: >-
+        {{state_attr('climate.rest_of_house_thermostat', 'temperature')}}
 
 - platform: thermal_comfort
   sensors:

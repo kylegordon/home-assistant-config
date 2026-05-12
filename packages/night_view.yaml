@@ -1,3 +1,4 @@
+---
 input_boolean:
   night_view:
     name: Night View

@@ -36,7 +36,9 @@ automation:
     variables:
       strings:
         success_msg: "Cleaning task succeeded."
-        error_msg: "The vacuum has encountered an issue: {{ states('sensor.valetudo_confusedmeaslyraccoon_error') }}"
+        error_msg: >
+          "The vacuum has encountered an issue:
+          {{ states('sensor.valetudo_confusedmeaslyraccoon_error') }}"
         default_msg: "Everything is working fine."
       message: "{{ strings[msg_type] | default(strings['default_msg']) }}"
 
@@ -46,7 +48,9 @@ automation:
           title: Snowwhite vacuum
           message: "{{ message }}"
           data:
-            image: /api/camera_proxy/camera.snowwhite_camera?token={{ state_attr('camera.snowwhite_camera','access_token') }}
+            image: >
+              /api/camera_proxy/camera.snowwhite_camera?
+              token={{ state_attr('camera.snowwhite_camera','access_token') }}
             color: red
             channel: Cameras
             tag: Motion

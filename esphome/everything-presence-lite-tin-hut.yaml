@@ -3,7 +3,8 @@ substitutions:
   name: presence-lite-tin-hut
   friendly_name: Everything Presence Lite - Tin Hut
 packages:
-  EverythingSmartTechnology.Everything_Presence_Lite: github://everythingsmarthome/everything-presence-lite/everything-presence-lite-ha.yaml@main
+  EverythingSmartTechnology.Everything_Presence_Lite:  # yamllint disable-line rule:line-length
+    github://everythingsmarthome/everything-presence-lite/everything-presence-lite-ha.yaml@main
 esphome:
   name: ${name}
   name_add_mac_suffix: false

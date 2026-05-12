@@ -19,7 +19,9 @@ logger:
 
 web_server:
 
-# Shelly 1 detached switch config with multi click options and fallback in case of wifi or api fail
+# Shelly 1 detached switch config with multi click options
+# and fallback in case of wifi or api fail
+
 switch:
   - platform: gpio
     name: ${friendly_name} Relay
