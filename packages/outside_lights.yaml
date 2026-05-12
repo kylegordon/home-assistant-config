@@ -1,12 +1,12 @@
 ---
-switch:
-  - platform: template
-    switches:
-      outside_rgb_white_channels:
-        friendly_name: Outside White Channels
+# light.outside_lights is a general purpose group defined in lights.yaml
+
+template:
+  - switch:
+      - name: Outside White Channels
         unique_id: outside_rgb_white_channels
-        icon_template: mdi:lightbulb-group
-        value_template: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
+        icon: mdi:lightbulb-group
+        state: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
                             or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
                           true
                         {% else %}
@@ -36,14 +36,15 @@ switch:
               - 0
 
 automation:
-  - alias: Outdoor motion detected
-    id: outdoor_motion_detected
+  - alias: Outside person detected
+    id: outside_person_detected
     trigger:
       - platform: state
         entity_id:
           - binary_sensor.back_door_pir
           - binary_sensor.driveway_pir
           - binary_sensor.driveway_person_occupancy
+          - binary_sensor.driveway_tin_hut_person_occupancy
           - binary_sensor.back_door_person_occupancy
           - binary_sensor.gates_person_occupancy
           - binary_sensor.front_door_person_occupancy
@@ -53,14 +54,24 @@ automation:
         entity_id: sun.sun
         state: "above_horizon"
     action:
-      - service: notify.mobile_app_nothing_phone_1
+      - service: notify.mobile_app_nothing_phone_2
         data:
-          title: "Motion outside!"
+          title: "Person outside!"
           message: >
-            Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
+            image: >
+              {% if 'back_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
+              {% elif 'front_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
+              {% elif 'driveway' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% elif 'gates' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% endif %}
 
 
   - alias: "Outside night lights on"
@@ -82,7 +93,7 @@ automation:
           - light.front_door_dome
         data:
           brightness_pct: 100
-          color_temp: 400
+          color_temp_kelvin: 2500
           transition: 30
 
   - alias: Outside night lights off
@@ -99,14 +110,15 @@ automation:
           - light.car_port
           - light.front_door_dome
 
-  - alias: Outdoor lights on
-    id: outdoor_lights_on
+  - alias: Outside lights on
+    id: outside_lights_on
     trigger:
       - platform: state
         entity_id:
           - binary_sensor.back_door_pir
           - binary_sensor.driveway_pir
           - binary_sensor.driveway_person_occupancy
+          - binary_sensor.driveway_tin_hut_person_occupancy
           - binary_sensor.back_door_person_occupancy
           - binary_sensor.gates_person_occupancy
           - binary_sensor.front_door_person_occupancy
@@ -119,38 +131,49 @@ automation:
         entity_id: sun.sun
         state: "below_horizon"
     action:
-      - service: script.tweet_engine
-        data_template:
-          tweet: >
-            {{ [
-            "Dark outside and motion detected! Scared! Turning on my outside lights!",
-            "Woooo, it's dark and scary. Something moved! Turning on the outside lights!",
-            "Did you hear that? I can't see a thing. Turning on the outside lights"
-            ] | random + " https://amzn.to/2CR5mbQ" }}
+      - service: media_player.play_media
+        target:
+          entity_id:
+            - media_player.living_room
+            - media_player.kitchen
+            - media_player.study
+        data:
+          media_content_id: amzn_sfx_doorbell_chime_02
+          media_content_type: sound
       - service: homeassistant.turn_on
         entity_id:
-          - group.outside_lights
-      - service: notify.mobile_app_nothing_phone_1
+          - light.outside_lights
+      - service: notify.mobile_app_nothing_phone_2
         data:
-          title: "Motion outside!"
+          title: "Person outside!"
           message: >
-            Motion detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
             Turning on outside lights
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
+            image: >
+              {% if 'back_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
+              {% elif 'front_door' in trigger.entity_id %}
+                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
+              {% elif 'driveway' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% elif 'gates' in trigger.entity_id %}
+                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% endif %}
 
       - service: homeassistant.turn_on
         entity_id:
-          - group.outside_lights
+          - light.outside_lights
       # If this evaluates to false, the action will stop here.
       - condition: template
         value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
       - service: light.turn_on
-        entity_id: light.front_door_floodlights
+        entity_id: light.front_floodlights
 
-  - alias: Outdoor lights off
-    id: outdoor_lights_off
+  - alias: Outside lights off
+    id: outside_lights_off
     trigger:
       - platform: state
         entity_id:
@@ -159,7 +182,7 @@ automation:
           - binary_sensor.front_door_motion
           - binary_sensor.back_door_person_occupancy
           - binary_sensor.driveway_person_occupancy
-          - binary_sensor.driveway_person_occupancy
+          - binary_sensor.driveway_tin_hut_person_occupancy
           - binary_sensor.gates_person_occupancy
         to: 'off'
         for:
@@ -167,4 +190,44 @@ automation:
     action:
       - service: homeassistant.turn_off
         entity_id:
-          - group.outside_lights
+          - light.outside_lights
+
+  - alias: Front Hall Outside lights toggle
+    id: front_hall_outside_lights_toggle
+    mode: parallel
+    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    trigger:
+      - platform: event
+        event_type: esphome.tx_ultimate_easy
+        event_data:
+          device_name: front_hall_dual_lightswitch
+          action: click
+          button_id: "2"
+    action:
+      # Turn on the rainbow effect for 5 seconds
+      # to show the button press was registered
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.front_hall_dual_switch_lights_all
+        data:
+          effect: "Rainbow - Fast"
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.front_hall_dual_switch_relay_2
+      - service: light.toggle
+        target:
+          entity_id:
+            - light.outside_lights
+      - service: logbook.log
+        data:
+          name: EVENT
+          message: "Toggling outside lights"
+      - delay: "00:00:05"
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.front_hall_dual_switch_lights_all
+        data:
+          transition: 1

@@ -1,4 +1,5 @@
 alias: 'Bin notification'
+id: bin_notification
 trigger:
   - platform: template
     value_template: '{{ states.sensor.date.state == strptime(states.calendar.garbage_collection.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")}}'

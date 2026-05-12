@@ -1,8 +1,11 @@
 ---
 substitutions:
-  device_name: ensuite_switch
+  name: "ensuite_lightswitch"
+  device_name: ensuite_lightswitch
   device_description: Ensuite Lightswitch
-  friendly_name: Ensuite Switch
+  friendly_name: Ensuite Lightswitch
   default_state: "RESTORE_DEFAULT_ON"
+  device_format: EU
+  gang_count: 1
 
-<<: !include common/sonoff_t1_r2_touch_switch_common.yaml
+<<: !include common/tx_ultimate_easy_common.yaml

@@ -1,4 +1,5 @@
 alias: TV turn off Hi-Fi
+id: tv_turn_off_hi_fi
 trigger:
   - platform: state
     entity_id: media_player.living_room_television
@@ -8,10 +9,10 @@ trigger:
       seconds: 30
 condition:
   - condition: template
-    value_template: '{{ media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f.attributes.source == "Kodi" }}'
+    value_template: '{{ state_attr("media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f", "source") == "Kodi" }}'
 action:
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: "Turning off hi-fi system"
   - service: media_player.turn_off

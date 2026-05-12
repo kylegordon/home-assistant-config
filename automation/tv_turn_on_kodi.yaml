@@ -1,4 +1,5 @@
 alias: TV turn on Hi-Fi
+id: tv_turn_on_hi_fi
 trigger:
   - platform: state
     entity_id: media_player.living_room_television
@@ -6,7 +7,7 @@ trigger:
     to: 'on'
 action:
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: "Turning on Hi-Fi system"
   - service: media_player.select_source

@@ -6,6 +6,7 @@ input_boolean:
 
 automation:
   - alias: Night view reset
+    id: night_view_reset
     trigger:
       - platform: time
         at: '04:00:00'
@@ -15,13 +16,14 @@ automation:
         state: 'on'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Resetting night view mode"
       - service: input_boolean.turn_off
         entity_id: input_boolean.night_view
 
   - alias: Night view lights
+    id: night_view_lights
     trigger:
       - platform: state
         entity_id: input_boolean.night_view
@@ -29,7 +31,7 @@ automation:
         to: 'on'
     action:
       - service: logbook.log
-        data_template:
+        data:
           name: EVENT
           message: "Enabling night view mode"
       - service: automation.trigger
@@ -42,7 +44,7 @@ automation:
           rgb_color: [255, 0, 0]
           transition: 5
       - service: notify.alexa_media
-        data_template:
+        data:
           target: '{{ states.sensor.last_alexa.state }}'
           data:
             type: announce

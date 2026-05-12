@@ -1,6 +1,7 @@
 ---
 packages:
   common: !include common.yaml
+  syslog: !include syslog.yaml
 
 esp8266:
   board: d1_mini
@@ -10,14 +11,6 @@ esphome:
   comment: ${device_description}
   friendly_name: ${friendly_name}
 
-external_components:
-  - source:
-      type: local
-      path: custom_components/syslog
-  - source:
-      type: local
-      path: custom_components/OPT3001
-
 captive_portal:
 
 logger:
@@ -26,15 +19,6 @@ logger:
 
 web_server:
 
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
-
-time:
-  - platform: homeassistant
-    id: esptime
-    timezone: Europe/London
-
 i2c:
   id: bus_a
   sda: GPIO4
@@ -42,14 +26,12 @@ i2c:
   scan: true
 
 sensor:
-  - platform: OPT3001
+  - platform: opt3001
     i2c_id: bus_a
-    illuminance:
-      name: "Level"
-      icon: mdi:sun-wireless-outline
-    # address: 0x44 - this doesn't work, the address is set in the library, OPT3001.cpp
+    name: "Level"
+    icon: mdi:sun-wireless-outline
+    address: 0x44
     update_interval: 5s
-
 
 output:
   # Register the blue LED as a dimmable output ....

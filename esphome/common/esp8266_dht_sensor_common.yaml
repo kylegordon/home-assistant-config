@@ -1,5 +1,7 @@
+---
 packages:
   common: !include common.yaml
+  syslog: !include syslog.yaml
 
 esp8266:
   board: d1_mini
@@ -30,10 +32,6 @@ captive_portal:
 logger:
 
 web_server:
-
-syslog:
-  ip_address: 172.24.32.13
-  port: 515
 
 deep_sleep:
   id: deep_sleep_1

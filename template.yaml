@@ -1,32 +1,189 @@
-  - trigger:
-      - platform: time_pattern
-        minutes: "/30"
-    action:
-      - service: weather.get_forecasts
-        data:
-          type: daily
-        target:
-          entity_id: weather.pirateweather
-        response_variable: daily
-    sensor:
-      - name: Pirate Weather Daily
-        unique_id: pirateweather_daily
-        state: "{{ daily['weather.pirateweather'].forecast[0].condition }}"
-        attributes:
-          forecast: "{{ daily['weather.pirateweather'].forecast }}"
-  - trigger:
-      - platform: time_pattern
-        minutes: "/30"
-    action:
-      - service: weather.get_forecasts
-        data:
-          type: hourly
-        target:
-          entity_id: weather.pirateweather
-        response_variable: hourly
-    sensor:
-      - name: Pirate Weather Hourly
-        unique_id: pirateweather_hourly
-        state: "{{ hourly['weather.pirateweather'].forecast[0].condition }}"
-        attributes:
-          forecast: "{{ hourly['weather.pirateweather'].forecast[:24] }}"
+---
+- trigger:
+    - platform: time_pattern
+      minutes: "/30"
+  action:
+    - service: weather.get_forecasts
+      data:
+        type: daily
+      target:
+        entity_id: weather.pirateweather
+      response_variable: daily
+  sensor:
+    - name: Pirate Weather Daily
+      unique_id: pirateweather_daily
+      state: "{{ daily['weather.pirateweather'].forecast[0].condition }}"
+      attributes:
+        forecast: "{{ daily['weather.pirateweather'].forecast }}"
+- trigger:
+    - platform: time_pattern
+      minutes: "/30"
+  action:
+    - service: weather.get_forecasts
+      data:
+        type: hourly
+      target:
+        entity_id: weather.pirateweather
+      response_variable: hourly
+  sensor:
+    - name: Pirate Weather Hourly
+      unique_id: pirateweather_hourly
+      state: "{{ hourly['weather.pirateweather'].forecast[0].condition }}"
+      attributes:
+        forecast: "{{ hourly['weather.pirateweather'].forecast[:24] }}"
+- trigger:
+    - platform: time_pattern
+      hours: "/1"
+    - platform: homeassistant
+      event: start
+  action:
+    - service: calendar.get_events
+      target:
+        entity_id: calendar.east_renfrewshire_council
+      data:
+        duration:
+          days: 30
+      response_variable: calendar_events
+  sensor:
+    - name: Days Until Black Bin
+      unique_id: days_until_black_bin
+      unit_of_measurement: "days"
+      icon: "mdi:delete"
+      state: >
+        {% set ns = namespace(found=false, days=999) %}
+        {% set today = now().date() %}
+        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+            {% set event_title = event.summary | default(event.title | default('')) %}
+            {% if 'Black' in event_title and not ns.found %}
+              {% set event_date = as_datetime(event.start).date() %}
+              {% if event_date >= today %}
+                {% set ns.found = true %}
+                {% set ns.days = (event_date - today).days %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if ns.found %}
+          {{ ns.days }}
+        {% else %}
+          unknown
+        {% endif %}
+    - name: Days Until Blue Bin
+      unique_id: days_until_blue_bin
+      unit_of_measurement: "days"
+      icon: "mdi:delete"
+      state: >
+        {% set ns = namespace(found=false, days=999) %}
+        {% set today = now().date() %}
+        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+            {% set event_title = event.summary | default(event.title | default('')) %}
+            {% if 'Blue' in event_title and not ns.found %}
+              {% set event_date = as_datetime(event.start).date() %}
+              {% if event_date >= today %}
+                {% set ns.found = true %}
+                {% set ns.days = (event_date - today).days %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if ns.found %}
+          {{ ns.days }}
+        {% else %}
+          unknown
+        {% endif %}
+    - name: Days Until Green Bin
+      unique_id: days_until_green_bin
+      unit_of_measurement: "days"
+      icon: "mdi:delete"
+      state: >
+        {% set ns = namespace(found=false, days=999) %}
+        {% set today = now().date() %}
+        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
+          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+            {% set event_title = event.summary | default(event.title | default('')) %}
+            {% if 'Green' in event_title and not ns.found %}
+              {% set event_date = as_datetime(event.start).date() %}
+              {% if event_date >= today %}
+                {% set ns.found = true %}
+                {% set ns.days = (event_date - today).days %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if ns.found %}
+          {{ ns.days }}
+        {% else %}
+          unknown
+        {% endif %}
+
+- sensor:
+    - name: Last Alexa
+      unique_id: last_alexa
+      state: >
+        {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
+
+    - name: Next Bin
+      unique_id: next_bin
+      state: "{{ state_attr('calendar.bin_collection_schedule_bins', 'message') }}"
+
+    - name: Kyle
+      unique_id: kyle_status
+      state: '{{ states.input_select.kyle_status_dropdown.state }}'
+
+    - name: Charlotte
+      unique_id: charlotte_status
+      state: '{{ states.input_select.charlotte_status_dropdown.state }}'
+
+    - name: Days Owned
+      unique_id: days_owned
+      state: '{{ (now() - as_datetime("2025-12-31") | as_local).days }}'
+
+    - name: No of Full Cycles
+      unique_id: no_full_cycles
+      state: '{{ (states("sensor.total_battery_charged") | float(0) / 100) | round(2) }}'
+
+    - name: Age of Car
+      unique_id: age_of_car
+      state: '{{ (states("sensor.days_owned") | float(0) / 365) | round(1) }}'
+
+    - name: EV Battery Health Estimate
+      unique_id: ev_battery_health_estimate
+      state: '{% set cycles = states("sensor.no_of_full_cycles") | float(0) %} {% set days = states("sensor.days_owned") | float(0) %}   {# --- Physics Parameters --- #} {# NMC degradation is non-linear; it slows down as the battery ages (t^0.5) #} {% set expected_cycle_life = 2000 %} {% set heat_penalty = 1.05 %} {% set nmc_curve_exponent = 0.5 %} {# The "Slower curve with age" factor #}   {# --- Cycle Aging (Non-Linear) --- #} {# We apply a slight power factor (1.1) because the last cycles are harder than the first #} {% set cycle_impact = (cycles / expected_cycle_life) ** 1.1 %} {% set cycle_degradation = cycle_impact * 20 * heat_penalty %}   {# --- Calendar Aging (Power Law) --- #} {# This simulates the rapid early drop and subsequent leveling off #} {# 2.5 is the scaling factor to reach ~10-12% loss over 8-10 years #} {% set calendar_coefficient = 2.5 %} {% set calendar_degradation = ((days / 365) ** nmc_curve_exponent) * calendar_coefficient %}   {# --- Total Health Calculation --- #} {% set health = 100 - cycle_degradation - calendar_degradation %}   {# Output: Percentage of SOH #} {{ ([0, health, 100] | sort)[1] | round(2) }}'
+
+    - name: Service Booking Deadline
+      unique_id: service_booking_deadline
+      state: '{% set src = states("sensor.polestar_2660_days_to_service") %} {% if (src | is_number) and not is_state("sensor.polestar_2660_days_to_service","unavailable") %} {% set days_remaining = src | int(0) %} {% set buffer_days = 49 %} {% set lead_time = days_remaining - buffer_days %} {{ (now() + timedelta(days = lead_time)).strftime("%d-%m-%Y") }} {% else %} unknown {% endif %}'
+
+    - name: EV Range Lost to Degradation
+      unique_id: ev_range_lost_to_degradation
+      state: >-
+        {# 1. Set your factory range or own estimate (e.g., 620km for Long Range, 590 for dual motor for P4) #}
+        {% set factory_range = 590 %}
+        {# 2. Get the Health % from our first helper #}
+        {% set health_pct = states("sensor.ev_battery_health_estimate") | float(100) %}
+        {# 3. Calculate how many km are gone forever #}
+        {% set lost_km = factory_range * (1 - (health_pct / 100)) %}
+        {{ lost_km | round(1) }}
+
+  binary_sensor:
+    - name: Living Room TV Power
+      unique_id: living_room_tv_power
+      device_class: power
+      state: "{{ states('sensor.tv_power_plug_power') | float(0) > 100 }}"
+    - name: Home Occupied
+      unique_id: home_occupied
+      device_class: occupancy
+      icon: >-
+        {% if is_state('binary_sensor.home_occupied','on') %}
+          mdi:home-account
+        {% else %}
+          mdi:home-outline
+        {% endif %}
+      state: >-
+        {{ is_state('person.kyle','home') or is_state('person.charlotte','home') or is_state('person.ronnie','home') }}
+    - name: Holiday mode
+      unique_id: holiday_mode
+      state: >-
+        {{ states.calendar.family_calendar.attributes.message == 'Holiday mode' }}

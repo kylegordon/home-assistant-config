@@ -1,4 +1,6 @@
+---
 alias: Mark Person as just arrived
+id: mark_person_as_just_arrived
 trigger:
   - platform: state
     entity_id: person.kyle
@@ -10,7 +12,7 @@ trigger:
     to: 'home'
 action:
   - service: input_select.select_option
-    data_template:
+    data:
       entity_id: >
         {% if trigger.entity_id == 'person.kyle' %}
           input_select.kyle_status_dropdown
@@ -20,19 +22,7 @@ action:
       option: Just Arrived
 
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: >
         {{ trigger.to_state.attributes.friendly_name }} has just arrived at the house.
-
-  - service: script.tweet_engine
-    data_template:
-      tweet: >
-        {{ [
-        "Yay! Company!",
-        "A resident has just arrived!"
-         ] | random + " http://amzn.to/2D3J8jW" }}
-
-  - service: notify.mastodon_viewpoint
-    data:
-      message: "A resident has just arrived!"

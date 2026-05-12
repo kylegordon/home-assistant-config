@@ -1,5 +1,6 @@
 ---
 alias: "Wakeup transition"
+id: wakeup_transition
 trigger:
   - platform: time
     at: '07:15:00'
@@ -27,17 +28,10 @@ condition:
     below: 500
 action:
   - service: logbook.log
-    data_template:
+    data:
       name: EVENT
       message: "Time to waken up!"
   # Trigger the morning lighting sequence
-  - service: script.tweet_engine
-    data_template:
-      tweet: >
-        {{ [
-        "This is way early.  We need some lights on. (http://amzn.to/2DFAd9w)",
-        "Time to wake up the house with some gentle lighting. (http://amzn.to/2Bsko4x)"
-        ] | random + " #Hue #Lifx"}}
   - service: light.turn_on
     entity_id: light.master_bedroom, light.bedside_charlotte, light.bedside_kyle
     data:

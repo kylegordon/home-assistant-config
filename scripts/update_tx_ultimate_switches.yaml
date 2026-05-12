@@ -1,0 +1,76 @@
+update_tx_ultimate_switches:
+  alias: "Update TX Ultimate Switches Firmware"
+  description: >-
+    Sequentially updates firmware on all TX Ultimate Easy switches.
+    Each device is updated one at a time to avoid overloading the
+    ESPHome compilation process. Discovers ESPHome update entities
+    by matching known device name patterns.
+  mode: single
+  icon: mdi:cellphone-arrow-down
+  sequence:
+    - variables:
+        tx_switch_entities: >-
+          {% set patterns = [
+            'craftroom_switch',
+            'ensuite_lightswitch',
+            'front_hall_dual_switch',
+            'guest_bedroom_lightswitch',
+            'hall_dual_lightswitch',
+            'hall_single_lightswitch',
+            'kitchen_lightswitch',
+            'living_room_lightswitch',
+            'master_bedroom_lightswitch',
+            'study_lightswitch'
+          ] %}
+          {% set ns = namespace(found=[]) %}
+          {% for entity in states.update
+            | map(attribute='entity_id') | list %}
+            {% for pattern in patterns %}
+              {% if pattern in entity %}
+                {% set ns.found = ns.found + [entity] %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {{ ns.found }}
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: >-
+                {{ tx_switch_entities | length == 0 }}
+          sequence:
+            - action: persistent_notification.create
+              data:
+                title: "TX Ultimate Update Script"
+                message: >-
+                  No update entities found for TX Ultimate devices.
+                  Ensure the ESPHome Dashboard add-on is installed
+                  and the device configs are present in its
+                  configuration directory.
+                notification_id: tx_ultimate_update_failed
+            - stop: "No TX Ultimate update entities found"
+    - action: logbook.log
+      data:
+        name: "TX Ultimate Update"
+        message: >-
+          Starting sequential firmware update for
+          {{ tx_switch_entities | length }} devices:
+          {{ tx_switch_entities | join(', ') }}
+    - repeat:
+        for_each: "{{ tx_switch_entities }}"
+        sequence:
+          - action: logbook.log
+            data:
+              name: "TX Ultimate Update"
+              message: >-
+                Updating {{ repeat.item }}
+                ({{ repeat.index }}/{{ tx_switch_entities | length }})
+          - action: update.install
+            target:
+              entity_id: "{{ repeat.item }}"
+            continue_on_error: true
+          - wait_template: >-
+              {{ not is_state(repeat.item, 'on') }}
+            timeout: "01:00:00"
+            continue_on_timeout: true
+          - delay:
+              seconds: 30

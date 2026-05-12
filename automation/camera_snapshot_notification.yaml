@@ -1,0 +1,19 @@
+alias: Camera Snapshot Notification
+id: camera_snapshot_notification
+trigger:
+  - platform: mqtt
+    topic: "frigate/events"
+variables:
+  camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
+condition:
+  - "{{ trigger.payload_json.type == 'new' }}"
+action:
+  - service: notify.mobile_app_nothing_phone_2
+    data:
+      title: "{{ camera | replace('_', ' ') | title }} Snapshot"
+      message: >
+        {{ trigger.payload_json.after.label | default('Object') | title }}
+        detected on {{ camera | replace('_', ' ') | title }}
+      data:
+        clickAction: "/lovelace/outside"
+        url: "/lovelace/outside"

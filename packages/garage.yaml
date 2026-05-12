@@ -1,6 +1,7 @@
 ---
 automation:
   - alias: Garage motion - Lights on
+    id: garage_motion_lights_on
     initial_state: true
     trigger:
       - platform: state
@@ -12,6 +13,7 @@ automation:
         entity_id: light.garage_lights
 
   - alias: Garage motion - 10 minute timeout
+    id: garage_motion_10_minute_timeout
     trigger:
       - platform: state
         entity_id: binary_sensor.garage_motion_occupancy
@@ -23,6 +25,7 @@ automation:
         entity_id: light.garage_lights
 
   - alias: Garage button - toggle
+    id: garage_button_toggle
     # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
     trigger:
       - platform: event

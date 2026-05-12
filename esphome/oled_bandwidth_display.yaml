@@ -34,7 +34,12 @@ sensor:
     internal: true
 
 syslog:
-  ip_address: 172.24.32.13
+  udp_id: esphome_udp_syslog
+  time_id: esptime
+
+udp:
+  id: esphome_udp_syslog
+  addresses: 172.24.32.13
   port: 515
 
 time:

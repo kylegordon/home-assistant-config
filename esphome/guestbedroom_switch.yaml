@@ -1,8 +1,11 @@
 ---
 substitutions:
-  device_name: guestbedroom_switch
+  name: "guestbedroom_lightswitch"
+  device_name: guestbedroom_lightswitch
   device_description: Guest Bedroom Lightswitch
-  friendly_name: Guest Bedroom Switch
+  friendly_name: Guest Bedroom Lightswitch
   default_state: "RESTORE_DEFAULT_ON"
+  device_format: EU
+  gang_count: 1
 
-<<: !include common/sonoff_touch_switch_common.yaml
+<<: !include common/tx_ultimate_easy_common.yaml
