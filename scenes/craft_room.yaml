@@ -1,0 +1,6 @@
+name: Craft Room
+entities:
+  light.craft_room:
+    state: on
+  light.craft_room_fairy_lights:
+    state: on
