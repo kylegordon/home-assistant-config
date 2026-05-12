@@ -1,0 +1,72 @@
+###############################################################################
+# Home Assistant Package: PC Display Control via IoTLink + NirCmd
+#
+# This package creates a state-aware MQTT switch that:
+#   - Uses IoTLink on Windows to execute NirCmd commands.
+#   - Turns your monitor(s) off/on.
+#   - Reflects real-time monitor state based on IoTLink telemetry.
+#
+# Prerequisites:
+#   - IoTLink installed and configured for MQTT.
+#   - NirCmd installed at C:\nircmd-x64\nircmd.exe.
+#   - Telemetry enabled in IoTLink configuration.yaml.
+#
+# Drop this file into /config/packages/ and restart Home Assistant.
+###############################################################################
+
+homeassistant:
+  customize:
+    switch.pc_display_power:
+      friendly_name: "PC Display Power"
+      icon: mdi:monitor
+
+###############################################################################
+# MQTT SWITCH
+###############################################################################
+switch:
+  - platform: mqtt
+    unique_id: pc_display_power
+    name: "PC Display Power"
+    command_topic: "iotlink/workgroup/surface-photofr/commands/run"
+    state_topic: "iotlink/workgroup/surface-photofr/telemetry"
+    value_template: >
+      {% if value_json.monitor and value_json.monitor.state == 'on' %}
+        ON
+      {% else %}
+        OFF
+      {% endif %}
+    payload_on: >
+      {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor on"}
+    payload_off: >
+      {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor off"}
+    state_on: "ON"
+    state_off: "OFF"
+    qos: 1
+    retain: false
+
+###############################################################################
+# OPTIONAL: SCRIPT TO FORCE DISPLAY OFF
+###############################################################################
+#script:
+#  pc_turn_off_display:
+#    alias: "Turn Off Display"
+#    sequence:
+#      - service: mqtt.publish
+#        data:
+#          topic: "iotlink/workgroup/surface-photofr/commands/run"
+#          payload: >
+#            {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor off"}
+#    mode: single
+###############################################################################
+# OPTIONAL: SCRIPT TO FORCE DISPLAY ON
+###############################################################################
+#script:
+#  pc_turn_on_display:
+#    alias: "Turn On Display"
+#    sequence:
+#      - service: mqtt.publish
+#        data:
+#          topic: "iotlink/workgroup/surface-photofr/commands/run"
+#          payload: >
+#            {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor on"}
+#    mode: single

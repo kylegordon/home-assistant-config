@@ -1,0 +1,30 @@
+name: Reading time
+entities:
+  light.kitchen_cabinets:
+    state: off
+  light.uplighter:
+    state: off
+  light.utility_room:
+    state: off
+  light.sideboard:
+    state: off
+  light.candle_arch:
+    state: off
+  light.living_room:
+    state: off
+  light.arc_lamp:
+    state: on
+  light.lava_lamp:
+    state: off
+  light.star_burst:
+    state: off
+  light.edison_lamp:
+    state: off
+  light.front_door:
+    state: off
+  light.hall_entrance:
+    state: off
+  light.hallway:
+    state: off
+  light.hall_bedrooms:
+    state: off
