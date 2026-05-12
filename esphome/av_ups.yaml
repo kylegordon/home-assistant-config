@@ -38,6 +38,11 @@ nut_server:
   password: !secret nut_password
   max_clients: 5
 
+# Required to force ESPHome to compile the number component,
+# which is a dependency of the ups_hid external component
+# (control_number.h includes esphome/components/number/number.h)
+number:
+
 # Essential UPS sensors
 sensor:
   # Battery level percentage
