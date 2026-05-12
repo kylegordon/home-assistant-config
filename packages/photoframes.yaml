@@ -47,26 +47,27 @@ switch:
 ###############################################################################
 # OPTIONAL: SCRIPT TO FORCE DISPLAY OFF
 ###############################################################################
-#script:
-#  pc_turn_off_display:
-#    alias: "Turn Off Display"
-#    sequence:
-#      - service: mqtt.publish
-#        data:
-#          topic: "iotlink/workgroup/surface-photofr/commands/run"
-#          payload: >
-#            {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor off"}
-#    mode: single
+# script:
+#   pc_turn_off_display:
+#     alias: "Turn Off Display"
+#     sequence:
+#       - service: mqtt.publish
+#         data:
+#           topic: "iotlink/workgroup/surface-photofr/commands/run"
+#           payload: >
+#             {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor off"}
+#     mode: single
+
 ###############################################################################
 # OPTIONAL: SCRIPT TO FORCE DISPLAY ON
 ###############################################################################
-#script:
-#  pc_turn_on_display:
-#    alias: "Turn On Display"
-#    sequence:
-#      - service: mqtt.publish
-#        data:
-#          topic: "iotlink/workgroup/surface-photofr/commands/run"
-#          payload: >
-#            {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor on"}
-#    mode: single
+# script:
+#   pc_turn_on_display:
+#     alias: "Turn On Display"
+#     sequence:
+#       - service: mqtt.publish
+#         data:
+#           topic: "iotlink/workgroup/surface-photofr/commands/run"
+#           payload: >
+#             {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor on"}
+#     mode: single
