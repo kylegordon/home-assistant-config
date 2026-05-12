@@ -1,3 +1,4 @@
+---
 db_url: !secret db_url
 purge_keep_days: 7  # Reduced from 21 — InfluxDB handles long-term
 commit_interval: 30  # Batch writes, huge reduction in I/O
@@ -15,7 +16,8 @@ exclude:
     - scene
 
   entity_globs:
-    # ===== mmWave / Presence tracking (top offenders: 350K-852K records each) =====
+    # ===== mmWave / Presence tracking =====
+    # (top offenders: 350K-852K records each)
     # These are continuous sub-second tracking sensors with no historical value
     - sensor.presence_lite_*_target_*_distance
     - sensor.presence_lite_*_target_*_angle
@@ -23,7 +25,8 @@ exclude:
     - sensor.presence_lite_*_target_*_y
     - sensor.presence_lite_*_target_*_speed
 
-    # ===== Daily energy accumulators (316K records — should be near-static) =====
+    # ===== Daily energy accumulators =====
+    # (316K records — should be near-static)
     - sensor.*_daily_energy
     - sensor.*_monthly_energy
     - sensor.*_hourly_energy

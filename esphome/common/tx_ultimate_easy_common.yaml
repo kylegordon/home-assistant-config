@@ -2,11 +2,15 @@
 packages:
   remote_package:
     url: https://github.com/edwardtfn/TX-Ultimate-Easy
-    ref: v2026.1.6  # Or you can specify a version, like `ref: v2024.12.6` or `ref: latest` to the latest non-stable
+    # Or you can specify a version, like `ref: v2024.12.6` or
+    # `ref: latest` to the latest non-stable
+    ref: v2026.1.6
     refresh: 5min
     files:
-      - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml                  # Core (essential) packages
-      - ESPHome/TX-Ultimate-Easy-ESPHome_standard.yaml              # Non-essential, but recommended packages. Includes hw_relays, hw_vibration, and media_player
+      # Core (essential) packages
+      - ESPHome/TX-Ultimate-Easy-ESPHome_core.yaml
+      # Non-essential but recommended: hw_relays, hw_vibration, media_player
+      - ESPHome/TX-Ultimate-Easy-ESPHome_standard.yaml
 
 bluetooth_proxy:
 
