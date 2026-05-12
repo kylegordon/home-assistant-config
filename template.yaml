@@ -126,7 +126,7 @@
 
     - name: Next Bin
       unique_id: next_bin
-      state: "{{ states.calendar.east_renfrewshire_council.attributes.message }}"
+      state: "{{ state_attr('calendar.bin_collection_schedule_bins', 'message') }}"
 
     - name: Kyle
       unique_id: kyle_status
