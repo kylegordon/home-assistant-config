@@ -1,3 +1,4 @@
+---
 alias: Camera Snapshot Notification
 id: camera_snapshot_notification
 trigger:
@@ -17,3 +18,4 @@ action:
       data:
         clickAction: "/lovelace/outside"
         url: "/lovelace/outside"
+        image: "/api/frigate/notifications/{{ trigger.payload_json.after.id }}/snapshot.jpg"
