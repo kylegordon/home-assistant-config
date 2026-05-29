@@ -19,4 +19,3 @@ action:
         clickAction: "/lovelace/outside"
         url: "/lovelace/outside"
         image: "/api/frigate/notifications/{{ trigger.payload_json.after.id }}/snapshot.jpg"
-
