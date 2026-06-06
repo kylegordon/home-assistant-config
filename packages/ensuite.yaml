@@ -76,6 +76,8 @@ automation:
             {{ 2.0 }}
             {% elif states('sensor.time_of_day') == "Night" %}
             {{ 30.0 }}
+            {% else %}
+            {{ 2.0 }}
             {% endif %}
 
   # - alias: Ensuite shower activity
