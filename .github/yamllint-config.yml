@@ -6,11 +6,11 @@
 extends: default
 
 rules:
-  line-length: disable
-#  comments: disable
-  comments-indentation: disable
-  document-start: disable
-  indentation: disable
+  line-length: enable
+  comments: disable
+  comments-indentation: enable
+  document-start: enable
+  indentation: enable
 
 ignore: |
   lovelace-ui.yaml

@@ -6,8 +6,8 @@
 # D3 - Boot fails if pulled low
 # D4 - Boot fails if pulled low
 # D5 - SCL
-# D6 - Open input (works when mode: INPUT_PULLUP - make sure system in garage pulls low when active)
-# D7 - Closed input (works when mode: INPUT_PULLUP - make sure system in garage pulls low when active)
+# D6 - Open input (mode: INPUT_PULLUP - system must pull low when active)
+# D7 - Closed input (mode: INPUT_PULLUP - system must pull low when active)
 # D8 - Boot fails if pulled high
 #
 
@@ -78,17 +78,25 @@ display:
       it.printf(64, y, id(font1), TextAlign::TOP_CENTER, "Viewpoint.House");
       y = y+lineheight;
       it.line(25, y-1, it.get_width()-25, y-1);
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "IP: %s", id(ip_address).state.c_str());
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "IP: %s",
+        id(ip_address).state.c_str());
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "HA: %s", id(connection_status).state ? "Connected" : "Disconnected");
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "HA: %s",
+        id(connection_status).state ? "Connected" : "Disconnected");
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Relay state: %s", id(relay_door).state ? "Open" : "Closed");
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT,
+        "Relay state: %s", id(relay_door).state ? "Open" : "Closed");
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Upper Endstop: %s", id(door_open_sensor).state ? "Active" : "Inactive");
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT,
+        "Upper Endstop: %s",
+        id(door_open_sensor).state ? "Active" : "Inactive");
       y = y+lineheight;
-      it.printf(0, y, id(font1), TextAlign::TOP_LEFT, "Lower Endstop: %s", id(door_closed_sensor).state ? "Active" : "Inactive");
+      it.printf(0, y, id(font1), TextAlign::TOP_LEFT,
+        "Lower Endstop: %s",
+        id(door_closed_sensor).state ? "Active" : "Inactive");
       // Print time in HH:MM format
-      it.strftime(0, 60, id(font1), TextAlign::BASELINE_LEFT, "%H:%M:%S", id(esptime).now());
+      it.strftime(0, 60, id(font1), TextAlign::BASELINE_LEFT,
+        "%H:%M:%S", id(esptime).now());
 
 # D0 == GPIO16 == Optional internal PullDOWN
 # D1 == GPIO5 == Optional internal Pullup

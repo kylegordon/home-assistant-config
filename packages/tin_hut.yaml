@@ -45,7 +45,7 @@ automation:
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
       - platform: state
-        entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door
+        entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door  # yamllint disable-line rule:line-length
         to: 'on'
     action:
       - service: homeassistant.turn_on
@@ -59,24 +59,24 @@ automation:
         # If the below condition is false, the action will stop here.
         conditions:
           - condition: state
-            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f  # yamllint disable-line rule:line-length
             state: 'idle'
           - condition: state
-            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f  # yamllint disable-line rule:line-length
             state: 'off'
           - condition: state
-            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f  # yamllint disable-line rule:line-length
             state: 'paused'
       - service: openhome.invoke_pin
         data:
           pin: 4
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f  # yamllint disable-line rule:line-length
       - service: media_player.volume_set
         data:
           volume_level: 0.45
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f  # yamllint disable-line rule:line-length
 
   - alias: Tin Hut Door Opened Outdoor Lights
     id: tin_hut_door_opened_outdoor_lights
@@ -88,7 +88,7 @@ automation:
         entity_id: cover.tin_hut_door_right_tin_hut_door_right
         to: 'open'
       - platform: state
-        entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door
+        entity_id: binary_sensor.tin_hut_pedestrian_door_tin_hut_pedestrian_door_door  # yamllint disable-line rule:line-length
         to: 'on'
     condition:
       - condition: state
@@ -122,7 +122,7 @@ automation:
       - service: media_player.turn_off
         data: {}
         target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f  # yamllint disable-line rule:line-length
 
   - alias: Open tin hut process
     # This is used by Alexa

@@ -6,12 +6,15 @@ template:
       - name: Outside White Channels
         unique_id: outside_rgb_white_channels
         icon: mdi:lightbulb-group
-        state: "{% if state_attr('light.decking_lights', 'rgbww_color')[3] | default(0) | int > 0
-                            or state_attr('light.decking_lights', 'rgbww_color')[4] | default(0) | int > 0 %}
-                          true
-                        {% else %}
-                          false
-                        {% endif %}"
+        state: >-
+          {% if state_attr('light.decking_lights', 'rgbww_color')[3]
+              | default(0) | int > 0
+              or state_attr('light.decking_lights', 'rgbww_color')[4]
+              | default(0) | int > 0 %}
+            true
+          {% else %}
+            false
+          {% endif %}
         turn_on:
           service: light.turn_on
           # Set the white channel values to maximum
@@ -58,19 +61,24 @@ automation:
         data:
           title: "Person outside!"
           message: >
-            Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Person detected outside by
+            {{ trigger.to_state.attributes.friendly_name }}
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
             image: >
               {% if 'back_door' in trigger.entity_id %}
-                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
+                /api/camera_proxy/camera.back_door_last_person?token={{
+                state_attr('camera.back_door_last_person','access_token') }}
               {% elif 'front_door' in trigger.entity_id %}
-                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
+                /api/camera_proxy/camera.front_door_last_person?token={{
+                state_attr('camera.front_door_last_person','access_token') }}
               {% elif 'driveway' in trigger.entity_id %}
-                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+                /api/camera_proxy/camera.driveway_last_person?token={{
+                state_attr('camera.driveway_last_person','access_token') }}
               {% elif 'gates' in trigger.entity_id %}
-                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+                /api/camera_proxy/camera.driveway_last_person?token={{
+                state_attr('camera.driveway_last_person','access_token') }}
               {% endif %}
 
 
@@ -147,20 +155,25 @@ automation:
         data:
           title: "Person outside!"
           message: >
-            Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Person detected outside by
+            {{ trigger.to_state.attributes.friendly_name }}
             Turning on outside lights
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
             image: >
               {% if 'back_door' in trigger.entity_id %}
-                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
+                /api/camera_proxy/camera.back_door_last_person?token={{
+                state_attr('camera.back_door_last_person','access_token') }}
               {% elif 'front_door' in trigger.entity_id %}
-                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
+                /api/camera_proxy/camera.front_door_last_person?token={{
+                state_attr('camera.front_door_last_person','access_token') }}
               {% elif 'driveway' in trigger.entity_id %}
-                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+                /api/camera_proxy/camera.driveway_last_person?token={{
+                state_attr('camera.driveway_last_person','access_token') }}
               {% elif 'gates' in trigger.entity_id %}
-                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+                /api/camera_proxy/camera.driveway_last_person?token={{
+                state_attr('camera.driveway_last_person','access_token') }}
               {% endif %}
 
       - service: homeassistant.turn_on
@@ -195,7 +208,7 @@ automation:
   - alias: Front Hall Outside lights toggle
     id: front_hall_outside_lights_toggle
     mode: parallel
-    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    # Can be improved, see TheFes/HA-configuration shelly_floris.yaml
     trigger:
       - platform: event
         event_type: esphome.tx_ultimate_easy

@@ -4,7 +4,9 @@ mqtt:
     - name: flightradar_home
       state_topic: 'flightradar/viewpoint'
       # just an example atm
-      value_template: "{{ value_json.id if value_json.lat == 55 else states('sensor.outdoor_temperature') }}"
+      value_template: >-
+        {{ value_json.id if value_json.lat == 55
+        else states('sensor.outdoor_temperature') }}
 
 automation:
   - alias: 'Flight entry notification - Home'
@@ -21,9 +23,12 @@ automation:
       - service: notify.email_kyle
         data:
           title: "Overflight event"
-          message: 'Flight {{ trigger.event.data.callsign }} is passing nearby at {{ trigger.event.data.altitude }} meters.
+          message: >-
+            Flight {{ trigger.event.data.callsign }} is passing nearby at
+            {{ trigger.event.data.altitude }} meters.
 
-          https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
+            https://flightaware.com/live/flight/
+            {{ trigger.event.data.callsign }}
 
   - alias: 'Flight entry notification - Uplawmoor'
     id: flight_entry_notification_uplawmoor
@@ -36,6 +41,9 @@ automation:
       - service: notify.email_kyle
         data:
           title: "{{ trigger.event.data.callsign }} Overflight - Uplawmoor"
-          message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
+          message: >-
+            Flight {{ trigger.event.data.callsign }} is passing near
+            Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
-          https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
+            https://flightaware.com/live/flight/
+            {{ trigger.event.data.callsign }}

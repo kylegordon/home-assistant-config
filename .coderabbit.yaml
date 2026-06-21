@@ -1,4 +1,5 @@
 ---
+# yamllint disable-line rule:line-length
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 language: "en-GB"
 early_access: false

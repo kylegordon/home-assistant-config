@@ -5,12 +5,13 @@
 # This common package provides base configuration for a binary sensor
 # connected to a GPIO pin with appropriate pull-up resistor configuration
 #
-# IMPORTANT: This configuration is designed for NORMALLY CLOSED (NC) reed switches.
-# NC switches conduct when the magnet is away and open when the magnet is present.
-# Note: Alarm/security reed switches are typically NORMALLY OPEN (NO), which is the
-# opposite behavior. NC switches like this one are NOT suitable for alarm applications
-# but work fine for non-critical door monitoring.
-# Adjust the 'inverted' setting if your switch is normally open (NO).
+# IMPORTANT: This configuration is designed for NORMALLY CLOSED (NC)
+# reed switches. NC switches conduct when the magnet is away and open
+# when the magnet is present.
+# Note: Alarm/security reed switches are typically NORMALLY OPEN (NO),
+# which is the opposite behavior. NC switches like this one are NOT
+# suitable for alarm applications but work fine for non-critical door
+# monitoring. Adjust the 'inverted' setting if your switch is NO.
 #
 # Recommended Pin: D2 (GPIO4) - supports internal pull-up
 # Alternative pins: D1, D5, D6, D7 (all support internal pull-up)

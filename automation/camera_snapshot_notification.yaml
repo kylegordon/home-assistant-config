@@ -18,4 +18,4 @@ action:
       data:
         clickAction: "/lovelace/outside"
         url: "/lovelace/outside"
-        image: "/api/frigate/notifications/{{ trigger.payload_json.after.id }}/snapshot.jpg"
+        image: "/api/frigate/notifications/{{ trigger.payload_json.after.id }}/snapshot.jpg"  # yamllint disable-line rule:line-length
