@@ -29,7 +29,9 @@ template:
         state: >
           {%- set heat_generated_state = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_heating') %}
           {%- set consumed_electricity_state = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_heating') %}
-          {%- if not (heat_generated_state | is_number) or not (consumed_electricity_state | is_number) %}
+          {%- if heat_generated_state == 'unknown' or consumed_electricity_state == 'unknown' %}
+            unknown
+          {%- elif not (heat_generated_state | is_number) or not (consumed_electricity_state | is_number) %}
             unavailable
           {%- elif consumed_electricity_state | float == 0 %}
             unknown
@@ -44,7 +46,9 @@ template:
         state: >
           {%- set heat_generated_state = states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') %}
           {%- set consumed_electricity_state = states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') %}
-          {%- if not (heat_generated_state | is_number) or not (consumed_electricity_state | is_number) %}
+          {%- if heat_generated_state == 'unknown' or consumed_electricity_state == 'unknown' %}
+            unknown
+          {%- elif not (heat_generated_state | is_number) or not (consumed_electricity_state | is_number) %}
             unavailable
           {%- elif consumed_electricity_state | float == 0 %}
             unknown
