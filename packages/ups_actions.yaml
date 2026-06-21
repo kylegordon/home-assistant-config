@@ -6,9 +6,15 @@ automation:
         value_template: "{{ not is_state('sensor.apc1000_status_data', '0L') }}"
     action:
       - service: camera.snapshot
+        target:
+          entity_id: camera.driveway
         data:
-          entity_id: camera.driveway, camera.backdoor
-          filename: /tmp/{{ entity_id.entity_id }}_snapshot.jpg
+          filename: /tmp/camera.driveway_snapshot.jpg
+      - service: camera.snapshot
+        target:
+          entity_id: camera.backdoor
+        data:
+          filename: /tmp/camera.backdoor_snapshot.jpg
       - service: notify.email_kyle
         data:
           title: 'Power failure - UPS responding'
@@ -45,9 +51,15 @@ automation:
         below: 600
     action:
       - service: camera.snapshot
+        target:
+          entity_id: camera.driveway
         data:
-          entity_id: camera.driveway, camera.backdoor
-          filename: /tmp/{{ entity_id.entity_id }}_snapshot.jpg
+          filename: /tmp/camera.driveway_snapshot.jpg
+      - service: camera.snapshot
+        target:
+          entity_id: camera.backdoor
+        data:
+          filename: /tmp/camera.backdoor_snapshot.jpg
       - service: notify.email_kyle
         data:
           title: 'Power outage - UPS shutting down'
@@ -83,9 +95,15 @@ automation:
         value_template: "{{ is_state('sensor.apc1000_status_data', '0L') }}"
     action:
       - service: camera.snapshot
+        target:
+          entity_id: camera.driveway
         data:
-          entity_id: camera.driveway, camera.backdoor
-          filename: /tmp/{{ entity_id.entity_id }}_snapshot.jpg
+          filename: /tmp/camera.driveway_snapshot.jpg
+      - service: camera.snapshot
+        target:
+          entity_id: camera.backdoor
+        data:
+          filename: /tmp/camera.backdoor_snapshot.jpg
       - service: notify.email_kyle
         data:
           title: 'Power outage - UPS has recovered'
