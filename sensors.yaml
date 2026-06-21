@@ -66,18 +66,6 @@
 
 - platform: template
   sensors:
-    time_of_day:
-      unique_id: time_of_day
-      value_template: >
-        {% set current_hour = strptime(states('sensor.time'), "%H:%M").hour %}
-        {% if 6 <= current_hour < 9 %}
-          Morning
-        {% elif 9 <= current_hour < 22 %}
-          Day
-        {% else %}
-          Night
-        {% endif %}
-
     forecast_2_hours:
       value_template: >-
         {% set f = state_attr('weather.pirateweather', 'forecast') %}

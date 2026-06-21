@@ -32,14 +32,18 @@ action:
         100
         {% elif states('sensor.time_of_day') == "Night" %}
         30
+        {% else %}
+        30
         {% endif %}
       transition: >
         {% if states('sensor.time_of_day') == "Morning" %}
-        10
+        {{ 10.0 }}
         {% elif states('sensor.time_of_day') == "Day" %}
-        2
+        {{ 2.0 }}
         {% elif states('sensor.time_of_day') == "Night" %}
-        5
+        {{ 5.0 }}
+        {% else %}
+        {{ 5.0 }}
         {% endif %}
       color_temp_kelvin: >
         {% if states('sensor.time_of_day') == "Morning" %}
@@ -47,6 +51,8 @@ action:
         {% elif states('sensor.time_of_day') == "Day" %}
         3333
         {% elif states('sensor.time_of_day') == "Night" %}
+        2667
+        {% else %}
         2667
         {% endif %}
   - service: light.turn_on
