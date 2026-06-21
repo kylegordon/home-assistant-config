@@ -34,7 +34,9 @@ template:
           {%- elif consumed_electricity_state | float == 0 %}
             unknown
           {%- else %}
-            {{ heat_generated_state | float / consumed_electricity_state | float }}
+            {%- set heat_generated = heat_generated_state | float %}
+            {%- set consumed_electricity = consumed_electricity_state | float %}
+            {{ heat_generated / consumed_electricity }}
           {%- endif %}
 
       - name: "ASHP Hot Water COP"
@@ -47,7 +49,9 @@ template:
           {%- elif consumed_electricity_state | float == 0 %}
             unknown
           {%- else %}
-            {{ heat_generated_state | float / consumed_electricity_state | float }}
+            {%- set heat_generated = heat_generated_state | float %}
+            {%- set consumed_electricity = consumed_electricity_state | float %}
+            {{ heat_generated / consumed_electricity }}
           {%- endif %}
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
