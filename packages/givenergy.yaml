@@ -1,5 +1,12 @@
 ---
 template:
+  - binary_sensor:
+      - name: "Negative Electricity Import Rate"
+        unique_id: negative_electricity_import_rate
+        state: "{{ states('sensor.octopus_energy_electricity_current_rate') | float(0) < 0 }}"
+        availability: "{{ states('sensor.octopus_energy_electricity_current_rate') not in ['unavailable', 'unknown', 'none'] }}"
+        icon: mdi:transmission-tower-import
+
   - sensor:
       - name: "Battery status"
         unique_id: battery_status
