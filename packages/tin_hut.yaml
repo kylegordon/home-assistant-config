@@ -186,6 +186,11 @@ automation:
         data:
           title: "Tin Hut Doors Open"
           message: "The tin hut doors have been opened!"
+          data:
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+            image: >
+              /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
 
   - alias: Tin Hut Doors Closing
     id: tin_hut_doors_closing
