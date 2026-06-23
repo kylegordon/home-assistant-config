@@ -7,7 +7,7 @@ trigger:
 variables:
   camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
 condition:
-  - "{{ trigger.payload_json.type == 'new' }}"
+  - "{{ trigger.payload_json.type == 'end' }}"
 action:
   - service: notify.mobile_app_nothing_phone_2
     data:
