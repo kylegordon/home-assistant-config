@@ -1,7 +1,7 @@
 automation:
   - alias: Knockhill charge prep
     id: knockhill_charge_prep
-    description: Poll the personal calendar for upcoming Knockhill Timekeeping events; pre-charge the Polestar and/or stage a Predbat battery SOC target ahead of them.
+    description: Poll the personal calendar for an upcoming two-day Knockhill Timekeeping weekend (Saturday+Sunday pair); pre-charge the Polestar and stage a Predbat battery SOC target ahead of it. Single-day Timekeeping events need no special charging.
     trigger:
       - platform: time_pattern
         hours: "/1"
@@ -16,15 +16,6 @@ automation:
             hours: 48
         response_variable: knockhill_events
       - variables:
-          has_upcoming_event: >-
-            {% set ns = namespace(found=false) %}
-            {% for event in knockhill_events.get('calendar.kyle_glasgownet_com', {}).get('events', []) %}
-              {% set title = event.summary | default(event.title | default('')) %}
-              {% if 'Timekeeping' in title %}
-                {% set ns.found = true %}
-              {% endif %}
-            {% endfor %}
-            {{ ns.found }}
           has_weekend_pair: >-
             {% set ns = namespace(dates=[], found=false) %}
             {% for event in knockhill_events.get('calendar.kyle_glasgownet_com', {}).get('events', []) %}
@@ -39,8 +30,22 @@ automation:
               {% endif %}
             {% endfor %}
             {{ ns.found }}
+          needs_ev_charge: >-
+            {% set ns = namespace(dates=[], saturday=none) %}
+            {% for event in knockhill_events.get('calendar.kyle_glasgownet_com', {}).get('events', []) %}
+              {% set title = event.summary | default(event.title | default('')) %}
+              {% if 'Timekeeping' in title %}
+                {% set ns.dates = ns.dates + [as_datetime(event.start).date()] %}
+              {% endif %}
+            {% endfor %}
+            {% for d in ns.dates %}
+              {% if d.weekday() == 5 and (d + timedelta(days=1)) in ns.dates %}
+                {% set ns.saturday = d %}
+              {% endif %}
+            {% endfor %}
+            {{ (ns.saturday is not none) and (ns.saturday > now().date()) }}
       - if:
-          - "{{ has_upcoming_event }}"
+          - "{{ needs_ev_charge }}"
           - "{{ states('number.polestar_4_442660_target_soc') | float(0) != 100 }}"
         then:
           - service: number.set_value
@@ -51,7 +56,7 @@ automation:
           - service: notify.mobile_app_nothing_phone_2
             data:
               title: "Knockhill charge prep"
-              message: "Setting Polestar target charge to 100% ahead of an upcoming Knockhill Timekeeping event."
+              message: "Setting Polestar target charge to 100% ahead of a two-day Knockhill Timekeeping weekend."
       - if:
           - "{{ has_weekend_pair }}"
           - "{{ states('select.predbat_manual_soc') != '17:00=100' }}"
@@ -68,7 +73,7 @@ automation:
 
   - alias: Knockhill charge revert
     id: knockhill_charge_revert
-    description: Revert the Polestar target charge back to 80% at 17:00 on the last day of a Knockhill Timekeeping weekend.
+    description: Revert the Polestar target charge back to 80% at 17:00 on the Saturday of a two-day Knockhill Timekeeping weekend.
     trigger:
       - platform: time
         at: "17:00:00"
@@ -82,7 +87,7 @@ automation:
             hours: 48
         response_variable: knockhill_events_revert
       - variables:
-          is_last_day_of_weekend: >-
+          is_pair_saturday: >-
             {% set ns = namespace(dates=[]) %}
             {% for event in knockhill_events_revert.get('calendar.kyle_glasgownet_com', {}).get('events', []) %}
               {% set title = event.summary | default(event.title | default('')) %}
@@ -90,9 +95,9 @@ automation:
                 {% set ns.dates = ns.dates + [as_datetime(event.start).date()] %}
               {% endif %}
             {% endfor %}
-            {{ (now().date() in ns.dates) and ((now().date() + timedelta(days=1)) not in ns.dates) }}
+            {{ now().weekday() == 5 and now().date() in ns.dates and (now().date() + timedelta(days=1)) in ns.dates }}
       - if:
-          - "{{ is_last_day_of_weekend }}"
+          - "{{ is_pair_saturday }}"
           - "{{ states('number.polestar_4_442660_target_soc') | float(0) != 80 }}"
         then:
           - service: number.set_value
@@ -103,4 +108,4 @@ automation:
           - service: notify.mobile_app_nothing_phone_2
             data:
               title: "Knockhill charge revert"
-              message: "Reverting Polestar target charge back to 80% - Knockhill weekend is over."
+              message: "Reverting Polestar target charge back to 80% - Saturday's Knockhill session is done."
