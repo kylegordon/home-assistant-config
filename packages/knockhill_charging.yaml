@@ -1,0 +1,106 @@
+automation:
+  - alias: Knockhill charge prep
+    id: knockhill_charge_prep
+    description: Poll the personal calendar for upcoming Knockhill Timekeeping events; pre-charge the Polestar and/or stage a Predbat battery SOC target ahead of them.
+    trigger:
+      - platform: time_pattern
+        hours: "/1"
+      - platform: homeassistant
+        event: start
+    action:
+      - service: calendar.get_events
+        target:
+          entity_id: calendar.kyle_glasgownet_com
+        data:
+          duration:
+            hours: 48
+        response_variable: knockhill_events
+      - variables:
+          has_upcoming_event: >-
+            {% set ns = namespace(found=false) %}
+            {% for event in knockhill_events.get('calendar.kyle_glasgownet_com', {}).get('events', []) %}
+              {% set title = event.summary | default(event.title | default('')) %}
+              {% if 'Timekeeping' in title %}
+                {% set ns.found = true %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.found }}
+          has_weekend_pair: >-
+            {% set ns = namespace(dates=[], found=false) %}
+            {% for event in knockhill_events.get('calendar.kyle_glasgownet_com', {}).get('events', []) %}
+              {% set title = event.summary | default(event.title | default('')) %}
+              {% if 'Timekeeping' in title %}
+                {% set ns.dates = ns.dates + [as_datetime(event.start).date()] %}
+              {% endif %}
+            {% endfor %}
+            {% for d in ns.dates %}
+              {% if d.weekday() == 5 and (d + timedelta(days=1)) in ns.dates %}
+                {% set ns.found = true %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.found }}
+      - if:
+          - "{{ has_upcoming_event }}"
+          - "{{ states('number.polestar_4_442660_target_soc') | float(0) != 100 }}"
+        then:
+          - service: number.set_value
+            target:
+              entity_id: number.polestar_4_442660_target_soc
+            data:
+              value: 100
+          - service: notify.mobile_app_nothing_phone_2
+            data:
+              title: "Knockhill charge prep"
+              message: "Setting Polestar target charge to 100% ahead of an upcoming Knockhill Timekeeping event."
+      - if:
+          - "{{ has_weekend_pair }}"
+          - "{{ states('select.predbat_manual_soc') != '17:00=100' }}"
+        then:
+          - service: select.select_option
+            target:
+              entity_id: select.predbat_manual_soc
+            data:
+              option: "17:00=100"
+          - service: notify.mobile_app_nothing_phone_2
+            data:
+              title: "Knockhill charge prep"
+              message: "Staging Predbat manual SOC target at 100% for 17:00 Saturday ahead of a Knockhill Sunday event."
+
+  - alias: Knockhill charge revert
+    id: knockhill_charge_revert
+    description: Revert the Polestar target charge back to 80% at 17:00 on the last day of a Knockhill Timekeeping weekend.
+    trigger:
+      - platform: time
+        at: "17:00:00"
+    action:
+      - service: calendar.get_events
+        target:
+          entity_id: calendar.kyle_glasgownet_com
+        data:
+          start_date_time: "{{ today_at('00:00:00') }}"
+          duration:
+            hours: 48
+        response_variable: knockhill_events_revert
+      - variables:
+          is_last_day_of_weekend: >-
+            {% set ns = namespace(dates=[]) %}
+            {% for event in knockhill_events_revert.get('calendar.kyle_glasgownet_com', {}).get('events', []) %}
+              {% set title = event.summary | default(event.title | default('')) %}
+              {% if 'Timekeeping' in title %}
+                {% set ns.dates = ns.dates + [as_datetime(event.start).date()] %}
+              {% endif %}
+            {% endfor %}
+            {{ (now().date() in ns.dates) and ((now().date() + timedelta(days=1)) not in ns.dates) }}
+      - if:
+          - "{{ is_last_day_of_weekend }}"
+          - "{{ states('number.polestar_4_442660_target_soc') | float(0) != 80 }}"
+        then:
+          - service: number.set_value
+            target:
+              entity_id: number.polestar_4_442660_target_soc
+            data:
+              value: 80
+          - service: notify.mobile_app_nothing_phone_2
+            data:
+              title: "Knockhill charge revert"
+              message: "Reverting Polestar target charge back to 80% - Knockhill weekend is over."
