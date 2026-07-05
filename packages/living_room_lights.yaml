@@ -294,12 +294,7 @@ automation:
     action:
       - service: light.turn_on
         data:
-          entity_id: >
-            {% if states('sensor.time_of_day') == "Morning" %}
-              - light.living_room
-              - light.dining_nook
-            {% else %}
-              - light.cosy_lights
-              - light.art
-              - light.train_cabinets
-            {% endif %}
+          entity_id: >-
+            {{ ['light.living_room', 'light.dining_nook']
+               if states('sensor.time_of_day') == 'Morning'
+               else ['light.cosy_lights', 'light.art', 'light.train_cabinets'] }}
