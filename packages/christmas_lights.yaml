@@ -16,9 +16,11 @@ template:
   - binary_sensor:
       - name: Christmas Time
         unique_id: christmastime
-        # Use %j to get the day of the year, force from string to integer, and return true if after December 1st or before January 6th
+        # Use %j to get the day of the year, force from string to integer,
+        # and return true if after December 1st or before January 6th
         state: >
-            {% if now().strftime("%j") | int >= 336 or now().strftime("%j") | int <= 6 %}
+            {% if now().strftime("%j") | int >= 336
+               or now().strftime("%j") | int <= 6 %}
             true
             {% else %}
             false

@@ -1,3 +1,4 @@
+---
 substitutions:
   device_name: "tin-hut-sensor"
   device_description: Tin Hut Sensor

@@ -35,10 +35,12 @@ switch:
       {% else %}
         OFF
       {% endif %}
+    # yamllint disable rule:line-length
     payload_on: >
       {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor on"}
     payload_off: >
       {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor off"}
+    # yamllint enable rule:line-length
     state_on: "ON"
     state_off: "OFF"
     qos: 1
@@ -55,7 +57,9 @@ switch:
 #         data:
 #           topic: "iotlink/workgroup/surface-photofr/commands/run"
 #           payload: >
+# yamllint disable rule:line-length
 #             {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor off"}
+# yamllint enable rule:line-length
 #     mode: single
 
 ###############################################################################
@@ -69,5 +73,7 @@ switch:
 #         data:
 #           topic: "iotlink/workgroup/surface-photofr/commands/run"
 #           payload: >
+# yamllint disable rule:line-length
 #             {"command": "C:\\\\nircmd-x64\\\\nircmd.exe", "args": "cmdwait 1000 monitor on"}
+# yamllint enable rule:line-length
 #     mode: single

@@ -10,7 +10,9 @@ template:
           {% else %}
             mdi:window-closed
           {% endif %}
-        state: "{{ is_state('binary_sensor.bathroom_window_contact','on') or is_state('binary_sensor.bathroom_window_vibration','on') }}"
+        state: >-
+          {{ is_state('binary_sensor.bathroom_window_contact','on')
+          or is_state('binary_sensor.bathroom_window_vibration','on') }}
 
 light:
   - platform: group
@@ -24,7 +26,7 @@ automation:
   - alias: Bathroom light toggle
     id: bathroom_light_toggle
     mode: parallel
-    # Can be improved, examples at https://github.com/TheFes/HA-configuration/blob/main/include/automation/01_first_floor/floris/shelly_floris.yaml
+    # Can be improved, see TheFes/HA-configuration shelly_floris.yaml
     trigger:
       - platform: event
         event_type: esphome.tx_ultimate_easy

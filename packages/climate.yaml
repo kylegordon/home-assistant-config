@@ -34,7 +34,8 @@ automation:
         entity_id: sensor.hwam_smart_stove_temperature
         below: 100
       - trigger: template
-        value_template: "{{ 'states.sensor.hwam_smart_stove_temperature' != 'unknown' }}"
+        value_template: >-
+          {{ 'states.sensor.hwam_smart_stove_temperature' != 'unknown' }}
       - trigger: state
         entity_id: binary_sensor.home_occupied
         to: 'on'
@@ -114,9 +115,10 @@ automation:
         variables:
           alert_text: >-
             Predbat stalled? Restarting. last_updated=' {{
-            state_attr('predbat.status','last_updated')|as_timestamp|timestamp_custom('%a
-            %H:%M') }}', unchanged for 20 mins; Status='{{ states('predbat.status')
-            }}'
+            state_attr('predbat.status','last_updated')
+            |as_timestamp|timestamp_custom('%a %H:%M')
+            }}', unchanged for 20 mins;
+            Status='{{ states('predbat.status') }}'
           restart_predbat: "Y"
       - trigger: state
         entity_id: binary_sensor.predbat_running

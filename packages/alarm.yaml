@@ -64,9 +64,11 @@ automation:
       - service: notify.email_kyle
         data:
           title: >
-            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+            {{ trigger.to_state.attributes.friendly_name }} changed from
+            {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
           message: >
-            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+            {{ trigger.to_state.attributes.friendly_name }} changed from
+            {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
             Away mode. Setting alarm.
       - service: alarm_control_panel.alarm_arm_away
 
@@ -85,9 +87,11 @@ automation:
       - service: notify.email_kyle
         data:
           title: >
-            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+            {{ trigger.to_state.attributes.friendly_name }} changed from
+            {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
           message: >
-            {{ trigger.to_state.attributes.friendly_name }} changed from {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
+            {{ trigger.to_state.attributes.friendly_name }} changed from
+            {{ trigger.from_state.state}} to {{ trigger.to_state.state }}
             Home is occupied. Disarming alarm.
       - service: alarm_control_panel.alarm_disarm
 

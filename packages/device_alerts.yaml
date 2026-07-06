@@ -71,14 +71,20 @@ automation:
       conditions:
         - condition: template
           value_template: >
-            {% if states.automation.alert_when_a_critical_device_goes_offline.last_triggered is not none %}
-              {% if as_timestamp(now()) | int   -  as_timestamp(states.automation.alert_when_a_critical_device_goes_offline.attributes.last_triggered) | int > 3600 %} true {% else %} false
-              {% endif %}
+            {% set auto = states.automation
+              .alert_when_a_critical_device_goes_offline %}
+            {% if auto.last_triggered is not none %}
+              {% set diff = as_timestamp(now()) | int
+                - as_timestamp(auto.attributes.last_triggered) | int %}
+              {{ diff > 3600 }}
             {% else %}
             false
             {% endif %}
     action:
       - service: notify.email_kyle
         data:
-          message: '{{trigger.to_state.attributes.friendly_name}} has gone offline. Please check the status of this device as some features may stop functioning.'
+          message: >-
+            {{trigger.to_state.attributes.friendly_name}} has gone offline.
+            Please check the status of this device as some features may
+            stop functioning.
           title: Device Alert

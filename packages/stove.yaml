@@ -5,7 +5,8 @@ template:
         unique_id: stove_sensor
         icon: >
           {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
-          {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
+          {%- set refuel =
+            states.binary_sensor.hwam_smart_stove_refill_needed.state %}
           {%- if phase == 'Burn' %}
             mdi:fire
           {%- elif phase == 'Standby' %}
@@ -22,9 +23,11 @@ template:
         state: >
           {%- set phase = states.sensor.hwam_smart_stove_phase.state %}
           {%- set temp = states.sensor.hwam_smart_stove_temperature.state %}
-          {%- set timer = states.sensor.hwam_smart_stove_time_to_new_firewood.state %}
+          {%- set timer =
+            states.sensor.hwam_smart_stove_time_to_new_firewood.state %}
           {%- set refill_timer = (timer | int(0) // 60) ~ ' min' %}
-          {%- set refuel = states.binary_sensor.hwam_smart_stove_refill_needed.state %}
+          {%- set refuel =
+            states.binary_sensor.hwam_smart_stove_refill_needed.state %}
           {%- if phase == 'Burn' %}
             {{ temp }} °C
           {%- elif phase == 'Standby' %}

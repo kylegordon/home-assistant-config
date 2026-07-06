@@ -1,3 +1,4 @@
+---
 - platform: generic_thermostat
   unique_id: rest_of_house_thermostat
   name: Rest of House Thermostat

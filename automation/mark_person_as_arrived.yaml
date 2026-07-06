@@ -25,4 +25,5 @@ action:
     data:
       name: EVENT
       message: >
-        {{ trigger.to_state.attributes.friendly_name }} has just arrived at the house.
+        {{ trigger.to_state.attributes.friendly_name }} has just arrived
+        at the house.
