@@ -97,14 +97,12 @@ automation:
 
 group:
   snmp_monitor:
-    name: Bandwith Monitoring
     entities:
       - sensor.internet_speed_in
       - sensor.internet_speed_out
       - sensor.wan_traffic_in_mean
       - sensor.wan_traffic_out_mean
   snmp_raw_values:
-    name: SNMP Raw Values
     entities:
       - sensor.snmp_wan_in
       - sensor.snmp_wan_out

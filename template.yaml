@@ -1,6 +1,19 @@
 ---
 - trigger:
     - platform: time_pattern
+      minutes: "/1"
+    - platform: homeassistant
+      event: start
+  sensor:
+    - name: Time of Day
+      unique_id: time_of_day
+      state: >
+        {% set h = now().hour %}
+        {% if 6 <= h < 9 %}Morning
+        {% elif 9 <= h < 22 %}Day
+        {% else %}Night{% endif %}
+- trigger:
+    - platform: time_pattern
       minutes: "/30"
   action:
     - service: weather.get_forecasts
@@ -126,7 +139,7 @@
 
     - name: Next Bin
       unique_id: next_bin
-      state: "{{ states.calendar.east_renfrewshire_council.attributes.message }}"
+      state: "{{ state_attr('calendar.bin_collection_schedule_bins', 'message') }}"
 
     - name: Kyle
       unique_id: kyle_status
