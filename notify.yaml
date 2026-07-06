@@ -3,7 +3,7 @@
   name: email_kyle
   server: smtp.gmail.com
   port: 587
-  starttls: true
+  encryption: starttls
   username: !secret gmail_username
   password: !secret gmail_password
   sender: homeassistant@glasgownet.com
