@@ -82,7 +82,10 @@ automation:
       - service: input_number.set_value
         data:
           entity_id: input_number.internet_traffic_delta_in
-          value: '{{ ((trigger.to_state.state | int - trigger.from_state.state | int) * 8 ) / ( as_timestamp(trigger.to_state.last_updated) - as_timestamp(trigger.from_state.last_updated) ) }}'
+          # The SNMP counter resets/wraps on device reboot, which can make
+          # to_state < from_state and produce a negative delta. Clamp at 0
+          # rather than erroring against the input_number's min.
+          value: '{{ [ ((trigger.to_state.state | int - trigger.from_state.state | int) * 8 ) / ( as_timestamp(trigger.to_state.last_updated) - as_timestamp(trigger.from_state.last_updated) ), 0 ] | max }}'
 
   - id: snmp_monitor_traffic_out
     alias: Monitor Traffic Out
@@ -93,7 +96,9 @@ automation:
       - service: input_number.set_value
         data:
           entity_id: input_number.internet_traffic_delta_out
-          value: '{{ ((trigger.to_state.state | int - trigger.from_state.state | int) * 8 ) / ( as_timestamp(trigger.to_state.last_updated) - as_timestamp(trigger.from_state.last_updated) ) }}'
+          # See snmp_monitor_traffic_in: clamp negative deltas from counter
+          # resets/wraps instead of erroring against the input_number's min.
+          value: '{{ [ ((trigger.to_state.state | int - trigger.from_state.state | int) * 8 ) / ( as_timestamp(trigger.to_state.last_updated) - as_timestamp(trigger.from_state.last_updated) ), 0 ] | max }}'
 
 group:
   snmp_monitor:
