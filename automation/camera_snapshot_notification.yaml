@@ -1,6 +1,11 @@
 ---
 alias: Camera Snapshot Notification
 id: camera_snapshot_notification
+# Frigate can emit multiple 'new' events in quick succession (e.g. several
+# cameras detecting at once); default single-run mode was dropping the
+# overlapping runs with an "Already running" warning instead of notifying.
+mode: queued
+max: 10
 trigger:
   - platform: mqtt
     topic: "frigate/events"
