@@ -21,7 +21,7 @@ automation:
         # brightness_pct: {{ (states('input_number.bandwidth_in_as_a_percentage') | float) | round(0) | int }}
         # brightness_pct: sensor.bandwidth_in_as_percentage
         brightness_pct: >
-          {{ states.sensor.bandwidth_in_as_percentage.state|int}}
+          {{ states('sensor.bandwidth_in_as_percentage') | int(0) }}
 
   - id: scale_backlight_up
     alias: Bandwidthometer Backlight On
