@@ -11,6 +11,8 @@ trigger:
     topic: "frigate/events"
 variables:
   camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
+  label: "{{ trigger.payload_json.after.label | default('object') }}"
+  snapshot_entity: "camera.{{ camera }}_last_{{ label }}"
 condition:
   - "{{ trigger.payload_json.type == 'end' }}"
 action:
@@ -18,9 +20,12 @@ action:
     data:
       title: "{{ camera | replace('_', ' ') | title }} Snapshot"
       message: >
-        {{ trigger.payload_json.after.label | default('Object') | title }}
+        {{ label | title }}
         detected on {{ camera | replace('_', ' ') | title }}
       data:
         clickAction: "/lovelace/outside"
         url: "/lovelace/outside"
-        image: "/api/frigate/notifications/{{ trigger.payload_json.after.id }}/snapshot.jpg"
+        image: >
+          {% if states(snapshot_entity) not in ['unknown', 'unavailable'] %}
+            /api/camera_proxy/{{ snapshot_entity }}?token={{ state_attr(snapshot_entity, 'access_token') }}
+          {% endif %}
