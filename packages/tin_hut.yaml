@@ -69,7 +69,7 @@ automation:
             state: 'paused'
       - service: openhome.invoke_pin
         data:
-          pin: 4
+          pin: 6
         target:
           entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
       - service: media_player.volume_set
