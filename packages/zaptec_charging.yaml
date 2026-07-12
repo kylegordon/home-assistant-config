@@ -1,0 +1,32 @@
+automation:
+  - alias: Zaptec cheap-rate charging start
+    id: zaptec_cheap_rate_charging_start
+    description: Turn on Zaptec charging when the Octopus off-peak window starts.
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.octopus_energy_electricity_22j0090022_1800028864966_off_peak
+        to: "on"
+    action:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.viewpoint_charging
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Zaptec charging"
+          message: "Off-peak window started — charging enabled."
+
+  - alias: Zaptec cheap-rate charging stop
+    id: zaptec_cheap_rate_charging_stop
+    description: Turn off Zaptec charging when the Octopus off-peak window ends, even mid-session.
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.octopus_energy_electricity_22j0090022_1800028864966_off_peak
+        to: "off"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.viewpoint_charging
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Zaptec charging"
+          message: "Off-peak window ended — charging disabled."
