@@ -1,0 +1,18 @@
+---
+automation:
+  - alias: Keep resetting Luba 2 turnaround mode to multi-point
+    id: luba2_turnaround_mode_multipoint
+    description: ""
+    triggers:
+      - trigger: state
+        entity_id:
+          - select.snowball_turnaround_mode
+    conditions: []
+    actions:
+      - action: select.select_option
+        metadata: {}
+        target:
+          entity_id: select.snowball_turnaround_mode
+        data:
+          option: multipoint
+    mode: single
