@@ -1,0 +1,136 @@
+---
+# Handles ALL deep sleep ESPHome devices. On every wake-up (a normal wake
+# AND the reboot after an ESPHome Update Manager install), the device gets
+# its full awake_window_seconds before being put back to sleep - unless an
+# update is pending/running, in which case it stays awake until that
+# finishes (then still gets its awake_window_seconds before sleeping).
+#
+# Requires each device's deep_sleep block to omit run_duration and expose a
+# button whose friendly name contains "sleep" that calls deep_sleep.enter -
+# see esphome/common/esp8266_dht_sensor_common.yaml and
+# esphome/common/car_battery_monitor_common.yaml.
+#
+# NOTE: the entity_id list below is a best-effort guess at the ESPHome
+# status binary_sensor slugs derived from each device's friendly_name.
+# Verify these against the live instance (Settings > Devices & Services >
+# Entities) before relying on this automation - this repo clone's
+# entity registry does not reflect the deployed instance.
+alias: "ESPHome deep sleep devices - wake and update"
+id: esphome_deep_sleep_wake_and_update
+mode: parallel
+max: 10
+variables:
+  awake_window_seconds: 120
+trigger:
+  - id: wake
+    platform: state
+    entity_id:
+      - binary_sensor.land_rover_battery_monitor_status
+      - binary_sensor.volvo_battery_monitor_status
+      - binary_sensor.tr6_battery_monitor_status
+      - binary_sensor.ac_battery_monitor_status
+      - binary_sensor.front_hall_sensor_status
+      - binary_sensor.study_sensor_status
+      - binary_sensor.tin_hut_sensor_status
+    to: "on"
+  - id: finished
+    platform: event
+    event_type: esphome_update_manager_finished
+action:
+  - choose:
+      # Branch 1: a device just woke up
+      - conditions:
+          - condition: trigger
+            id: wake
+        sequence:
+          - variables:
+              wake_last_changed: "{{ trigger.to_state.last_changed }}"
+          - delay: "{{ awake_window_seconds }}"
+          - condition: template
+            # If this is false, the sensor flipped again during our wait
+            # (a reboot happened) - a newer run or the finished-branch is
+            # already handling this device, so stop here silently.
+            value_template: >
+              {{ (states[trigger.entity_id].last_changed | string) == (wake_last_changed | string) }}
+          - service: esphome_update_manager.get_device_status
+            data:
+              device_id: "{{ device_id(trigger.entity_id) }}"
+            response_variable: dev_status
+          - if:
+              - condition: template
+                value_template: >
+                  {{ not dev_status.devices.get(device_id(trigger.entity_id), {}).get('active', false) }}
+            then:
+              - variables:
+                  deep_sleep_btn: >
+                    {% set ns = namespace(found='') %}
+                    {% for e in states.button
+                       if device_id(e.entity_id) == device_id(trigger.entity_id)
+                       and 'sleep' in (e.attributes.friendly_name | default('') | lower) %}
+                      {% set ns.found = e.entity_id %}
+                    {% endfor %}
+                    {{ ns.found }}
+              - if:
+                  - condition: template
+                    value_template: "{{ deep_sleep_btn != '' }}"
+                then:
+                  - service: button.press
+                    target:
+                      entity_id: "{{ deep_sleep_btn }}"
+
+      # Branch 2: an update batch just finished (force install or a
+      # regular auto-update / manual update)
+      - conditions:
+          - condition: trigger
+            id: finished
+        sequence:
+          - variables:
+              finished_devices: >
+                {{ trigger.event.data.results | default([])
+                   | selectattr('device_id', 'defined')
+                   | list }}
+          - repeat:
+              for_each: "{{ finished_devices }}"
+              sequence:
+                - variables:
+                    status_entity: >
+                      {% set ns = namespace(found='') %}
+                      {% for e in states.binary_sensor
+                         if e.entity_id.endswith('_status')
+                         and device_id(e.entity_id) == repeat.item.device_id %}
+                        {% set ns.found = e.entity_id %}
+                      {% endfor %}
+                      {{ ns.found }}
+                # Wait for the device to come back online after reboot
+                - wait_template: "{{ status_entity != '' and is_state(status_entity, 'on') }}"
+                  timeout: "00:03:00"
+                  continue_on_timeout: true
+                # Give it its normal awake window
+                - delay: "{{ awake_window_seconds }}"
+                # Final safety check before sleeping, in case something new
+                # got queued for it in the meantime
+                - service: esphome_update_manager.get_device_status
+                  data:
+                    device_id: "{{ repeat.item.device_id }}"
+                  response_variable: dev_status2
+                - if:
+                    - condition: template
+                      value_template: >
+                        {{ not dev_status2.devices.get(repeat.item.device_id, {}).get('active', false) }}
+                  then:
+                    - variables:
+                        deep_sleep_btn: >
+                          {% set ns = namespace(found='') %}
+                          {% for e in states.button
+                             if device_id(e.entity_id) == repeat.item.device_id
+                             and 'sleep' in (e.attributes.friendly_name | default('') | lower) %}
+                            {% set ns.found = e.entity_id %}
+                          {% endfor %}
+                          {{ ns.found }}
+                    - if:
+                        - condition: template
+                          value_template: "{{ deep_sleep_btn != '' }}"
+                      then:
+                        - service: button.press
+                          target:
+                            entity_id: "{{ deep_sleep_btn }}"

@@ -200,3 +200,38 @@
       unique_id: holiday_mode
       state: >-
         {{ states.calendar.family_calendar.attributes.message == 'Holiday mode' }}
+
+- sensor:
+    - name: Forecast 2 Hours
+      unique_id: forecast_2_hours
+      state: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[2].temperature if f and f | length >= 3 else none }}
+    - name: Forecast 4 Hours
+      unique_id: forecast_4_hours
+      state: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[4].temperature if f and f | length >= 5 else none }}
+    - name: Forecast 6 Hours
+      unique_id: forecast_6_hours
+      state: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[6].temperature if f and f | length >= 7 else none }}
+    - name: Forecast 8 Hours
+      unique_id: forecast_8_hours
+      state: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[8].temperature if f and f | length >= 9 else none }}
+    - name: Forecast 10 Hours
+      unique_id: forecast_10_hours
+      state: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[10].temperature if f and f | length >= 11 else none }}
+    - name: Forecast 12 Hours
+      unique_id: forecast_12_hours
+      state: >-
+        {% set f = state_attr('weather.pirateweather', 'forecast') %}
+        {{ f[12].temperature if f and f | length >= 13 else none }}
+    - name: House Target Temperature
+      unique_id: house_target_temperature
+      state: "{{ state_attr('climate.rest_of_house_thermostat', 'temperature') }}"
