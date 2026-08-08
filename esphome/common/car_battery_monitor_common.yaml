@@ -35,7 +35,6 @@ logger:
 
 deep_sleep:
   id: deep_sleep_1
-  run_duration: 20s
   sleep_duration: 10min
 
 binary_sensor:
@@ -108,6 +107,13 @@ light:
     id: blue_led_light
     name: "${friendly_name} Status LED"
     output: blue_led
+
+button:
+  - platform: template
+    name: "${friendly_name} Enter Deep Sleep"
+    icon: mdi:sleep
+    on_press:
+      - deep_sleep.enter: deep_sleep_1
 
 # Consolidated LED status indicator - checks WiFi, API, and OTA status
 script:
