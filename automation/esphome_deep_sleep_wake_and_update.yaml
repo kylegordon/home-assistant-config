@@ -19,7 +19,6 @@ alias: "ESPHome deep sleep devices - wake and update"
 id: esphome_deep_sleep_wake_and_update
 mode: parallel
 max: 10
-max_exceeded: silent
 variables:
   awake_window_seconds: 120
 trigger:
@@ -64,16 +63,16 @@ action:
             then:
               - variables:
                   deep_sleep_btn: >
-                    {% set ns = namespace(found=none) %}
+                    {% set ns = namespace(found='') %}
                     {% for e in states.button
                        if device_id(e.entity_id) == device_id(trigger.entity_id)
-                       and 'sleep' in (e.attributes.friendly_name | lower) %}
+                       and 'sleep' in (e.attributes.friendly_name | default('') | lower) %}
                       {% set ns.found = e.entity_id %}
                     {% endfor %}
                     {{ ns.found }}
               - if:
                   - condition: template
-                    value_template: "{{ deep_sleep_btn != none }}"
+                    value_template: "{{ deep_sleep_btn != '' }}"
                 then:
                   - service: button.press
                     target:
@@ -87,21 +86,23 @@ action:
         sequence:
           - variables:
               finished_devices: >
-                {{ trigger.event.data.results
+                {{ trigger.event.data.results | default([])
                    | selectattr('device_id', 'defined')
                    | list }}
           - repeat:
               for_each: "{{ finished_devices }}"
               sequence:
+                - variables:
+                    status_entity: >
+                      {% set ns = namespace(found='') %}
+                      {% for e in states.binary_sensor
+                         if e.entity_id.endswith('_status')
+                         and device_id(e.entity_id) == repeat.item.device_id %}
+                        {% set ns.found = e.entity_id %}
+                      {% endfor %}
+                      {{ ns.found }}
                 # Wait for the device to come back online after reboot
-                - wait_template: >
-                    {% set ns = namespace(online=false) %}
-                    {% for e in states.binary_sensor
-                       if e.entity_id.endswith('_status')
-                       and device_id(e.entity_id) == repeat.item.device_id %}
-                      {% if e.state == 'on' %}{% set ns.online = true %}{% endif %}
-                    {% endfor %}
-                    {{ ns.online }}
+                - wait_template: "{{ status_entity != '' and is_state(status_entity, 'on') }}"
                   timeout: "00:03:00"
                   continue_on_timeout: true
                 # Give it its normal awake window
@@ -119,16 +120,16 @@ action:
                   then:
                     - variables:
                         deep_sleep_btn: >
-                          {% set ns = namespace(found=none) %}
+                          {% set ns = namespace(found='') %}
                           {% for e in states.button
                              if device_id(e.entity_id) == repeat.item.device_id
-                             and 'sleep' in (e.attributes.friendly_name | lower) %}
+                             and 'sleep' in (e.attributes.friendly_name | default('') | lower) %}
                             {% set ns.found = e.entity_id %}
                           {% endfor %}
                           {{ ns.found }}
                     - if:
                         - condition: template
-                          value_template: "{{ deep_sleep_btn != none }}"
+                          value_template: "{{ deep_sleep_btn != '' }}"
                       then:
                         - service: button.press
                           target:
