@@ -1,0 +1,51 @@
+---
+automation:
+  - alias: 'Battery Voltage Low Alert'
+    id: battery_voltage_low_alert
+    trigger:
+      - platform: numeric_state
+        entity_id:
+          - sensor.land_rover_battery_monitor_voltage
+          - sensor.volvo_battery_monitor_voltage
+          - sensor.tr6_battery_monitor_voltage
+          - sensor.ac_battery_monitor_voltage
+        below: 11
+        for:
+          minutes: 30
+    action:
+      - service: persistent_notification.create
+        data:
+          title: "⚠️ Low Battery Voltage Alert"
+          message: >
+            {{ trigger.to_state.attributes.friendly_name }} has dropped to {{ trigger.to_state.state }}V (below 11V threshold).
+            This has persisted for more than 30 minutes.
+          notification_id: "battery_low_{{ trigger.entity_id }}"
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "⚠️ Low Battery Voltage"
+          message: "{{ trigger.to_state.attributes.friendly_name }}: {{ trigger.to_state.state }}V (below 11V)"
+
+  - alias: 'Battery Voltage High Alert'
+    id: battery_voltage_high_alert
+    trigger:
+      - platform: numeric_state
+        entity_id:
+          - sensor.land_rover_battery_monitor_voltage
+          - sensor.volvo_battery_monitor_voltage
+          - sensor.tr6_battery_monitor_voltage
+          - sensor.ac_battery_monitor_voltage
+        above: 14
+        for:
+          minutes: 30
+    action:
+      - service: persistent_notification.create
+        data:
+          title: "⚠️ High Battery Voltage Alert"
+          message: >
+            {{ trigger.to_state.attributes.friendly_name }} has risen to {{ trigger.to_state.state }}V (above 14V threshold).
+            This has persisted for more than 30 minutes.
+          notification_id: "battery_high_{{ trigger.entity_id }}"
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "⚠️ High Battery Voltage"
+          message: "{{ trigger.to_state.attributes.friendly_name }}: {{ trigger.to_state.state }}V (above 14V)"

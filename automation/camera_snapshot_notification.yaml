@@ -1,0 +1,31 @@
+---
+alias: Camera Snapshot Notification
+id: camera_snapshot_notification
+# Frigate can emit multiple 'new' events in quick succession (e.g. several
+# cameras detecting at once); default single-run mode was dropping the
+# overlapping runs with an "Already running" warning instead of notifying.
+mode: queued
+max: 10
+trigger:
+  - platform: mqtt
+    topic: "frigate/events"
+variables:
+  camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
+  label: "{{ trigger.payload_json.after.label | default('object') }}"
+  snapshot_entity: "camera.{{ camera }}_last_{{ label }}"
+condition:
+  - "{{ trigger.payload_json.type == 'end' }}"
+action:
+  - service: notify.mobile_app_nothing_phone_2
+    data:
+      title: "{{ camera | replace('_', ' ') | title }} Snapshot"
+      message: >
+        {{ label | title }}
+        detected on {{ camera | replace('_', ' ') | title }}
+      data:
+        clickAction: "/lovelace/outside"
+        url: "/lovelace/outside"
+        image: >
+          {% if states(snapshot_entity) not in ['unknown', 'unavailable'] %}
+            /api/camera_proxy/{{ snapshot_entity }}?token={{ state_attr(snapshot_entity, 'access_token') }}
+          {% endif %}

@@ -1,7 +1,6 @@
 ---
 group:
   christmas_lights:
-    name: Christmas Lights
     entities:
       - switch.energenie_1
       - switch.energenie_2

@@ -1,0 +1,24 @@
+---
+automation:
+  - alias: Master Bedroom blind control
+    id: master_bedroom_blind_control
+    trigger:
+      - platform: mqtt
+        topic: "zigbee2mqtt/Bedroom Ysia Remote/action"
+
+    action:
+      - variables:
+          command: "{{ trigger.payload }}"
+      - choose:
+          - conditions:
+              - '{{ command == "on" }}'
+            sequence:
+              - service: cover.open_cover
+                target:
+                  entity_id: cover.bedroom_blind
+          - conditions:
+              - '{{ command == "off" }}'
+            sequence:
+              - service: cover.close_cover
+                target:
+                  entity_id: cover.bedroom_blind
