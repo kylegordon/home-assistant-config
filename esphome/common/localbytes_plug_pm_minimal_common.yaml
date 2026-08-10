@@ -35,3 +35,4 @@ wifi:
     ssid: "${friendly_name}"
 
 captive_portal:
+
