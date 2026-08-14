@@ -35,7 +35,10 @@ web_server:
 
 deep_sleep:
   id: deep_sleep_1
-  run_duration: 60s
+  # Failsafe only - the wake automation presses the deep sleep button well
+  # before this in normal operation. Bounds awake time (battery drain) if
+  # Home Assistant is unreachable when the device wakes.
+  run_duration: 10min
   sleep_duration: 300s
 
 i2c:
@@ -83,6 +86,13 @@ light:
     id: blue_led_light
     name: "${friendly_name} Blue LED"
     output: blue_led
+
+button:
+  - platform: template
+    name: "${friendly_name} Enter Deep Sleep"
+    icon: mdi:sleep
+    on_press:
+      - deep_sleep.enter: deep_sleep_1
 
 # Blink the light if we aren't connected to WiFi.
 interval:

@@ -2,7 +2,7 @@
 - platform: min_max
   name: Average External Light Level
   unique_id: average_external_light_level
-  type: median
+  type: mean
   entity_ids:
     - sensor.lux_meter_1_level
     - sensor.lux_meter_2_level
