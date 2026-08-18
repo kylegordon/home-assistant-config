@@ -13,3 +13,5 @@ fullchain.pem
 privkey.pem
 .esphome/
 .vscode/
+.rpi-tracking/
+.storage/
