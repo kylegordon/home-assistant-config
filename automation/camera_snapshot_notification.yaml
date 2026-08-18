@@ -13,6 +13,14 @@ variables:
   camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
   label: "{{ trigger.payload_json.after.label | default('object') }}"
   snapshot_entity: "camera.{{ camera }}_last_{{ label }}"
+  # Repeated detections of the same camera+label within this window reuse
+  # the same Android notification (updated message/image) instead of
+  # stacking near-identical alerts. A gap longer than this raises a fresh,
+  # separately-alerting notification instead of silently updating a
+  # possibly already-dismissed one.
+  notification_reuse_window_minutes: 15
+  notification_tag: >-
+    camera_snapshot_{{ camera }}_{{ label }}_{{ (as_timestamp(now()) // (notification_reuse_window_minutes * 60)) | int }}
 condition:
   - "{{ trigger.payload_json.type == 'end' }}"
 action:
@@ -23,6 +31,7 @@ action:
         {{ label | title }}
         detected on {{ camera | replace('_', ' ') | title }}
       data:
+        tag: "{{ notification_tag }}"
         clickAction: "/lovelace/outside"
         url: "/lovelace/outside"
         image: >
