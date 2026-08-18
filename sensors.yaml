@@ -114,7 +114,8 @@
 
 - platform: integration
   source: sensor.polestar_4_442660_charging_power
-  name: Polestar 4 Charging Energy
+  name: Polestar 4 (442660) Charging Energy (Predbat)
   unique_id: polestar_4_442660_charging_energy
   round: 2
   method: left
+
