@@ -6,12 +6,12 @@ substitutions:
   friendly_name: "Localbytes Plug PM"
 
 esphome:
-  name: "${device_name}"
+  name: "${name}"
   friendly_name: "${friendly_name}"
 
   # Automatically add the mac address to the name
   # so you can use a single firmware for all devices
-  # name_add_mac_suffix: true
+  name_add_mac_suffix: true
 
   # This will allow for (future) project identification,
   # configuration and updates.
@@ -25,6 +25,7 @@ esp8266:
 api:
 
 ota:
+  platform: esphome
 
 # This should point to the public location of this yaml file.
 dashboard_import:
