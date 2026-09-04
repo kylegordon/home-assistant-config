@@ -1,0 +1,24 @@
+---
+automation:
+  - alias: Kitchen blind control
+    id: kitchen_blind_control
+    trigger:
+      - platform: mqtt
+        topic: "zigbee2mqtt/Kitchen Blinds Remote/action"
+
+    action:
+      - variables:
+          command: "{{ trigger.payload }}"
+      - choose:
+          - conditions:
+              - '{{ command == "on" }}'
+            sequence:
+              - service: cover.open_cover
+                target:
+                  entity_id: cover.kitchen_blind
+          - conditions:
+              - '{{ command == "off" }}'
+            sequence:
+              - service: cover.close_cover
+                target:
+                  entity_id: cover.kitchen_blind

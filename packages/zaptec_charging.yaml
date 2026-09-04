@@ -1,0 +1,32 @@
+automation:
+  - alias: Zaptec Predbat charging start
+    id: zaptec_predbat_charging_start
+    description: Authorize Zaptec charging when Predbat determines it's a good time to charge.
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.predbat_car_charging_slot
+        to: "on"
+    action:
+      - service: button.press
+        target:
+          entity_id: button.viewpoint_authorize_charging
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Zaptec charging"
+          message: "Predbat charging slot started — charging authorized."
+
+  - alias: Zaptec Predbat charging stop
+    id: zaptec_predbat_charging_stop
+    description: Deauthorize Zaptec charging when Predbat's charging slot ends, even mid-session.
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.predbat_car_charging_slot
+        to: "off"
+    action:
+      - service: button.press
+        target:
+          entity_id: button.viewpoint_deauthorize_charging
+      - service: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Zaptec charging"
+          message: "Predbat charging slot ended — charging deauthorized."
