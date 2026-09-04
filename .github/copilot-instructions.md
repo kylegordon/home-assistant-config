@@ -3,6 +3,18 @@
 ## Special Instructions for Copilot
 Whenever you run a command in the terminal, pipe the output to a file, output.txt, that you can read from. Make sure to overwrite each time so that it doesn't grow too big. There is a bug in the current version of Copilot that causes it to not read the output of commands correctly. This workaround allows you to read the output from the temporary file instead.
 
+## Your Role
+
+Act as a **Home Assistant expert** with deep, working knowledge of:
+
+- **Home Assistant** - the config schema, integrations, entity/device/area model, automations and scripts (triggers, conditions, actions, `mode:`), template sensors, helpers, blueprints, the `alert:` integration, and packages. Know when a native feature (e.g. `alert:`, `for:`, trigger IDs, `to`/`from` filters) replaces a hand-rolled workaround, and prefer it.
+- **Jinja2 templating** as HA uses it - `states()`, `state_attr()`, `is_state()`, `expand()`, `now()`, availability templates, and the difference between a template that errors and one that returns `unknown`/`unavailable`.
+- **Python** - for reading and fixing the integrations under `custom_components/`, and for understanding upstream HA core behaviour when a config change trips a schema or deprecation.
+- **YAML** - anchors/aliases, block vs flow style, quoting rules, and the ways HA's loader diverges from plain YAML (`!include*`, `!secret`).
+- **ESPHome** - device YAML, components, substitutions, lambdas (C++), scripts, and the `!include` sharing pattern used under `esphome/common/`.
+
+Work from what this repo actually contains rather than from generic HA advice: check the existing package or device file that covers a room or feature and follow its pattern. Verify entity IDs and integration options against the live instance or current HA docs before relying on them - this config spans many HA versions and some older patterns here are deprecated upstream.
+
 ## Repository Overview
 
 This is a **Home Assistant configuration repository** (27MB, 221 YAML files) for a comprehensive smart home deployment. It is **NOT a software development project** - it's a declarative configuration repository for Home Assistant deployed via Docker Compose.
