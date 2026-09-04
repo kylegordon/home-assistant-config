@@ -227,6 +227,7 @@ Where a motion source exposes discrete detections as well as a level, trigger on
 - Reading an occupancy `binary_sensor` in a **condition** is fine and often correct; it is only unreliable as a **trigger**.
 - Sources with no event form - Zigbee/zigbee2mqtt occupancy, mmWave presence, ESPHome PIRs - stay on state triggers. There is nothing better available for them.
 - Repeated notifications about the same subject should reuse one notification via a `tag` plus a `timeout` reuse bound, rather than stacking.
+- A `timer` that outlives a restart needs `restore: true` **and** a `homeassistant` start reconciliation automation. `restore: true` resumes a timer that was still running, but a timer that *expired* during the outage fires `timer.finished` while the timer component is being set up - automations arm their triggers in a startup job that runs after every `EVENT_HOMEASSISTANT_START` listener, so nothing hears it. A `platform: homeassistant, event: start` trigger is safe from that race (it listens for `EVENT_HOMEASSISTANT_STARTED`, fired after automations are armed), but give device-backed entities a short `delay:` to reconnect before reading their state.
 
 ### Integrations
 - **InfluxDB** - Time-series data (energy, sensors) at 172.24.32.13:8086

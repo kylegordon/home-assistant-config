@@ -43,10 +43,15 @@ timer:
     # detection on any watched camera. Every detection restarts it, so the
     # window is measured from the last detection rather than the first.
     duration: "00:05:00"
-    # Survive a Home Assistant restart. Without this a restart mid-hold would
-    # lose the timer and leave the lights on until something else turned them
-    # off; with it, a hold that expired while HA was down fires timer.finished
-    # on startup instead.
+    # Survive a Home Assistant restart, so a hold that is still running when HA
+    # goes down resumes instead of being lost.
+    #
+    # A hold that *expired* during the outage is a separate case and this alone
+    # does not cover it. The timer entity does fire timer.finished as it
+    # restores, but that happens while the timer component is being set up, and
+    # automations arm their triggers in a startup job that runs after every
+    # EVENT_HOMEASSISTANT_START listener — so nothing is listening yet and the
+    # event is missed. Outside lights startup reconcile handles that case.
     restore: true
 
 automation:
@@ -259,6 +264,42 @@ automation:
           - service: homeassistant.turn_off
             entity_id:
               - light.outside_lights
+
+  - alias: Outside lights startup reconcile
+    id: outside_lights_startup_reconcile
+    # Covers the one case Outside lights off cannot see: a hold that ran out
+    # while Home Assistant was stopped. Its timer.finished is fired during
+    # component setup, before any automation has armed its triggers, so without
+    # this a restart mid-hold would leave the outside lights on indefinitely.
+    #
+    # The homeassistant start trigger is safe from the same race — it listens
+    # for EVENT_HOMEASSISTANT_STARTED, which fires after automations are armed.
+    trigger:
+      - platform: homeassistant
+        event: start
+    condition:
+      # A hold that restored with time left on it is still running and will
+      # finish on its own. Only an expired or absent hold needs reconciling.
+      - condition: state
+        entity_id: timer.outside_lights_hold
+        state: idle
+    action:
+      # Members of light.outside_lights reconnect at their own pace, so let the
+      # group settle before reading it rather than mistaking a member that has
+      # not reported yet for lights that are already off.
+      - delay: "00:01:00"
+      # If this evaluates to false, the action will stop here: nothing is on,
+      # so there is nothing to reconcile.
+      - condition: state
+        entity_id: light.outside_lights
+        state: "on"
+      # Hand back to the normal path instead of duplicating it. This arms a
+      # fresh hold, and Outside lights off then applies its usual occupancy
+      # check when that hold expires — so a person still outside at restart
+      # keeps the lights, and an empty driveway loses them.
+      - service: timer.start
+        target:
+          entity_id: timer.outside_lights_hold
 
   - alias: Front Hall Outside lights toggle
     id: front_hall_outside_lights_toggle
