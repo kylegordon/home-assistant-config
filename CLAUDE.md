@@ -82,6 +82,16 @@ TX-Ultimate-Easy touch switches (`*_switch.yaml`) are a significant device famil
 
 The Somfy RTS garage/tin-hut door control (`tin_hut_door_left.yaml` / `tin_hut_door_right.yaml`) shares state-machine logic from `esphome/common/tin-hut-doors.yaml` — it models a single-relay cover as a stop/open/close cycle with time-based position tracking, not true position control.
 
+### Motion detection: trigger on events, not on binary sensors
+
+Where a motion source exposes discrete detections as well as a level, trigger on the detections. A `binary_sensor` that means "something is present right now" is a *level*: while it is already `on`, a further detection produces no state change, and a tracker that momentarily loses its subject produces a spurious `off`. Frigate's `binary_sensor.<camera>_<object>_occupancy` sensors flicker badly for this reason — several on/off cycles for a single visit.
+
+- **Frigate** — trigger on MQTT topic `frigate/events` and filter on `trigger.payload_json`: `type` (`new` / `update` / `end`), `after.label`, `after.camera`. See `packages/outside_lights.yaml` and `automation/camera_snapshot_notification.yaml`. Note that `after.camera` is always a *camera*, never a Frigate zone; zone occupancy is a subset of its parent camera's, so trigger on the camera. Snapshot images come from the `frigate/<camera>/<object>/snapshot` MQTT cameras in `mqtt.yaml`.
+- **"Still active?" and "how long since the last detection?"** are not questions events answer on their own. Hold the state in a `timer` helper that each detection restarts, and act on `timer.finished` — not on `to: 'off'` with a `for:`, which fires when any *one* sensor in a trigger list goes clear.
+- Reading an occupancy `binary_sensor` in a **condition** is fine and often correct; it is only unreliable as a **trigger**.
+- Sources with no event form — Zigbee/zigbee2mqtt occupancy, mmWave presence, ESPHome PIRs — stay on state triggers. There is nothing better available for them.
+- Repeated notifications about the same subject should reuse one notification via a `tag` plus a `timeout` reuse bound, rather than stacking.
+
 ### Custom components
 
 `custom_components/` holds integrations not available (or not current) in HACS/core: `hwam_stove` (wood stove, needs `pystove==0.3a1`), `adaptive_lighting`, `programmable_thermostat`, `thermal_comfort`, `bulb_energy`, `smartir`, `alexa_media`, plus `hacs` itself. This directory is excluded from yamllint and remark lint.

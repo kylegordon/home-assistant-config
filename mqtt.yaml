@@ -75,6 +75,11 @@ camera:
     topic: frigate/front_door/person/snapshot
   - name: Driveway Last Person
     topic: frigate/driveway/person/snapshot
+  # The driveway_tin_hut camera had no snapshot entity, so notifications for it
+  # fell back to the driveway camera's image (via a substring match on the
+  # trigger entity_id). Frigate publishes a snapshot topic per camera+object.
+  - name: Driveway Tin Hut Last Person
+    topic: frigate/driveway_tin_hut/person/snapshot
   - name: Driveway Last Car
     topic: frigate/driveway/car/snapshot
   - name: octoPrint camera
