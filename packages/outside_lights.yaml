@@ -35,19 +35,71 @@ template:
               - 0
               - 0
 
+timer:
+  outside_lights_hold:
+    name: Outside lights hold
+    icon: mdi:timer-outline
+    # How long the outside lights stay on after the most recent person
+    # detection on any watched camera. Every detection restarts it, so the
+    # window is measured from the last detection rather than the first.
+    duration: "00:05:00"
+    # Survive a Home Assistant restart, so a hold that is still running when HA
+    # goes down resumes instead of being lost.
+    #
+    # A hold that *expired* during the outage is a separate case and this alone
+    # does not cover it. The timer entity does fire timer.finished as it
+    # restores, but that happens while the timer component is being set up, and
+    # automations arm their triggers in a startup job that runs after every
+    # EVENT_HOMEASSISTANT_START listener — so nothing is listening yet and the
+    # event is missed. Outside lights startup reconcile handles that case.
+    restore: true
+
 automation:
+  # ---------------------------------------------------------------------------
+  # Frigate's occupancy binary sensors are levels, not events.
+  # binary_sensor.<camera>_person_occupancy means "a person object is being
+  # tracked here right now", and the tracker loses and reacquires objects
+  # constantly: on 2026-09-03 the driveway sensor went on and off six times in
+  # four minutes for what was one visit. A `to: 'on'` state trigger therefore
+  # fires once per reacquisition rather than once per arrival, and a `to: 'off'`
+  # trigger reports "gone" every time tracking stutters.
+  #
+  # frigate/events carries the detections themselves — one message per stage of
+  # a tracked object's life (type: new / update / end) — which is what these
+  # automations actually want. Same source as
+  # automation/camera_snapshot_notification.yaml.
+  #
+  # Cameras, not zones: 'gates' is a zone on the driveway_tin_hut camera, and
+  # 'road' / 'parking_area_-_driveway' / 'parking_area_-_tin_hut' are zones on
+  # driveway and driveway_tin_hut. Their occupancy is a subset of the parent
+  # camera's, so watching the four cameras covers everything the old five-sensor
+  # trigger list covered. The frigate/events payload reports after.camera and
+  # never a zone name, so a zone would not match here anyway.
+  # ---------------------------------------------------------------------------
+
   - alias: Outside person detected
     id: outside_person_detected
+    # Every frigate/events message wakes this automation and most are rejected
+    # by the conditions below; several cameras can also fire at once. Queue the
+    # runs rather than dropping them with an "already running" warning.
+    mode: queued
+    max: 10
     trigger:
-      - platform: state
-        entity_id:
-          - binary_sensor.driveway_person_occupancy
-          - binary_sensor.driveway_tin_hut_person_occupancy
-          - binary_sensor.back_door_person_occupancy
-          - binary_sensor.gates_person_occupancy
-          - binary_sensor.front_door_person_occupancy
-        to: 'on'
+      - platform: mqtt
+        topic: "frigate/events"
+    variables:
+      # Shared with Outside lights on via the YAML anchor — edit here only.
+      cameras: &outside_person_cameras
+        - back_door
+        - driveway
+        - driveway_tin_hut
+        - front_door
+      camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
+      snapshot_entity: "camera.{{ camera }}_last_person"
     condition:
+      - "{{ trigger.payload_json.type == 'new' }}"
+      - "{{ trigger.payload_json.after.label == 'person' }}"
+      - "{{ camera in cameras }}"
       - condition: state
         entity_id: sun.sun
         state: "above_horizon"
@@ -56,19 +108,19 @@ automation:
         data:
           title: "Person outside!"
           message: >
-            Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Person detected outside by {{ camera | replace('_', ' ') | title }}
           data:
+            # One tracked person can still end and restart as several objects,
+            # so repeated detections on the same camera update a single
+            # notification in place instead of stacking near-identical ones.
+            # Same tag+timeout reuse bound as camera_snapshot_notification.
+            tag: "outside_person:{{ camera }}"
+            timeout: 900
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
             image: >
-              {% if 'back_door' in trigger.entity_id %}
-                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
-              {% elif 'front_door' in trigger.entity_id %}
-                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
-              {% elif 'driveway' in trigger.entity_id %}
-                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
-              {% elif 'gates' in trigger.entity_id %}
-                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% if states(snapshot_entity) not in ['unknown', 'unavailable'] %}
+                /api/camera_proxy/{{ snapshot_entity }}?token={{ state_attr(snapshot_entity, 'access_token') }}
               {% endif %}
 
 
@@ -110,16 +162,29 @@ automation:
 
   - alias: Outside lights on
     id: outside_lights_on
+    mode: queued
+    max: 10
     trigger:
-      - platform: state
-        entity_id:
-          - binary_sensor.driveway_person_occupancy
-          - binary_sensor.driveway_tin_hut_person_occupancy
-          - binary_sensor.back_door_person_occupancy
-          - binary_sensor.gates_person_occupancy
-          - binary_sensor.front_door_person_occupancy
-        to: 'on'
+      - platform: mqtt
+        topic: "frigate/events"
+    variables:
+      cameras: *outside_person_cameras
+      camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
+      snapshot_entity: "camera.{{ camera }}_last_person"
+      # An arrival is a detection that starts a visit. If the hold timer is
+      # already running this is a continuation — the tracker reacquiring the
+      # same person, a second camera picking them up, or the object ending —
+      # so the chime and the notification are skipped.
+      arrival: >
+        {{ trigger.payload_json.type == 'new'
+           and not is_state('timer.outside_lights_hold', 'active') }}
     condition:
+      # 'update' and 'end' are accepted as well as 'new' so that a person who
+      # lingers keeps extending the hold, and so the window after they leave is
+      # measured from the object ending rather than from when it first appeared.
+      - "{{ trigger.payload_json.type in ['new', 'update', 'end'] }}"
+      - "{{ trigger.payload_json.after.label == 'person' }}"
+      - "{{ camera in cameras }}"
       - condition: state
         entity_id: input_boolean.night_view
         state: "off"
@@ -127,6 +192,20 @@ automation:
         entity_id: sun.sun
         state: "below_horizon"
     action:
+      # Restart the hold before anything else, so a burst of detections always
+      # extends the window instead of racing Outside lights off.
+      - service: timer.start
+        target:
+          entity_id: timer.outside_lights_hold
+      # light.front_floodlights is a member of the light.outside_lights group
+      # (see lights.yaml), so it comes on with the rest of the group.
+      - service: homeassistant.turn_on
+        entity_id:
+          - light.outside_lights
+      # If this evaluates to false, the action will stop here: the lights are
+      # already on and held, and only the announcement is arrival-only.
+      - condition: template
+        value_template: "{{ arrival }}"
       - service: media_player.play_media
         target:
           entity_id:
@@ -136,55 +215,91 @@ automation:
         data:
           media_content_id: amzn_sfx_doorbell_chime_02
           media_content_type: sound
-      - service: homeassistant.turn_on
-        entity_id:
-          - light.outside_lights
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Person outside!"
           message: >
-            Person detected outside by {{ trigger.to_state.attributes.friendly_name }}
+            Person detected outside by {{ camera | replace('_', ' ') | title }}
             Turning on outside lights
           data:
+            tag: "outside_person:{{ camera }}"
+            timeout: 900
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
             image: >
-              {% if 'back_door' in trigger.entity_id %}
-                /api/camera_proxy/camera.back_door_last_person?token={{ state_attr('camera.back_door_last_person','access_token') }}
-              {% elif 'front_door' in trigger.entity_id %}
-                /api/camera_proxy/camera.front_door_last_person?token={{ state_attr('camera.front_door_last_person','access_token') }}
-              {% elif 'driveway' in trigger.entity_id %}
-                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
-              {% elif 'gates' in trigger.entity_id %}
-                /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+              {% if states(snapshot_entity) not in ['unknown', 'unavailable'] %}
+                /api/camera_proxy/{{ snapshot_entity }}?token={{ state_attr(snapshot_entity, 'access_token') }}
               {% endif %}
-
-      - service: homeassistant.turn_on
-        entity_id:
-          - light.outside_lights
-      # If this evaluates to false, the action will stop here.
-      - condition: template
-        value_template: "{{ not is_state('binary_sensor.home_occupied') }}"
-      - service: light.turn_on
-        entity_id: light.front_floodlights
 
   - alias: Outside lights off
     id: outside_lights_off
+    # Driven by the hold timer rather than by each sensor's own `to: 'off'`.
+    # The old trigger list turned the lights off five minutes after *any one*
+    # camera went clear, even while another still had a person in frame, and
+    # counted a momentary tracking stutter as the person having left.
     trigger:
-      - platform: state
-        entity_id:
-          - binary_sensor.front_door_motion
-          - binary_sensor.back_door_person_occupancy
-          - binary_sensor.driveway_person_occupancy
-          - binary_sensor.driveway_tin_hut_person_occupancy
-          - binary_sensor.gates_person_occupancy
-        to: 'off'
-        for:
-          seconds: 300
+      - platform: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.outside_lights_hold
     action:
-      - service: homeassistant.turn_off
-        entity_id:
-          - light.outside_lights
+      # Someone standing still can outlast the hold if Frigate stops emitting
+      # events for them, so re-arm rather than going dark on a person who is
+      # demonstrably still there. Occupancy is read as a level here, which is
+      # what it is good for — it is only unreliable as a trigger.
+      - if:
+          - condition: state
+            entity_id:
+              - binary_sensor.back_door_person_occupancy
+              - binary_sensor.driveway_person_occupancy
+              - binary_sensor.driveway_tin_hut_person_occupancy
+              - binary_sensor.front_door_person_occupancy
+            state: "on"
+            match: any
+        then:
+          - service: timer.start
+            target:
+              entity_id: timer.outside_lights_hold
+        else:
+          - service: homeassistant.turn_off
+            entity_id:
+              - light.outside_lights
+
+  - alias: Outside lights startup reconcile
+    id: outside_lights_startup_reconcile
+    # Covers the one case Outside lights off cannot see: a hold that ran out
+    # while Home Assistant was stopped. Its timer.finished is fired during
+    # component setup, before any automation has armed its triggers, so without
+    # this a restart mid-hold would leave the outside lights on indefinitely.
+    #
+    # The homeassistant start trigger is safe from the same race — it listens
+    # for EVENT_HOMEASSISTANT_STARTED, which fires after automations are armed.
+    trigger:
+      - platform: homeassistant
+        event: start
+    condition:
+      # A hold that restored with time left on it is still running and will
+      # finish on its own. Only an expired or absent hold needs reconciling.
+      - condition: state
+        entity_id: timer.outside_lights_hold
+        state: idle
+    action:
+      # Members of light.outside_lights reconnect at their own pace, so let the
+      # group settle before reading it rather than mistaking a member that has
+      # not reported yet for lights that are already off.
+      - delay: "00:01:00"
+      # If this evaluates to false, the action will stop here: nothing is on,
+      # so there is nothing to reconcile.
+      - condition: state
+        entity_id: light.outside_lights
+        state: "on"
+      # Hand back to the normal path instead of duplicating it. This arms a
+      # fresh hold, and Outside lights off then applies its usual occupancy
+      # check when that hold expires — so a person still outside at restart
+      # keeps the lights, and an empty driveway loses them.
+      - service: timer.start
+        target:
+          entity_id: timer.outside_lights_hold
 
   - alias: Front Hall Outside lights toggle
     id: front_hall_outside_lights_toggle
