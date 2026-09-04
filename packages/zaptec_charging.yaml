@@ -1,32 +1,32 @@
 automation:
-  - alias: Zaptec cheap-rate charging start
-    id: zaptec_cheap_rate_charging_start
-    description: Turn on Zaptec charging when the Octopus off-peak window starts.
+  - alias: Zaptec Predbat charging start
+    id: zaptec_predbat_charging_start
+    description: Authorize Zaptec charging when Predbat determines it's a good time to charge.
     trigger:
       - platform: state
-        entity_id: binary_sensor.octopus_energy_electricity_22j0090022_1800028864966_off_peak
+        entity_id: binary_sensor.predbat_car_charging_slot
         to: "on"
     action:
-      - service: switch.turn_on
+      - service: button.press
         target:
-          entity_id: switch.viewpoint_charging
+          entity_id: button.viewpoint_authorize_charging
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Zaptec charging"
-          message: "Off-peak window started — charging enabled."
+          message: "Predbat charging slot started — charging authorized."
 
-  - alias: Zaptec cheap-rate charging stop
-    id: zaptec_cheap_rate_charging_stop
-    description: Turn off Zaptec charging when the Octopus off-peak window ends, even mid-session.
+  - alias: Zaptec Predbat charging stop
+    id: zaptec_predbat_charging_stop
+    description: Deauthorize Zaptec charging when Predbat's charging slot ends, even mid-session.
     trigger:
       - platform: state
-        entity_id: binary_sensor.octopus_energy_electricity_22j0090022_1800028864966_off_peak
+        entity_id: binary_sensor.predbat_car_charging_slot
         to: "off"
     action:
-      - service: switch.turn_off
+      - service: button.press
         target:
-          entity_id: switch.viewpoint_charging
+          entity_id: button.viewpoint_deauthorize_charging
       - service: notify.mobile_app_nothing_phone_2
         data:
           title: "Zaptec charging"
-          message: "Off-peak window ended — charging disabled."
+          message: "Predbat charging slot ended — charging deauthorized."
