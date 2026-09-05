@@ -1,32 +1,183 @@
 automation:
   - alias: Zaptec Predbat charging start
     id: zaptec_predbat_charging_start
-    description: Authorize Zaptec charging when Predbat determines it's a good time to charge.
-    trigger:
-      - platform: state
+    description: Authorize Zaptec charging whenever Predbat wants the car charging and the charger is waiting for authorization.
+    triggers:
+      # Fast path: the slot opening with the car already plugged in.
+      - trigger: state
         entity_id: binary_sensor.predbat_car_charging_slot
         to: "on"
-    action:
-      - service: button.press
+      # The car being plugged in after the slot has already opened. Nothing
+      # else notices this — the slot sensor does not change state — so without
+      # this trigger the whole slot is lost waiting for an edge that never comes.
+      - trigger: state
+        entity_id: sensor.viewpoint_charger_mode
+        to: connected_requesting
+      # Safety net for everything neither edge can see: Home Assistant restarting
+      # across the slot transition, the Zaptec cloud being unreachable at the
+      # moment of the press, or the press itself erroring. Re-pressing authorize
+      # is idempotent, so a redundant tick costs nothing.
+      - trigger: time_pattern
+        minutes: "/5"
+    conditions:
+      # Both halves matter. The slot check is the "should it be charging" half;
+      # the charger_mode check is what stops the reconciler pressing authorize
+      # against a charger with no session to authorize — the cause of every
+      # errored run on record, which aborted before the notification could fire.
+      - condition: state
+        entity_id: binary_sensor.predbat_car_charging_slot
+        state: "on"
+      - condition: state
+        entity_id: sensor.viewpoint_charger_mode
+        state: connected_requesting
+    actions:
+      # Deliberately no continue_on_error: if authorizing fails then charging
+      # genuinely did not start, and the error belongs in the trace where the
+      # five-minute retry can be seen working against it.
+      - action: button.press
         target:
           entity_id: button.viewpoint_authorize_charging
-      - service: notify.mobile_app_nothing_phone_2
+      - action: notify.mobile_app_nothing_phone_2
         data:
           title: "Zaptec charging"
-          message: "Predbat charging slot started — charging authorized."
+          message: "Predbat charging slot active — charging authorized."
+          data:
+            # The reconciler can press more than once for a single slot, so a
+            # stable tag updates one notification in place rather than stacking
+            # near-identical ones. Same reuse bound as the camera notifications.
+            tag: zaptec_charging
+            timeout: 900
 
   - alias: Zaptec Predbat charging stop
     id: zaptec_predbat_charging_stop
-    description: Deauthorize Zaptec charging when Predbat's charging slot ends, even mid-session.
-    trigger:
-      - platform: state
+    description: Deauthorize Zaptec charging whenever the car is charging outside a Predbat slot.
+    triggers:
+      # Fast path: the slot closing mid-session.
+      - trigger: state
         entity_id: binary_sensor.predbat_car_charging_slot
         to: "off"
-    action:
-      - service: button.press
+      # Charging that starts outside a slot at all — the charger's own internal
+      # schedule can begin a session with no slot open.
+      - trigger: state
+        entity_id: sensor.viewpoint_charger_mode
+        to: connected_charging
+      # Safety net: a slot that ends while Home Assistant is down otherwise
+      # leaves the car charging at peak rate until the next edge.
+      - trigger: time_pattern
+        minutes: "/5"
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.predbat_car_charging_slot
+        state: "off"
+      # connected_charging only. connected_requesting also covers "plugged in
+      # but not authorized", so including it would press deauthorize every five
+      # minutes for as long as the car sat plugged in outside a slot.
+      - condition: state
+        entity_id: sensor.viewpoint_charger_mode
+        state: connected_charging
+    actions:
+      # continue_on_error here but not on the start side: Zaptec's cloud returns
+      # HTTP 500 for deauthorize_and_stop and the integration raises, even though
+      # the command does its job. Letting that abort the run is why the stop
+      # notification has never once been delivered.
+      - action: button.press
+        continue_on_error: true
         target:
           entity_id: button.viewpoint_deauthorize_charging
-      - service: notify.mobile_app_nothing_phone_2
+      # Worded for what the conditions actually guarantee — the car is charging
+      # and no slot is open — rather than "the slot just ended". As a reconciler
+      # this also fires for a session the charger's own schedule started hours
+      # after a slot closed. "Sent" rather than "done" because continue_on_error
+      # means a genuine deauthorization failure reaches this step too.
+      - action: notify.mobile_app_nothing_phone_2
         data:
           title: "Zaptec charging"
-          message: "Predbat charging slot ended — charging deauthorized."
+          message: "Charging outside a Predbat slot — deauthorization sent."
+          data:
+            tag: zaptec_charging
+            timeout: 900
+
+template:
+  # alert: watches exactly one entity, so the compound "Predbat wants to charge
+  # and the car is plugged in but still not charging" condition needs a feeder
+  # sensor. It is split in two: the first tracks the condition itself, and the
+  # second turns "still true fifteen minutes later" into the alert state. One
+  # sensor with delay_on cannot do both — see the second sensor for why.
+  - binary_sensor:
+      - name: "Zaptec charging awaiting authorization"
+        unique_id: zaptec_charging_awaiting_authorization
+        # Asks the same question as the start automation's conditions above, for
+        # a different consumer. The two must change together; nothing enforces
+        # that beyond this comment.
+        #
+        # Deliberately no availability: template. alert: ends an alert on any
+        # state that is not "on" — homeassistant/components/alert/entity.py
+        # makes no exception for unavailable — so letting this sensor go
+        # unavailable would fire done_message and restart the whole wait.
+        # The charger sensor is cloud-backed and does drop out, and it is most
+        # likely to do so during exactly the kind of trouble worth alerting on.
+        # So hold the last known answer while either source is untrustworthy,
+        # and only move when both can be read. Holding also keeps last_changed
+        # still, which is what the sensor below measures. This also stops an
+        # unavailable slot sensor being read as a confident "Predbat does not
+        # want to charge" when the truth is that we cannot tell.
+        state: >
+          {% set slot = states('binary_sensor.predbat_car_charging_slot') %}
+          {% set mode = states('sensor.viewpoint_charger_mode') %}
+          {% if slot in ['unavailable', 'unknown', 'none']
+                or mode in ['unavailable', 'unknown', 'none'] %}
+            {{ this.state == 'on' }}
+          {% else %}
+            {{ slot == 'on' and mode == 'connected_requesting' }}
+          {% endif %}
+
+      - name: "Zaptec charging not starting"
+        unique_id: zaptec_charging_not_starting
+        device_class: problem
+        # Fifteen minutes of waiting is the alert threshold — long enough that a
+        # normal authorization handshake never trips it.
+        #
+        # Measured from the feeder's last_changed rather than with delay_on,
+        # because delay_on cannot survive a source dropout: template/
+        # binary_sensor.py cancels the pending timer on every re-render and
+        # returns without rescheduling when the new result matches the current
+        # state. A charger sensor flapping more often than every fifteen minutes
+        # would restart the countdown each time and the alert would never fire —
+        # suppressed by exactly the outage it exists to report. last_changed
+        # does not move while the feeder holds its answer, so the clock keeps
+        # running through a dropout.
+        #
+        # now() is bound unconditionally rather than inline: reading it is what
+        # registers this template for the per-minute re-render that advances the
+        # countdown, and Jinja would short-circuit past it while the feeder is
+        # off, leaving nothing to schedule the render that fires the alert.
+        state: >
+          {% set now_ts = now() %}
+          {% set feeder = states.binary_sensor.zaptec_charging_awaiting_authorization %}
+          {{ feeder is not none
+             and feeder.state == 'on'
+             and (now_ts - feeder.last_changed).total_seconds() >= 900 }}
+
+alert:
+  # The reconciler retries forever and silently succeeds at retrying; this is
+  # what makes a persistently failing authorize_charge visible.
+  zaptec_charging_not_starting:
+    name: "Zaptec charging not starting"
+    entity_id: binary_sensor.zaptec_charging_not_starting
+    state: "on"
+    # A real interval is required. repeat: [] passes check_config but raises
+    # IndexError the first time the alert fires.
+    repeat:
+      - 30
+    can_acknowledge: true
+    skip_first: false
+    title: "Zaptec charging"
+    message: "Predbat wants to charge and the car is plugged in, but the charger is still not charging."
+    # The feeder sensor clears whenever its compound condition stops holding —
+    # charging started, but equally the slot closed or the car was unplugged.
+    # Only the alert itself can be said to have cleared.
+    done_message: "No longer waiting for Zaptec charging to start."
+    notifiers:
+      - mobile_app_nothing_phone_2
+    data:
+      tag: zaptec_charging_not_starting
