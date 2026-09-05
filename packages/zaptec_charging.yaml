@@ -107,10 +107,25 @@ template:
         unique_id: zaptec_charging_not_starting
         device_class: problem
         delay_on: "00:15:00"
-        availability: "{{ states('sensor.viewpoint_charger_mode') not in ['unavailable', 'unknown', 'none'] }}"
+        # Deliberately no availability: template. alert: ends an alert on any
+        # state that is not "on" — homeassistant/components/alert/entity.py
+        # makes no exception for unavailable — so letting this sensor go
+        # unavailable would fire done_message and re-arm the whole delay_on.
+        # The charger sensor is cloud-backed and does drop out, and it is most
+        # likely to do so during exactly the kind of trouble worth alerting on.
+        # So hold the last known answer while either source is untrustworthy,
+        # and only move when both can be read. This also stops an unavailable
+        # slot sensor being read as a confident "Predbat does not want to
+        # charge" when the truth is that we cannot tell.
         state: >
-          {{ is_state('binary_sensor.predbat_car_charging_slot', 'on')
-             and is_state('sensor.viewpoint_charger_mode', 'connected_requesting') }}
+          {% set slot = states('binary_sensor.predbat_car_charging_slot') %}
+          {% set mode = states('sensor.viewpoint_charger_mode') %}
+          {% if slot in ['unavailable', 'unknown', 'none']
+                or mode in ['unavailable', 'unknown', 'none'] %}
+            {{ this.state == 'on' }}
+          {% else %}
+            {{ slot == 'on' and mode == 'connected_requesting' }}
+          {% endif %}
 
 alert:
   # The reconciler retries forever and silently succeeds at retrying; this is
