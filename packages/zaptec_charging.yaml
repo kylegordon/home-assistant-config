@@ -100,23 +100,27 @@ automation:
 template:
   # alert: watches exactly one entity, so the compound "Predbat wants to charge
   # and the car is plugged in but still not charging" condition needs a feeder
-  # sensor. delay_on gives a normal authorization handshake time to complete so
-  # only a genuinely stuck charger trips it.
+  # sensor. It is split in two: the first tracks the condition itself, and the
+  # second turns "still true fifteen minutes later" into the alert state. One
+  # sensor with delay_on cannot do both — see the second sensor for why.
   - binary_sensor:
-      - name: "Zaptec charging not starting"
-        unique_id: zaptec_charging_not_starting
-        device_class: problem
-        delay_on: "00:15:00"
+      - name: "Zaptec charging awaiting authorization"
+        unique_id: zaptec_charging_awaiting_authorization
+        # Asks the same question as the start automation's conditions above, for
+        # a different consumer. The two must change together; nothing enforces
+        # that beyond this comment.
+        #
         # Deliberately no availability: template. alert: ends an alert on any
         # state that is not "on" — homeassistant/components/alert/entity.py
         # makes no exception for unavailable — so letting this sensor go
-        # unavailable would fire done_message and re-arm the whole delay_on.
+        # unavailable would fire done_message and restart the whole wait.
         # The charger sensor is cloud-backed and does drop out, and it is most
         # likely to do so during exactly the kind of trouble worth alerting on.
         # So hold the last known answer while either source is untrustworthy,
-        # and only move when both can be read. This also stops an unavailable
-        # slot sensor being read as a confident "Predbat does not want to
-        # charge" when the truth is that we cannot tell.
+        # and only move when both can be read. Holding also keeps last_changed
+        # still, which is what the sensor below measures. This also stops an
+        # unavailable slot sensor being read as a confident "Predbat does not
+        # want to charge" when the truth is that we cannot tell.
         state: >
           {% set slot = states('binary_sensor.predbat_car_charging_slot') %}
           {% set mode = states('sensor.viewpoint_charger_mode') %}
@@ -126,6 +130,33 @@ template:
           {% else %}
             {{ slot == 'on' and mode == 'connected_requesting' }}
           {% endif %}
+
+      - name: "Zaptec charging not starting"
+        unique_id: zaptec_charging_not_starting
+        device_class: problem
+        # Fifteen minutes of waiting is the alert threshold — long enough that a
+        # normal authorization handshake never trips it.
+        #
+        # Measured from the feeder's last_changed rather than with delay_on,
+        # because delay_on cannot survive a source dropout: template/
+        # binary_sensor.py cancels the pending timer on every re-render and
+        # returns without rescheduling when the new result matches the current
+        # state. A charger sensor flapping more often than every fifteen minutes
+        # would restart the countdown each time and the alert would never fire —
+        # suppressed by exactly the outage it exists to report. last_changed
+        # does not move while the feeder holds its answer, so the clock keeps
+        # running through a dropout.
+        #
+        # now() is bound unconditionally rather than inline: reading it is what
+        # registers this template for the per-minute re-render that advances the
+        # countdown, and Jinja would short-circuit past it while the feeder is
+        # off, leaving nothing to schedule the render that fires the alert.
+        state: >
+          {% set now_ts = now() %}
+          {% set feeder = states.binary_sensor.zaptec_charging_awaiting_authorization %}
+          {{ feeder is not none
+             and feeder.state == 'on'
+             and (now_ts - feeder.last_changed).total_seconds() >= 900 }}
 
 alert:
   # The reconciler retries forever and silently succeeds at retrying; this is
