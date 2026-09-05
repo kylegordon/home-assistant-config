@@ -84,10 +84,15 @@ automation:
         continue_on_error: true
         target:
           entity_id: button.viewpoint_deauthorize_charging
+      # Worded for what the conditions actually guarantee — the car is charging
+      # and no slot is open — rather than "the slot just ended". As a reconciler
+      # this also fires for a session the charger's own schedule started hours
+      # after a slot closed. "Sent" rather than "done" because continue_on_error
+      # means a genuine deauthorization failure reaches this step too.
       - action: notify.mobile_app_nothing_phone_2
         data:
           title: "Zaptec charging"
-          message: "Predbat charging slot ended — charging deauthorized."
+          message: "Charging outside a Predbat slot — deauthorization sent."
           data:
             tag: zaptec_charging
             timeout: 900
@@ -122,7 +127,10 @@ alert:
     skip_first: false
     title: "Zaptec charging"
     message: "Predbat wants to charge and the car is plugged in, but the charger is still not charging."
-    done_message: "Zaptec charging has started."
+    # The feeder sensor clears whenever its compound condition stops holding —
+    # charging started, but equally the slot closed or the car was unplugged.
+    # Only the alert itself can be said to have cleared.
+    done_message: "No longer waiting for Zaptec charging to start."
     notifiers:
       - mobile_app_nothing_phone_2
     data:
