@@ -111,4 +111,3 @@ exclude:
     - media_player.living_room
     - sensor.hot_tap_power
     - sensor.hot_tap_voltage
-    - sensor.average_external_light_level

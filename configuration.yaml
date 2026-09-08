@@ -91,7 +91,7 @@ recorder: !include recorder.yaml
 http:
   use_x_forwarded_for: true
   trusted_proxies:
-    - 172.20.0.0/24
+    - 172.21.0.0/24
   cors_allowed_origins:
     - http://homeauto.vpn.glasgownet.com
     - http://viewpoint.house

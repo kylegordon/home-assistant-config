@@ -2,7 +2,7 @@
 - platform: min_max
   name: Average External Light Level
   unique_id: average_external_light_level
-  type: median
+  type: mean
   entity_ids:
     - sensor.lux_meter_1_level
     - sensor.lux_meter_2_level
@@ -114,7 +114,7 @@
 
 - platform: integration
   source: sensor.polestar_4_442660_charging_power
-  name: Polestar 4 Charging Energy
+  name: Polestar 4 (442660) Charging Energy (Predbat)
   unique_id: polestar_4_442660_charging_energy
   round: 2
   method: left

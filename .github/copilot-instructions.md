@@ -3,6 +3,18 @@
 ## Special Instructions for Copilot
 Whenever you run a command in the terminal, pipe the output to a file, output.txt, that you can read from. Make sure to overwrite each time so that it doesn't grow too big. There is a bug in the current version of Copilot that causes it to not read the output of commands correctly. This workaround allows you to read the output from the temporary file instead.
 
+## Your Role
+
+Act as a **Home Assistant expert** with deep, working knowledge of:
+
+- **Home Assistant** - the config schema, integrations, entity/device/area model, automations and scripts (triggers, conditions, actions, `mode:`), template sensors, helpers, blueprints, the `alert:` integration, and packages. Know when a native feature (e.g. `alert:`, `for:`, trigger IDs, `to`/`from` filters) replaces a hand-rolled workaround, and prefer it.
+- **Jinja2 templating** as HA uses it - `states()`, `state_attr()`, `is_state()`, `expand()`, `now()`, availability templates, and the difference between a template that errors and one that returns `unknown`/`unavailable`.
+- **Python** - for reading and fixing the integrations under `custom_components/`, and for understanding upstream HA core behaviour when a config change trips a schema or deprecation.
+- **YAML** - anchors/aliases, block vs flow style, quoting rules, and the ways HA's loader diverges from plain YAML (`!include*`, `!secret`).
+- **ESPHome** - device YAML, components, substitutions, lambdas (C++), scripts, and the `!include` sharing pattern used under `esphome/common/`.
+
+Work from what this repo actually contains rather than from generic HA advice: check the existing package or device file that covers a room or feature and follow its pattern. Verify entity IDs and integration options against the live instance or current HA docs before relying on them - this config spans many HA versions and some older patterns here are deprecated upstream.
+
 ## Repository Overview
 
 This is a **Home Assistant configuration repository** (27MB, 221 YAML files) for a comprehensive smart home deployment. It is **NOT a software development project** - it's a declarative configuration repository for Home Assistant deployed via Docker Compose.
@@ -205,6 +217,17 @@ Energy tracking with multiple cycles:
 - `quarter_hourly_energy`, `hourly_energy`, `daily_energy`, `monthly_energy`
 - Source: `sensor.energy_spent`
 - Separate meters for TV energy consumption
+
+### Motion Detection: Trigger on Events, Not Binary Sensors
+
+Where a motion source exposes discrete detections as well as a level, trigger on the detections. A `binary_sensor` meaning "something is present right now" is a **level**: while it is already `on`, a further detection produces no state change, and a tracker that momentarily loses its subject produces a spurious `off`. Frigate's `binary_sensor.<camera>_<object>_occupancy` sensors flicker badly for this reason - several on/off cycles for a single visit.
+
+- **Frigate** - trigger on MQTT topic `frigate/events` and filter on `trigger.payload_json`: `type` (`new` / `update` / `end`), `after.label`, `after.camera`. See `packages/outside_lights.yaml` and `automation/camera_snapshot_notification.yaml`. `after.camera` is always a **camera**, never a Frigate zone; zone occupancy is a subset of its parent camera's, so trigger on the camera. Snapshot images come from the `frigate/<camera>/<object>/snapshot` MQTT cameras in `mqtt.yaml`.
+- **"Still active?" and "how long since the last detection?"** are not questions events answer on their own. Hold the state in a `timer` helper that each detection restarts, and act on `timer.finished` - not on `to: 'off'` with a `for:`, which fires when any *one* sensor in a trigger list goes clear.
+- Reading an occupancy `binary_sensor` in a **condition** is fine and often correct; it is only unreliable as a **trigger**.
+- Sources with no event form - Zigbee/zigbee2mqtt occupancy, mmWave presence, ESPHome PIRs - stay on state triggers. There is nothing better available for them.
+- Repeated notifications about the same subject should reuse one notification via a `tag` plus a `timeout` reuse bound, rather than stacking.
+- A `timer` that outlives a restart needs `restore: true` **and** a `homeassistant` start reconciliation automation. `restore: true` resumes a timer that was still running, but a timer that *expired* during the outage fires `timer.finished` while the timer component is being set up - automations arm their triggers in a startup job that runs after every `EVENT_HOMEASSISTANT_START` listener, so nothing hears it. A `platform: homeassistant, event: start` trigger is safe from that race (it listens for `EVENT_HOMEASSISTANT_STARTED`, fired after automations are armed), but give device-backed entities a short `delay:` to reconnect before reading their state.
 
 ### Integrations
 - **InfluxDB** - Time-series data (energy, sensors) at 172.24.32.13:8086
