@@ -1,7 +1,7 @@
 automation:
   - alias: Zaptec Predbat charging start
     id: zaptec_predbat_charging_start
-    description: Authorize Zaptec charging whenever Predbat wants the car charging and the charger is waiting for authorization.
+    description: Start Zaptec charging whenever Predbat wants the car charging and the charger is not charging — authorizing a session that is waiting for it, resuming one the charger has abandoned.
     triggers:
       # Fast path: the slot opening with the car already plugged in.
       - trigger: state
@@ -17,36 +17,102 @@ automation:
       # across the slot transition, the Zaptec cloud being unreachable at the
       # moment of the press, or the press itself erroring. Re-pressing authorize
       # is idempotent, so a redundant tick costs nothing.
+      #
+      # This is also the only path into the connected_finished recovery below,
+      # deliberately. There is no fast-path trigger on connected_finished: the
+      # failure that needs recovering is an authorize landing milliseconds into
+      # the cable handshake, so an instant retry would press again into exactly
+      # the state that just rejected one. The tick gives the session time to
+      # settle first.
       - trigger: time_pattern
         minutes: "/5"
     conditions:
       # Both halves matter. The slot check is the "should it be charging" half;
-      # the charger_mode check is what stops the reconciler pressing authorize
-      # against a charger with no session to authorize — the cause of every
-      # errored run on record, which aborted before the notification could fire.
+      # the charger_mode check is what stops the reconciler pressing buttons
+      # against a charger with no session to act on — the cause of every errored
+      # run on record, which aborted before the notification could fire.
+      #
+      # Two modes now qualify, because "plugged in and not charging" has two
+      # shapes and they need different buttons. Everything else — disconnected,
+      # connected_charging — is either nothing to do or already done, and is
+      # kept out here rather than in the choose so the trace log stays free of
+      # no-op runs.
       - condition: state
         entity_id: binary_sensor.predbat_car_charging_slot
         state: "on"
       - condition: state
         entity_id: sensor.viewpoint_charger_mode
-        state: connected_requesting
+        state:
+          - connected_requesting
+          - connected_finished
     actions:
-      # Deliberately no continue_on_error: if authorizing fails then charging
-      # genuinely did not start, and the error belongs in the trace where the
-      # five-minute retry can be seen working against it.
-      - action: button.press
-        target:
-          entity_id: button.viewpoint_authorize_charging
-      - action: notify.mobile_app_nothing_phone_2
-        data:
-          title: "Zaptec charging"
-          message: "Predbat charging slot active — charging authorized."
-          data:
-            # The reconciler can press more than once for a single slot, so a
-            # stable tag updates one notification in place rather than stacking
-            # near-identical ones. Same reuse bound as the camera notifications.
-            tag: zaptec_charging
-            timeout: 900
+      # Deliberately no continue_on_error on either press: if the press fails
+      # then charging genuinely did not start, and the error belongs in the
+      # trace where the five-minute retry can be seen working against it.
+      - choose:
+          # A session offered and waiting for authorization. The original case,
+          # and the one that works: on every successful night on record the car
+          # had been sitting in connected_requesting for hours and the slot
+          # opened onto it.
+          - conditions:
+              - condition: state
+                entity_id: sensor.viewpoint_charger_mode
+                state: connected_requesting
+            sequence:
+              - action: button.press
+                target:
+                  entity_id: button.viewpoint_authorize_charging
+              - action: notify.mobile_app_nothing_phone_2
+                data:
+                  title: "Zaptec charging"
+                  message: "Predbat charging slot active — charging authorized."
+                  data:
+                    # The reconciler can press more than once for a single slot,
+                    # so a stable tag updates one notification in place rather
+                    # than stacking near-identical ones. Same reuse bound as the
+                    # camera notifications.
+                    tag: zaptec_charging
+                    timeout: 900
+          # A session the charger has closed without delivering anything. Seen
+          # when the car is plugged in while a slot is already open: the charger
+          # reports the session, authorize lands within the same millisecond,
+          # and two seconds later the mode is connected_finished at 0 W. Before
+          # this branch existed nothing retried and nothing alerted — the
+          # reconciler failed its connected_requesting condition every tick for
+          # the rest of the slot, silently.
+          #
+          # connected_finished is also the normal end of a completed charge, so
+          # the car's own view is what separates the two. Both guards are load
+          # bearing: charging_status rules out 'done' (the car finished) and
+          # 'scheduled'/'smart_charging_paused' (the car is deferring on
+          # purpose), while the SOC comparison catches a car that is sitting at
+          # its target with a status that has since decayed back to 'idle' —
+          # which is what happens every morning after an overnight charge.
+          - conditions:
+              - condition: state
+                entity_id: sensor.viewpoint_charger_mode
+                state: connected_finished
+              - condition: state
+                entity_id: sensor.polestar_4_442660_charging_status
+                state: idle
+              - condition: numeric_state
+                entity_id: sensor.polestar_4_442660_battery_level
+                below: number.polestar_4_442660_target_soc
+            sequence:
+              # Resume, not authorize. The session is already authorized — it
+              # has been abandoned. Zaptec exposes this exact distinction:
+              # while the mode is connected_finished the stop button goes
+              # unavailable and the resume button is the live one.
+              - action: button.press
+                target:
+                  entity_id: button.viewpoint_resume_charging
+              - action: notify.mobile_app_nothing_phone_2
+                data:
+                  title: "Zaptec charging"
+                  message: "Charger stopped inside a Predbat slot — charging resumed."
+                  data:
+                    tag: zaptec_charging
+                    timeout: 900
 
   - alias: Zaptec Predbat charging stop
     id: zaptec_predbat_charging_stop
@@ -108,7 +174,9 @@ template:
         unique_id: zaptec_charging_awaiting_authorization
         # Asks the same question as the start automation's conditions above, for
         # a different consumer. The two must change together; nothing enforces
-        # that beyond this comment.
+        # that beyond this comment. Both charger modes the automation acts on
+        # are covered here, or a recovery that keeps failing would stay as
+        # invisible as the missing recovery was.
         #
         # Deliberately no availability: template. alert: ends an alert on any
         # state that is not "on" — homeassistant/components/alert/entity.py
@@ -116,19 +184,38 @@ template:
         # unavailable would fire done_message and restart the whole wait.
         # The charger sensor is cloud-backed and does drop out, and it is most
         # likely to do so during exactly the kind of trouble worth alerting on.
-        # So hold the last known answer while either source is untrustworthy,
-        # and only move when both can be read. Holding also keeps last_changed
-        # still, which is what the sensor below measures. This also stops an
-        # unavailable slot sensor being read as a confident "Predbat does not
-        # want to charge" when the truth is that we cannot tell.
+        # So hold the last known answer while a source needed for the answer is
+        # untrustworthy, and only move when it can be read. Holding also keeps
+        # last_changed still, which is what the sensor below measures. This also
+        # stops an unavailable slot sensor being read as a confident "Predbat
+        # does not want to charge" when the truth is that we cannot tell.
+        #
+        # The car sensors are consulted only inside the connected_finished
+        # branch, so a Polestar API dropout — which does happen, and takes every
+        # car entity unavailable together — cannot freeze the branch that does
+        # not need them. The connected_requesting answer stays as reliable as it
+        # was before this branch existed.
         state: >
+          {% set unreadable = ['unavailable', 'unknown', 'none'] %}
           {% set slot = states('binary_sensor.predbat_car_charging_slot') %}
           {% set mode = states('sensor.viewpoint_charger_mode') %}
-          {% if slot in ['unavailable', 'unknown', 'none']
-                or mode in ['unavailable', 'unknown', 'none'] %}
+          {% if slot in unreadable or mode in unreadable %}
             {{ this.state == 'on' }}
+          {% elif slot != 'on' %}
+            {{ false }}
+          {% elif mode == 'connected_requesting' %}
+            {{ true }}
+          {% elif mode == 'connected_finished' %}
+            {% set status = states('sensor.polestar_4_442660_charging_status') %}
+            {% set soc = states('sensor.polestar_4_442660_battery_level') %}
+            {% set target = states('number.polestar_4_442660_target_soc') %}
+            {% if status in unreadable or soc in unreadable or target in unreadable %}
+              {{ this.state == 'on' }}
+            {% else %}
+              {{ status == 'idle' and soc | float(0) < target | float(0) }}
+            {% endif %}
           {% else %}
-            {{ slot == 'on' and mode == 'connected_requesting' }}
+            {{ false }}
           {% endif %}
 
       - name: "Zaptec charging not starting"
