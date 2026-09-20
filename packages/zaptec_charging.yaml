@@ -163,6 +163,85 @@ automation:
             tag: zaptec_charging
             timeout: 900
 
+  - alias: Car charge plan shortfall
+    id: car_charge_plan_shortfall
+    description: >
+      Notify when Predbat's plan cannot reach the car's target by the ready
+      time. input_number.predbat_car_charging_plan_max_price is capped below
+      the peak rate, so Predbat will not buy peak units to close a shortfall --
+      it simply arrives low. That is the intended trade almost every night: the
+      cheap window carries far more energy per week than the car uses, so a
+      short night is absorbed by the next one. This exists for the nights it is
+      not, and it advises rather than acts, because only the driver knows
+      whether tomorrow needs the range.
+    triggers:
+      # The ordinary case: car already plugged in for the evening. Late enough
+      # that the day's driving is done, early enough to act before the cheap
+      # window opens at 23:30.
+      - trigger: time
+        at: "22:00:00"
+      # A car plugged in after that fixed point would otherwise go unreported.
+      # The ten minutes let Predbat -- which replans about every five -- produce
+      # at least one plan that knows the car is connected.
+      - trigger: state
+        entity_id: binary_sensor.polestar_4_442660_plugged_in
+        to: "on"
+        for: "00:10:00"
+    conditions:
+      # Both triggers are gated to the evening rather than only the second, so
+      # a clock change or a manual trigger cannot deliver this overnight.
+      - condition: time
+        after: "19:00:00"
+        before: "23:30:00"
+      - condition: state
+        entity_id: binary_sensor.polestar_4_442660_plugged_in
+        state: "on"
+      # has_value rather than a float default: the Polestar API drops out and
+      # takes every car entity unavailable together, and a defaulted 0 kWh
+      # predicted against an 80% target is a maximal shortfall -- the one shape
+      # that would notify hardest on the least information.
+      - condition: template
+        value_template: >
+          {{ has_value('predbat.car_soc_best')
+             and has_value('number.polestar_4_442660_target_soc')
+             and target_kwh - predicted_kwh >= 5 }}
+    variables:
+      # Predbat reports the car in kWh and the Polestar in percent, so one has
+      # to be converted. pack_kwh mirrors car_charging_battery_size in
+      # Predbat's apps.yaml, which is hardcoded because the Polestar API no
+      # longer publishes capacity -- the two must change together if the car
+      # does. They are numerically equal today at 100, which makes the
+      # conversion look redundant; it is not, and removing it would silently
+      # break on any other car.
+      pack_kwh: 100
+      predicted_kwh: "{{ states('predbat.car_soc_best') | float(0) }}"
+      target_kwh: >
+        {{ states('number.polestar_4_442660_target_soc') | float(0)
+           / 100 * pack_kwh }}
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Car charging"
+          # Percentages, not kWh: the target is set in percent on the car and
+          # read back in percent on the app, so kWh would need translating at
+          # the moment of deciding.
+          message: >-
+            Cheap rate alone reaches
+            {{ (predicted_kwh / pack_kwh * 100) | round }}% by
+            {{ states('select.predbat_car_charging_plan_time')[:5] }}, short of
+            the {{ (target_kwh / pack_kwh * 100) | round }}% target.
+            To charge through peak tonight, raise Predbat's Car Charging Plan
+            max price to 35p.
+          data:
+            # One notification per night rather than one per trigger: the
+            # plugged-in trigger and the 22:00 trigger both firing is normal,
+            # and the second should replace the first rather than stack.
+            tag: car_charge_plan_shortfall
+            # Longer than the tag reuse bound elsewhere in this package. This
+            # one asks for a decision that stays valid until the cheap window
+            # opens, not a status that goes stale in minutes.
+            timeout: 3600
+
 template:
   # alert: watches exactly one entity, so the compound "Predbat wants to charge
   # and the car is plugged in but still not charging" condition needs a feeder
