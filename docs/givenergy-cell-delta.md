@@ -106,6 +106,28 @@ entities:
 If one pack's daily peak keeps climbing while the others stay flat, that pack
 is the one to raise with GivEnergy.
 
+## What other owners see
+
+This section is a paraphrase of a September 2026 discussion in the GivEnergy
+Owners Facebook group, linked below. It's anecdote from owners, not guidance
+from GivEnergy.
+
+- **Single-digit deltas are normal.** One owner looking at their packs at low
+  SoC asked whether 8–9 mV on two packs, against 2 mV on the other two, was a
+  concern. The replies all said no, and other owners reported 1–2 mV.
+- **The BMS balancer reportedly works to about 30 mV.** Don't expect it to hold
+  the cells closer than that, so a delta under 30 mV is as good as it gets.
+- **100–150 mV is where to start looking more closely.** A community session
+  on battery management gave that as the figure that deserves attention. That
+  puts the 50 mV threshold here well on the cautious side. It is an early
+  warning, not a fault. If it goes off during ordinary deep discharges, raise
+  it towards 100 mV.
+- **Wayward cells at the ends are common.** One owner had a single cell
+  drifting about 150 mV away from the rest, but only near full or empty, and
+  back in line through the middle of the range. That's the LFP knee
+  behaviour described above. They also found their packs drifted apart unless
+  they did a full charge and discharge about once a fortnight.
+
 ## Further reading
 
 - [Facebook group discussion of GivEnergy cell deltas](https://www.facebook.com/groups/1517262158723613/posts/2602772823505869)
