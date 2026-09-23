@@ -105,3 +105,8 @@ entities:
 
 If one pack's daily peak keeps climbing while the others stay flat, that pack
 is the one to raise with GivEnergy.
+
+## Further reading
+
+- [Facebook group discussion of GivEnergy cell deltas](https://www.facebook.com/groups/1517262158723613/posts/2602772823505869)
+  (you need to be logged in to Facebook to read it)
