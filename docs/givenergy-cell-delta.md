@@ -8,7 +8,8 @@ GivEnergy battery packs, and alerts when any pack stays unbalanced.
 | Entity | What it is |
 | --- | --- |
 | `sensor.givenergy_<serial>_cell_delta` | Highest cell voltage minus lowest, across the pack's 16 cells, in mV |
-| `binary_sensor.givenergy_cell_imbalance` | `on` once any pack has been over 50 mV for 15 minutes |
+| `binary_sensor.givenergy_<serial>_cell_imbalance` | `on` once that pack has been over 50 mV for 15 minutes without a break |
+| `binary_sensor.givenergy_cell_imbalance` | `on` while any of the per-pack sensors is `on`; this is what the alert watches |
 | `alert.givenergy_cell_imbalance` | Phone notification while the binary sensor is `on`, repeated every 4 hours, can be acknowledged |
 
 The serials are `dx2320g655`, `dz2324g237`, `dx2319r335`, `dz2239r348` and
@@ -16,8 +17,16 @@ The serials are `dx2320g655`, `dz2324g237`, `dx2319r335`, `dz2239r348` and
 entities that GivTCP publishes. It goes `unavailable` unless all 16 cells
 report a value, so a missing cell can't make the spread look smaller than it is.
 
-The binary sensor has an `over_threshold` attribute that lists each offending
-pack and its delta. The alert message uses it, along with the inverter SoC.
+Each pack has its own 15-minute timer. Two packs that are each over the
+threshold for 10 minutes, one after the other, won't raise the alert.
+
+If a pack's delta sensor goes unavailable, its imbalance sensor keeps its last
+state. A dropout therefore can't raise the alert, and it can't clear one
+either, so "back under 50 mV" only arrives after a real reading.
+
+The aggregate sensor has an `over_threshold` attribute that lists each
+offending pack and its delta. The alert message uses it, along with the
+inverter SoC.
 
 ## Reading the delta
 
@@ -36,8 +45,8 @@ Heavy charge or discharge current also opens up the spread for a while,
 because each cell has slightly different internal resistance. The 15-minute
 `delay_on` is there so those spikes don't reach the alert.
 
-To change the 50 mV threshold, edit the `> 50` in both templates of
-`binary_sensor.givenergy_cell_imbalance`, and the alert's `done_message`.
+To change the 50 mV threshold, edit the `> 50` in each per-pack imbalance
+sensor, and the alert's `done_message`.
 
 ## Dashboard cards
 
