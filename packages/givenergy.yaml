@@ -7,6 +7,72 @@ template:
         availability: "{{ states('sensor.octopus_energy_electricity_current_rate') not in ['unavailable', 'unknown', 'none'] }}"
         icon: mdi:transmission-tower-import
 
+      # One per pack, so each pack has to stay over 50 mV for the whole
+      # delay_on by itself. The delay rides out the spread that heavy
+      # charge/discharge current briefly opens up through cell internal
+      # resistance. While the delta sensor is unavailable the last state is
+      # held, so a telemetry dropout neither raises nor clears the alert.
+      - name: "GivEnergy DX2320G655 cell imbalance"
+        unique_id: givenergy_dx2320g655_cell_imbalance
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dx2320g655_cell_delta') %}
+          {{ d | int > 50 if d | is_number else this.state == 'on' }}
+        delay_on:
+          minutes: 15
+
+      - name: "GivEnergy DZ2324G237 cell imbalance"
+        unique_id: givenergy_dz2324g237_cell_imbalance
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dz2324g237_cell_delta') %}
+          {{ d | int > 50 if d | is_number else this.state == 'on' }}
+        delay_on:
+          minutes: 15
+
+      - name: "GivEnergy DX2319R335 cell imbalance"
+        unique_id: givenergy_dx2319r335_cell_imbalance
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dx2319r335_cell_delta') %}
+          {{ d | int > 50 if d | is_number else this.state == 'on' }}
+        delay_on:
+          minutes: 15
+
+      - name: "GivEnergy DZ2239R348 cell imbalance"
+        unique_id: givenergy_dz2239r348_cell_imbalance
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dz2239r348_cell_delta') %}
+          {{ d | int > 50 if d | is_number else this.state == 'on' }}
+        delay_on:
+          minutes: 15
+
+      - name: "GivEnergy DF2240G031 cell imbalance"
+        unique_id: givenergy_df2240g031_cell_imbalance
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_df2240g031_cell_delta') %}
+          {{ d | int > 50 if d | is_number else this.state == 'on' }}
+        delay_on:
+          minutes: 15
+
+      # Any pack imbalanced; the single entity the alert watches.
+      - name: "GivEnergy cell imbalance"
+        unique_id: givenergy_cell_imbalance
+        device_class: problem
+        icon: mdi:battery-alert
+        state: >
+          {{ expand(['binary_sensor.givenergy_dx2320g655_cell_imbalance', 'binary_sensor.givenergy_dz2324g237_cell_imbalance', 'binary_sensor.givenergy_dx2319r335_cell_imbalance', 'binary_sensor.givenergy_dz2239r348_cell_imbalance', 'binary_sensor.givenergy_df2240g031_cell_imbalance']) | selectattr('state', 'eq', 'on') | list | count > 0 }}
+        attributes:
+          over_threshold: >
+            {%- set ns = namespace(p=[]) %}
+            {%- for s in expand(['binary_sensor.givenergy_dx2320g655_cell_imbalance', 'binary_sensor.givenergy_dz2324g237_cell_imbalance', 'binary_sensor.givenergy_dx2319r335_cell_imbalance', 'binary_sensor.givenergy_dz2239r348_cell_imbalance', 'binary_sensor.givenergy_df2240g031_cell_imbalance']) if s.state == 'on' %}
+              {%- set d = states(s.entity_id | replace('binary_sensor.', 'sensor.') | replace('_cell_imbalance', '_cell_delta')) %}
+              {%- set ns.p = ns.p + [s.name | replace(' cell imbalance', '') ~ ' ' ~ (d ~ ' mV' if d | is_number else 'no reading')] %}
+            {%- endfor %}
+            {{ ns.p | join(', ') }}
+
   - sensor:
       - name: "Battery status"
         unique_id: battery_status
@@ -67,6 +133,95 @@ template:
 
         # "{{ states('sensor.viewpoint_device_0_arotherm_plus_heat_generated_domestic_hot_water') | int / states('sensor.viewpoint_device_0_arotherm_plus_consumed_electrical_energy_domestic_hot_water') | int | float(default='NaN') }}"
 
+      # Spread between the highest and lowest of a pack's 16 cells. LFP is flat
+      # through the middle of its SoC range, so this reads a few mV there on any
+      # pack; it only opens up near full (top balancing) and near empty
+      # (capacity mismatch between cells), which is where it tells you anything.
+      - name: "GivEnergy DX2320G655 cell delta"
+        unique_id: givenergy_dx2320g655_cell_delta
+        unit_of_measurement: mV
+        state_class: measurement
+        icon: mdi:battery-sync
+        state: >
+          {%- set ns = namespace(v=[]) %}
+          {%- for i in range(1, 17) %}
+            {%- set s = states('sensor.givtcp_dx2320g655_battery_cell_' ~ i ~ '_voltage') %}
+            {%- if s | is_number %}{% set ns.v = ns.v + [s | float] %}{% endif %}
+          {%- endfor %}
+          {{ ((ns.v | max - ns.v | min) * 1000) | round(0) | int }}
+        availability: >
+          {{ range(1, 17) | map('string')
+             | map('regex_replace', '^(.*)$', 'sensor.givtcp_dx2320g655_battery_cell_\\1_voltage')
+             | select('has_value') | list | count == 16 }}
+
+      - name: "GivEnergy DZ2324G237 cell delta"
+        unique_id: givenergy_dz2324g237_cell_delta
+        unit_of_measurement: mV
+        state_class: measurement
+        icon: mdi:battery-sync
+        state: >
+          {%- set ns = namespace(v=[]) %}
+          {%- for i in range(1, 17) %}
+            {%- set s = states('sensor.givtcp_dz2324g237_battery_cell_' ~ i ~ '_voltage') %}
+            {%- if s | is_number %}{% set ns.v = ns.v + [s | float] %}{% endif %}
+          {%- endfor %}
+          {{ ((ns.v | max - ns.v | min) * 1000) | round(0) | int }}
+        availability: >
+          {{ range(1, 17) | map('string')
+             | map('regex_replace', '^(.*)$', 'sensor.givtcp_dz2324g237_battery_cell_\\1_voltage')
+             | select('has_value') | list | count == 16 }}
+
+      - name: "GivEnergy DX2319R335 cell delta"
+        unique_id: givenergy_dx2319r335_cell_delta
+        unit_of_measurement: mV
+        state_class: measurement
+        icon: mdi:battery-sync
+        state: >
+          {%- set ns = namespace(v=[]) %}
+          {%- for i in range(1, 17) %}
+            {%- set s = states('sensor.givtcp_dx2319r335_battery_cell_' ~ i ~ '_voltage') %}
+            {%- if s | is_number %}{% set ns.v = ns.v + [s | float] %}{% endif %}
+          {%- endfor %}
+          {{ ((ns.v | max - ns.v | min) * 1000) | round(0) | int }}
+        availability: >
+          {{ range(1, 17) | map('string')
+             | map('regex_replace', '^(.*)$', 'sensor.givtcp_dx2319r335_battery_cell_\\1_voltage')
+             | select('has_value') | list | count == 16 }}
+
+      - name: "GivEnergy DZ2239R348 cell delta"
+        unique_id: givenergy_dz2239r348_cell_delta
+        unit_of_measurement: mV
+        state_class: measurement
+        icon: mdi:battery-sync
+        state: >
+          {%- set ns = namespace(v=[]) %}
+          {%- for i in range(1, 17) %}
+            {%- set s = states('sensor.givtcp_dz2239r348_battery_cell_' ~ i ~ '_voltage') %}
+            {%- if s | is_number %}{% set ns.v = ns.v + [s | float] %}{% endif %}
+          {%- endfor %}
+          {{ ((ns.v | max - ns.v | min) * 1000) | round(0) | int }}
+        availability: >
+          {{ range(1, 17) | map('string')
+             | map('regex_replace', '^(.*)$', 'sensor.givtcp_dz2239r348_battery_cell_\\1_voltage')
+             | select('has_value') | list | count == 16 }}
+
+      - name: "GivEnergy DF2240G031 cell delta"
+        unique_id: givenergy_df2240g031_cell_delta
+        unit_of_measurement: mV
+        state_class: measurement
+        icon: mdi:battery-sync
+        state: >
+          {%- set ns = namespace(v=[]) %}
+          {%- for i in range(1, 17) %}
+            {%- set s = states('sensor.givtcp_df2240g031_battery_cell_' ~ i ~ '_voltage') %}
+            {%- if s | is_number %}{% set ns.v = ns.v + [s | float] %}{% endif %}
+          {%- endfor %}
+          {{ ((ns.v | max - ns.v | min) * 1000) | round(0) | int }}
+        availability: >
+          {{ range(1, 17) | map('string')
+             | map('regex_replace', '^(.*)$', 'sensor.givtcp_df2240g031_battery_cell_\\1_voltage')
+             | select('has_value') | list | count == 16 }}
+
 automation:
   - alias: Boost hot water
     id: boost_hot_water
@@ -84,3 +239,26 @@ automation:
         data:
           title: "Hot water boost triggered"
           message: "Hot water boost triggered whilst exporting."
+
+alert:
+  givenergy_cell_imbalance:
+    name: "GivEnergy cell imbalance"
+    entity_id: binary_sensor.givenergy_cell_imbalance
+    state: "on"
+    # A real interval is required. repeat: [] passes check_config but raises
+    # IndexError the first time the alert fires.
+    repeat:
+      - 240
+    can_acknowledge: true
+    skip_first: false
+    title: "Battery cell imbalance"
+    # SoC says which end of the curve it happened at: near full is a balancing
+    # question, near empty is a weak (low-capacity) cell.
+    message: >
+      {{ state_attr('binary_sensor.givenergy_cell_imbalance', 'over_threshold') }}
+      at {{ states('sensor.givtcp_fd2308f368_soc') }}% SoC.
+    done_message: "Battery cell deltas are back under 50 mV."
+    notifiers:
+      - mobile_app_nothing_phone_2
+    data:
+      tag: givenergy_cell_imbalance
