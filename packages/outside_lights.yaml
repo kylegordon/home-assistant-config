@@ -66,8 +66,7 @@ automation:
   #
   # frigate/events carries the detections themselves — one message per stage of
   # a tracked object's life (type: new / update / end) — which is what these
-  # automations actually want. Same source as
-  # automation/camera_snapshot_notification.yaml.
+  # automations actually want.
   #
   # Cameras, not zones: 'gates' is a zone on the driveway_tin_hut camera, and
   # 'road' / 'parking_area_-_driveway' / 'parking_area_-_tin_hut' are zones on
@@ -113,7 +112,9 @@ automation:
             # One tracked person can still end and restart as several objects,
             # so repeated detections on the same camera update a single
             # notification in place instead of stacking near-identical ones.
-            # Same tag+timeout reuse bound as camera_snapshot_notification.
+            # The timeout bounds the reuse: the notification self-dismisses
+            # this long after the latest detection, so a later visit alerts
+            # afresh rather than silently updating one already seen.
             tag: "outside_person:{{ camera }}"
             timeout: 900
             clickAction: "/lovelace/outside"
@@ -123,6 +124,71 @@ automation:
                 /api/camera_proxy/{{ snapshot_entity }}?token={{ state_attr(snapshot_entity, 'access_token') }}
               {% endif %}
 
+
+  - alias: Driveway car arrival
+    id: driveway_car_arrival
+    description: >-
+      Notify when a moving car enters one of the driveway parking areas from
+      outside it.
+    # Same reasoning as Outside person detected: most frigate/events messages
+    # are rejected by the conditions, and several can arrive at once.
+    mode: queued
+    max: 10
+    triggers:
+      - trigger: mqtt
+        topic: "frigate/events"
+    variables:
+      # Frigate zone names, keyed by the camera that owns them. The HA
+      # occupancy sensors slugify these (binary_sensor.parking_area_driveway_*),
+      # but the frigate/events payload carries the names exactly as configured
+      # in Frigate.
+      parking_zones:
+        driveway: "parking_area_-_driveway"
+        driveway_tin_hut: "parking_area_-_tin_hut"
+      event: "{{ trigger.payload_json.after }}"
+      camera: "{{ event.camera | default('unknown') }}"
+      zone: "{{ parking_zones.get(camera, '') }}"
+      entered_before: "{{ trigger.payload_json.before.entered_zones | default([]) }}"
+      entered_after: "{{ event.entered_zones | default([]) }}"
+    conditions:
+      - "{{ trigger.payload_json.type in ['new', 'update'] }}"
+      - "{{ event.label == 'car' }}"
+      - "{{ zone != '' }}"
+      # A parked car is lost and reacquired by the tracker all day long
+      # (binary_sensor.parking_area_tin_hut_car_occupancy flips dozens of times
+      # a day), and each reacquisition is a fresh object that already sits in
+      # the parking area. Stationary objects are never arrivals.
+      - "{{ not event.stationary | default(false) }}"
+      - "{{ not event.false_positive | default(false) }}"
+      # The edge: this message is the one in which the object first entered the
+      # parking area. Without it every later update for the same car would
+      # re-notify.
+      - "{{ zone in entered_after and zone not in entered_before }}"
+      # entered_zones is in order of entry. An arriving car is first seen on the
+      # road or at the gates; a car that was reacquired while parked and then
+      # drives off has the parking area first. Requiring another zone ahead of
+      # it filters out departures, at the cost of missing an arrival that
+      # Frigate only picks up once it is already in the parking area.
+      - "{{ entered_after | first != zone }}"
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Car arriving"
+          message: >
+            Car arriving on the {{ camera | replace('_', ' ') | title }} camera
+          data:
+            # One arrival can still split into several tracked objects, so they
+            # update a single notification rather than stacking. The timeout
+            # bounds the reuse so a later arrival alerts afresh.
+            tag: "driveway_car_arrival:{{ camera }}"
+            timeout: 900
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+            # The Frigate integration's notification proxy serves this event's
+            # own image, rather than whichever car the camera saw most recently.
+            image: >
+              /api/frigate/notifications/{{ event.id }}/{{
+              'snapshot.jpg' if event.has_snapshot | default(false) else 'thumbnail.jpg' }}
 
   - alias: "Outside night lights on"
     id: outside_night_lights_on
