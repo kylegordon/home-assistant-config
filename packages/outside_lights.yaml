@@ -129,7 +129,8 @@ automation:
     id: driveway_car_arrival
     description: >-
       Notify when a moving car enters one of the driveway parking areas from
-      outside it.
+      outside it, and after dark turn the outside lights on through the same
+      hold timer as Outside lights on.
     # Same reasoning as Outside person detected: most frigate/events messages
     # are rejected by the conditions, and several can arrive at once.
     mode: queued
@@ -150,6 +151,11 @@ automation:
       zone: "{{ parking_zones.get(camera, '') }}"
       entered_before: "{{ trigger.payload_json.before.entered_zones | default([]) }}"
       entered_after: "{{ event.entered_zones | default([]) }}"
+      # Same gate as Outside lights on, so a car never lights up the outside
+      # when a person would not.
+      lights_wanted: >
+        {{ is_state('sun.sun', 'below_horizon')
+           and is_state('input_boolean.night_view', 'off') }}
     conditions:
       - "{{ trigger.payload_json.type in ['new', 'update'] }}"
       - "{{ event.label == 'car' }}"
@@ -172,11 +178,29 @@ automation:
       # Frigate only picks up once it is already in the parking area.
       - "{{ entered_after | first != zone }}"
     actions:
+      # Lights go through timer.outside_lights_hold, so Outside lights off
+      # turns them off again, and re-arms while the driver is still out there
+      # on the person occupancy check. A parked car is deliberately not part of
+      # that check, or it would hold the lights on all night.
+      #
+      # Side effect: the hold is active by the time the driver gets out, so
+      # Outside lights on treats them as a continuation of this visit and skips
+      # its chime and "Person outside!" notification.
+      - if:
+          - "{{ lights_wanted }}"
+        then:
+          - action: timer.start
+            target:
+              entity_id: timer.outside_lights_hold
+          - action: homeassistant.turn_on
+            target:
+              entity_id: light.outside_lights
       - action: notify.mobile_app_nothing_phone_2
         data:
           title: "Car arriving"
           message: >
             Car arriving on the {{ camera | replace('_', ' ') | title }} camera
+            {%- if lights_wanted %}. Turning on outside lights{% endif %}
           data:
             # Both cameras usually see the same arrival within seconds, and one
             # arrival can split into several tracked objects, so every arrival
