@@ -68,9 +68,9 @@ automation:
   # a tracked object's life (type: new / update / end) — which is what these
   # automations actually want.
   #
-  # Cameras, not zones: 'gates' is a zone on the driveway_tin_hut camera, and
-  # 'road' / 'parking_area_-_driveway' / 'parking_area_-_tin_hut' are zones on
-  # driveway and driveway_tin_hut. Their occupancy is a subset of the parent
+  # Cameras, not zones: 'gates' / 'Parking_Area_-_Tin_Hut' are zones on the
+  # driveway_tin_hut camera, and 'Road' / 'Parking_Area_-_Driveway' are zones on
+  # driveway. Their occupancy is a subset of the parent
   # camera's, so watching the four cameras covers everything the old five-sensor
   # trigger list covered. The frigate/events payload reports after.camera and
   # never a zone name, so a zone would not match here anyway.
@@ -141,10 +141,10 @@ automation:
       # Frigate zone names, keyed by the camera that owns them. The HA
       # occupancy sensors slugify these (binary_sensor.parking_area_driveway_*),
       # but the frigate/events payload carries the names exactly as configured
-      # in Frigate.
+      # in Frigate, case included.
       parking_zones:
-        driveway: "parking_area_-_driveway"
-        driveway_tin_hut: "parking_area_-_tin_hut"
+        driveway: "Parking_Area_-_Driveway"
+        driveway_tin_hut: "Parking_Area_-_Tin_Hut"
       event: "{{ trigger.payload_json.after }}"
       camera: "{{ event.camera | default('unknown') }}"
       zone: "{{ parking_zones.get(camera, '') }}"
@@ -165,8 +165,9 @@ automation:
       # re-notify.
       - "{{ zone in entered_after and zone not in entered_before }}"
       # entered_zones is in order of entry. An arriving car is first seen on the
-      # road or at the gates; a car that was reacquired while parked and then
-      # drives off has the parking area first. Requiring another zone ahead of
+      # road or at the gates (Road>Parking_Area_-_Driveway,
+      # gates>Parking_Area_-_Tin_Hut); a departing car has the parking area
+      # first, and a parked car being reacquired has nothing else at all. Requiring another zone ahead of
       # it filters out departures, at the cost of missing an arrival that
       # Frigate only picks up once it is already in the parking area.
       - "{{ entered_after | first != zone }}"
@@ -177,10 +178,11 @@ automation:
           message: >
             Car arriving on the {{ camera | replace('_', ' ') | title }} camera
           data:
-            # One arrival can still split into several tracked objects, so they
-            # update a single notification rather than stacking. The timeout
-            # bounds the reuse so a later arrival alerts afresh.
-            tag: "driveway_car_arrival:{{ camera }}"
+            # Both cameras usually see the same arrival within seconds, and one
+            # arrival can split into several tracked objects, so every arrival
+            # shares one notification rather than stacking. The timeout bounds
+            # the reuse so a later arrival alerts afresh.
+            tag: "driveway_car_arrival"
             timeout: 900
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
