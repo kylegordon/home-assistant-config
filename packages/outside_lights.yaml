@@ -53,6 +53,19 @@ timer:
     # EVENT_HOMEASSISTANT_START listener — so nothing is listening yet and the
     # event is missed. Outside lights startup reconcile handles that case.
     restore: true
+  outside_person_visit:
+    name: Outside person visit
+    icon: mdi:timer-outline
+    # Marks a person visit as already announced, so Outside lights on chimes
+    # once per visit rather than once per tracked object. Only person
+    # detections restart it. This is kept apart from outside_lights_hold,
+    # because Driveway car arrival also starts that hold, and the driver
+    # getting out of the car should still chime.
+    duration: "00:05:00"
+    # Nothing acts on this timer finishing, so an expiry during a restart needs
+    # no reconciliation. Restoring it just avoids a repeat chime for a visit
+    # that was already under way when HA went down.
+    restore: true
 
 automation:
   # ---------------------------------------------------------------------------
@@ -181,11 +194,9 @@ automation:
       # Lights go through timer.outside_lights_hold, so Outside lights off
       # turns them off again, and re-arms while the driver is still out there
       # on the person occupancy check. A parked car is deliberately not part of
-      # that check, or it would hold the lights on all night.
-      #
-      # Side effect: the hold is active by the time the driver gets out, so
-      # Outside lights on treats them as a continuation of this visit and skips
-      # its chime and "Person outside!" notification.
+      # that check, or it would hold the lights on all night. The driver
+      # getting out still chimes: Outside lights on decides that from
+      # timer.outside_person_visit, which a car never starts.
       - if:
           - "{{ lights_wanted }}"
         then:
@@ -263,13 +274,14 @@ automation:
       cameras: *outside_person_cameras
       camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
       snapshot_entity: "camera.{{ camera }}_last_person"
-      # An arrival is a detection that starts a visit. If the hold timer is
+      # An arrival is a detection that starts a visit. If the visit timer is
       # already running this is a continuation — the tracker reacquiring the
       # same person, a second camera picking them up, or the object ending —
-      # so the chime and the notification are skipped.
+      # so the chime and the notification are skipped. Variables are rendered
+      # before the actions restart the timer, so this sees its earlier state.
       arrival: >
         {{ trigger.payload_json.type == 'new'
-           and not is_state('timer.outside_lights_hold', 'active') }}
+           and not is_state('timer.outside_person_visit', 'active') }}
     condition:
       # 'update' and 'end' are accepted as well as 'new' so that a person who
       # lingers keeps extending the hold, and so the window after they leave is
@@ -288,7 +300,9 @@ automation:
       # extends the window instead of racing Outside lights off.
       - service: timer.start
         target:
-          entity_id: timer.outside_lights_hold
+          entity_id:
+            - timer.outside_lights_hold
+            - timer.outside_person_visit
       # light.front_floodlights is a member of the light.outside_lights group
       # (see lights.yaml), so it comes on with the rest of the group.
       - service: homeassistant.turn_on
