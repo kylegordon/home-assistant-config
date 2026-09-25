@@ -53,6 +53,19 @@ timer:
     # EVENT_HOMEASSISTANT_START listener — so nothing is listening yet and the
     # event is missed. Outside lights startup reconcile handles that case.
     restore: true
+  outside_person_visit:
+    name: Outside person visit
+    icon: mdi:timer-outline
+    # Marks a person visit as already announced, so Outside lights on chimes
+    # once per visit rather than once per tracked object. Only person
+    # detections restart it. This is kept apart from outside_lights_hold,
+    # because Driveway car arrival also starts that hold, and the driver
+    # getting out of the car should still chime.
+    duration: "00:05:00"
+    # Nothing acts on this timer finishing, so an expiry during a restart needs
+    # no reconciliation. Restoring it just avoids a repeat chime for a visit
+    # that was already under way when HA went down.
+    restore: true
 
 automation:
   # ---------------------------------------------------------------------------
@@ -66,12 +79,11 @@ automation:
   #
   # frigate/events carries the detections themselves — one message per stage of
   # a tracked object's life (type: new / update / end) — which is what these
-  # automations actually want. Same source as
-  # automation/camera_snapshot_notification.yaml.
+  # automations actually want.
   #
-  # Cameras, not zones: 'gates' is a zone on the driveway_tin_hut camera, and
-  # 'road' / 'parking_area_-_driveway' / 'parking_area_-_tin_hut' are zones on
-  # driveway and driveway_tin_hut. Their occupancy is a subset of the parent
+  # Cameras, not zones: 'gates' / 'Parking_Area_-_Tin_Hut' are zones on the
+  # driveway_tin_hut camera, and 'Road' / 'Parking_Area_-_Driveway' are zones on
+  # driveway. Their occupancy is a subset of the parent
   # camera's, so watching the four cameras covers everything the old five-sensor
   # trigger list covered. The frigate/events payload reports after.camera and
   # never a zone name, so a zone would not match here anyway.
@@ -113,7 +125,9 @@ automation:
             # One tracked person can still end and restart as several objects,
             # so repeated detections on the same camera update a single
             # notification in place instead of stacking near-identical ones.
-            # Same tag+timeout reuse bound as camera_snapshot_notification.
+            # The timeout bounds the reuse: the notification self-dismisses
+            # this long after the latest detection, so a later visit alerts
+            # afresh rather than silently updating one already seen.
             tag: "outside_person:{{ camera }}"
             timeout: 900
             clickAction: "/lovelace/outside"
@@ -123,6 +137,95 @@ automation:
                 /api/camera_proxy/{{ snapshot_entity }}?token={{ state_attr(snapshot_entity, 'access_token') }}
               {% endif %}
 
+
+  - alias: Driveway car arrival
+    id: driveway_car_arrival
+    description: >-
+      Notify when a moving car enters one of the driveway parking areas from
+      outside it, and after dark turn the outside lights on through the same
+      hold timer as Outside lights on.
+    # Same reasoning as Outside person detected: most frigate/events messages
+    # are rejected by the conditions, and several can arrive at once.
+    mode: queued
+    max: 10
+    triggers:
+      - trigger: mqtt
+        topic: "frigate/events"
+    variables:
+      # Frigate zone names, keyed by the camera that owns them. The HA
+      # occupancy sensors slugify these (binary_sensor.parking_area_driveway_*),
+      # but the frigate/events payload carries the names exactly as configured
+      # in Frigate, case included.
+      parking_zones:
+        driveway: "Parking_Area_-_Driveway"
+        driveway_tin_hut: "Parking_Area_-_Tin_Hut"
+      event: "{{ trigger.payload_json.after }}"
+      camera: "{{ event.camera | default('unknown') }}"
+      zone: "{{ parking_zones.get(camera, '') }}"
+      entered_before: "{{ trigger.payload_json.before.entered_zones | default([]) }}"
+      entered_after: "{{ event.entered_zones | default([]) }}"
+      # Same gate as Outside lights on, so a car never lights up the outside
+      # when a person would not.
+      lights_wanted: >
+        {{ is_state('sun.sun', 'below_horizon')
+           and is_state('input_boolean.night_view', 'off') }}
+    conditions:
+      - "{{ trigger.payload_json.type in ['new', 'update'] }}"
+      - "{{ event.label == 'car' }}"
+      - "{{ zone != '' }}"
+      # A parked car is lost and reacquired by the tracker all day long
+      # (binary_sensor.parking_area_tin_hut_car_occupancy flips dozens of times
+      # a day), and each reacquisition is a fresh object that already sits in
+      # the parking area. Stationary objects are never arrivals.
+      - "{{ not event.stationary | default(false) }}"
+      - "{{ not event.false_positive | default(false) }}"
+      # The edge: this message is the one in which the object first entered the
+      # parking area. Without it every later update for the same car would
+      # re-notify.
+      - "{{ zone in entered_after and zone not in entered_before }}"
+      # entered_zones is in order of entry. An arriving car is first seen on the
+      # road or at the gates (Road>Parking_Area_-_Driveway,
+      # gates>Parking_Area_-_Tin_Hut); a departing car has the parking area
+      # first, and a parked car being reacquired has nothing else at all. Requiring another zone ahead of
+      # it filters out departures, at the cost of missing an arrival that
+      # Frigate only picks up once it is already in the parking area.
+      - "{{ entered_after | first != zone }}"
+    actions:
+      # Lights go through timer.outside_lights_hold, so Outside lights off
+      # turns them off again, and re-arms while the driver is still out there
+      # on the person occupancy check. A parked car is deliberately not part of
+      # that check, or it would hold the lights on all night. The driver
+      # getting out still chimes: Outside lights on decides that from
+      # timer.outside_person_visit, which a car never starts.
+      - if:
+          - "{{ lights_wanted }}"
+        then:
+          - action: timer.start
+            target:
+              entity_id: timer.outside_lights_hold
+          - action: homeassistant.turn_on
+            target:
+              entity_id: light.outside_lights
+      - action: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Car arriving"
+          message: >
+            Car arriving on the {{ camera | replace('_', ' ') | title }} camera
+            {%- if lights_wanted %}. Turning on outside lights{% endif %}
+          data:
+            # Both cameras usually see the same arrival within seconds, and one
+            # arrival can split into several tracked objects, so every arrival
+            # shares one notification rather than stacking. The timeout bounds
+            # the reuse so a later arrival alerts afresh.
+            tag: "driveway_car_arrival"
+            timeout: 900
+            clickAction: "/lovelace/outside"
+            url: "/lovelace/outside"
+            # The Frigate integration's notification proxy serves this event's
+            # own image, rather than whichever car the camera saw most recently.
+            image: >
+              /api/frigate/notifications/{{ event.id }}/{{
+              'snapshot.jpg' if event.has_snapshot | default(false) else 'thumbnail.jpg' }}
 
   - alias: "Outside night lights on"
     id: outside_night_lights_on
@@ -171,13 +274,14 @@ automation:
       cameras: *outside_person_cameras
       camera: "{{ trigger.payload_json.after.camera | default('unknown') }}"
       snapshot_entity: "camera.{{ camera }}_last_person"
-      # An arrival is a detection that starts a visit. If the hold timer is
+      # An arrival is a detection that starts a visit. If the visit timer is
       # already running this is a continuation — the tracker reacquiring the
       # same person, a second camera picking them up, or the object ending —
-      # so the chime and the notification are skipped.
+      # so the chime and the notification are skipped. Variables are rendered
+      # before the actions restart the timer, so this sees its earlier state.
       arrival: >
         {{ trigger.payload_json.type == 'new'
-           and not is_state('timer.outside_lights_hold', 'active') }}
+           and not is_state('timer.outside_person_visit', 'active') }}
     condition:
       # 'update' and 'end' are accepted as well as 'new' so that a person who
       # lingers keeps extending the hold, and so the window after they leave is
@@ -196,7 +300,9 @@ automation:
       # extends the window instead of racing Outside lights off.
       - service: timer.start
         target:
-          entity_id: timer.outside_lights_hold
+          entity_id:
+            - timer.outside_lights_hold
+            - timer.outside_person_visit
       # light.front_floodlights is a member of the light.outside_lights group
       # (see lights.yaml), so it comes on with the rest of the group.
       - service: homeassistant.turn_on
