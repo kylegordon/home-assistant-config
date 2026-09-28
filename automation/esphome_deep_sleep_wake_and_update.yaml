@@ -10,11 +10,10 @@
 # see esphome/common/esp8266_dht_sensor_common.yaml and
 # esphome/common/car_battery_monitor_common.yaml.
 #
-# NOTE: the entity_id list below is a best-effort guess at the ESPHome
-# status binary_sensor slugs derived from each device's friendly_name.
-# Verify these against the live instance (Settings > Devices & Services >
-# Entities) before relying on this automation - this repo clone's
-# entity registry does not reflect the deployed instance.
+# NOTE: entity_ids checked against the live instance on 2026-09-28. The TR6
+# monitor's entities carry a doubled device prefix. The Volvo, front hall
+# and study sensors are not adopted in HA yet; their IDs are the expected
+# slugs, so check them once those devices are added.
 alias: "ESPHome deep sleep devices - wake and update"
 id: esphome_deep_sleep_wake_and_update
 mode: parallel
@@ -27,7 +26,7 @@ trigger:
     entity_id:
       - binary_sensor.land_rover_battery_monitor_status
       - binary_sensor.volvo_battery_monitor_status
-      - binary_sensor.tr6_battery_monitor_status
+      - binary_sensor.tr6_battery_monitor_tr6_battery_monitor_status
       - binary_sensor.ac_battery_monitor_status
       - binary_sensor.front_hall_sensor_status
       - binary_sensor.study_sensor_status
