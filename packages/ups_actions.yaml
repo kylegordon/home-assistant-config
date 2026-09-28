@@ -19,8 +19,18 @@ automation:
 
   - alias: "UPS Shutdown Imminent"
     id: ups_shutdown_imminent
+    # NUT estimates runtime on mains too, so require both low runtime and
+    # being on battery, whichever happens second
     triggers:
       - trigger: numeric_state
+        entity_id: sensor.apc1000_battery_runtime
+        below: 600
+      - trigger: template
+        value_template: "{{ 'OB' in states('sensor.apc1000_status_data').split() }}"
+    conditions:
+      - condition: template
+        value_template: "{{ 'OB' in states('sensor.apc1000_status_data').split() }}"
+      - condition: numeric_state
         entity_id: sensor.apc1000_battery_runtime
         below: 600
     actions:

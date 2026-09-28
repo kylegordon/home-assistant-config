@@ -114,4 +114,6 @@ automation:
         data:
           name: EVENT
           message: "Sleeping. Setting alarm."
-      - action: script.alarm_home
+      - action: alarm_control_panel.alarm_arm_home
+        target:
+          entity_id: alarm_control_panel.home_alarm
