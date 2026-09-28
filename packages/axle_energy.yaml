@@ -1,29 +1,8 @@
 ---
 
-# Home Assistant configuration for Axle Energy integration
-# This configuration defines a REST sensor to fetch event data from the Axle Energy API.
-rest:
-  - resource: https://api.axle.energy/vpp/home-assistant/event
-    scan_interval: 600
-    headers:
-      Authorization: !secret axle_energy_token
-    sensor:
-      - name: Axle Event
-        json_attributes:
-          - start_time
-          - end_time
-          - import_export
-          - updated_at
-        value_template: >-
-          {% if value_json is defined and value_json.start_time is defined %}
-            {{ value_json.start_time }}
-          {% else %}
-            {{ none }}
-          {% endif %}
-
 # During an Axle export event every watt the house draws is a watt the battery
-# cannot export. The battery side is Predbat's job: it reads the same Axle API
-# and plans the export itself. This package does the house side: it sheds the
+# cannot export. The battery side is Predbat's job: it reads the Axle API and
+# plans the export itself. This package does the house side: it sheds the
 # big controllable loads for the duration of the event and puts them back
 # afterwards.
 #
@@ -32,14 +11,12 @@ rest:
 template:
   # The one entity everything else relies on for "is an export event on".
   #
-  # Built from Predbat's event list rather than from the on/off state of
-  # binary_sensor.predbat_axle_event, or from sensor.axle_event above:
-  # - The REST sensor has read "None" throughout every event on record, so it
-  #   cannot be trusted to see one.
-  # - Predbat's on/off only moves when Predbat runs a cycle, and it holds its
-  #   last state while the add-on is stopped. event_current, by contrast, lists
-  #   an event hours before it starts, so comparing its times against the clock
-  #   gives edges to the minute and keeps working through a Predbat restart.
+  # Predbat polls the Axle API itself, so its entity is the only source here.
+  # Built from its event list rather than its on/off state: the on/off only
+  # moves when Predbat runs a cycle, and it holds its last state while the
+  # add-on is stopped. event_current, by contrast, lists an event hours before
+  # it starts, so comparing its times against the clock gives edges to the
+  # minute and keeps working through a Predbat restart.
   #
   # Trigger-based so that the state and the attributes come from one
   # evaluation of the event list, not three that could disagree.
