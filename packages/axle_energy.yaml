@@ -20,3 +20,264 @@ rest:
           {% else %}
             {{ none }}
           {% endif %}
+
+# During an Axle export event every watt the house draws is a watt the battery
+# cannot export. The battery side is Predbat's job: it reads the same Axle API
+# and plans the export itself. This package does the house side: it sheds the
+# big controllable loads for the duration of the event and puts them back
+# afterwards.
+#
+# Car charging is handled in zaptec_charging.yaml, which reads the sensor below.
+
+template:
+  # The one entity everything else relies on for "is an export event on".
+  #
+  # Built from Predbat's event list rather than from the on/off state of
+  # binary_sensor.predbat_axle_event, or from sensor.axle_event above:
+  # - The REST sensor has read "None" throughout every event on record, so it
+  #   cannot be trusted to see one.
+  # - Predbat's on/off only moves when Predbat runs a cycle, and it holds its
+  #   last state while the add-on is stopped. event_current, by contrast, lists
+  #   an event hours before it starts, so comparing its times against the clock
+  #   gives edges to the minute and keeps working through a Predbat restart.
+  #
+  # Trigger-based so that the state and the attributes come from one
+  # evaluation of the event list, not three that could disagree.
+  - triggers:
+      # Second zero of every minute, which is where event edges fall.
+      - trigger: time_pattern
+        minutes: "*"
+      - trigger: state
+        entity_id: binary_sensor.predbat_axle_event
+        attribute: event_current
+      - trigger: homeassistant
+        event: start
+    actions:
+      - variables:
+          # Turns on one minute early, so loads are already off when the event
+          # opens: it is settled on metered export over whole half hours.
+          #
+          # Predbat's entities do not survive a Home Assistant restart; the list
+          # is missing until its next cycle, up to five minutes. An event this
+          # sensor already knew about is held until its own end time through
+          # that gap, rather than flapping every load back on and off again.
+          # Beyond that, an unreadable list means "no event we know of", and
+          # off is the safe failure: the hold is bounded by end_time, so it
+          # cannot leave the heating shed indefinitely.
+          current: >
+            {%- set events = state_attr('binary_sensor.predbat_axle_event', 'event_current') %}
+            {%- set ns = namespace(e=none) %}
+            {%- if events is none %}
+              {%- set held = this.attributes if this is defined and this.attributes is defined else {} %}
+              {%- set end = held.get('end_time') | as_datetime(none) %}
+              {%- if end and now() < end %}
+                {%- set ns.e = {'start_time': held.start_time, 'end_time': held.end_time,
+                                'pence_per_kwh': held.pence_per_kwh} %}
+              {%- endif %}
+            {%- endif %}
+            {%- for e in events or [] if e.import_export == 'export' and ns.e is none %}
+              {%- set start = as_datetime(e.start_time) %}
+              {%- set end = as_datetime(e.end_time) %}
+              {%- if start and end and start - timedelta(minutes=1) <= now() < end %}
+                {%- set ns.e = {'start_time': start.isoformat(), 'end_time': end.isoformat(),
+                                'pence_per_kwh': e.pence_per_kwh} %}
+              {%- endif %}
+            {%- endfor %}
+            {{ ns.e }}
+          next_start_time: >
+            {%- set events = state_attr('binary_sensor.predbat_axle_event', 'event_current') or [] %}
+            {%- set starts = events
+                  | selectattr('import_export', 'eq', 'export')
+                  | map(attribute='start_time') | map('as_datetime')
+                  | reject('none') | select('gt', now()) | sort | list %}
+            {{ starts[0].isoformat() if starts else none }}
+    binary_sensor:
+      - name: "Axle export event"
+        unique_id: axle_export_event
+        icon: mdi:transmission-tower-export
+        state: "{{ current is mapping }}"
+        attributes:
+          start_time: "{{ current.start_time if current is mapping else none }}"
+          end_time: "{{ current.end_time if current is mapping else none }}"
+          pence_per_kwh: "{{ current.pence_per_kwh if current is mapping else none }}"
+          # The next export event not yet started, for dashboards and for
+          # anything that wants to prepare ahead of one.
+          next_start_time: "{{ next_start_time }}"
+
+input_text:
+  # What the shed automation switched off, and the mode to restore each one to,
+  # as JSON. Kept in a helper rather than a scene.create snapshot so that
+  # restoring still works after a restart part-way through an event. A load
+  # that was already off when the event started is not recorded, so it is not
+  # switched on again afterwards.
+  axle_export_shed:
+    name: Axle export shed loads
+    max: 255
+
+automation:
+  - alias: Axle export event shed loads
+    id: axle_export_event_shed_loads
+    description: Switch off the Tin Hut air conditioning, the heat pump and the hot water for the duration of an Axle export event.
+    mode: queued
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.axle_export_event
+        to: "on"
+        id: event_start
+      # A restart during an event. Re-running is safe: loads already recorded
+      # are switched off again and not recorded twice.
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.axle_export_event
+        state: "on"
+    actions:
+      # The mypyllant and Tin Hut entities are cloud-backed and need a moment
+      # to reconnect after a restart before their state means anything.
+      - if:
+          - condition: template
+            value_template: "{{ trigger.id != 'event_start' }}"
+        then:
+          - delay: "00:01:00"
+      - variables:
+          skip: ["off", "Off", "unavailable", "unknown"]
+          shed: "{{ states('input_text.axle_export_shed') | from_json(default={}) }}"
+          tin_hut: "{{ states('climate.tin_hut') }}"
+          dhw: "{{ states('water_heater.viewpoint_domestic_hot_water_0') }}"
+          record: >
+            {%- set r = shed %}
+            {%- if 'tin_hut' not in r and tin_hut not in skip %}
+              {%- set r = dict(r, tin_hut=tin_hut) %}
+            {%- endif %}
+            {%- if 'dhw' not in r and dhw not in skip %}
+              {%- set r = dict(r, dhw=dhw) %}
+            {%- endif %}
+            {{ r }}
+          # Script variables do not keep datetimes, so everything that needs
+          # the end time is derived here rather than passed on.
+          end_time: "{{ state_attr('binary_sensor.axle_export_event', 'end_time') | as_datetime(none) }}"
+          end_local: >
+            {{ (end_time | as_datetime).astimezone(now().tzinfo).strftime('%H:%M') if end_time else 'the end of the event' }}
+          # Rounded up to the 0.1 h step mypyllant accepts, so the veto outlasts
+          # the event by at most six minutes.
+          veto_hours: >
+            {{ (((((end_time | as_datetime) - now()).total_seconds() / 3600 * 10) | round(0, 'ceil')) / 10)
+               if end_time else 0 }}
+          # A quick veto that is still running belongs to "Turn off ASHP" in
+          # climate.yaml (stove lit, window open, house empty), or is ours from
+          # before a restart. Either way the heat pump is already off and that
+          # veto should be left alone.
+          ashp_vetoed: >
+            {{ (state_attr('climate.viewpoint_zone_1_circuit_0_climate', 'quick_veto_end_date_time')
+                | as_datetime(none) or now()) > now() }}
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.axle_export_shed
+        data:
+          value: "{{ record | to_json }}"
+      # Each load is independent: one cloud call failing must not leave the
+      # others running.
+      - if:
+          - condition: template
+            value_template: "{{ 'tin_hut' in record }}"
+        then:
+          - action: climate.set_hvac_mode
+            continue_on_error: true
+            target:
+              entity_id: climate.tin_hut
+            data:
+              hvac_mode: "off"
+      - if:
+          - condition: template
+            value_template: "{{ 'dhw' in record }}"
+        then:
+          - action: water_heater.set_operation_mode
+            continue_on_error: true
+            target:
+              entity_id: water_heater.viewpoint_domestic_hot_water_0
+            data:
+              operation_mode: "Off"
+      # Heating is shed with a quick veto sized to the rest of the event, the
+      # same mechanism "Turn off ASHP" uses. It lapses on its own, so there is
+      # nothing to restore and nothing to go wrong if the restore never runs.
+      - if:
+          - condition: template
+            value_template: "{{ not ashp_vetoed and veto_hours | float(0) > 0 }}"
+        then:
+          - action: mypyllant.set_quick_veto
+            continue_on_error: true
+            target:
+              entity_id: climate.viewpoint_zone_1_circuit_0_climate
+            data:
+              temperature: 15
+              duration_hours: "{{ veto_hours }}"
+      - if:
+          - condition: trigger
+            id: event_start
+        then:
+          - action: notify.mobile_app_nothing_phone_2
+            data:
+              title: "Axle export event"
+              message: >-
+                {%- set paused = (['Tin Hut air con'] if 'tin_hut' in record else [])
+                                 + (['hot water'] if 'dhw' in record else [])
+                                 + (['heating'] if not ashp_vetoed else [])
+                                 + ['car charging'] %}
+                Exporting until {{ end_local }}. Paused: {{ paused | join(', ') }}.
+              data:
+                tag: axle_export_event
+                timeout: 7200
+
+  - alias: Axle export event restore loads
+    id: axle_export_event_restore_loads
+    description: Put back whatever the shed automation switched off, once the Axle export event is over.
+    mode: queued
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.axle_export_event
+        from: "on"
+        to: "off"
+      # An event that ended while Home Assistant was down.
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.axle_export_event
+        state: "off"
+      - condition: template
+        value_template: "{{ states('input_text.axle_export_shed') | from_json(default={}) | length > 0 }}"
+    actions:
+      # Time for cloud-backed entities to reconnect after a restart, and for
+      # the event sensor to have re-evaluated since it was restored.
+      - delay: "00:01:00"
+      - condition: state
+        entity_id: binary_sensor.axle_export_event
+        state: "off"
+      - variables:
+          shed: "{{ states('input_text.axle_export_shed') | from_json(default={}) }}"
+      - if:
+          - condition: template
+            value_template: "{{ 'tin_hut' in shed }}"
+        then:
+          - action: climate.set_hvac_mode
+            continue_on_error: true
+            target:
+              entity_id: climate.tin_hut
+            data:
+              hvac_mode: "{{ shed.tin_hut }}"
+      - if:
+          - condition: template
+            value_template: "{{ 'dhw' in shed }}"
+        then:
+          - action: water_heater.set_operation_mode
+            continue_on_error: true
+            target:
+              entity_id: water_heater.viewpoint_domestic_hot_water_0
+            data:
+              operation_mode: "{{ shed.dhw }}"
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.axle_export_shed
+        data:
+          value: ""

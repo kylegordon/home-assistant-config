@@ -40,12 +40,19 @@ automation:
         to: 'on'
         for:
           minutes: 5
-    action:
-      - service: mypyllant.cancel_quick_veto
+    conditions:
+      # The quick veto cancelled below may be the one axle_energy.yaml set to
+      # keep the heat pump off for an export event. It lapses on its own when
+      # the event ends.
+      - condition: state
+        entity_id: binary_sensor.axle_export_event
+        state: "off"
+    actions:
+      - action: mypyllant.cancel_quick_veto
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
       - delay: "00:00:02"
-      - service: climate.set_hvac_mode
+      - action: climate.set_hvac_mode
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
