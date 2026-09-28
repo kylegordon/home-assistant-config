@@ -7,7 +7,7 @@ automation:
         entity_id:
           - sensor.land_rover_battery_monitor_voltage
           - sensor.volvo_battery_monitor_voltage
-          - sensor.tr6_battery_monitor_tr6_battery_monitor_voltage
+          - sensor.tr6_battery_monitor_voltage
           - sensor.ac_battery_monitor_voltage
         below: 11
         for:
@@ -32,7 +32,7 @@ automation:
         entity_id:
           - sensor.land_rover_battery_monitor_voltage
           - sensor.volvo_battery_monitor_voltage
-          - sensor.tr6_battery_monitor_tr6_battery_monitor_voltage
+          - sensor.tr6_battery_monitor_voltage
           - sensor.ac_battery_monitor_voltage
         above: 14
         for:
