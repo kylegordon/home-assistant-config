@@ -185,8 +185,8 @@ automation:
           data:
             clickAction: "/lovelace/outside"
             url: "/lovelace/outside"
-            image: >
-              /api/camera_proxy/camera.driveway_last_person?token={{ state_attr('camera.driveway_last_person','access_token') }}
+            # The companion app authenticates relative camera proxy URLs itself
+            image: /api/camera_proxy/camera.driveway_last_person
 
   - alias: Tin Hut Doors Closing
     id: tin_hut_doors_closing

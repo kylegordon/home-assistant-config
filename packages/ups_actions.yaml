@@ -14,8 +14,8 @@ automation:
           title: 'Power failure - UPS responding'
           message: "UPS is on battery ({{ states('sensor.apc1000_status_data') }}). Runtime {{ states('sensor.apc1000_battery_runtime') }}s."
           data:
-            image: >
-              /api/camera_proxy/camera.driveway?token={{ state_attr('camera.driveway','access_token') }}
+            # The companion app authenticates relative camera proxy URLs itself
+            image: /api/camera_proxy/camera.driveway
 
   - alias: "UPS Shutdown Imminent"
     id: ups_shutdown_imminent
@@ -29,8 +29,8 @@ automation:
           title: 'Power outage - UPS shutting down'
           message: "UPS runtime is down to {{ states('sensor.apc1000_battery_runtime') }}s."
           data:
-            image: >
-              /api/camera_proxy/camera.driveway?token={{ state_attr('camera.driveway','access_token') }}
+            # The companion app authenticates relative camera proxy URLs itself
+            image: /api/camera_proxy/camera.driveway
 
   - alias: "UPS Recovery"
     id: ups_recovery
@@ -50,5 +50,5 @@ automation:
           title: 'Power outage - UPS has recovered'
           message: "Mains power is back ({{ states('sensor.apc1000_status_data') }})."
           data:
-            image: >
-              /api/camera_proxy/camera.driveway?token={{ state_attr('camera.driveway','access_token') }}
+            # The companion app authenticates relative camera proxy URLs itself
+            image: /api/camera_proxy/camera.driveway
