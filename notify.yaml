@@ -1,13 +1,4 @@
 ---
-- platform: smtp
-  name: email_kyle
-  server: smtp.gmail.com
-  port: 587
-  encryption: starttls
-  username: !secret gmail_username
-  password: !secret gmail_password
-  sender: homeassistant@glasgownet.com
-  recipient: kyle@glasgownet.com
 - platform: alexa_media
   name: alexa_media
 - platform: syslog

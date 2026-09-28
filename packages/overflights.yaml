@@ -9,46 +9,33 @@ mqtt:
 automation:
   - alias: 'Flight entry notification - Home'
     id: flight_entry_notification_home
-    trigger:
-      platform: event
-      event_data:
-        sensor: opensky_home
-      event_type: opensky_entry
-    condition:
+    triggers:
+      - trigger: event
+        event_type: opensky_entry
+        event_data:
+          sensor: opensky_home
+    conditions:
       - condition: template
         value_template: "{{ trigger.event.data.altitude <= 10000 }}"
-    action:
-      # continue_on_error so an email delivery outage doesn't repeatedly
-      # fail this automation - the persistent_notification below is the
-      # guaranteed-to-work fallback channel.
-      - service: notify.email_kyle
-        continue_on_error: true
+    actions:
+      - action: persistent_notification.create
         data:
           title: "Overflight event"
           message: 'Flight {{ trigger.event.data.callsign }} is passing nearby at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
-      - service: persistent_notification.create
-        data:
-          title: "Overflight event"
-          message: 'Flight {{ trigger.event.data.callsign }} is passing nearby at {{ trigger.event.data.altitude }} meters.'
 
   - alias: 'Flight entry notification - Uplawmoor'
     id: flight_entry_notification_uplawmoor
-    trigger:
-      platform: event
-      event_data:
-        sensor: opensky_uplawmoor
-      event_type: opensky_entry
-    action:
-      - service: notify.email_kyle
-        continue_on_error: true
+    triggers:
+      - trigger: event
+        event_type: opensky_entry
+        event_data:
+          sensor: opensky_uplawmoor
+    actions:
+      - action: persistent_notification.create
         data:
           title: "{{ trigger.event.data.callsign }} Overflight - Uplawmoor"
           message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.
 
           https://flightaware.com/live/flight/{{ trigger.event.data.callsign }}'
-      - service: persistent_notification.create
-        data:
-          title: "{{ trigger.event.data.callsign }} Overflight - Uplawmoor"
-          message: 'Flight {{ trigger.event.data.callsign }} is passing near Uplawmoor at {{ trigger.event.data.altitude }} meters.'

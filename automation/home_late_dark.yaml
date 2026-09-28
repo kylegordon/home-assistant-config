@@ -1,28 +1,31 @@
 alias: "Home late night"
 id: home_late_night
-trigger:
-  - platform: state
+triggers:
+  - trigger: state
     entity_id: binary_sensor.home_occupied
     from: "off"
     to: "on"
-condition:
+conditions:
   - condition: state
     entity_id: sun.sun
     state: "below_horizon"
   - condition: time
     after: '22:00:00'
     before: '05:00:00'
-  - condition: template
-    value_template: "{% if states('sensor.kyle_status') != 'sleeping' and states('sensor.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
-action:
-  - service: logbook.log
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id:
+          - sensor.kyle_status
+          - sensor.charlotte_status
+        state: "Sleeping"
+        match: any
+actions:
+  - action: logbook.log
     data:
       name: EVENT
       message: "Home late..."
-  - service: notify.email_kyle
-    data:
-      message: "Home late..."
-  - service: light.turn_on
+  - action: light.turn_on
     data:
       entity_id: light.hall
       brightness_pct: >
@@ -55,15 +58,15 @@ action:
         {% else %}
         2667
         {% endif %}
-  - service: light.turn_on
+  - action: light.turn_on
     data:
       entity_id: light.bedside_lights
-  - service: light.turn_on
+  - action: light.turn_on
     data:
       entity_id: light.outside_lights
 
   - delay:
       minutes: 5
-  - service: light.turn_off
+  - action: light.turn_off
     data:
       entity_id: light.outside_lights

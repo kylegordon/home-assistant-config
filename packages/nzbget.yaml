@@ -2,53 +2,55 @@
 automation:
   - alias: Completed Download
     id: completed_download
-    trigger:
-      platform: event
-      event_type: nzbget_download_complete
-      event_data:
-        category: tv
-    action:
-      - service: notify.email_kyle
+    triggers:
+      - trigger: event
+        event_type: nzbget_download_complete
+        event_data:
+          category: tv
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
+        continue_on_error: true
         data:
           title: "Download completed!"
-          message: "{{trigger.event.data.name}}"
-      - service: system_log.write
+          message: "{{ trigger.event.data.name }}"
+      - action: system_log.write
         data:
-          message: "{{trigger.event.data.name}}"
+          message: "{{ trigger.event.data.name }}"
           level: info
 
   - alias: Completed Star Trek Download
     id: completed_star_trek_download
-    trigger:
-      platform: event
-      event_type: nzbget_download_complete
-      event_data:
-        category: tv
-    condition:
-      condition: template
-      value_template: '{% if trigger.event.data.name | regex_search("star.trek", ignorecase=True) %}True{% endif %}'  # yamllint disable-line rule:line-length
-    action:
-      service: notify.email_kyle
-      data:
-        title: "Star Trek download completed!"
-        message: "{{ trigger.event.data.name }} has finished downloading"
+    triggers:
+      - trigger: event
+        event_type: nzbget_download_complete
+        event_data:
+          category: tv
+    conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.name is search("star.trek", ignorecase=True) }}'
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
+        data:
+          title: "Star Trek download completed!"
+          message: "{{ trigger.event.data.name }} has finished downloading"
 
   - alias: Completed Westworld Download
     id: completed_westworld_download
-    trigger:
-      platform: event
-      event_type: nzbget_download_complete
-      event_data:
-        category: tv
-    condition:
-      condition: template
-      value_template: '{% if trigger.event.data.name | regex_search("westworld", ignorecase=True) %}True{% endif %}'  # yamllint disable-line rule:line-length
-    action:
-      - service: notify.email_kyle
+    triggers:
+      - trigger: event
+        event_type: nzbget_download_complete
+        event_data:
+          category: tv
+    conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.name is search("westworld", ignorecase=True) }}'
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
+        continue_on_error: true
         data:
           title: "Westworld download completed!"
           message: "{{ trigger.event.data.name }} has finished downloading"
-      - service: notify.alexa_media
+      - action: notify.alexa_media
         data:
           target:
             - media_player.living_room
