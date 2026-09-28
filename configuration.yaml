@@ -54,8 +54,6 @@ homeassistant:
       icon: mdi:thermometer
     sensor.next_bin:
       icon: mdi:delete-empty
-    light.kyles_bedside:
-      icon: mdi:hotel
     light.drinks_cabinet:
       assumed_state: false
     light.lava_lamp:
@@ -72,8 +70,6 @@ homeassistant:
       entity_picture: https://www.gravatar.com/avatar/c5affce936e162c5ef9752c3276f99be.jpg
     input_boolean.guest_mode:
       icon: mdi:account-multiple-plus
-    light.craft_room_desk_level:
-      friendly_name: Craft Room Desk
     sensor.daily_energy:
       friendly_name: Daily energy usage
     sensor.monthly_energy:
@@ -88,13 +84,8 @@ config:
 
 recorder: !include recorder.yaml
 
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 172.21.0.0/24
-  cors_allowed_origins:
-    - http://homeauto.vpn.glasgownet.com
-    - http://viewpoint.house
+# http: and influxdb: are UI-configured since their YAML was imported
+# (Settings > System > Network, and the InfluxDB integration entry).
 
 stream:
 
@@ -103,15 +94,6 @@ alarm_control_panel:
     name: Home Alarm
     code_arm_required: false
     code: !secret alarm_code
-
-influxdb:
-  host: 172.24.32.13
-  port: 8086
-  ssl: false
-  api_version: 2
-  organization: !secret influxdb_organization
-  bucket: !secret influxdb_bucket
-  token: !secret influxdb_token
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
@@ -148,7 +130,6 @@ binary_sensor: !include binary_sensors.yaml
 light: !include lights.yaml
 switch: !include switches.yaml
 media_player: !include media_players.yaml
-device_tracker: !include device_trackers.yaml
 group: !include groups.yaml
 zone: !include zones/places.yaml
 shell_command: !include shell_commands.yaml
