@@ -1,24 +1,13 @@
 alias: 'Bin notification'
 id: bin_notification
-trigger:
-  - platform: template
-    value_template: '{{ states.sensor.date.state == strptime(states.calendar.garbage_collection.attributes.start_time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")}}'
-  - platform: time
+# Collections are on Mondays; remind on Sunday evening with the next bin
+triggers:
+  - trigger: time
     at: '17:00:00'
-condition:
-  - condition: and
-    conditions:
-      - condition: time
-        after: '12:00'
-        weekday:
-          - sun
-      - condition: time
-        before: '07:00'
-        weekday:
-          - mon
-
-action:
-- service: persistent_notification.create
-  data:
-    message: "Next bin: {{ states.calendar.garbage_collection.attributes.message }}. "
-    title: "Bin Reminder"
+    weekday:
+      - sun
+actions:
+  - action: persistent_notification.create
+    data:
+      message: "Next bin: {{ state_attr('calendar.bin_collection_schedule_bins', 'message') }}."
+      title: "Bin Reminder"

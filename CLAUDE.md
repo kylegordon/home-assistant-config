@@ -66,7 +66,7 @@ CI validates every `esphome/*.yaml` device in a matrix, against both `stable` an
 - `!include_dir_merge_named scripts/` — `scripts/*.yaml`, merged into one named dict.
 - `!include_dir_named input_select`, `input_boolean` — same named-dict pattern.
 - `!include_dir_list scenes` — `scenes/*.yaml`.
-- `!include some_file.yaml` — single-file includes for the simple entity domains (`sensors.yaml`, `lights.yaml`, `switches.yaml`, `climate.yaml`, `mqtt.yaml`, `template.yaml`, `binary_sensors.yaml`, `media_players.yaml`, `device_trackers.yaml`, `groups.yaml`, `zones/places.yaml`, `shell_commands.yaml`, `notify.yaml`, `persons.yaml`, `recorder.yaml`, `logger.yaml`).
+- `!include some_file.yaml` — single-file includes for the simple entity domains (`sensors.yaml`, `lights.yaml`, `switches.yaml`, `climate.yaml`, `mqtt.yaml`, `template.yaml`, `binary_sensors.yaml`, `media_players.yaml`, `groups.yaml`, `zones/places.yaml`, `shell_commands.yaml`, `notify.yaml`, `persons.yaml`, `recorder.yaml`, `logger.yaml`).
 
 ### Packages are the real unit of organization
 

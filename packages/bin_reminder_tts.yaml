@@ -38,7 +38,7 @@ automation:
         entity_id: binary_sensor.front_hall_door_contact
         to: 'on'
       - platform: state
-        entity_id: binary_sensor.front_hall_motion
+        entity_id: binary_sensor.front_hall_motion_occupancy
         to: 'on'
     action:
       - service: notify.alexa_media
@@ -48,7 +48,7 @@ automation:
           data:
             type: "tts"
             # method: all
-          message: "Hello! It's {{ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][now().weekday()] }}. Don't forget to take the {{ states.calendar.garbage_collection.attributes.message }} out. If you wish to disable this message, just ask me to 'turn off bin reminder'"
+          message: "Hello! It's {{ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][now().weekday()] }}. Don't forget to take the {{ state_attr('calendar.bin_collection_schedule_bins', 'message') }} out. If you wish to disable this message, just ask me to 'turn off bin reminder'"
 
   - alias: Bin reminder reset
     id: bin_reminder_reset

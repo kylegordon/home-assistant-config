@@ -52,7 +52,7 @@
   action:
     - service: calendar.get_events
       target:
-        entity_id: calendar.east_renfrewshire_council
+        entity_id: calendar.bin_collection_schedule_bins
       data:
         duration:
           days: 30
@@ -65,8 +65,8 @@
       state: >
         {% set ns = namespace(found=false, days=999) %}
         {% set today = now().date() %}
-        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
-          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+        {% if calendar_events is defined and 'calendar.bin_collection_schedule_bins' in calendar_events %}
+          {% for event in calendar_events['calendar.bin_collection_schedule_bins']['events'] %}
             {% set event_title = event.summary | default(event.title | default('')) %}
             {% if 'Black' in event_title and not ns.found %}
               {% set event_date = as_datetime(event.start).date() %}
@@ -89,8 +89,8 @@
       state: >
         {% set ns = namespace(found=false, days=999) %}
         {% set today = now().date() %}
-        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
-          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+        {% if calendar_events is defined and 'calendar.bin_collection_schedule_bins' in calendar_events %}
+          {% for event in calendar_events['calendar.bin_collection_schedule_bins']['events'] %}
             {% set event_title = event.summary | default(event.title | default('')) %}
             {% if 'Blue' in event_title and not ns.found %}
               {% set event_date = as_datetime(event.start).date() %}
@@ -113,8 +113,8 @@
       state: >
         {% set ns = namespace(found=false, days=999) %}
         {% set today = now().date() %}
-        {% if calendar_events is defined and 'calendar.east_renfrewshire_council' in calendar_events %}
-          {% for event in calendar_events['calendar.east_renfrewshire_council']['events'] %}
+        {% if calendar_events is defined and 'calendar.bin_collection_schedule_bins' in calendar_events %}
+          {% for event in calendar_events['calendar.bin_collection_schedule_bins']['events'] %}
             {% set event_title = event.summary | default(event.title | default('')) %}
             {% if 'Green' in event_title and not ns.found %}
               {% set event_date = as_datetime(event.start).date() %}

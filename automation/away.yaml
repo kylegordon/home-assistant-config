@@ -1,17 +1,23 @@
 alias: "Away"
 id: away
-trigger:
-  - platform: state
+triggers:
+  - trigger: state
     entity_id: binary_sensor.home_occupied
     from: "on"
     to: "off"
     for:
       minutes: 5
-condition:
-  - condition: template
-    value_template: "{% if states('input_select.kyle_status') != 'sleeping' and states('input_select.charlotte_status') != 'sleeping' %}true{% else %}false{% endif %}"
+conditions:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id:
+          - input_select.kyle_status_dropdown
+          - input_select.charlotte_status_dropdown
+        state: "Sleeping"
+        match: any
   - condition: state
     entity_id: binary_sensor.guest_mode
     state: "off"
-action:
-  - service: script.all_off
+actions:
+  - action: script.all_off

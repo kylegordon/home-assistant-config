@@ -1,133 +1,64 @@
+---
+# sensor.apc1000_status_data is NUT's raw ups.status: space-separated flags
+# such as "OL", "OL CHRG", "OB DISCHRG", "OB LB". Test for the flags rather
+# than comparing the whole string.
 automation:
   - alias: "UPS Not OK"
     id: ups_not_ok
-    trigger:
-      - platform: template
-        value_template: "{{ not is_state('sensor.apc1000_status_data', '0L') }}"
-    action:
-      - service: camera.snapshot
-        target:
-          entity_id: camera.driveway
-        data:
-          filename: /tmp/camera.driveway_snapshot.jpg
-      - service: camera.snapshot
-        target:
-          entity_id: camera.backdoor
-        data:
-          filename: /tmp/camera.backdoor_snapshot.jpg
-      - service: notify.email_kyle
+    triggers:
+      - trigger: template
+        value_template: "{{ 'OB' in states('sensor.apc1000_status_data').split() }}"
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
         data:
           title: 'Power failure - UPS responding'
-          message: "Cameras summary"
+          message: "UPS is on battery ({{ states('sensor.apc1000_status_data') }}). Runtime {{ states('sensor.apc1000_battery_runtime') }}s."
           data:
-            images:
-              - /tmp/camera.driveway_snapshot.jpg
-              - /tmp/camera.backdoor_snapshot.jpg
-            html: >
-              <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-              <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-                <head>
-                  <meta charset="UTF-8">
-                  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>Cameras snapshot</title>
-                  <style type="text/css">
-                    h1,h2,h3,h4,h5,h6 {
-                    font-family:Arial,sans-serif;
-                    }
-                  </style>
-                </head>
-                <body>
-                  <h1>UPS Triggered</h1>
-                  <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:camera.driveway_snapshot.jpg" />
-                  <img style="width: 100%; max-width: 640px;"  alt="Image from backdoor camera" src="cid:camera.backdoor_snapshot.jpg" />
-              </html>
+            # The companion app authenticates relative camera proxy URLs itself
+            image: /api/camera_proxy/camera.driveway
 
   - alias: "UPS Shutdown Imminent"
     id: ups_shutdown_imminent
-    trigger:
-      - platform: numeric_state
+    # NUT estimates runtime on mains too, so require both low runtime and
+    # being on battery, whichever happens second
+    triggers:
+      - trigger: numeric_state
         entity_id: sensor.apc1000_battery_runtime
         below: 600
-    action:
-      - service: camera.snapshot
-        target:
-          entity_id: camera.driveway
-        data:
-          filename: /tmp/camera.driveway_snapshot.jpg
-      - service: camera.snapshot
-        target:
-          entity_id: camera.backdoor
-        data:
-          filename: /tmp/camera.backdoor_snapshot.jpg
-      - service: notify.email_kyle
+      - trigger: template
+        value_template: "{{ 'OB' in states('sensor.apc1000_status_data').split() }}"
+    conditions:
+      - condition: template
+        value_template: "{{ 'OB' in states('sensor.apc1000_status_data').split() }}"
+      - condition: numeric_state
+        entity_id: sensor.apc1000_battery_runtime
+        below: 600
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
         data:
           title: 'Power outage - UPS shutting down'
-          message: "Cameras summary"
+          message: "UPS runtime is down to {{ states('sensor.apc1000_battery_runtime') }}s."
           data:
-            images:
-              - /tmp/camera.driveway_snapshot.jpg
-              - /tmp/camera.backdoor_snapshot.jpg
-            html: >
-              <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-              <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-                <head>
-                  <meta charset="UTF-8">
-                  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>Cameras snapshot</title>
-                  <style type="text/css">
-                    h1,h2,h3,h4,h5,h6 {
-                    font-family:Arial,sans-serif;
-                    }
-                  </style>
-                </head>
-                <body>
-                  <h1>UPS shutdown imminent</h1>
-                  <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:camera.driveway_snapshot.jpg" />
-                  <img style="width: 100%; max-width: 640px;"  alt="Image from backdoor camera" src="cid:camera.backdoor_snapshot.jpg" />
-              </html>
+            # The companion app authenticates relative camera proxy URLs itself
+            image: /api/camera_proxy/camera.driveway
 
   - alias: "UPS Recovery"
     id: ups_recovery
-    trigger:
-      - platform: template
-        value_template: "{{ is_state('sensor.apc1000_status_data', '0L') }}"
-    action:
-      - service: camera.snapshot
-        target:
-          entity_id: camera.driveway
-        data:
-          filename: /tmp/camera.driveway_snapshot.jpg
-      - service: camera.snapshot
-        target:
-          entity_id: camera.backdoor
-        data:
-          filename: /tmp/camera.backdoor_snapshot.jpg
-      - service: notify.email_kyle
+    triggers:
+      - trigger: state
+        entity_id: sensor.apc1000_status_data
+    conditions:
+      # Only a real on-battery -> on-line transition, not NUT reconnecting
+      # from unavailable
+      - condition: template
+        value_template: >
+          {{ 'OB' in trigger.from_state.state.split()
+             and 'OL' in trigger.to_state.state.split() }}
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
         data:
           title: 'Power outage - UPS has recovered'
-          message: "Cameras summary"
+          message: "Mains power is back ({{ states('sensor.apc1000_status_data') }})."
           data:
-            images:
-              - /tmp/camera.driveway_snapshot.jpg
-              - /tmp/camera.backdoor_snapshot.jpg
-            html: >
-              <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-              <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-                <head>
-                  <meta charset="UTF-8">
-                  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>Cameras snapshot</title>
-                  <style type="text/css">
-                    h1,h2,h3,h4,h5,h6 {
-                    font-family:Arial,sans-serif;
-                    }
-                  </style>
-                </head>
-                <body>
-                  <h1>UPS recovered</h1>
-                  <img style="width: 100%; max-width: 640px;"  alt="Image from driveway camera" src="cid:camera.driveway_snapshot.jpg" />
-                  <img style="width: 100%; max-width: 640px;"  alt="Image from backdoor camera" src="cid:camera.backdoor_snapshot.jpg" />
-              </html>
+            # The companion app authenticates relative camera proxy URLs itself
+            image: /api/camera_proxy/camera.driveway

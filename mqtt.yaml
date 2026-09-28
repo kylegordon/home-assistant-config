@@ -27,11 +27,6 @@ sensor:
     unit_of_measurement: "mm"
     value_template: "{{ value_json.rain }}"
 
-  - name: "Kyle Oneplus One Battery"
-    state_topic: "owntracks/bagpuss/a0001"
-    unit_of_measurement: "%"
-    value_template: "{{ value_json.batt }}"
-
 binary_sensor:
   - name: Charlotte Bed Sensor
     device_class: occupancy
