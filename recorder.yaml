@@ -44,9 +44,8 @@ exclude:
     - sensor.wan_traffic_*
     - sensor.freebsd_router_*
 
-    # ===== Shelly 3EM high-frequency power metering =====
+    # ===== Shelly 3EM high-frequency power metering (active_power kept for history/statistics) =====
     - sensor.shellypro3em_*_apparent_power
-    - sensor.shellypro3em_*_active_power
     - sensor.shellypro3em_*_power_factor
     - sensor.shellypro3em_*_current
 
