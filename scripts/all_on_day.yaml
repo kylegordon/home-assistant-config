@@ -1,12 +1,12 @@
 all_on_day:
   sequence:
-  - service: logbook.log
-    data_template:
+  - action: logbook.log
+    data:
       name: EVENT
       message: "Welcome! Disarming the alarm."
 
-  - service: alarm_control_panel.alarm_disarm
-
-  - service: notify.email_kyle
+  - action: alarm_control_panel.alarm_disarm
+    target:
+      entity_id: alarm_control_panel.home_alarm
     data:
-      message: "Welcome! Disarming the alarm."
+      code: !secret alarm_code
