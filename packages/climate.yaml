@@ -18,34 +18,46 @@ binary_sensor:
       - binary_sensor.kitchen_window
       # - binary_sensor.utility_room_window
 
+template:
+  - binary_sensor:
+      # One place for every reason the heating should stay off, so the two
+      # automations below can't disagree about it. An unavailable stove or
+      # occupancy sensor doesn't count as a lockout, so a dead sensor can't
+      # hold the heating off indefinitely.
+      - name: Heating Lockout
+        unique_id: heating_lockout
+        icon: mdi:radiator-off
+        state: >-
+          {{ is_state('binary_sensor.climate_openings', 'on')
+             or states('sensor.hwam_smart_stove_temperature') | float(0) > 100
+             or is_state('binary_sensor.home_occupied', 'off') }}
+        delay_on:
+          minutes: 5
+        delay_off:
+          minutes: 5
+
 automation:
   - alias: "Turn on ASHP"
     id: turnonashp
     description: >-
-      Turn on ASHP if stove is off
-      and all the openings are shut
+      Resume the ASHP schedule once every heating lockout has cleared
     triggers:
+      # from: 'on' so a restart (unavailable -> off) doesn't cancel a
+      # quick veto set by hand
       - trigger: state
-        entity_id: binary_sensor.climate_openings
+        entity_id: binary_sensor.heating_lockout
+        from: 'on'
         to: 'off'
-        for:
-          minutes: 5
-      - trigger: numeric_state
-        entity_id: sensor.hwam_smart_stove_temperature
-        below: 100
-      - trigger: template
-        value_template: "{{ 'states.sensor.hwam_smart_stove_temperature' != 'unknown' }}"
-      - trigger: state
-        entity_id: binary_sensor.home_occupied
-        to: 'on'
-        for:
-          minutes: 5
-    action:
-      - service: mypyllant.cancel_quick_veto
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.heating_lockout
+        state: 'off'
+    actions:
+      - action: mypyllant.cancel_quick_veto
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
       - delay: "00:00:02"
-      - service: climate.set_hvac_mode
+      - action: climate.set_hvac_mode
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
@@ -54,25 +66,25 @@ automation:
   - alias: "Turn off ASHP"
     id: turnoffashp
     description: >-
-      Turn off ASHP if stove is on
-      or any of the openings are open
-      or home is not occupied
+      Hold the ASHP off with a quick veto while any heating lockout is
+      active (window open, stove lit, or nobody home)
     triggers:
       - trigger: state
-        entity_id: binary_sensor.climate_openings
+        entity_id: binary_sensor.heating_lockout
         to: 'on'
-        for:
-          minutes: 5
-      - trigger: numeric_state
-        entity_id: sensor.hwam_smart_stove_temperature
-        above: 100
-      - trigger: state
-        entity_id: binary_sensor.home_occupied
-        to: 'off'
-        for:
-          minutes: 5
-    action:
-      - service: mypyllant.set_quick_veto
+      # The quick veto lasts 3 hours. Refresh it hourly so a lockout that
+      # outlasts it doesn't let the heating back on.
+      - trigger: time_pattern
+        minutes: 0
+      # Catch a lockout that was already active when HA started
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.heating_lockout
+        state: 'on'
+    actions:
+      - action: mypyllant.set_quick_veto
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
