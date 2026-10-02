@@ -66,15 +66,35 @@ automation:
         entity_id: binary_sensor.heating_lockout
         state: 'off'
     actions:
-      - action: mypyllant.cancel_quick_veto
-        target:
-          entity_id: climate.viewpoint_zone_1_circuit_0_climate
-      - delay: "00:00:02"
-      - action: climate.set_hvac_mode
-        target:
-          entity_id: climate.viewpoint_zone_1_circuit_0_climate
-        data:
-          hvac_mode: auto
+      # During an Axle export event (axle_energy.yaml) the heat pump stays
+      # off until the event ends. The lockout veto can run up to three hours,
+      # so it is swapped for one that lapses with the event rather than left
+      # to outlast it.
+      - variables:
+          end_time: "{{ state_attr('binary_sensor.axle_export_event', 'end_time') | as_datetime(none) }}"
+          veto_hours: >
+            {{ (((((end_time | as_datetime) - now()).total_seconds() / 3600 * 10) | round(0, 'ceil')) / 10)
+               if is_state('binary_sensor.axle_export_event', 'on') and end_time else 0 }}
+      - if:
+          - condition: template
+            value_template: "{{ veto_hours | float(0) > 0 }}"
+        then:
+          - action: mypyllant.set_quick_veto
+            target:
+              entity_id: climate.viewpoint_zone_1_circuit_0_climate
+            data:
+              temperature: 15
+              duration_hours: "{{ veto_hours }}"
+        else:
+          - action: mypyllant.cancel_quick_veto
+            target:
+              entity_id: climate.viewpoint_zone_1_circuit_0_climate
+          - delay: "00:00:02"
+          - action: climate.set_hvac_mode
+            target:
+              entity_id: climate.viewpoint_zone_1_circuit_0_climate
+            data:
+              hvac_mode: auto
 
   - alias: "Turn off ASHP"
     id: turnoffashp

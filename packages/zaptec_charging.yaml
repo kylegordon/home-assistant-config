@@ -13,6 +13,11 @@ automation:
       - trigger: state
         entity_id: sensor.viewpoint_charger_mode
         to: connected_requesting
+      # An Axle export event ending inside a slot, so charging picks up at once
+      # rather than at the next tick.
+      - trigger: state
+        entity_id: binary_sensor.axle_export_event
+        to: "off"
       # Safety net for everything neither edge can see: Home Assistant restarting
       # across the slot transition, the Zaptec cloud being unreachable at the
       # moment of the press, or the press itself erroring. Re-pressing authorize
@@ -40,6 +45,11 @@ automation:
       - condition: state
         entity_id: binary_sensor.predbat_car_charging_slot
         state: "on"
+      # Every watt the car takes during an Axle export event is a watt the
+      # battery cannot export, whatever Predbat has planned for the car.
+      - condition: state
+        entity_id: binary_sensor.axle_export_event
+        state: "off"
       - condition: state
         entity_id: sensor.viewpoint_charger_mode
         state:
@@ -116,7 +126,7 @@ automation:
 
   - alias: Zaptec Predbat charging stop
     id: zaptec_predbat_charging_stop
-    description: Deauthorize Zaptec charging whenever the car is charging outside a Predbat slot.
+    description: Deauthorize Zaptec charging whenever the car is charging outside a Predbat slot or during an Axle export event.
     triggers:
       # Fast path: the slot closing mid-session.
       - trigger: state
@@ -127,14 +137,22 @@ automation:
       - trigger: state
         entity_id: sensor.viewpoint_charger_mode
         to: connected_charging
+      - trigger: state
+        entity_id: binary_sensor.axle_export_event
+        to: "on"
       # Safety net: a slot that ends while Home Assistant is down otherwise
       # leaves the car charging at peak rate until the next edge.
       - trigger: time_pattern
         minutes: "/5"
     conditions:
-      - condition: state
-        entity_id: binary_sensor.predbat_car_charging_slot
-        state: "off"
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: binary_sensor.predbat_car_charging_slot
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.axle_export_event
+            state: "on"
       # connected_charging only. connected_requesting also covers "plugged in
       # but not authorized", so including it would press deauthorize every five
       # minutes for as long as the car sat plugged in outside a slot.
@@ -158,7 +176,9 @@ automation:
       - action: notify.mobile_app_nothing_phone_2
         data:
           title: "Zaptec charging"
-          message: "Charging outside a Predbat slot — deauthorization sent."
+          message: >-
+            {{ 'Axle export event' if is_state('binary_sensor.axle_export_event', 'on')
+               else 'Charging outside a Predbat slot' }} — deauthorization sent.
           data:
             tag: zaptec_charging
             timeout: 900
@@ -251,6 +271,9 @@ template:
   - binary_sensor:
       - name: "Zaptec charging awaiting authorization"
         unique_id: zaptec_charging_awaiting_authorization
+        # An Axle export event holds charging off on purpose, so it is not
+        # waiting in the sense this sensor means.
+        #
         # Asks the same question as the start automation's conditions above, for
         # a different consumer. The two must change together; nothing enforces
         # that beyond this comment. Both charger modes the automation acts on
@@ -280,7 +303,7 @@ template:
           {% set mode = states('sensor.viewpoint_charger_mode') %}
           {% if slot in unreadable or mode in unreadable %}
             {{ this.state == 'on' }}
-          {% elif slot != 'on' %}
+          {% elif slot != 'on' or is_state('binary_sensor.axle_export_event', 'on') %}
             {{ false }}
           {% elif mode == 'connected_requesting' %}
             {{ true }}
