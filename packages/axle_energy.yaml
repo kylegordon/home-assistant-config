@@ -101,10 +101,16 @@ automation:
         entity_id: binary_sensor.axle_export_event
         to: "on"
         id: event_start
-      # A restart during an event. Re-running is safe: loads already recorded
-      # are switched off again and not recorded twice.
+      # A restart during an event.
       - trigger: homeassistant
         event: start
+        id: ha_start
+      # The shutoff calls are cloud-backed and can fail; retry through the
+      # event. Re-running is safe: a load already recorded is not recorded
+      # twice, and is only switched off again if it is back on.
+      - trigger: time_pattern
+        minutes: "/5"
+        id: reconcile
     conditions:
       - condition: state
         entity_id: binary_sensor.axle_export_event
@@ -113,10 +119,14 @@ automation:
       # The mypyllant and Tin Hut entities are cloud-backed and need a moment
       # to reconnect after a restart before their state means anything.
       - if:
-          - condition: template
-            value_template: "{{ trigger.id != 'event_start' }}"
+          - condition: trigger
+            id: ha_start
         then:
           - delay: "00:01:00"
+      # The event may have ended during that delay.
+      - condition: state
+        entity_id: binary_sensor.axle_export_event
+        state: "on"
       - variables:
           skip: ["off", "Off", "unavailable", "unknown"]
           shed: "{{ states('input_text.axle_export_shed') | from_json(default={}) }}"
@@ -159,7 +169,7 @@ automation:
       # others running.
       - if:
           - condition: template
-            value_template: "{{ 'tin_hut' in record }}"
+            value_template: "{{ 'tin_hut' in record and tin_hut not in skip }}"
         then:
           - action: climate.set_hvac_mode
             continue_on_error: true
@@ -169,7 +179,7 @@ automation:
               hvac_mode: "off"
       - if:
           - condition: template
-            value_template: "{{ 'dhw' in record }}"
+            value_template: "{{ 'dhw' in record and dhw not in skip }}"
         then:
           - action: water_heater.set_operation_mode
             continue_on_error: true
@@ -220,6 +230,10 @@ automation:
       # An event that ended while Home Assistant was down.
       - trigger: homeassistant
         event: start
+      # Retry a restore that did not take.
+      - trigger: time_pattern
+        minutes: "/5"
+        id: reconcile
     conditions:
       - condition: state
         entity_id: binary_sensor.axle_export_event
@@ -229,15 +243,23 @@ automation:
     actions:
       # Time for cloud-backed entities to reconnect after a restart, and for
       # the event sensor to have re-evaluated since it was restored.
-      - delay: "00:01:00"
+      - if:
+          - not:
+              - condition: trigger
+                id: reconcile
+        then:
+          - delay: "00:01:00"
       - condition: state
         entity_id: binary_sensor.axle_export_event
         state: "off"
+      # A load is only put back while it is still off, so a mode someone
+      # chose since the event ended is not overridden.
       - variables:
+          skip: ["off", "Off", "unavailable", "unknown"]
           shed: "{{ states('input_text.axle_export_shed') | from_json(default={}) }}"
       - if:
           - condition: template
-            value_template: "{{ 'tin_hut' in shed }}"
+            value_template: "{{ 'tin_hut' in shed and states('climate.tin_hut') in skip }}"
         then:
           - action: climate.set_hvac_mode
             continue_on_error: true
@@ -247,7 +269,7 @@ automation:
               hvac_mode: "{{ shed.tin_hut }}"
       - if:
           - condition: template
-            value_template: "{{ 'dhw' in shed }}"
+            value_template: "{{ 'dhw' in shed and states('water_heater.viewpoint_domestic_hot_water_0') in skip }}"
         then:
           - action: water_heater.set_operation_mode
             continue_on_error: true
@@ -255,8 +277,21 @@ automation:
               entity_id: water_heater.viewpoint_domestic_hot_water_0
             data:
               operation_mode: "{{ shed.dhw }}"
+      # Keep any load that is still off, so the next run retries it. One that
+      # has come back on in any mode is done with.
+      - delay: "00:00:30"
+      - variables:
+          remaining: >
+            {%- set r = {} %}
+            {%- if 'tin_hut' in shed and states('climate.tin_hut') in skip %}
+              {%- set r = dict(r, tin_hut=shed.tin_hut) %}
+            {%- endif %}
+            {%- if 'dhw' in shed and states('water_heater.viewpoint_domestic_hot_water_0') in skip %}
+              {%- set r = dict(r, dhw=shed.dhw) %}
+            {%- endif %}
+            {{ r }}
       - action: input_text.set_value
         target:
           entity_id: input_text.axle_export_shed
         data:
-          value: ""
+          value: "{{ remaining | to_json if remaining else '' }}"
