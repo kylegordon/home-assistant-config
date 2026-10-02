@@ -141,13 +141,15 @@ automation:
           veto_hours: >
             {{ (((((end_time | as_datetime) - now()).total_seconds() / 3600 * 10) | round(0, 'ceil')) / 10)
                if end_time else 0 }}
-          # A quick veto that is still running belongs to "Turn off ASHP" in
-          # climate.yaml (stove lit, window open, house empty), or is ours from
-          # before a restart. Either way the heat pump is already off and that
-          # veto should be left alone.
+          # A quick veto that already runs past the end of the event belongs to
+          # "Turn off ASHP" in climate.yaml (stove lit, window open, house
+          # empty), or is ours from before a restart. Either way it covers the
+          # event and should be left alone. One that ends sooner, such as a
+          # lockout veto due its hourly refresh, is replaced: the lockout can
+          # clear mid-event and nothing would then hold the heat pump off.
           ashp_vetoed: >
-            {{ (state_attr('climate.viewpoint_zone_1_circuit_0_climate', 'quick_veto_end_date_time')
-                | as_datetime(none) or now()) > now() }}
+            {% set veto_end = state_attr('climate.viewpoint_zone_1_circuit_0_climate', 'quick_veto_end_date_time') | as_datetime(none) %}
+            {{ end_time is not none and veto_end is not none and veto_end >= (end_time | as_datetime) }}
       - action: input_text.set_value
         target:
           entity_id: input_text.axle_export_shed
