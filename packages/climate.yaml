@@ -18,35 +18,59 @@ binary_sensor:
       - binary_sensor.kitchen_window
       # - binary_sensor.utility_room_window
 
+template:
+  - binary_sensor:
+      # Openings and occupancy are debounced by 5 minutes so a door or a
+      # brief departure doesn't cycle the heat pump. The stove isn't: it
+      # acts on the 100°C threshold straight away.
+      - name: Heating Lockout Openings
+        unique_id: heating_lockout_openings
+        state: "{{ is_state('binary_sensor.climate_openings', 'on') }}"
+        delay_on:
+          minutes: 5
+        delay_off:
+          minutes: 5
+      - name: Heating Lockout Away
+        unique_id: heating_lockout_away
+        state: "{{ is_state('binary_sensor.home_occupied', 'off') }}"
+        delay_on:
+          minutes: 5
+        delay_off:
+          minutes: 5
+      # One place for every reason the heating should stay off, so the two
+      # automations below can't disagree about it. An unavailable stove or
+      # occupancy sensor doesn't count as a lockout, so a dead sensor can't
+      # hold the heating off indefinitely.
+      - name: Heating Lockout
+        unique_id: heating_lockout
+        icon: mdi:radiator-off
+        state: >-
+          {{ is_state('binary_sensor.heating_lockout_openings', 'on')
+             or is_state('binary_sensor.heating_lockout_away', 'on')
+             or states('sensor.hwam_smart_stove_temperature') | float(0) > 100 }}
+
 automation:
   - alias: "Turn on ASHP"
     id: turnonashp
     description: >-
-      Turn on ASHP if stove is off
-      and all the openings are shut
+      Resume the ASHP schedule once every heating lockout has cleared
     triggers:
+      # from: 'on' so a restart (unavailable -> off) doesn't cancel a
+      # quick veto set by hand
       - trigger: state
-        entity_id: binary_sensor.climate_openings
+        entity_id: binary_sensor.heating_lockout
+        from: 'on'
         to: 'off'
-        for:
-          minutes: 5
-      - trigger: numeric_state
-        entity_id: sensor.hwam_smart_stove_temperature
-        below: 100
-      - trigger: template
-        value_template: "{{ 'states.sensor.hwam_smart_stove_temperature' != 'unknown' }}"
-      - trigger: state
-        entity_id: binary_sensor.home_occupied
-        to: 'on'
-        for:
-          minutes: 5
     conditions:
+      - condition: state
+        entity_id: binary_sensor.heating_lockout
+        state: 'off'
       # The quick veto cancelled below may be the one axle_energy.yaml set to
       # keep the heat pump off for an export event. It lapses on its own when
       # the event ends.
       - condition: state
         entity_id: binary_sensor.axle_export_event
-        state: "off"
+        state: 'off'
     actions:
       - action: mypyllant.cancel_quick_veto
         target:
@@ -61,25 +85,25 @@ automation:
   - alias: "Turn off ASHP"
     id: turnoffashp
     description: >-
-      Turn off ASHP if stove is on
-      or any of the openings are open
-      or home is not occupied
+      Hold the ASHP off with a quick veto while any heating lockout is
+      active (window open, stove lit, or nobody home)
     triggers:
       - trigger: state
-        entity_id: binary_sensor.climate_openings
+        entity_id: binary_sensor.heating_lockout
         to: 'on'
-        for:
-          minutes: 5
-      - trigger: numeric_state
-        entity_id: sensor.hwam_smart_stove_temperature
-        above: 100
-      - trigger: state
-        entity_id: binary_sensor.home_occupied
-        to: 'off'
-        for:
-          minutes: 5
-    action:
-      - service: mypyllant.set_quick_veto
+      # The quick veto lasts 3 hours. Refresh it hourly so a lockout that
+      # outlasts it doesn't let the heating back on.
+      - trigger: time_pattern
+        minutes: 0
+      # Catch a lockout that was already active when HA started
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.heating_lockout
+        state: 'on'
+    actions:
+      - action: mypyllant.set_quick_veto
         target:
           entity_id: climate.viewpoint_zone_1_circuit_0_climate
         data:
