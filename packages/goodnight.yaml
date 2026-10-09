@@ -28,7 +28,7 @@ automation:
       - service: cover.close_cover
         entity_id:
           - cover.patio_blinds
-          - cover.front_hall_blinds
+          - cover.front_hall_blind
       - service: homeassistant.turn_off
         entity_id:
           - light.outside_lights
