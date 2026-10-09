@@ -1,0 +1,58 @@
+---
+# Remember the last radio station each Linn Openhome player streamed, so it
+# can be resumed later (see Tin Hut Occupied in tin_hut.yaml).
+
+input_text:
+  linn_main_room_last_played:
+    name: Linn Main Room last played
+    icon: mdi:radio
+    max: 255
+  linn_study_last_played:
+    name: Linn Study last played
+    icon: mdi:radio
+    max: 255
+  linn_tin_hut_last_played:
+    name: Linn Tin Hut last played
+    icon: mdi:radio
+    max: 255
+
+automation:
+  - alias: Linn save last played radio
+    id: linn_save_last_played_radio
+    mode: queued
+    # Each trigger id is the helper that stores that player's URI
+    triggers:
+      - trigger: state
+        entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_3637_01475230013f
+        attribute: media_content_id
+        id: input_text.linn_main_room_last_played
+      - trigger: state
+        entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_5661_01531488013f
+        attribute: media_content_id
+        id: input_text.linn_study_last_played
+      - trigger: state
+        entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+        attribute: media_content_id
+        id: input_text.linn_tin_hut_last_played
+    conditions:
+      - condition: template
+        value_template: "{{ trigger.to_state.attributes.source == 'Radio' }}"
+    actions:
+      - variables:
+          reported: "{{ trigger.to_state.attributes.media_content_id | default('', true) }}"
+          # The player reports airable stations as airable://stream?..., which
+          # it won't play back. The airable.radios://radio?... form for the
+          # same radioId and deviceId does play.
+          uri: >-
+            {%- if reported.startswith('airable://stream?') -%}
+              {%- set radio = reported | regex_findall('[?&]radioId=([^&]+)') | first | default('') -%}
+              {%- set device = reported | regex_findall('[?&]deviceId=([^&]+)') | first | default('') -%}
+              {%- if radio and device -%}airable.radios://radio?version=1&radioId={{ radio }}&deviceId={{ device }}{%- endif -%}
+            {%- else -%}{{ reported }}{%- endif -%}
+      - condition: template
+        value_template: "{{ uri != '' and uri | length <= 255 and uri != states(trigger.id) }}"
+      - action: input_text.set_value
+        target:
+          entity_id: "{{ trigger.id }}"
+        data:
+          value: "{{ uri }}"
