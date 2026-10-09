@@ -1,0 +1,40 @@
+automation:
+  - alias: Knockhill Polestar climate
+    id: knockhill_polestar_climate
+    description: At 06:30 on days with a Knockhill event in the calendar, turn on the Polestar's climate and report whether it started.
+    triggers:
+      - trigger: time
+        at: "06:30:00"
+    actions:
+      - action: calendar.get_events
+        target:
+          entity_id: calendar.kyle_glasgownet_com
+        data:
+          start_date_time: "{{ today_at('00:00') }}"
+          end_date_time: "{{ today_at('00:00') + timedelta(days=1) }}"
+        response_variable: events
+      - variables:
+          is_knockhill_day: >-
+            {% set ns = namespace(found=false) %}
+            {% for event in events.get('calendar.kyle_glasgownet_com', {}).get('events', []) %}
+              {% if 'knockhill' in (event.get('location') or '') | lower
+                    or 'timekeeping' in (event.get('summary') or '') | lower %}
+                {% set ns.found = true %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.found }}
+      - condition: template
+        value_template: "{{ is_knockhill_day }}"
+      - action: switch.turn_on
+        target:
+          entity_id: switch.polestar_4_442660_climate
+        continue_on_error: true
+      - wait_template: "{{ is_state('binary_sensor.polestar_4_442660_climate_active', 'on') }}"
+        timeout: "00:05:00"
+        continue_on_timeout: true
+      - action: notify.mobile_app_nothing_phone_2
+        data:
+          title: Knockhill
+          message: >-
+            {{ 'Polestar climate is on.' if wait.completed else 'Polestar climate failed to start.' }}
+    mode: single
