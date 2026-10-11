@@ -10,9 +10,9 @@
 # see esphome/common/esp8266_dht_sensor_common.yaml and
 # esphome/common/car_battery_monitor_common.yaml.
 #
-# NOTE: entity_ids checked against the live instance on 2026-09-28. The Volvo,
-# front hall and study sensors are not adopted in HA yet; their IDs are the
-# expected slugs, so check them once those devices are added. The common
+# NOTE: entity_ids checked against the live instance on 2026-09-28. The front
+# hall and study sensors are not adopted in HA yet; their IDs are the expected
+# slugs, so check them once those devices are added. The common
 # ESPHome config prefixes entity names with ${friendly_name}, so a newly
 # adopted device gets a doubled prefix (e.g. sensor.x_monitor_x_monitor_voltage)
 # and its entities need renaming in HA.
@@ -27,7 +27,6 @@ trigger:
     platform: state
     entity_id:
       - binary_sensor.land_rover_battery_monitor_status
-      - binary_sensor.volvo_battery_monitor_status
       - binary_sensor.tr6_battery_monitor_status
       - binary_sensor.ac_battery_monitor_status
       - binary_sensor.front_hall_sensor_status
