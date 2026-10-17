@@ -72,7 +72,7 @@ CI validates every `esphome/*.yaml` device in a matrix, against both `stable` an
 
 `packages/` (44+ files) is where most logic lives, and it's organized **by room or by feature**, not by HA domain. A single package file (e.g. `packages/kitchen.yaml`) typically bundles together everything for that room: automations, scripts, template sensors, input helpers, etc. When changing behavior for a room/feature, check for an existing package file with that name first rather than scattering changes across the domain-level files (`lights.yaml`, `sensors.yaml`, ...).
 
-Notable packages beyond simple rooms: `adaptive_lighting.yaml`, `alarm.yaml`, `climate.yaml` + `heatpump.yaml` (Better Thermostat-based heating), `tin_hut_heating.yaml` (Tin Hut setback/warm mode helper; its apply automation is meant to be the only writer to `climate.tin_hut`, so Scheduler card entries set the mode, not the thermostat), `givenergy.yaml` (battery/solar), `stove.yaml` (HWAM wood stove), `valetudo.yaml` (self-hosted vacuum), `overflights.yaml`, `bin_reminder_tts.yaml`, `device_alerts.yaml`.
+Notable packages beyond simple rooms: `adaptive_lighting.yaml`, `alarm.yaml`, `climate.yaml` + `heatpump.yaml` (Better Thermostat-based heating), `tin_hut_heating.yaml` (Tin Hut setback/warm mode helper, switched to warm after 15 minutes occupied; its apply automation is meant to be the only writer to `climate.tin_hut`, so Scheduler card entries set the mode, not the thermostat), `givenergy.yaml` (battery/solar), `stove.yaml` (HWAM wood stove), `valetudo.yaml` (self-hosted vacuum), `overflights.yaml`, `bin_reminder_tts.yaml`, `device_alerts.yaml`.
 
 ### ESPHome devices
 
