@@ -289,10 +289,11 @@ automation:
     description: Return the Tin Hut to setback about an hour after the last person leaves a warm session.
     mode: queued
     triggers:
+      # Every mode change starts the next session with a clear flag.
       - trigger: state
         entity_id: input_select.tin_hut_heating_mode
-        to: setback
-        id: setback
+        to: ~
+        id: mode
       - trigger: time_pattern
         minutes: "/5"
         id: check
@@ -300,7 +301,7 @@ automation:
       - condition: or
         conditions:
           - condition: trigger
-            id: setback
+            id: mode
           - condition: state
             entity_id: input_select.tin_hut_heating_mode
             state: warm
@@ -308,7 +309,7 @@ automation:
       - choose:
           - conditions:
               - condition: trigger
-                id: setback
+                id: mode
             sequence:
               - action: input_boolean.turn_off
                 target:
