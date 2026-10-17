@@ -8,7 +8,6 @@ automation:
           - sensor.kitchen_temperature
           - binary_sensor.front_hall_sensor_status
           - sensor.garage_temperature
-          - sensor.tin_hut_sensor_temperature
           - binary_sensor.hallway_bathroom_occupancy
           - binary_sensor.hallway_rooms_occupancy
           - binary_sensor.ensuite_motion_occupancy

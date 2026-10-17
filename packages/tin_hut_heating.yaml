@@ -21,8 +21,13 @@
 # The floor guard runs the thermostat at its 15 °C minimum while the wall
 # sensor reads below 14 °C, until it is back above 15 °C. The unit really
 # heats at its 16 °C minimum, so nothing in Better Thermostat tunes this
-# cycle; the threshold sensor below does. If the wall sensor drops out the
-# guard holds whatever it was doing, and device_alerts.yaml raises the alarm.
+# cycle; the threshold sensor below does.
+#
+# The wall sensor deep-sleeps between readings (awake it warms itself and
+# reads high), waking every five minutes. Home Assistant keeps its last
+# reading while it sleeps, so a dead sensor shows as a stale reading rather
+# than unavailable: the guard then holds whatever it was doing, and the
+# alert at the end of this file fires when the sensor stops waking.
 #
 # Better Thermostat wants its high target at least 1 °C above its low one,
 # hence the 19/20 and 15/16 pairs. Its maximum was raised to 25 °C in the UI.
@@ -210,3 +215,28 @@ automation:
           entity_id: input_select.tin_hut_heating_mode
         data:
           option: setback
+
+  # Normal sleep is five minutes, so half an hour asleep means a flat battery
+  # or a lost connection, and the floor guard is working from a stale reading.
+  - alias: Tin Hut heating wall sensor not waking
+    id: tin_hut_heating_wall_sensor_not_waking
+    description: Alert when the Tin Hut wall sensor has not woken for half an hour.
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.tin_hut_sensor_status
+        to: "off"
+        for:
+          minutes: 30
+    actions:
+      # continue_on_error so a push delivery failure doesn't stop the
+      # persistent_notification below.
+      - action: notify.mobile_app_nothing_phone_2
+        continue_on_error: true
+        data:
+          title: Tin Hut heating
+          message: The Tin Hut wall sensor hasn't woken for 30 minutes. The setback floor is holding on a stale reading.
+      - action: persistent_notification.create
+        data:
+          title: Tin Hut heating
+          message: The Tin Hut wall sensor hasn't woken for 30 minutes. The setback floor is holding on a stale reading.
