@@ -196,9 +196,11 @@ automation:
             data:
               title: "Axle export event"
               message: >-
-                {#- tin_hut_heating.yaml holds the Tin Hut off; it is running if
-                    a warm session or the setback floor has it on. #}
-                {%- set tin_hut = is_state('input_select.tin_hut_heating_mode', 'warm')
+                {#- tin_hut_heating.yaml holds the Tin Hut off. It counts as
+                    paused if it was on, or would be on but for the event:
+                    the two automations race at the start of an event. #}
+                {%- set tin_hut = is_state('climate.tin_hut', 'heat_cool')
+                                  or is_state('input_select.tin_hut_heating_mode', 'warm')
                                   or is_state('binary_sensor.tin_hut_heating_floor', 'on') %}
                 {%- set paused = (['Tin Hut air con'] if tin_hut else [])
                                  + (['hot water'] if 'dhw' in record else [])
