@@ -6,7 +6,8 @@
 # big controllable loads for the duration of the event and puts them back
 # afterwards.
 #
-# Car charging is handled in zaptec_charging.yaml, which reads the sensor below.
+# Car charging is handled in zaptec_charging.yaml and the Tin Hut heating in
+# tin_hut_heating.yaml, both of which read the sensor below.
 
 template:
   # The one entity everything else relies on for "is an export event on".
@@ -94,7 +95,7 @@ input_text:
 automation:
   - alias: Axle export event shed loads
     id: axle_export_event_shed_loads
-    description: Switch off the Tin Hut air conditioning, the heat pump and the hot water for the duration of an Axle export event.
+    description: Switch off the heat pump and the hot water for the duration of an Axle export event.
     mode: queued
     triggers:
       - trigger: state
@@ -116,7 +117,7 @@ automation:
         entity_id: binary_sensor.axle_export_event
         state: "on"
     actions:
-      # The mypyllant and Tin Hut entities are cloud-backed and need a moment
+      # The mypyllant entities are cloud-backed and need a moment
       # to reconnect after a restart before their state means anything.
       - if:
           - condition: trigger
@@ -130,13 +131,9 @@ automation:
       - variables:
           skip: ["off", "Off", "unavailable", "unknown"]
           shed: "{{ states('input_text.axle_export_shed') | from_json(default={}) }}"
-          tin_hut: "{{ states('climate.tin_hut') }}"
           dhw: "{{ states('water_heater.viewpoint_domestic_hot_water_0') }}"
           record: >
             {%- set r = shed %}
-            {%- if 'tin_hut' not in r and tin_hut not in skip %}
-              {%- set r = dict(r, tin_hut=tin_hut) %}
-            {%- endif %}
             {%- if 'dhw' not in r and dhw not in skip %}
               {%- set r = dict(r, dhw=dhw) %}
             {%- endif %}
@@ -169,16 +166,6 @@ automation:
       # others running.
       - if:
           - condition: template
-            value_template: "{{ 'tin_hut' in record and tin_hut not in skip }}"
-        then:
-          - action: climate.set_hvac_mode
-            continue_on_error: true
-            target:
-              entity_id: climate.tin_hut
-            data:
-              hvac_mode: "off"
-      - if:
-          - condition: template
             value_template: "{{ 'dhw' in record and dhw not in skip }}"
         then:
           - action: water_heater.set_operation_mode
@@ -209,7 +196,11 @@ automation:
             data:
               title: "Axle export event"
               message: >-
-                {%- set paused = (['Tin Hut air con'] if 'tin_hut' in record else [])
+                {#- tin_hut_heating.yaml holds the Tin Hut off; it is running if
+                    a warm session or the setback floor has it on. #}
+                {%- set tin_hut = is_state('input_select.tin_hut_heating_mode', 'warm')
+                                  or is_state('binary_sensor.tin_hut_heating_floor', 'on') %}
+                {%- set paused = (['Tin Hut air con'] if tin_hut else [])
                                  + (['hot water'] if 'dhw' in record else [])
                                  + (['heating'] if not ashp_vetoed else [])
                                  + ['car charging'] %}
@@ -259,16 +250,6 @@ automation:
           shed: "{{ states('input_text.axle_export_shed') | from_json(default={}) }}"
       - if:
           - condition: template
-            value_template: "{{ 'tin_hut' in shed and states('climate.tin_hut') in skip }}"
-        then:
-          - action: climate.set_hvac_mode
-            continue_on_error: true
-            target:
-              entity_id: climate.tin_hut
-            data:
-              hvac_mode: "{{ shed.tin_hut }}"
-      - if:
-          - condition: template
             value_template: "{{ 'dhw' in shed and states('water_heater.viewpoint_domestic_hot_water_0') in skip }}"
         then:
           - action: water_heater.set_operation_mode
@@ -278,14 +259,13 @@ automation:
             data:
               operation_mode: "{{ shed.dhw }}"
       # Keep any load that is still off, so the next run retries it. One that
-      # has come back on in any mode is done with.
+      # has come back on in any mode is done with, as is anything this
+      # automation no longer restores, such as a tin_hut entry recorded before
+      # the Tin Hut moved to tin_hut_heating.yaml.
       - delay: "00:00:30"
       - variables:
           remaining: >
             {%- set r = {} %}
-            {%- if 'tin_hut' in shed and states('climate.tin_hut') in skip %}
-              {%- set r = dict(r, tin_hut=shed.tin_hut) %}
-            {%- endif %}
             {%- if 'dhw' in shed and states('water_heater.viewpoint_domestic_hot_water_0') in skip %}
               {%- set r = dict(r, dhw=shed.dhw) %}
             {%- endif %}

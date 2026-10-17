@@ -1,0 +1,166 @@
+---
+
+# Tin Hut heating: one mode helper, one automation that drives the thermostat.
+#
+# Change the mode, not the thermostat. The apply automation below is the only
+# thing that writes to climate.tin_hut (Better Thermostat, configured in the
+# UI). It re-checks every five minutes and switches the thermostat back on or
+# off to match the mode. A setpoint changed by hand during warm is kept until
+# the next mode change.
+#
+#   Mode     Thermostat                    Unit draw
+#   setback  off; floor guard below 14 °C  ~5 W standby
+#   warm     heat to 19 °C                 ~1.4 kW warming up, ~480 W holding
+#
+# Why setback is "off" rather than a low setpoint: Better Thermostat's minimum
+# is 15 °C and the unit's own is 16 °C, and whenever the thermostat is on at
+# all the unit sits in heat drawing ~480 W. A 60 h off test in October 2026
+# (outdoor 8-12 °C) saw 5 W standby and a low of 12.7 °C: the slab holds the
+# heat.
+#
+# The floor guard runs the thermostat at its 15 °C minimum while the wall
+# sensor reads below 14 °C, until it is back above 15 °C. The unit really
+# heats at its 16 °C minimum, so nothing in Better Thermostat tunes this
+# cycle; the threshold sensor below does. If the wall sensor drops out the
+# guard holds whatever it was doing, and device_alerts.yaml raises the alarm.
+#
+# Better Thermostat wants its high target at least 1 °C above its low one,
+# hence the 19/20 and 15/16 pairs. Its maximum was raised to 25 °C in the UI.
+#
+# Who changes the mode:
+#   - Scheduler card entries (stored in .storage, not in this repo):
+#     "Tin Hut - Warm up" sets warm at 14:00 on Thursdays, and the nightly
+#     23:00 entry sets setback. No Scheduler entry should target
+#     climate.tin_hut directly: one that did silently undid the off test.
+#   - The empty-hut automation below, once a warm session is over.
+#   - By hand, from the helper.
+#
+# During an Axle export event the thermostat is held off whatever the mode,
+# and picks up again from the mode afterwards. axle_energy.yaml only names
+# the Tin Hut in its notification.
+
+input_select:
+  # No initial: so the mode survives a restart.
+  tin_hut_heating_mode:
+    name: Tin Hut heating mode
+    icon: mdi:thermostat
+    options:
+      - setback
+      - warm
+
+binary_sensor:
+  # On below 14 °C, off again above 15 °C.
+  - platform: threshold
+    name: Tin Hut heating floor
+    entity_id: sensor.tin_hut_sensor_temperature
+    lower: 14.5
+    hysteresis: 0.5
+
+automation:
+  - alias: Tin Hut heating apply mode
+    id: tin_hut_heating_apply_mode
+    description: Drive the Tin Hut thermostat from the heating mode, the setback floor and any Axle export event.
+    mode: restart
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_select.tin_hut_heating_mode
+          - binary_sensor.tin_hut_heating_floor
+          - binary_sensor.axle_export_event
+        id: change
+      # The thermostat is cloud-backed; put it right once it reconnects.
+      - trigger: state
+        entity_id:
+          - climate.tin_hut
+          - climate.tin_hut_hvac
+        from: "unavailable"
+        id: change
+      - trigger: homeassistant
+        event: start
+        id: ha_start
+      # Catches a call that failed and anything that changed the thermostat
+      # on or off behind this automation's back.
+      - trigger: time_pattern
+        minutes: "/5"
+        id: reconcile
+    actions:
+      # Cloud-backed entities need a moment to reconnect after a restart.
+      - if:
+          - condition: trigger
+            id: ha_start
+        then:
+          - delay: "00:01:00"
+      - condition: template
+        value_template: >
+          {{ states('climate.tin_hut') not in ['unavailable', 'unknown']
+             and states('climate.tin_hut_hvac') not in ['unavailable', 'unknown'] }}
+      - variables:
+          warm_low: 19
+          floor_low: 15
+          current: "{{ states('climate.tin_hut') }}"
+          floor: "{{ states('binary_sensor.tin_hut_heating_floor') }}"
+          # off, warm, floor, or hold: the floor sensor is unknown, so leave
+          # the thermostat as it is.
+          desired: >
+            {%- if is_state('binary_sensor.axle_export_event', 'on') %}off
+            {%- elif is_state('input_select.tin_hut_heating_mode', 'warm') %}warm
+            {%- elif floor == 'on' %}floor
+            {%- elif floor == 'off' %}off
+            {%- else %}hold
+            {%- endif %}
+          low: "{{ warm_low if desired == 'warm' else floor_low }}"
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ desired == 'off' and current != 'off' }}"
+            sequence:
+              - action: climate.set_hvac_mode
+                target:
+                  entity_id: climate.tin_hut
+                data:
+                  hvac_mode: "off"
+          # Targets are only written when the thermostat is off or on a
+          # change, so the five-minute check leaves a hand-set target alone.
+          - conditions:
+              - condition: template
+                value_template: >
+                  {{ desired in ['warm', 'floor']
+                     and (current != 'heat_cool'
+                          or (trigger.id != 'reconcile'
+                              and state_attr('climate.tin_hut', 'target_temp_low') | float(0) != low | float)) }}
+            sequence:
+              - action: climate.set_temperature
+                target:
+                  entity_id: climate.tin_hut
+                data:
+                  hvac_mode: heat_cool
+                  target_temp_low: "{{ low }}"
+                  target_temp_high: "{{ low | int + 1 }}"
+
+  # The Thursday warm-up starts before anyone arrives, so an empty hut only
+  # ends a warm session once someone has been in since it began.
+  - alias: Tin Hut heating setback when empty
+    id: tin_hut_heating_setback_when_empty
+    description: Return the Tin Hut to setback an hour after the last person leaves a warm session.
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.tin_hut_occupied
+        from: "on"
+        to: "off"
+        for:
+          minutes: 60
+    conditions:
+      - condition: state
+        entity_id: input_select.tin_hut_heating_mode
+        state: warm
+      # They left after warm began, so they were in during it.
+      - condition: template
+        value_template: >
+          {{ trigger.to_state.last_changed > states.input_select.tin_hut_heating_mode.last_changed }}
+    actions:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.tin_hut_heating_mode
+        data:
+          option: setback
