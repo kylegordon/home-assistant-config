@@ -1,0 +1,349 @@
+---
+
+# Tin Hut heating: one mode helper, one automation that drives the thermostat.
+#
+# Change the mode, not the thermostat. The apply automation below is the only
+# thing that writes to climate.tin_hut (Better Thermostat, configured in the
+# UI). It re-checks every five minutes and switches the thermostat back on or
+# off to match the mode. A target changed by hand during warm is kept for the
+# rest of that session, through an export event too; the next warm session
+# starts at 19 °C again.
+#
+#   Mode     Thermostat                    Unit draw
+#   setback  off; floor guard below 14 °C  ~5 W standby
+#   warm     heat to 19 °C                 ~1.4 kW warming up, ~480 W holding
+#
+# Why setback is "off" rather than a low setpoint: Better Thermostat's minimum
+# is 15 °C and the unit's own is 16 °C, and whenever the thermostat is on at
+# all the unit sits in heat drawing ~480 W. A 60 h off test in October 2026
+# (outdoor 8-12 °C) saw 5 W standby and a low of 12.7 °C: the slab holds the
+# heat.
+#
+# The floor guard runs the thermostat at its 15 °C minimum while the wall
+# sensor reads below 14 °C, until it is back above 15 °C. The unit really
+# heats at its 16 °C minimum, so nothing in Better Thermostat tunes this
+# cycle; the threshold sensor below does. After a restart the threshold
+# sensor starts again as off, so a floor cycle in progress can stop short of
+# 15 °C; it comes back on below 14 °C.
+#
+# The wall sensor deep-sleeps between readings (awake it warms itself and
+# reads high), waking every five minutes. Home Assistant keeps its last
+# reading while it sleeps, so a dead sensor shows as a stale reading rather
+# than unavailable: the guard then holds whatever it was doing, and the
+# alert at the end of this file repeats until the sensor wakes again.
+#
+# Better Thermostat wants its high target at least 1 °C above its low one,
+# hence the 19/20 and 15/16 pairs. Its maximum was raised to 25 °C in the UI.
+#
+# Who changes the mode:
+#   - Scheduler card entries (stored in .storage, not in this repo):
+#     "Tin Hut - Warm up" sets warm at 14:00 on Thursdays, and the nightly
+#     23:00 entry sets setback. No Scheduler entry should target
+#     climate.tin_hut directly: one that did silently undid the off test.
+#   - The warm session automation below, about an hour after the hut empties.
+#   - By hand, from the helper.
+#
+# During an Axle export event the thermostat is held off whatever the mode,
+# and picks up again from the mode afterwards. axle_energy.yaml only names
+# the Tin Hut in its notification.
+
+input_select:
+  # No initial: so the mode survives a restart.
+  tin_hut_heating_mode:
+    name: Tin Hut heating mode
+    icon: mdi:thermostat
+    options:
+      - setback
+      - warm
+
+input_number:
+  # The current warm session's target. Each session starts at 19 °C; a target
+  # set by hand on the thermostat is copied here, so it survives the
+  # thermostat being switched off for an export event. No initial: so it
+  # survives a restart.
+  tin_hut_heating_warm_target:
+    name: Tin Hut warm target
+    icon: mdi:thermometer
+    # 24 so the high target, 1 °C above, stays within Better Thermostat's
+    # 25 °C maximum.
+    min: 15
+    max: 24
+    step: 1
+    unit_of_measurement: "°C"
+
+input_boolean:
+  # Someone has been in since the current warm session began. Kept in a
+  # helper so it survives a restart, which would otherwise lose track of a
+  # session that had already emptied.
+  tin_hut_heating_warm_occupied:
+    name: Tin Hut occupied this warm session
+    icon: mdi:account-clock
+
+binary_sensor:
+  # On below 14 °C, off again above 15 °C.
+  - platform: threshold
+    name: Tin Hut heating floor
+    entity_id: sensor.tin_hut_sensor_temperature
+    lower: 14.5
+    hysteresis: 0.5
+
+template:
+  # Normal sleep is five minutes, so half an hour without waking means a flat
+  # battery or a lost connection, and the floor guard is working from a stale
+  # reading. A missing status entity (a renamed device) counts too. The half
+  # hour is measured from last_changed rather than with a for:, which a
+  # restart would drop; after a restart it counts from the restart. The
+  # short delay_on below only absorbs a briefly missing entity.
+  - binary_sensor:
+      - name: Tin Hut wall sensor not waking
+        unique_id: tin_hut_wall_sensor_not_waking
+        device_class: problem
+        # Rides out the status entity being briefly missing at startup or
+        # during an ESPHome reload.
+        delay_on:
+          minutes: 2
+        state: >
+          {% set s = states.binary_sensor.tin_hut_sensor_status %}
+          {{ s is none
+             or (s.state != 'on' and now() - s.last_changed > timedelta(minutes=30)) }}
+
+alert:
+  tin_hut_wall_sensor_not_waking:
+    name: Tin Hut wall sensor not waking
+    entity_id: binary_sensor.tin_hut_wall_sensor_not_waking
+    state: "on"
+    # A real interval is required; see zaptec_charging.yaml.
+    repeat:
+      - 240
+    can_acknowledge: true
+    skip_first: false
+    title: Tin Hut heating
+    message: The Tin Hut wall sensor hasn't woken for 30 minutes. The setback floor is holding on a stale reading.
+    done_message: The Tin Hut wall sensor is waking again.
+    # persistent_notification keeps it in the HA UI if the push is missed.
+    notifiers:
+      - mobile_app_nothing_phone_2
+      - persistent_notification
+    data:
+      tag: tin_hut_wall_sensor_not_waking
+      timeout: 14400
+      # Replaces the persistent notification rather than stacking a new one.
+      notification_id: tin_hut_wall_sensor_not_waking
+
+automation:
+  - alias: Tin Hut heating apply mode
+    id: tin_hut_heating_apply_mode
+    description: Drive the Tin Hut thermostat from the heating mode, the setback floor and any Axle export event.
+    mode: restart
+    variables:
+      # Where each warm session starts.
+      warm_default: 19
+    triggers:
+      # to: ~ ignores attribute-only changes, such as a helper reload.
+      - trigger: state
+        entity_id: input_select.tin_hut_heating_mode
+        to: ~
+        id: mode
+      - trigger: state
+        entity_id:
+          - binary_sensor.tin_hut_heating_floor
+          - binary_sensor.axle_export_event
+          - input_number.tin_hut_heating_warm_target
+        # The export event sensor's attributes change every minute; under
+        # mode: restart each would cancel a run, start-up delay included.
+        to: ~
+        id: change
+      # The thermostat is cloud-backed; put it right once it reconnects.
+      - trigger: state
+        entity_id:
+          - climate.tin_hut
+          - climate.tin_hut_hvac
+        from:
+          - "unavailable"
+          - "unknown"
+        id: change
+      - trigger: homeassistant
+        event: start
+        id: ha_start
+      # Catches a call that failed and anything that changed the thermostat
+      # behind this automation's back.
+      - trigger: time_pattern
+        minutes: "/5"
+        id: reconcile
+    actions:
+      # A new warm session starts at 19 °C, even if the thermostat can't be
+      # reached yet or an export event is holding it off.
+      - if:
+          - condition: trigger
+            id: mode
+          - condition: state
+            entity_id: input_select.tin_hut_heating_mode
+            state: warm
+        then:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.tin_hut_heating_warm_target
+            data:
+              value: "{{ warm_default }}"
+      # Cloud-backed entities need a moment to reconnect after a restart.
+      - if:
+          - condition: trigger
+            id: ha_start
+        then:
+          - delay: "00:01:00"
+      - condition: template
+        value_template: >
+          {{ states('climate.tin_hut') not in ['unavailable', 'unknown']
+             and states('climate.tin_hut_hvac') not in ['unavailable', 'unknown'] }}
+      - variables:
+          floor_low: 15
+          current: "{{ states('climate.tin_hut') }}"
+          current_low: "{{ state_attr('climate.tin_hut', 'target_temp_low') | float(0) }}"
+          floor: "{{ states('binary_sensor.tin_hut_heating_floor') }}"
+          # off, warm, floor, or hold. Hold is setback with the floor sensor
+          # unknown: leave the thermostat on or off as it is, but never at a
+          # warm target.
+          desired: >
+            {%- if is_state('binary_sensor.axle_export_event', 'on') %}off
+            {%- elif is_state('input_select.tin_hut_heating_mode', 'warm') %}warm
+            {%- elif floor == 'on' %}floor
+            {%- elif floor == 'off' %}off
+            {%- elif current == 'heat_cool' and current_low > floor_low %}floor
+            {%- else %}hold
+            {%- endif %}
+          low: >
+            {{ states('input_number.tin_hut_heating_warm_target') | float(warm_default)
+               if desired == 'warm' else floor_low }}
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ desired == 'off' and current != 'off' }}"
+            sequence:
+              - action: climate.set_hvac_mode
+                target:
+                  entity_id: climate.tin_hut
+                data:
+                  hvac_mode: "off"
+          - conditions:
+              - condition: template
+                value_template: >
+                  {{ desired in ['warm', 'floor']
+                     and (current != 'heat_cool' or current_low != low | float) }}
+            sequence:
+              - action: climate.set_temperature
+                target:
+                  entity_id: climate.tin_hut
+                data:
+                  hvac_mode: heat_cool
+                  target_temp_low: "{{ low }}"
+                  target_temp_high: "{{ low | float + 1 }}"
+
+  # Copies a target set by hand during warm into the session's target, so the
+  # apply automation keeps it rather than putting 19 °C back.
+  - alias: Tin Hut heating keep hand-set warm target
+    id: tin_hut_heating_keep_hand_set_warm_target
+    description: Keep a Tin Hut target set by hand for the rest of the warm session.
+    mode: queued
+    triggers:
+      - trigger: state
+        entity_id: climate.tin_hut
+        attribute: target_temp_low
+    conditions:
+      - condition: state
+        entity_id: input_select.tin_hut_heating_mode
+        state: warm
+      - condition: state
+        entity_id: climate.tin_hut
+        state: heat_cool
+      # Only a change made while it was already on: switching it on can pass
+      # through the targets it held while off.
+      - condition: template
+        value_template: >
+          {{ trigger.from_state is not none and trigger.from_state.state == 'heat_cool'
+             and trigger.to_state.attributes.target_temp_low is number
+             and trigger.to_state.attributes.target_temp_low
+                 != states('input_number.tin_hut_heating_warm_target') | float(0) }}
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.tin_hut_heating_warm_target
+        data:
+          # Clamped to the helper's range: the 1 °C above it for the high
+          # target has to stay within Better Thermostat's 25 °C maximum.
+          value: "{{ [[trigger.to_state.attributes.target_temp_low, 15] | max, 24] | min }}"
+
+  # The Thursday warm-up starts before anyone arrives, so an empty hut only
+  # ends a warm session once someone has been in since it began. "Been in"
+  # means occupied for ten minutes: the camera person sensors behind
+  # binary_sensor.tin_hut_occupied flicker, and a blip (held five minutes by
+  # its delay_off) must not count. Someone already in when warm starts only
+  # counts once the session is 15 minutes old, so a visit ending just after
+  # a warm-up begins doesn't count.
+  #
+  # Polled every five minutes with conditions rather than triggered on the
+  # occupancy sensor with for:, which a restart would drop. After a restart
+  # the hour counts from the restart. The polling and the occupancy sensor's
+  # own five-minute delay_off make "an hour" 65-70 minutes in practice.
+  - alias: Tin Hut heating warm session
+    id: tin_hut_heating_warm_session
+    description: Return the Tin Hut to setback about an hour after the last person leaves a warm session.
+    mode: queued
+    triggers:
+      # Every mode change starts the next session with a clear flag.
+      - trigger: state
+        entity_id: input_select.tin_hut_heating_mode
+        to: ~
+        id: mode
+      - trigger: time_pattern
+        minutes: "/5"
+        id: check
+    conditions:
+      - condition: or
+        conditions:
+          - condition: trigger
+            id: mode
+          - condition: state
+            entity_id: input_select.tin_hut_heating_mode
+            state: warm
+    actions:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: mode
+            sequence:
+              - action: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.tin_hut_heating_warm_occupied
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.tin_hut_heating_warm_occupied
+                state: "off"
+              - condition: state
+                entity_id: binary_sensor.tin_hut_occupied
+                state: "on"
+                for:
+                  minutes: 10
+              - condition: state
+                entity_id: input_select.tin_hut_heating_mode
+                state: warm
+                for:
+                  minutes: 15
+            sequence:
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.tin_hut_heating_warm_occupied
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.tin_hut_heating_warm_occupied
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.tin_hut_occupied
+                state: "off"
+                for:
+                  minutes: 60
+            sequence:
+              - action: input_select.select_option
+                target:
+                  entity_id: input_select.tin_hut_heating_mode
+                data:
+                  option: setback
