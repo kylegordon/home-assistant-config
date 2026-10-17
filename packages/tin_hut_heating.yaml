@@ -40,8 +40,11 @@
 #     "Tin Hut - Warm up" sets warm at 14:00 on Thursdays, and the nightly
 #     23:00 entry sets setback. No Scheduler entry should target
 #     climate.tin_hut directly: one that did silently undid the off test.
-#   - The warm session automation below, about an hour after the hut empties.
-#   - By hand, from the helper.
+#   - The warm session automation below: warm once someone has been in for
+#     15 minutes, setback about an hour after the hut empties. The 23:00
+#     setback with someone still in turns back to warm after 15-20 minutes.
+#   - By hand, from the helper. A setback set by hand (UI, app, voice or
+#     API) holds until the hut has been empty for 15 minutes.
 #
 # During an Axle export event the thermostat is held off whatever the mode,
 # and picks up again from the mode afterwards. axle_energy.yaml only names
@@ -78,6 +81,11 @@ input_boolean:
   tin_hut_heating_warm_occupied:
     name: Tin Hut occupied this warm session
     icon: mdi:account-clock
+  # Setback was chosen by hand, so occupancy doesn't turn warm back on until
+  # the hut has been empty for 15 minutes.
+  tin_hut_heating_setback_hold:
+    name: Tin Hut setback held by hand
+    icon: mdi:hand-back-right
 
 binary_sensor:
   # On below 14 °C, off again above 15 °C.
@@ -272,24 +280,41 @@ automation:
           # target has to stay within Better Thermostat's 25 °C maximum.
           value: "{{ [[trigger.to_state.attributes.target_temp_low, 15] | max, 24] | min }}"
 
+  # Someone in the hut for 15 minutes during setback starts a warm session.
+  # The camera person sensors behind binary_sensor.tin_hut_occupied flicker,
+  # and the delay_off holds each blip for five minutes. The lights switching
+  # off can set one off, which turns the lights back on: on 17 October 2026
+  # an empty hut showed occupied for 5-8½ minutes in every ten for an hour.
+  # Fifteen minutes rides that out.
+  #
+  # A setback chosen by a person sets a hold, and occupancy leaves the mode
+  # alone until the hut has been empty for 15 minutes. "By a person" means
+  # the change carries a user: the UI, the app, voice or the API do;
+  # automations and the Scheduler card don't. Picking setback when it is
+  # already setback changes nothing, so it sets no hold; turn the hold
+  # helper on by hand instead.
+  #
   # The Thursday warm-up starts before anyone arrives, so an empty hut only
   # ends a warm session once someone has been in since it began. "Been in"
-  # means occupied for ten minutes: the camera person sensors behind
-  # binary_sensor.tin_hut_occupied flicker, and a blip (held five minutes by
-  # its delay_off) must not count. Someone already in when warm starts only
-  # counts once the session is 15 minutes old, so a visit ending just after
-  # a warm-up begins doesn't count.
+  # means occupied for ten minutes, so a blip doesn't count. Someone in for
+  # 15 minutes when warm begins counts straight away, which is how a session
+  # that occupancy started counts. Anyone else already in only counts once
+  # the session is 15 minutes old, so a short visit ending just after a
+  # warm-up begins doesn't count. A longer visit that does count and then
+  # ends returns the hut to setback; whoever comes next warms it again.
   #
   # Polled every five minutes with conditions rather than triggered on the
   # occupancy sensor with for:, which a restart would drop. After a restart
-  # the hour counts from the restart. The polling and the occupancy sensor's
-  # own five-minute delay_off make "an hour" 65-70 minutes in practice.
+  # the 15 minutes and the hour count from the restart. The polling and the
+  # occupancy sensor's own five-minute delay_off make "an hour" 65-70
+  # minutes in practice.
   - alias: Tin Hut heating warm session
     id: tin_hut_heating_warm_session
-    description: Return the Tin Hut to setback about an hour after the last person leaves a warm session.
+    description: Warm the Tin Hut once someone has been in for 15 minutes, and return it to setback about an hour after the last person leaves.
     mode: queued
     triggers:
-      # Every mode change starts the next session with a clear flag.
+      # Every mode change sets both flags afresh: occupied on if warm with
+      # someone in for 15 minutes, hold on if setback was chosen by hand.
       - trigger: state
         entity_id: input_select.tin_hut_heating_mode
         to: ~
@@ -297,23 +322,87 @@ automation:
       - trigger: time_pattern
         minutes: "/5"
         id: check
-    conditions:
-      - condition: or
-        conditions:
-          - condition: trigger
-            id: mode
-          - condition: state
-            entity_id: input_select.tin_hut_heating_mode
-            state: warm
     actions:
       - choose:
           - conditions:
               - condition: trigger
                 id: mode
             sequence:
+              # Occupied for 15 minutes as warm starts means this automation
+              # started it, so that visit counts.
+              - if:
+                  - condition: state
+                    entity_id: input_select.tin_hut_heating_mode
+                    state: warm
+                  - condition: state
+                    entity_id: binary_sensor.tin_hut_occupied
+                    state: "on"
+                    for:
+                      minutes: 15
+                then:
+                  - action: input_boolean.turn_on
+                    target:
+                      entity_id: input_boolean.tin_hut_heating_warm_occupied
+                else:
+                  - action: input_boolean.turn_off
+                    target:
+                      entity_id: input_boolean.tin_hut_heating_warm_occupied
+              - if:
+                  - condition: template
+                    value_template: >
+                      {{ trigger.to_state.state == 'setback'
+                         and trigger.to_state.context.user_id is not none }}
+                then:
+                  - action: input_boolean.turn_on
+                    target:
+                      entity_id: input_boolean.tin_hut_heating_setback_hold
+                else:
+                  - action: input_boolean.turn_off
+                    target:
+                      entity_id: input_boolean.tin_hut_heating_setback_hold
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.tin_hut_heating_setback_hold
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.tin_hut_occupied
+                state: "off"
+                for:
+                  minutes: 15
+            sequence:
               - action: input_boolean.turn_off
                 target:
-                  entity_id: input_boolean.tin_hut_heating_warm_occupied
+                  entity_id: input_boolean.tin_hut_heating_setback_hold
+          - conditions:
+              # Setback for 15 minutes too, so the 23:00 setback with someone
+              # in lasts at least that long.
+              - condition: state
+                entity_id: input_select.tin_hut_heating_mode
+                state: setback
+                for:
+                  minutes: 15
+              - condition: state
+                entity_id: input_boolean.tin_hut_heating_setback_hold
+                state: "off"
+              - condition: state
+                entity_id: binary_sensor.tin_hut_occupied
+                state: "on"
+                for:
+                  minutes: 15
+            sequence:
+              - action: input_select.select_option
+                target:
+                  entity_id: input_select.tin_hut_heating_mode
+                data:
+                  option: warm
+              # So a false start, or a stuck sensor heating an empty hut, is
+              # seen rather than only found on the bill.
+              - action: notify.mobile_app_nothing_phone_2
+                data:
+                  title: Tin Hut heating
+                  message: Someone has been in the Tin Hut for 15 minutes, so the heating is on.
+                  data:
+                    tag: tin_hut_heating_auto_warm
           - conditions:
               - condition: state
                 entity_id: input_boolean.tin_hut_heating_warm_occupied
@@ -333,6 +422,9 @@ automation:
                 target:
                   entity_id: input_boolean.tin_hut_heating_warm_occupied
           - conditions:
+              - condition: state
+                entity_id: input_select.tin_hut_heating_mode
+                state: warm
               - condition: state
                 entity_id: input_boolean.tin_hut_heating_warm_occupied
                 state: "on"
