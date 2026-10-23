@@ -29,6 +29,45 @@ jobs:
         continue-on-error: false
         with:
           args: "remark --no-stdout --color --frail --use preset-lint-recommended ."
+
+    version_env:
+      name: Get Installed Version for Testing
+      runs-on: ubuntu-latest
+      outputs:
+        current_version: ${{ steps.currentver.outputs.current_version }}
+      steps:
+        - name: Get config from GitHub
+          uses: actions/checkout@v4
+        - name: Get Installed Version from .HA_VERSION
+          id: currentver
+          run: |
+            HA_VERSION=$(<.HA_VERSION)
+            echo $HA_VERSION
+            echo "{current_version}={$HA_VERSION}" >> $GITHUB_OUTPUT
+
+    home-assistant:
+      name: "HA ${{ matrix.version }} Config Check"
+      runs-on: ubuntu-latest
+      needs: [yamllint, remarklint]
+      strategy:
+        matrix:
+          version: ["${{needs.version_env.outputs.current_version}}", "stable", "beta", "dev"]
+      steps:
+        - name: ⤵️ Check out configuration from GitHub
+          uses: actions/checkout@v4
+        - name: ⚙ Copy stub files into configuration folder
+          run: |
+            cp -R travis_secrets.yaml secrets.yaml
+            sudo mkdir -p /github/workspace/tmp
+            sudo touch fullchain.pem
+            sudo touch privkey.pem
+        - name: 🚀 Run Home Assistant Configuration Check
+          uses: frenck/action-home-assistant@v1
+          with:
+            path: "."
+            secrets: secrets.yaml
+            version: "${{ matrix.version }}"
+
   home_assistant_stable:
     runs-on: ubuntu-latest
     needs: [yamllint, remarklint]
