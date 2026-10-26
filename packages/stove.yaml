@@ -68,3 +68,13 @@ automation:
           title: "More wood needed!"
           message: >
             The stove is running low on wood. Refuel now.
+      # On-screen toast for whoever is watching the TV, over most inputs. Last,
+      # so a TV failure cannot stop the notifications above.
+      - if:
+          - condition: state
+            entity_id: media_player.lg_tv
+            state: "on"
+        then:
+          - service: notify.lg_webos_tv_oled65g45lw_dekqljp
+            data:
+              message: "More wood needed! The stove is running low on wood."
