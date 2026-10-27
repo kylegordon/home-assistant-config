@@ -10,7 +10,7 @@
 # starts at 19 °C again.
 #
 #   Mode     Thermostat                    Unit draw
-#   setback  off; floor guard below 14 °C  ~5 W standby
+#   setback  off; floor guard below 12 °C  ~5 W standby
 #   warm     heat to 19 °C                 ~1.4 kW warming up, ~480 W holding
 #
 # Why setback is "off" rather than a low setpoint: Better Thermostat's minimum
@@ -20,11 +20,16 @@
 # heat.
 #
 # The floor guard runs the thermostat at its 15 °C minimum while the wall
-# sensor reads below 14 °C, until it is back above 15 °C. The unit really
+# sensor reads below 12 °C, until it is back above 13 °C. The unit really
 # heats at its 16 °C minimum, so nothing in Better Thermostat tunes this
 # cycle; the threshold sensor below does. After a restart the threshold
 # sensor starts again as off, so a floor cycle in progress can stop short of
-# 15 °C; it comes back on below 14 °C.
+# 13 °C; it comes back on below 12 °C.
+#
+# 12 °C rather than lower because of damp: cooling the hut's air as measured
+# on 27 Oct 2026 (62 % RH at 14.6 °C)
+# takes it to about 73 % at 12 °C but about 84 % at 10 °C, past the ~80 %
+# where mould and corrosion start.
 #
 # The wall sensor deep-sleeps between readings (awake it warms itself and
 # reads high), waking every five minutes. Home Assistant keeps its last
@@ -88,11 +93,11 @@ input_boolean:
     icon: mdi:hand-back-right
 
 binary_sensor:
-  # On below 14 °C, off again above 15 °C.
+  # On below 12 °C, off again above 13 °C.
   - platform: threshold
     name: Tin Hut heating floor
     entity_id: sensor.tin_hut_sensor_temperature
-    lower: 14.5
+    lower: 12.5
     hysteresis: 0.5
 
 template:
