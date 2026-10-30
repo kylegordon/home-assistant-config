@@ -10,7 +10,7 @@
 # starts at 19 °C again.
 #
 #   Mode     Thermostat                    Unit draw
-#   setback  off; floor guard below 12 °C  ~5 W standby
+#   setback  off; floor guard below floor  ~5 W standby
 #   warm     heat to 19 °C                 ~1.4 kW warming up, ~480 W holding
 #
 # Why setback is "off" rather than a low setpoint: Better Thermostat's minimum
@@ -20,11 +20,11 @@
 # heat.
 #
 # The floor guard runs the thermostat at its 15 °C minimum while the wall
-# sensor reads below 12 °C, until it is back above 13 °C. The unit really
-# heats at its 16 °C minimum, so nothing in Better Thermostat tunes this
-# cycle; the threshold sensor below does. After a restart the threshold
-# sensor starts again as off, so a floor cycle in progress can stop short of
-# 13 °C; it comes back on below 12 °C.
+# sensor reads below the floor (input_number.tin_hut_heating_floor, set to 12 °C),
+# until it is back 1 °C above it. The unit really heats at its 16 °C minimum,
+# so nothing in Better Thermostat tunes this cycle; the floor sensor below
+# does. After a restart the floor sensor starts again as off, so a floor
+# cycle in progress can stop short; it comes back on below the floor.
 #
 # 12 °C rather than lower because of damp: cooling the hut's air as measured
 # on 27 Oct 2026 (62 % RH at 14.6 °C)
@@ -78,6 +78,15 @@ input_number:
     max: 24
     step: 1
     unit_of_measurement: "°C"
+  # The setback floor. No initial: so a value set by hand survives a restart;
+  # a new install starts at the 10 °C minimum, so set it once.
+  tin_hut_heating_floor:
+    name: Tin Hut setback floor
+    icon: mdi:thermometer-low
+    min: 10
+    max: 14
+    step: 0.5
+    unit_of_measurement: "°C"
 
 input_boolean:
   # Someone has been in since the current warm session began. Kept in a
@@ -92,15 +101,22 @@ input_boolean:
     name: Tin Hut setback held by hand
     icon: mdi:hand-back-right
 
-binary_sensor:
-  # On below 12 °C, off again above 13 °C.
-  - platform: threshold
-    name: Tin Hut heating floor
-    entity_id: sensor.tin_hut_sensor_temperature
-    lower: 12.5
-    hysteresis: 0.5
-
 template:
+  # On below the floor, off again 1 °C above it; in between it keeps its
+  # state. Unavailable without a temperature reading or floor value, which
+  # the apply automation treats as hold. Deploy with a restart, not a reload:
+  # the old threshold sensor of the same name would push this one to _2.
+  - binary_sensor:
+      - name: Tin Hut heating floor
+        unique_id: tin_hut_heating_floor
+        availability: >
+          {{ has_value('sensor.tin_hut_sensor_temperature')
+             and has_value('input_number.tin_hut_heating_floor') }}
+        state: >
+          {% set t = states('sensor.tin_hut_sensor_temperature') | float %}
+          {% set f = states('input_number.tin_hut_heating_floor') | float %}
+          {{ t < f or (this.state == 'on' and t <= f + 1) }}
+
   # Normal sleep is five minutes, so half an hour without waking means a flat
   # battery or a lost connection, and the floor guard is working from a stale
   # reading. A missing status entity (a renamed device) counts too. The half
