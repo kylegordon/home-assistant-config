@@ -3,7 +3,7 @@
 # Script to compile (and optionally upload) all ESPHome files that use tx-ultimate-easy
 # Usage: ./compile_tx_ultimate.sh [--upload]
 
-ESPHOME_VERSION="2026.1.1"
+ESPHOME_VERSION="2026.10.0"
 UPLOAD_MODE=false
 
 # Parse arguments
