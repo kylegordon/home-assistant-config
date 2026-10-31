@@ -80,6 +80,8 @@ Notable packages beyond simple rooms: `adaptive_lighting.yaml`, `alarm.yaml`, `c
 
 TX-Ultimate-Easy touch switches (`*_switch.yaml`) are a significant device family: they fire `esphome.tx_ultimate_easy` events (`device_name`, `action` — `click`/`double_click`, optional `button_id` for multi-gang) consumed by automations in the corresponding `packages/*.yaml` file (e.g. `study_switch.yaml` events → `packages/study_lights.yaml`). When wiring up a new switch, look at how an existing room's switch+package pair is connected before inventing a new pattern. These switches run in "API Failsafe only" mode so the physical relay still works if HA/WiFi is down.
 
+The TX-Ultimate-Easy version is pinned by `ref:` in `esphome/common/tx_ultimate_easy_common.yaml` and bumped by Renovate (regex custom manager in `renovate.json`). Keep `ref:` on the line directly after `url:` and pin an unquoted `vX.Y.Z` tag, or Renovate silently stops tracking it. Upstream bumps can raise the minimum ESPHome version, so review those PRs rather than automerging.
+
 The Somfy RTS garage/tin-hut door control (`tin_hut_door_left.yaml` / `tin_hut_door_right.yaml`) shares state-machine logic from `esphome/common/tin-hut-doors.yaml` — it models a single-relay cover as a stop/open/close cycle with time-based position tracking, not true position control.
 
 ### Motion detection: trigger on events, not on binary sensors
