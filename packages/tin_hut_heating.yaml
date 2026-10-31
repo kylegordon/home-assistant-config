@@ -54,6 +54,11 @@
 # During an Axle export event the thermostat is held off whatever the mode,
 # and picks up again from the mode afterwards. axle_energy.yaml only names
 # the Tin Hut in its notification.
+#
+# The same hold applies, floor guard included, while either vehicle roller
+# door has been open for 10 minutes; driving a car in or out doesn't count.
+# The pedestrian door is ignored. An alert fires if the hold keeps the hut
+# below the floor for an hour.
 
 input_select:
   # No initial: so the mode survives a restart.
@@ -117,6 +122,34 @@ template:
           {% set f = states('input_number.tin_hut_heating_floor') | float %}
           {{ t < f or (this.state == 'on' and t <= f + 1) }}
 
+  # Either roller door off its closed endstop for 10 minutes. The endstop
+  # rather than the cover: a missed open command leaves the cover reporting
+  # opening with the door still shut. An unavailable endstop counts as shut,
+  # so a lost door controller doesn't stop the heating. The 10 minutes start
+  # again after a restart.
+  - binary_sensor:
+      - name: Tin Hut roller door open
+        unique_id: tin_hut_roller_door_open
+        device_class: garage_door
+        delay_on:
+          minutes: 10
+        state: >
+          {{ is_state('binary_sensor.tin_hut_door_left_closed_endstop_sensor', 'off')
+             or is_state('binary_sensor.tin_hut_door_right_closed_endstop_sensor', 'off') }}
+
+  # The roller door hold is overriding the setback floor. A broken closed
+  # endstop wire reads as open, so this is also how a fault that would leave
+  # the hut unheated for days shows up.
+  - binary_sensor:
+      - name: Tin Hut floor held off by roller door
+        unique_id: tin_hut_floor_held_off_by_roller_door
+        device_class: problem
+        delay_on:
+          hours: 1
+        state: >
+          {{ is_state('binary_sensor.tin_hut_roller_door_open', 'on')
+             and is_state('binary_sensor.tin_hut_heating_floor', 'on') }}
+
   # Normal sleep is five minutes, so half an hour without waking means a flat
   # battery or a lost connection, and the floor guard is working from a stale
   # reading. A missing status entity (a renamed device) counts too. The half
@@ -159,10 +192,32 @@ alert:
       # Replaces the persistent notification rather than stacking a new one.
       notification_id: tin_hut_wall_sensor_not_waking
 
+  tin_hut_floor_held_off_by_roller_door:
+    name: Tin Hut floor held off by roller door
+    entity_id: binary_sensor.tin_hut_floor_held_off_by_roller_door
+    state: "on"
+    repeat:
+      - 240
+    can_acknowledge: true
+    skip_first: false
+    title: Tin Hut heating
+    message: >
+      The Tin Hut is below the setback floor but the heating is held off, because a
+      roller door has been reading open for over an hour. Shut the door, or check its
+      closed endstop if it is already shut.
+    done_message: The Tin Hut setback floor is no longer held off by a roller door.
+    notifiers:
+      - mobile_app_nothing_phone_2
+      - persistent_notification
+    data:
+      tag: tin_hut_floor_held_off_by_roller_door
+      timeout: 14400
+      notification_id: tin_hut_floor_held_off_by_roller_door
+
 automation:
   - alias: Tin Hut heating apply mode
     id: tin_hut_heating_apply_mode
-    description: Drive the Tin Hut thermostat from the heating mode, the setback floor and any Axle export event.
+    description: Drive the Tin Hut thermostat from the heating mode, the setback floor, any Axle export event and the roller doors.
     mode: restart
     variables:
       # Where each warm session starts.
@@ -177,6 +232,7 @@ automation:
         entity_id:
           - binary_sensor.tin_hut_heating_floor
           - binary_sensor.axle_export_event
+          - binary_sensor.tin_hut_roller_door_open
           - input_number.tin_hut_heating_warm_target
         # The export event sensor's attributes change every minute; under
         # mode: restart each would cancel a run, start-up delay included.
@@ -233,7 +289,8 @@ automation:
           # unknown: leave the thermostat on or off as it is, but never at a
           # warm target.
           desired: >
-            {%- if is_state('binary_sensor.axle_export_event', 'on') %}off
+            {%- if is_state('binary_sensor.axle_export_event', 'on')
+                   or is_state('binary_sensor.tin_hut_roller_door_open', 'on') %}off
             {%- elif is_state('input_select.tin_hut_heating_mode', 'warm') %}warm
             {%- elif floor == 'on' %}floor
             {%- elif floor == 'off' %}off
@@ -421,7 +478,10 @@ automation:
               - action: notify.mobile_app_nothing_phone_2
                 data:
                   title: Tin Hut heating
-                  message: Someone has been in the Tin Hut for 15 minutes, so the heating is on.
+                  message: >
+                    Someone has been in the Tin Hut for 15 minutes, so the heating is on{{
+                    ', once the roller doors are shut'
+                    if is_state('binary_sensor.tin_hut_roller_door_open', 'on') else '' }}.
                   data:
                     tag: tin_hut_heating_auto_warm
           - conditions:
