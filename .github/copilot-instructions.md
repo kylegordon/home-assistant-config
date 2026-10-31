@@ -170,7 +170,7 @@ Jobs 3-6 run in parallel after jobs 1-2 complete.
 
 ### ESPHome Workflows
 
-**esphome-parallel.yaml** - Runs when esphome/ files change:
+**esphome-parallel.yaml** - Runs when esphome/ files change. Both matrices use `fail-fast: false`, so every failing device is reported:
 1. **files** job - Discovers all `esphome/*.yaml` files
 2. **loop-stable** - Matrix validation of all devices (stable)
 3. **loop-beta** - Matrix validation of all devices (beta)
