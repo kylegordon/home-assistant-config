@@ -2,5 +2,16 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "ESPHome remote packages pinned to a GitHub tag (url + ref)",
+      "managerFilePatterns": ["/^esphome/.+\\.ya?ml$/"],
+      "matchStrings": [
+        "url:\\s*https://github\\.com/(?<depName>[^/\\s]+/[^/\\s]+?)/?\\s*\\n\\s*ref:\\s*(?<currentValue>v?\\d[^\\s#]*)"
+      ],
+      "datasourceTemplate": "github-tags"
+    }
   ]
 }

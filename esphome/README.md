@@ -49,7 +49,7 @@ The following TX-Ultimate-Easy switch devices are configured in this directory:
 - `living_room_switch.yaml` - Switch in the living room
 - `craftroom_switch.yaml` - Switch in the craft room
 
-All switches use the TX-Ultimate-Easy package from https://github.com/edwardtfn/TX-Ultimate-Easy (ref: v9999.99.9)
+All switches use the TX-Ultimate-Easy package from https://github.com/edwardtfn/TX-Ultimate-Easy (version pinned in `common/tx_ultimate_easy_common.yaml`, bumped by Renovate)
 
 ### Features
 
