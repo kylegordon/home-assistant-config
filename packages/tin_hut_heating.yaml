@@ -46,10 +46,14 @@
 #     23:00 entry sets setback. No Scheduler entry should target
 #     climate.tin_hut directly: one that did silently undid the off test.
 #   - The warm session automation below: warm once someone has been in for
-#     15 minutes, setback about an hour after the hut empties. The 23:00
+#     15 minutes, setback once the hut has been empty for 15 minutes. The 23:00
 #     setback with someone still in turns back to warm after 15-20 minutes.
 #   - By hand, from the helper. A setback set by hand (UI, app, voice or
 #     API) holds until the hut has been empty for 15 minutes.
+#
+# While the mode is warm the phone shows a persistent notification, sent as
+# warm starts and again after a restart or automation reload (not if merely
+# dismissed); it clears when the mode leaves warm.
 #
 # During an Axle export event the thermostat is held off whatever the mode,
 # and picks up again from the mode afterwards. axle_energy.yaml only names
@@ -383,12 +387,12 @@ automation:
   #
   # Polled every five minutes with conditions rather than triggered on the
   # occupancy sensor with for:, which a restart would drop. After a restart
-  # the 15 minutes and the hour count from the restart. The polling and the
-  # occupancy sensor's own five-minute delay_off make "an hour" 65-70
-  # minutes in practice.
+  # the 15 minutes count from the restart. The polling and the occupancy
+  # sensor's own five-minute delay_off make "empty for 15 minutes" 20-25
+  # minutes after the last person leaves in practice.
   - alias: Tin Hut heating warm session
     id: tin_hut_heating_warm_session
-    description: Warm the Tin Hut once someone has been in for 15 minutes, and return it to setback about an hour after the last person leaves.
+    description: Warm the Tin Hut once someone has been in for 15 minutes, and return it to setback once it has been empty for 15 minutes.
     mode: queued
     triggers:
       # Every mode change sets both flags afresh: occupied on if warm with
@@ -400,6 +404,14 @@ automation:
       - trigger: time_pattern
         minutes: "/5"
         id: check
+      # Puts the notification right after anything that could have missed a
+      # mode change.
+      - trigger: homeassistant
+        event: start
+        id: sync
+      - trigger: event
+        event_type: automation_reloaded
+        id: sync
     actions:
       - choose:
           - conditions:
@@ -473,17 +485,6 @@ automation:
                   entity_id: input_select.tin_hut_heating_mode
                 data:
                   option: warm
-              # So a false start, or a stuck sensor heating an empty hut, is
-              # seen rather than only found on the bill.
-              - action: notify.mobile_app_nothing_phone_2
-                data:
-                  title: Tin Hut heating
-                  message: >
-                    Someone has been in the Tin Hut for 15 minutes, so the heating is on{{
-                    ', once the roller doors are shut'
-                    if is_state('binary_sensor.tin_hut_roller_door_open', 'on') else '' }}.
-                  data:
-                    tag: tin_hut_heating_auto_warm
           - conditions:
               - condition: state
                 entity_id: input_boolean.tin_hut_heating_warm_occupied
@@ -513,10 +514,51 @@ automation:
                 entity_id: binary_sensor.tin_hut_occupied
                 state: "off"
                 for:
-                  minutes: 60
+                  minutes: 15
             sequence:
               - action: input_select.select_option
                 target:
                   entity_id: input_select.tin_hut_heating_mode
                 data:
                   option: setback
+      # A persistent notification stays up for as long as the mode is warm and
+      # goes when it leaves warm, so a false start, a stuck sensor heating an
+      # empty hut, or a session ended with someone still in is seen rather than
+      # only found on the bill. On a mode change the occupied flag was set
+      # above, so it says whether this automation started the session; a
+      # resend after a restart or reload can't tell, so it says less. No
+      # timeout, unlike other tagged notifications here: it should last the
+      # whole session. alert_once keeps a resend after a restart quiet.
+      - if:
+          - condition: trigger
+            id:
+              - mode
+              - sync
+        then:
+          - if:
+              - condition: state
+                entity_id: input_select.tin_hut_heating_mode
+                state: warm
+            then:
+              - action: notify.mobile_app_nothing_phone_2
+                data:
+                  title: Tin Hut heating
+                  # About the mode only: it is sent once per session, so door
+                  # or Axle holds that change mid-session would leave anything
+                  # said about them out of date.
+                  message: >
+                    {{ 'Someone has been in the Tin Hut for 15 minutes, so the heating is in warm mode.'
+                       if trigger.id == 'mode'
+                          and is_state('input_boolean.tin_hut_heating_warm_occupied', 'on')
+                       else 'The Tin Hut heating is in warm mode.' }}
+                  data:
+                    tag: tin_hut_heating_warm
+                    persistent: true
+                    sticky: true
+                    alert_once: true
+            else:
+              - action: notify.mobile_app_nothing_phone_2
+                data:
+                  message: clear_notification
+                  data:
+                    tag: tin_hut_heating_warm
