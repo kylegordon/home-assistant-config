@@ -1,5 +1,5 @@
 db_url: !secret db_url
-purge_keep_days: 7  # Reduced from 21 — InfluxDB handles long-term. packages/givenergy.yaml has a 7-day statistics sensor that refills from this on restart.
+purge_keep_days: 7  # Reduced from 21 — InfluxDB handles long-term. packages/givenergy.yaml has 7-day statistics sensors that refill from this on restart.
 commit_interval: 30  # Batch writes, huge reduction in I/O
 
 exclude:
