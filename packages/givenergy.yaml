@@ -57,19 +57,95 @@ template:
         delay_on:
           minutes: 15
 
-      # Any pack imbalanced; the single entity the alert watches.
+      # Slow trend per pack, from the 7-day time-weighted average below.
+      # Over 100 mV is roughly double what DZ2239R348, the worst pack, sat
+      # at in Nov 2026 (50-70 mV); the healthy packs sit at 5-10 mV. The
+      # average moves a few mV a day as nights enter and leave the window,
+      # so it clears only below 90 mV, or the alert would flap daily near 100.
+      - name: "GivEnergy DX2320G655 cell drift"
+        unique_id: givenergy_dx2320g655_cell_drift
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dx2320g655_cell_delta_7_day_average') %}
+          {%- if d | is_number %}
+            {{ d | float > (90 if this.state == 'on' else 100) }}
+          {%- else %}
+            {{ this.state == 'on' }}
+          {%- endif %}
+
+      - name: "GivEnergy DZ2324G237 cell drift"
+        unique_id: givenergy_dz2324g237_cell_drift
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dz2324g237_cell_delta_7_day_average') %}
+          {%- if d | is_number %}
+            {{ d | float > (90 if this.state == 'on' else 100) }}
+          {%- else %}
+            {{ this.state == 'on' }}
+          {%- endif %}
+
+      - name: "GivEnergy DX2319R335 cell drift"
+        unique_id: givenergy_dx2319r335_cell_drift
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dx2319r335_cell_delta_7_day_average') %}
+          {%- if d | is_number %}
+            {{ d | float > (90 if this.state == 'on' else 100) }}
+          {%- else %}
+            {{ this.state == 'on' }}
+          {%- endif %}
+
+      - name: "GivEnergy DZ2239R348 cell drift"
+        unique_id: givenergy_dz2239r348_cell_drift
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dz2239r348_cell_delta_7_day_average') %}
+          {%- if d | is_number %}
+            {{ d | float > (90 if this.state == 'on' else 100) }}
+          {%- else %}
+            {{ this.state == 'on' }}
+          {%- endif %}
+
+      - name: "GivEnergy DF2240G031 cell drift"
+        unique_id: givenergy_df2240g031_cell_drift
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_df2240g031_cell_delta_7_day_average') %}
+          {%- if d | is_number %}
+            {{ d | float > (90 if this.state == 'on' else 100) }}
+          {%- else %}
+            {{ this.state == 'on' }}
+          {%- endif %}
+
+      # DZ2239R348 has an ageing cell: since autumn 2026 its spread passes
+      # 150-250 mV on most overnight charges, so its 50 mV sensor above
+      # would alert nightly. That sensor stays for history but is left out
+      # of the alert; this backstop catches a sudden failure, which the
+      # 7-day average would take days to show. Its overnight peaks reached ~320 mV in
+      # autumn 2026, so 400 mV for 15 minutes is a real step change.
+      - name: "GivEnergy DZ2239R348 cell imbalance severe"
+        unique_id: givenergy_dz2239r348_cell_imbalance_severe
+        device_class: problem
+        state: >
+          {%- set d = states('sensor.givenergy_dz2239r348_cell_delta') %}
+          {{ d | int > 400 if d | is_number else this.state == 'on' }}
+        delay_on:
+          minutes: 15
+
+      # Any pack imbalanced or drifting; the single entity the alert watches.
+      # DZ2239R348 uses its severe sensor in place of its 50 mV one.
       - name: "GivEnergy cell imbalance"
         unique_id: givenergy_cell_imbalance
         device_class: problem
         icon: mdi:battery-alert
         state: >
-          {{ expand(['binary_sensor.givenergy_dx2320g655_cell_imbalance', 'binary_sensor.givenergy_dz2324g237_cell_imbalance', 'binary_sensor.givenergy_dx2319r335_cell_imbalance', 'binary_sensor.givenergy_dz2239r348_cell_imbalance', 'binary_sensor.givenergy_df2240g031_cell_imbalance']) | selectattr('state', 'eq', 'on') | list | count > 0 }}
+          {{ expand(['binary_sensor.givenergy_dx2320g655_cell_imbalance', 'binary_sensor.givenergy_dz2324g237_cell_imbalance', 'binary_sensor.givenergy_dx2319r335_cell_imbalance', 'binary_sensor.givenergy_dz2239r348_cell_imbalance_severe', 'binary_sensor.givenergy_df2240g031_cell_imbalance', 'binary_sensor.givenergy_dx2320g655_cell_drift', 'binary_sensor.givenergy_dz2324g237_cell_drift', 'binary_sensor.givenergy_dx2319r335_cell_drift', 'binary_sensor.givenergy_dz2239r348_cell_drift', 'binary_sensor.givenergy_df2240g031_cell_drift']) | selectattr('state', 'eq', 'on') | list | count > 0 }}
         attributes:
           over_threshold: >
             {%- set ns = namespace(p=[]) %}
-            {%- for s in expand(['binary_sensor.givenergy_dx2320g655_cell_imbalance', 'binary_sensor.givenergy_dz2324g237_cell_imbalance', 'binary_sensor.givenergy_dx2319r335_cell_imbalance', 'binary_sensor.givenergy_dz2239r348_cell_imbalance', 'binary_sensor.givenergy_df2240g031_cell_imbalance']) if s.state == 'on' %}
-              {%- set d = states(s.entity_id | replace('binary_sensor.', 'sensor.') | replace('_cell_imbalance', '_cell_delta')) %}
-              {%- set ns.p = ns.p + [s.name | replace(' cell imbalance', '') ~ ' ' ~ (d ~ ' mV' if d | is_number else 'no reading')] %}
+            {%- for s in expand(['binary_sensor.givenergy_dx2320g655_cell_imbalance', 'binary_sensor.givenergy_dz2324g237_cell_imbalance', 'binary_sensor.givenergy_dx2319r335_cell_imbalance', 'binary_sensor.givenergy_dz2239r348_cell_imbalance_severe', 'binary_sensor.givenergy_df2240g031_cell_imbalance', 'binary_sensor.givenergy_dx2320g655_cell_drift', 'binary_sensor.givenergy_dz2324g237_cell_drift', 'binary_sensor.givenergy_dx2319r335_cell_drift', 'binary_sensor.givenergy_dz2239r348_cell_drift', 'binary_sensor.givenergy_df2240g031_cell_drift']) if s.state == 'on' %}
+              {%- set d = states(s.entity_id | replace('binary_sensor.', 'sensor.') | replace('_cell_imbalance_severe', '_cell_delta') | replace('_cell_imbalance', '_cell_delta') | replace('_cell_drift', '_cell_delta_7_day_average')) %}
+              {%- set ns.p = ns.p + [s.name | replace(' cell imbalance', '') | replace(' cell drift', ' 7-day average') ~ ' ' ~ (d | float | round(0) | int ~ ' mV' if d | is_number else 'no reading')] %}
             {%- endfor %}
             {{ ns.p | join(', ') }}
 
@@ -222,6 +298,62 @@ template:
              | map('regex_replace', '^(.*)$', 'sensor.givtcp_df2240g031_battery_cell_\\1_voltage')
              | select('has_value') | list | count == 16 }}
 
+sensor:
+  # Slow trend per pack (see the drift binary sensors above). Time-weighted,
+  # because the delta updates far more often while charging, when the spread
+  # is widest. max_age stays within recorder purge_keep_days so a restart
+  # refills it from history. sampling_size is set well above the ~4000-5000
+  # updates a week a delta sensor produces.
+  - platform: statistics
+    name: "GivEnergy DX2320G655 cell delta 7 day average"
+    unique_id: givenergy_dx2320g655_cell_delta_7_day_average
+    entity_id: sensor.givenergy_dx2320g655_cell_delta
+    state_characteristic: average_step
+    max_age:
+      days: 7
+    sampling_size: 50000
+    precision: 0
+
+  - platform: statistics
+    name: "GivEnergy DZ2324G237 cell delta 7 day average"
+    unique_id: givenergy_dz2324g237_cell_delta_7_day_average
+    entity_id: sensor.givenergy_dz2324g237_cell_delta
+    state_characteristic: average_step
+    max_age:
+      days: 7
+    sampling_size: 50000
+    precision: 0
+
+  - platform: statistics
+    name: "GivEnergy DX2319R335 cell delta 7 day average"
+    unique_id: givenergy_dx2319r335_cell_delta_7_day_average
+    entity_id: sensor.givenergy_dx2319r335_cell_delta
+    state_characteristic: average_step
+    max_age:
+      days: 7
+    sampling_size: 50000
+    precision: 0
+
+  - platform: statistics
+    name: "GivEnergy DZ2239R348 cell delta 7 day average"
+    unique_id: givenergy_dz2239r348_cell_delta_7_day_average
+    entity_id: sensor.givenergy_dz2239r348_cell_delta
+    state_characteristic: average_step
+    max_age:
+      days: 7
+    sampling_size: 50000
+    precision: 0
+
+  - platform: statistics
+    name: "GivEnergy DF2240G031 cell delta 7 day average"
+    unique_id: givenergy_df2240g031_cell_delta_7_day_average
+    entity_id: sensor.givenergy_df2240g031_cell_delta
+    state_characteristic: average_step
+    max_age:
+      days: 7
+    sampling_size: 50000
+    precision: 0
+
 automation:
   - alias: Boost hot water
     id: boost_hot_water
@@ -257,7 +389,7 @@ alert:
     message: >
       {{ state_attr('binary_sensor.givenergy_cell_imbalance', 'over_threshold') }}
       at {{ states('sensor.givtcp_fd2308f368_soc') }}% SoC.
-    done_message: "Battery cell deltas are back under 50 mV."
+    done_message: "Battery cell imbalance has cleared."
     notifiers:
       - mobile_app_nothing_phone_2
     data:
