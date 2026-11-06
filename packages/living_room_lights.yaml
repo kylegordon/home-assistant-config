@@ -146,7 +146,6 @@ automation:
         - light.cosy_lights
         - light.art
         - light.train_cabinets
-        - light.george_usb_switch_relay_1
 
   - alias: Living Room Sofa Presence
     ### When there is presence on the sofa, Zone 1, turn on lights
@@ -189,7 +188,6 @@ automation:
         data:
           entity_id:
             - light.cosy_lights
-            - light.george_usb_switch_relay_1
 
   - alias: Living Room Sofa - presence timeout
     ### When no presence on sofa, Zone 1, turn off lights after timeout
@@ -204,7 +202,6 @@ automation:
       service: homeassistant.turn_off
       entity_id:
         - light.cosy_lights
-        - light.george_usb_switch_relay_1
 
   - alias: Dining Nook Presence
     id: dining_nook_presence
@@ -235,7 +232,6 @@ automation:
             - light.cosy_lights
             - light.art
             - light.train_cabinets
-            - light.george_usb_switch_relay_1
 
   - alias: Dining Nook - presence timeout
     id: dining_nook_presence_timeout
@@ -251,7 +247,6 @@ automation:
         - light.dining_nook
         - light.art
         - light.train_cabinets
-        - light.george_usb_switch_relay_1
 
   - alias: Living Room motion
     id: living_room_motion
@@ -298,3 +293,46 @@ automation:
             {{ ['light.living_room', 'light.dining_nook']
                if states('sensor.time_of_day') == 'Morning'
                else ['light.cosy_lights', 'light.art', 'light.train_cabinets'] }}
+
+  - alias: Living Room - George follows Cosy Lights
+    ### George (USB relay 1) mirrors the Cosy Lights group, whatever turned the group on or off
+    id: living_room_george_follows_cosy_lights
+    mode: queued
+    trigger:
+      - platform: state
+        entity_id: light.cosy_lights
+        to:
+          - "on"
+          - "off"
+      # Re-sync after George reboots, as it comes back off
+      - platform: state
+        entity_id: light.george_usb_switch_relay_1
+        from:
+          - unavailable
+          - unknown
+        not_to:
+          - unavailable
+          - unknown
+      # Re-sync if either changed while automations weren't listening
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: automation_reloaded
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: light.cosy_lights
+                state: "on"
+            sequence:
+              - service: light.turn_on
+                target:
+                  entity_id: light.george_usb_switch_relay_1
+          - conditions:
+              - condition: state
+                entity_id: light.cosy_lights
+                state: "off"
+            sequence:
+              - service: light.turn_off
+                target:
+                  entity_id: light.george_usb_switch_relay_1
