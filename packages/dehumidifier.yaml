@@ -1,0 +1,22 @@
+---
+# Dehumidifier schedule: off overnight, on during the day.
+automation:
+  - alias: Dehumidifier off at night
+    id: dehumidifier_off_at_night
+    triggers:
+      - trigger: time
+        at: "21:00:00"
+    actions:
+      - action: humidifier.turn_off
+        target:
+          entity_id: humidifier.dehumidifier
+
+  - alias: Dehumidifier on in the morning
+    id: dehumidifier_on_in_the_morning
+    triggers:
+      - trigger: time
+        at: "09:00:00"
+    actions:
+      - action: humidifier.turn_on
+        target:
+          entity_id: humidifier.dehumidifier
