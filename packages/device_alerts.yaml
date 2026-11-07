@@ -89,3 +89,62 @@ automation:
         data:
           message: '{{trigger.to_state.attributes.friendly_name}} has gone offline. Please check the status of this device as some features may stop functioning.'
           title: Device Alert
+
+  # An Everything Presence Lite's LD2450 radar can wedge: the ESP stays online
+  # but the radar sends no frames, so occupancy and targets sit at `unknown`
+  # after the next API reconnect. Only a power cycle at the wall clears it (the
+  # "Reboot mmWave Sensor" button does not). A healthy unit publishes occupancy
+  # within seconds of connecting, so 15 minutes of `unknown` is a wedge.
+  # The start and reload triggers re-check after anything that drops a pending
+  # `for:` or arms the state trigger only after a unit was already `unknown` (an HA
+  # start, or the git pull + reload deploy). Keep the entity list in `radars` in
+  # step with the state trigger.
+  - alias: Presence radar stuck
+    id: presence_radar_stuck
+    mode: parallel
+    variables:
+      radars:
+        - binary_sensor.presence_lite_kitchen_occupancy
+        - binary_sensor.presence_lite_living_room_occupancy
+        - binary_sensor.presence_lite_tin_hut_occupancy
+    trigger:
+      - platform: state
+        id: stuck
+        entity_id:
+          - binary_sensor.presence_lite_kitchen_occupancy
+          - binary_sensor.presence_lite_living_room_occupancy
+          - binary_sensor.presence_lite_tin_hut_occupancy
+        to: 'unknown'
+        for:
+          minutes: 15
+      - platform: homeassistant
+        id: recheck
+        event: start
+      - platform: event
+        id: recheck
+        event_type: automation_reloaded
+    action:
+      - if:
+          - condition: trigger
+            id: recheck
+        then:
+          - delay:
+              minutes: 15
+      - variables:
+          stuck: "{{ [trigger.entity_id] if trigger.id == 'stuck' else radars | select('is_state', 'unknown') | list }}"
+      - repeat:
+          for_each: '{{ stuck }}'
+          sequence:
+            - action: persistent_notification.create
+              data:
+                notification_id: 'presence_radar_stuck_{{ repeat.item }}'
+                title: Presence radar stuck
+                message: '{{ state_attr(repeat.item, ''friendly_name'') or repeat.item }} has reported nothing for 15 minutes. Power cycle the sensor at the wall.'
+            # continue_on_error so one failed push doesn't skip the other radars.
+            - action: notify.mobile_app_nothing_phone_2
+              continue_on_error: true
+              data:
+                title: Presence radar stuck
+                message: '{{ state_attr(repeat.item, ''friendly_name'') or repeat.item }} has reported nothing for 15 minutes. Power cycle the sensor at the wall.'
+                data:
+                  tag: 'presence_radar_stuck_{{ repeat.item }}'
