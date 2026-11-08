@@ -1,5 +1,6 @@
 ---
-# Dehumidifier schedule: off overnight, on during the day.
+# Dehumidifier schedule: off overnight, on during the day, and off during a
+# load shed (load_shedding.yaml).
 automation:
   - alias: Dehumidifier off at night
     id: dehumidifier_off_at_night
@@ -16,7 +17,90 @@ automation:
     triggers:
       - trigger: time
         at: "09:00:00"
+    conditions:
+      - condition: state
+        entity_id: input_boolean.load_shed
+        state: "off"
     actions:
       - action: humidifier.turn_on
         target:
           entity_id: humidifier.dehumidifier
+
+  - alias: Dehumidifier load shed
+    id: dehumidifier_load_shed
+    description: Turn the dehumidifier off for a load shed, and back on if the shed ends during the day.
+    # Queued so a shed change during the start-up delay isn't dropped.
+    mode: queued
+    # The 5-minute recheck runs often; keep enough to see a start or restore.
+    trace:
+      stored_traces: 30
+    triggers:
+      - trigger: state
+        entity_id: input_boolean.load_shed
+        from: "off"
+        to: "on"
+        id: shed
+      - trigger: state
+        entity_id: input_boolean.load_shed
+        from: "on"
+        to: "off"
+        id: restore
+      # Turned on during a shed, by hand or once it reconnects.
+      - trigger: state
+        entity_id: humidifier.dehumidifier
+        to: "on"
+        id: shed
+      # A shed and an on dehumidifier both restored at start-up change
+      # nothing, so neither trigger above fires.
+      - trigger: homeassistant
+        event: start
+        id: start
+      # Catches a turn_off that failed with the dehumidifier still on, which
+      # no state trigger above would see.
+      - trigger: time_pattern
+        minutes: "/5"
+        id: shed
+    actions:
+      # Device-backed entities need a moment to reconnect after a restart.
+      - if:
+          - condition: trigger
+            id: start
+        then:
+          - delay: "00:01:00"
+      - choose:
+          - conditions:
+              - condition: trigger
+                id:
+                  - shed
+                  - start
+              - condition: state
+                entity_id: input_boolean.load_shed
+                state: "on"
+              - condition: state
+                entity_id: humidifier.dehumidifier
+                state: "on"
+            sequence:
+              - action: humidifier.turn_off
+                target:
+                  entity_id: humidifier.dehumidifier
+          # A shed ending in the day (by hand, a free session, or Predbat's
+          # rates going missing) turns it back on; the overnight cheap rate
+          # ending a shed leaves it off for the night. A daytime start-up does
+          # too, covering a shed that ended or a 09:00 missed while Home
+          # Assistant was down; like 09:00, it overrides a hand-set off.
+          - conditions:
+              - condition: trigger
+                id:
+                  - restore
+                  - start
+              # A queued run can outlast its shed ending: check it still has.
+              - condition: state
+                entity_id: input_boolean.load_shed
+                state: "off"
+              - condition: time
+                after: "09:00:00"
+                before: "21:00:00"
+            sequence:
+              - action: humidifier.turn_on
+                target:
+                  entity_id: humidifier.dehumidifier
