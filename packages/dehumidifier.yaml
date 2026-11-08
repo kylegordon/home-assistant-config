@@ -31,6 +31,9 @@ automation:
     description: Turn the dehumidifier off for a load shed, and back on if the shed ends during the day.
     # Queued so a shed change during the start-up delay isn't dropped.
     mode: queued
+    # The 5-minute recheck runs often; keep enough to see a start or restore.
+    trace:
+      stored_traces: 30
     triggers:
       - trigger: state
         entity_id: input_boolean.load_shed
@@ -52,6 +55,11 @@ automation:
       - trigger: homeassistant
         event: start
         id: start
+      # Catches a turn_off that failed with the dehumidifier still on, which
+      # no state trigger above would see.
+      - trigger: time_pattern
+        minutes: "/5"
+        id: shed
     actions:
       # Device-backed entities need a moment to reconnect after a restart.
       - if:
@@ -68,16 +76,27 @@ automation:
               - condition: state
                 entity_id: input_boolean.load_shed
                 state: "on"
+              - condition: state
+                entity_id: humidifier.dehumidifier
+                state: "on"
             sequence:
               - action: humidifier.turn_off
                 target:
                   entity_id: humidifier.dehumidifier
           # A shed ending in the day (by hand, a free session, or Predbat's
           # rates going missing) turns it back on; the overnight cheap rate
-          # ending a shed leaves it off for the night.
+          # ending a shed leaves it off for the night. A daytime start-up does
+          # too, covering a shed that ended or a 09:00 missed while Home
+          # Assistant was down; like 09:00, it overrides a hand-set off.
           - conditions:
               - condition: trigger
-                id: restore
+                id:
+                  - restore
+                  - start
+              # A queued run can outlast its shed ending: check it still has.
+              - condition: state
+                entity_id: input_boolean.load_shed
+                state: "off"
               - condition: time
                 after: "09:00:00"
                 before: "21:00:00"

@@ -61,7 +61,9 @@ input_datetime:
 template:
   # The lowest import price above 0p from the current slot onwards: the
   # normal cheap rate. Past days are left out so a tariff change counts at
-  # once. See the Agile note at the top.
+  # once. Unknown unless a dearer price is also ahead, so a cut-short rate
+  # timeline can't make the peak price count as cheap; that raises the
+  # forecast-missing alert below. See the Agile note at the top.
   - sensor:
       - name: Import cheap rate
         unique_id: import_cheap_rate
@@ -69,22 +71,24 @@ template:
         icon: mdi:cash-minus
         availability: "{{ state_attr('predbat.rates', 'results') is mapping }}"
         state: >
-          {% set ns = namespace(cur=none, low=none) %}
+          {% set ns = namespace(cur=none, low=none, high=none) %}
           {% for t, v in state_attr('predbat.rates', 'results') | dictsort %}
             {% set d = as_datetime(t) %}
             {% set p = v | float(none) %}
             {% if d is not none and p is not none %}
               {% if d <= now() %}
                 {% set ns.cur = p %}
-              {% elif p > 0 and (ns.low is none or p < ns.low) %}
-                {% set ns.low = p %}
+              {% else %}
+                {% if p > 0 and (ns.low is none or p < ns.low) %}{% set ns.low = p %}{% endif %}
+                {% if ns.high is none or p > ns.high %}{% set ns.high = p %}{% endif %}
               {% endif %}
             {% endif %}
           {% endfor %}
-          {% if ns.cur is not none and ns.cur > 0 and (ns.low is none or ns.cur < ns.low) %}
-            {% set ns.low = ns.cur %}
+          {% if ns.cur is not none %}
+            {% if ns.cur > 0 and (ns.low is none or ns.cur < ns.low) %}{% set ns.low = ns.cur %}{% endif %}
+            {% if ns.high is none or ns.cur > ns.high %}{% set ns.high = ns.cur %}{% endif %}
           {% endif %}
-          {{ ns.low }}
+          {{ ns.low if ns.low is not none and ns.high > ns.low else none }}
 
   # Start of the cheap run now under way, or of the next one. predbat.rates
   # lists the times the price changes, so the price at any moment is that of
@@ -152,13 +156,21 @@ template:
           {% set end = as_datetime(states('sensor.next_cheap_import')) or now() %}
           {% set ns = namespace(low=none) %}
           {% for t, kwh in state_attr('predbat.soc_kw_best', 'results').items()
-                 if as_datetime(t) is not none and start <= as_datetime(t) < end %}
-            {% if ns.low is none or kwh | float(99) < ns.low %}
-              {% set ns.low = kwh | float(99) %}
+                 if as_datetime(t) is not none and start <= as_datetime(t) < end
+                    and kwh | float(none) is not none %}
+            {% if ns.low is none or kwh | float < ns.low %}
+              {% set ns.low = kwh | float %}
             {% endif %}
           {% endfor %}
-          {# 0.05 kWh absorbs rounding in the plan's 3-decimal figures. #}
-          {{ ns.low is not none and ns.low <= reserve + 0.05 }}
+          {# No usable plan point before a cheap slot still to come (a changed
+             key format, a short horizon) is unknown, which raises the
+             forecast-missing alert, rather than a quiet "not short". #}
+          {% if ns.low is none and end > now() %}
+            {{ none }}
+          {% else %}
+            {# 0.05 kWh absorbs rounding in the plan's 3-decimal figures. #}
+            {{ ns.low is not none and ns.low <= reserve + 0.05 }}
+          {% endif %}
 
   # The forecast above missing outside a cheap slot, so nothing can shed. The
   # Predbat error monitor in climate.yaml misses a Predbat that never posts
