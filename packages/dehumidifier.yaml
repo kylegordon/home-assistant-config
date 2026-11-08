@@ -1,5 +1,6 @@
 ---
-# Dehumidifier schedule: off overnight, on during the day.
+# Dehumidifier schedule: off overnight, on during the day, and off during a
+# load shed (load_shedding.yaml).
 automation:
   - alias: Dehumidifier off at night
     id: dehumidifier_off_at_night
@@ -16,7 +17,55 @@ automation:
     triggers:
       - trigger: time
         at: "09:00:00"
+    conditions:
+      - condition: state
+        entity_id: input_boolean.load_shed
+        state: "off"
     actions:
       - action: humidifier.turn_on
         target:
           entity_id: humidifier.dehumidifier
+
+  - alias: Dehumidifier load shed
+    id: dehumidifier_load_shed
+    description: Turn the dehumidifier off for a load shed, and back on if the shed ends during the day.
+    triggers:
+      - trigger: state
+        entity_id: input_boolean.load_shed
+        from: "off"
+        to: "on"
+        id: shed
+      - trigger: state
+        entity_id: input_boolean.load_shed
+        from: "on"
+        to: "off"
+        id: restore
+      # Turned on during a shed, by hand or once it reconnects.
+      - trigger: state
+        entity_id: humidifier.dehumidifier
+        to: "on"
+        id: shed
+    actions:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: shed
+              - condition: state
+                entity_id: input_boolean.load_shed
+                state: "on"
+            sequence:
+              - action: humidifier.turn_off
+                target:
+                  entity_id: humidifier.dehumidifier
+          # Only a shed ended by hand lands in the day; the 23:30 end leaves
+          # it off for the night.
+          - conditions:
+              - condition: trigger
+                id: restore
+              - condition: time
+                after: "09:00:00"
+                before: "21:00:00"
+            sequence:
+              - action: humidifier.turn_on
+                target:
+                  entity_id: humidifier.dehumidifier

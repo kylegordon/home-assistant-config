@@ -57,7 +57,8 @@
 #
 # During an Axle export event the thermostat is held off whatever the mode,
 # and picks up again from the mode afterwards. axle_energy.yaml only names
-# the Tin Hut in its notification.
+# the Tin Hut in its notification. A load shed (input_boolean.load_shed,
+# load_shedding.yaml) holds it off the same way, floor guard included.
 #
 # The same hold applies, floor guard included, while either vehicle roller
 # door has been open for 10 minutes; driving a car in or out doesn't count.
@@ -251,7 +252,7 @@ alert:
 automation:
   - alias: Tin Hut heating apply mode
     id: tin_hut_heating_apply_mode
-    description: Drive the Tin Hut thermostat from the heating mode, the setback floor, any Axle export event and the roller doors.
+    description: Drive the Tin Hut thermostat from the heating mode, the setback floor, any Axle export event or load shed, and the roller doors.
     mode: restart
     variables:
       # Where each warm session starts.
@@ -266,6 +267,7 @@ automation:
         entity_id:
           - binary_sensor.tin_hut_heating_floor
           - binary_sensor.axle_export_event
+          - input_boolean.load_shed
           - binary_sensor.tin_hut_roller_door_open
           # So heating held back by an open door starts as soon as it shuts.
           - binary_sensor.tin_hut_roller_door_not_shut
@@ -331,6 +333,7 @@ automation:
           # warm target.
           desired: >
             {%- if is_state('binary_sensor.axle_export_event', 'on')
+                   or is_state('input_boolean.load_shed', 'on')
                    or is_state('binary_sensor.tin_hut_roller_door_open', 'on')
                    or (door_open and current == 'off') %}off
             {%- elif is_state('input_select.tin_hut_heating_mode', 'warm') %}warm

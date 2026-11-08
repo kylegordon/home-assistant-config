@@ -1,0 +1,201 @@
+---
+
+# Load shedding: when Predbat's plan says the battery will hit its reserve
+# before the 23:30 cheap rate starts, shed the optional loads until 23:30.
+#
+# The shed loads read input_boolean.load_shed themselves:
+#   - tin_hut_heating.yaml holds the Tin Hut thermostat off, warm and floor
+#     guard alike, as it does for an Axle export event.
+#   - dehumidifier.yaml turns the dehumidifier off and keeps it off.
+#
+# "Short" is Predbat's executed plan (predbat.soc_kw_best, a 5-minute SoC
+# forecast in kWh) reaching the battery reserve at any point between now and
+# 23:30. Predbat holds the battery at the reserve rather than going below it,
+# so the plan touching the reserve is the plan draining the battery. The
+# reserve is read from Predbat's own reserve percentage and battery size, not
+# copied here.
+#
+# Once shed, the loads stay shed until 23:30, so a forecast that improves
+# because the loads are off doesn't switch them straight back on. Turn the
+# helper off by hand to bring them back early; it sheds again if the
+# forecast clears and goes short again, at the next 05:30, or once a restart
+# or a stalled Predbat has made the forecast unavailable and it comes back
+# short.
+#
+# Only between 05:30 and 23:30, the peak rate: in the cheap window the battery
+# is charging and the grid is cheap, so shedding saves nothing. After
+# midnight the sensor already looks at the coming day, so it can be on well
+# before 05:30; the 05:30 check starts that shed.
+
+input_boolean:
+  # No initial: so a shed survives a restart.
+  load_shed:
+    name: Load shed
+    icon: mdi:transmission-tower-off
+
+input_datetime:
+  # When the current shed began, so a shed left over from a day Home
+  # Assistant was down across 23:30 is cleared at start-up.
+  load_shed_since:
+    name: Load shed since
+    has_date: true
+    has_time: true
+
+template:
+  # Unavailable without a plan or the reserve, or with a plan over 30 minutes
+  # old (Predbat updates it every 5; a stalled Predbat is alerted on in
+  # climate.yaml), which never sheds anything. After 23:30 there is nothing
+  # left before 23:30 today, so it reads off.
+  - binary_sensor:
+      - name: Battery short before cheap rate
+        unique_id: battery_short_before_cheap_rate
+        icon: mdi:battery-alert-variant-outline
+        availability: >
+          {{ state_attr('predbat.soc_kw_best', 'results') is mapping
+             and now() - states.predbat.soc_kw_best.last_updated < timedelta(minutes=30)
+             and has_value('number.predbat_givtcp_0_reserve')
+             and has_value('sensor.predbat_givtcp_0_soc_max') }}
+        state: >
+          {% set reserve = states('number.predbat_givtcp_0_reserve') | float
+                           * states('sensor.predbat_givtcp_0_soc_max') | float / 100 %}
+          {% set start = now() - timedelta(minutes=5) %}
+          {% set end = today_at('23:30') %}
+          {% set ns = namespace(low=none) %}
+          {% for t, kwh in state_attr('predbat.soc_kw_best', 'results').items()
+                 if as_datetime(t) is not none and start <= as_datetime(t) < end %}
+            {% if ns.low is none or kwh | float(99) < ns.low %}
+              {% set ns.low = kwh | float(99) %}
+            {% endif %}
+          {% endfor %}
+          {# 0.05 kWh absorbs rounding in the plan's 3-decimal figures. #}
+          {{ ns.low is not none and ns.low <= reserve + 0.05 }}
+
+  # The forecast above missing in the peak window, so nothing can shed. The
+  # Predbat error monitor in climate.yaml misses a Predbat that never posts
+  # after a restart: its triggers need predbat.status to change. The 45
+  # minutes count from start-up for a sensor unavailable since boot.
+  - binary_sensor:
+      - name: Load shed forecast missing
+        unique_id: load_shed_forecast_missing
+        device_class: problem
+        delay_on:
+          minutes: 45
+        state: >
+          {{ states('binary_sensor.battery_short_before_cheap_rate') not in ['on', 'off']
+             and today_at('05:30') <= now() < today_at('23:30') }}
+
+alert:
+  load_shed_forecast_missing:
+    name: Load shed forecast missing
+    entity_id: binary_sensor.load_shed_forecast_missing
+    state: "on"
+    repeat:
+      - 240
+    can_acknowledge: true
+    skip_first: false
+    title: Load shed
+    message: >
+      There has been no usable Predbat plan for at least 45 minutes, so load shedding
+      can't run. Check Predbat.
+    done_message: Load shedding has a current Predbat plan again.
+    notifiers:
+      - mobile_app_nothing_phone_2
+      - persistent_notification
+    data:
+      tag: load_shed_forecast_missing
+      timeout: 14400
+      notification_id: load_shed_forecast_missing
+
+automation:
+  - alias: Load shed start
+    id: load_shed_start
+    description: Shed optional loads when Predbat's plan drains the battery before 23:30.
+    mode: single
+    triggers:
+      # 10 minutes rides out a single odd Predbat recalculation.
+      - trigger: state
+        entity_id: binary_sensor.battery_short_before_cheap_rate
+        to: "on"
+        for:
+          minutes: 10
+      # A sensor that went on overnight doesn't change at 05:30.
+      - trigger: time
+        at: "05:30:00"
+    conditions:
+      - condition: time
+        after: "05:30:00"
+        before: "23:30:00"
+      - condition: state
+        entity_id: binary_sensor.battery_short_before_cheap_rate
+        state: "on"
+        for:
+          minutes: 10
+      - condition: state
+        entity_id: input_boolean.load_shed
+        state: "off"
+    actions:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.load_shed
+      - action: notify.mobile_app_nothing_phone_2
+        data:
+          title: Load shed
+          message: >
+            Predbat's plan runs the battery down to its reserve before 23:30, so
+            the Tin Hut heating and the dehumidifier are off until then.
+          data:
+            tag: load_shed
+
+  - alias: Load shed end
+    id: load_shed_end
+    description: Bring the shed loads back when the cheap rate starts at 23:30.
+    triggers:
+      - trigger: time
+        at: "23:30:00"
+      # Catches a 23:30 missed while Home Assistant was down.
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: input_boolean.load_shed
+        state: "on"
+      # Outside the peak window, or a shed from before today's 05:30: one
+      # left over from a day Home Assistant was down across 23:30.
+      - condition: template
+        value_template: >
+          {{ not (today_at('05:30') <= now() < today_at('23:30'))
+             or state_attr('input_datetime.load_shed_since', 'timestamp') | float(0)
+                < as_timestamp(today_at('05:30')) }}
+    actions:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.load_shed
+
+  # Any shed, by hand too, so the start-up check can tell its day.
+  - alias: Load shed record start
+    id: load_shed_record_start
+    triggers:
+      - trigger: state
+        entity_id: input_boolean.load_shed
+        from: "off"
+        to: "on"
+    actions:
+      - action: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.load_shed_since
+        data:
+          timestamp: "{{ now().timestamp() }}"
+
+  - alias: Load shed clear notification
+    id: load_shed_clear_notification
+    triggers:
+      - trigger: state
+        entity_id: input_boolean.load_shed
+        from: "on"
+        to: "off"
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
+        data:
+          message: clear_notification
+          data:
+            tag: load_shed
