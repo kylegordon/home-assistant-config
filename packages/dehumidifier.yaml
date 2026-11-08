@@ -57,8 +57,9 @@ automation:
               - action: humidifier.turn_off
                 target:
                   entity_id: humidifier.dehumidifier
-          # Only a shed ended by hand lands in the day; the 23:30 end leaves
-          # it off for the night.
+          # A shed ending in the day (by hand, a free session, or Predbat's
+          # rates going missing) turns it back on; the overnight cheap rate
+          # ending a shed leaves it off for the night.
           - conditions:
               - condition: trigger
                 id: restore

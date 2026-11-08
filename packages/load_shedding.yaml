@@ -1,31 +1,48 @@
 ---
 
 # Load shedding: when Predbat's plan says the battery will hit its reserve
-# before the 23:30 cheap rate starts, shed the optional loads until 23:30.
+# before the next cheap import rate, shed the optional loads until that cheap
+# rate starts.
 #
 # The shed loads read input_boolean.load_shed themselves:
 #   - tin_hut_heating.yaml holds the Tin Hut thermostat off, warm and floor
 #     guard alike, as it does for an Axle export event.
 #   - dehumidifier.yaml turns the dehumidifier off and keeps it off.
 #
+# "Cheap" comes from Predbat's import rates (predbat.rates), not the clock:
+# a slot is cheap if it is free (0p or less) or at the lowest non-free price
+# in Predbat's rates. On the current two-rate tariff that is 23:30-05:30 at
+# 7.62p, plus any Octopus free electricity session, which Predbat prices at
+# 0p (apps.yaml octopus_free_session). Free sessions are left out of the
+# lowest price so one doesn't stop the overnight rate counting as cheap.
+# Saving and power-down sessions are priced high, so they count as peak.
+#
+# NOT FOR AGILE. This assumes a fixed tariff with one cheap price, where only
+# a free session goes to 0p. On Agile (or any tariff with a different price
+# each half hour) the lowest non-free price is a single half hour, so "cheap"
+# would shrink to that one slot and the shed would run until it, often the
+# next night. Plunge prices at or below 0p would also all count as cheap.
+# Agile needs a different idea of cheap, such as Predbat's own low-rate
+# threshold (predbat.rates attribute threshold) or a fixed p/kWh cut-off.
+#
 # "Short" is Predbat's executed plan (predbat.soc_kw_best, a 5-minute SoC
 # forecast in kWh) reaching the battery reserve at any point between now and
-# 23:30. Predbat holds the battery at the reserve rather than going below it,
-# so the plan touching the reserve is the plan draining the battery. The
-# reserve is read from Predbat's own reserve percentage and battery size, not
-# copied here.
+# the next cheap slot. Predbat holds the battery at the reserve rather than
+# going below it, so the plan touching the reserve is the plan draining the
+# battery. The reserve is read from Predbat's own reserve percentage and
+# battery size, not copied here.
 #
-# Once shed, the loads stay shed until 23:30, so a forecast that improves
-# because the loads are off doesn't switch them straight back on. Turn the
-# helper off by hand to bring them back early; it sheds again if the
-# forecast clears and goes short again, at the next 05:30, or once a restart
-# or a stalled Predbat has made the forecast unavailable and it comes back
-# short.
-#
-# Only between 05:30 and 23:30, the peak rate: in the cheap window the battery
-# is charging and the grid is cheap, so shedding saves nothing. After
-# midnight the sensor already looks at the coming day, so it can be on well
-# before 05:30; the 05:30 check starts that shed.
+# Once shed, the loads stay shed until the next cheap slot starts, so a
+# forecast that improves because the loads are off doesn't switch them
+# straight back on. A free session during the day ends the shed, so the loads
+# run on free power; when peak resumes the plan is checked again. Turn the
+# helper off by hand to bring the loads back early; it sheds again if the
+# forecast clears and goes short again, when peak next begins, or once a
+# restart or a stalled Predbat has made the forecast unavailable and it comes
+# back short. With no Predbat rates for an hour the shed ends, since nothing
+# can say when the cheap slot comes; the forecast-missing alert says why
+# nothing sheds then. A shed turned on by hand during a cheap slot lasts until the
+# next cheap slot starts, or until a restart during a cheap slot.
 
 input_boolean:
   # No initial: so a shed survives a restart.
@@ -34,18 +51,90 @@ input_boolean:
     icon: mdi:transmission-tower-off
 
 input_datetime:
-  # When the current shed began, so a shed left over from a day Home
-  # Assistant was down across 23:30 is cleared at start-up.
+  # When the current shed began, so a shed that outlived a cheap slot while
+  # Home Assistant was down is cleared at start-up.
   load_shed_since:
     name: Load shed since
     has_date: true
     has_time: true
 
 template:
-  # Unavailable without a plan or the reserve, or with a plan over 30 minutes
-  # old (Predbat updates it every 5; a stalled Predbat is alerted on in
-  # climate.yaml), which never sheds anything. After 23:30 there is nothing
-  # left before 23:30 today, so it reads off.
+  # The lowest import price above 0p from the current slot onwards: the
+  # normal cheap rate. Past days are left out so a tariff change counts at
+  # once. See the Agile note at the top.
+  - sensor:
+      - name: Import cheap rate
+        unique_id: import_cheap_rate
+        unit_of_measurement: p/kWh
+        icon: mdi:cash-minus
+        availability: "{{ state_attr('predbat.rates', 'results') is mapping }}"
+        state: >
+          {% set ns = namespace(cur=none, low=none) %}
+          {% for t, v in state_attr('predbat.rates', 'results') | dictsort %}
+            {% set d = as_datetime(t) %}
+            {% set p = v | float(none) %}
+            {% if d is not none and p is not none %}
+              {% if d <= now() %}
+                {% set ns.cur = p %}
+              {% elif p > 0 and (ns.low is none or p < ns.low) %}
+                {% set ns.low = p %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if ns.cur is not none and ns.cur > 0 and (ns.low is none or ns.cur < ns.low) %}
+            {% set ns.low = ns.cur %}
+          {% endif %}
+          {{ ns.low }}
+
+  # Start of the cheap run now under way, or of the next one. predbat.rates
+  # lists the times the price changes, so the price at any moment is that of
+  # the latest entry at or before it. Unknown if no cheap slot is published,
+  # or if no entry is later than now (a stale timeline), which raises the
+  # forecast-missing alert below.
+  - sensor:
+      - name: Next cheap import
+        unique_id: next_cheap_import
+        device_class: timestamp
+        availability: >
+          {{ state_attr('predbat.rates', 'results') is mapping
+             and has_value('sensor.import_cheap_rate') }}
+        state: >
+          {% set low = states('sensor.import_cheap_rate') | float(0) %}
+          {% set ns = namespace(run=none, ans=none, passed=false) %}
+          {# dictsort: the '+0000' keys sort in time order. #}
+          {% for t, v in state_attr('predbat.rates', 'results') | dictsort %}
+            {% set d = as_datetime(t) %}
+            {% set p = v | float(none) %}
+            {% if d is not none and p is not none %}
+              {% set cheap = p <= 0 or p <= low %}
+              {% if ns.ans is none and d > now() %}
+                {% if not ns.passed %}
+                  {% set ns.passed = true %}
+                  {% if ns.run is not none %}{% set ns.ans = ns.run %}{% endif %}
+                {% endif %}
+                {% if ns.ans is none and cheap %}{% set ns.ans = d %}{% endif %}
+              {% endif %}
+              {% if cheap %}
+                {% if ns.run is none %}{% set ns.run = d %}{% endif %}
+              {% else %}
+                {% set ns.run = none %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.ans.isoformat() if ns.ans is not none else none }}
+
+  - binary_sensor:
+      - name: Import rate cheap
+        unique_id: import_rate_cheap
+        icon: mdi:cash-clock
+        availability: "{{ has_value('sensor.next_cheap_import') }}"
+        state: >
+          {% set n = as_datetime(states('sensor.next_cheap_import')) %}
+          {{ n is not none and n <= now() }}
+
+  # Unavailable without a plan, the reserve or the next cheap slot, or with a
+  # plan over 30 minutes old (Predbat updates it every 5), which never sheds
+  # anything. During a cheap slot there is nothing before it, so it reads off.
   - binary_sensor:
       - name: Battery short before cheap rate
         unique_id: battery_short_before_cheap_rate
@@ -54,12 +143,13 @@ template:
           {{ state_attr('predbat.soc_kw_best', 'results') is mapping
              and now() - states.predbat.soc_kw_best.last_updated < timedelta(minutes=30)
              and has_value('number.predbat_givtcp_0_reserve')
-             and has_value('sensor.predbat_givtcp_0_soc_max') }}
+             and has_value('sensor.predbat_givtcp_0_soc_max')
+             and has_value('sensor.next_cheap_import') }}
         state: >
           {% set reserve = states('number.predbat_givtcp_0_reserve') | float
                            * states('sensor.predbat_givtcp_0_soc_max') | float / 100 %}
           {% set start = now() - timedelta(minutes=5) %}
-          {% set end = today_at('23:30') %}
+          {% set end = as_datetime(states('sensor.next_cheap_import')) or now() %}
           {% set ns = namespace(low=none) %}
           {% for t, kwh in state_attr('predbat.soc_kw_best', 'results').items()
                  if as_datetime(t) is not none and start <= as_datetime(t) < end %}
@@ -70,7 +160,7 @@ template:
           {# 0.05 kWh absorbs rounding in the plan's 3-decimal figures. #}
           {{ ns.low is not none and ns.low <= reserve + 0.05 }}
 
-  # The forecast above missing in the peak window, so nothing can shed. The
+  # The forecast above missing outside a cheap slot, so nothing can shed. The
   # Predbat error monitor in climate.yaml misses a Predbat that never posts
   # after a restart: its triggers need predbat.status to change. The 45
   # minutes count from start-up for a sensor unavailable since boot.
@@ -82,7 +172,7 @@ template:
           minutes: 45
         state: >
           {{ states('binary_sensor.battery_short_before_cheap_rate') not in ['on', 'off']
-             and today_at('05:30') <= now() < today_at('23:30') }}
+             and not is_state('binary_sensor.import_rate_cheap', 'on') }}
 
 alert:
   load_shed_forecast_missing:
@@ -95,8 +185,8 @@ alert:
     skip_first: false
     title: Load shed
     message: >
-      There has been no usable Predbat plan for at least 45 minutes, so load shedding
-      can't run. Check Predbat.
+      There has been no usable Predbat plan or rate for at least 45 minutes, so
+      load shedding can't run. Check Predbat.
     done_message: Load shedding has a current Predbat plan again.
     notifiers:
       - mobile_app_nothing_phone_2
@@ -109,22 +199,20 @@ alert:
 automation:
   - alias: Load shed start
     id: load_shed_start
-    description: Shed optional loads when Predbat's plan drains the battery before 23:30.
+    description: Shed optional loads when Predbat's plan drains the battery before the next cheap rate.
     mode: single
     triggers:
-      # 10 minutes rides out a single odd Predbat recalculation.
+      # 10 minutes rides out a single odd Predbat recalculation. During a
+      # cheap slot the short sensor reads off, so it turns on as peak begins.
       - trigger: state
         entity_id: binary_sensor.battery_short_before_cheap_rate
         to: "on"
         for:
           minutes: 10
-      # A sensor that went on overnight doesn't change at 05:30.
-      - trigger: time
-        at: "05:30:00"
     conditions:
-      - condition: time
-        after: "05:30:00"
-        before: "23:30:00"
+      - condition: state
+        entity_id: binary_sensor.import_rate_cheap
+        state: "off"
       - condition: state
         entity_id: binary_sensor.battery_short_before_cheap_rate
         state: "on"
@@ -141,37 +229,83 @@ automation:
         data:
           title: Load shed
           message: >
-            Predbat's plan runs the battery down to its reserve before 23:30, so
-            the Tin Hut heating and the dehumidifier are off until then.
+            {% set n = as_datetime(states('sensor.next_cheap_import')) %}
+            Predbat's plan runs the battery down to its reserve before the next
+            cheap rate{{ ' at ' ~ (n | as_local).strftime('%H:%M') if n is not none else '' }},
+            so the Tin Hut heating and the dehumidifier are off until then.
           data:
             tag: load_shed
 
   - alias: Load shed end
     id: load_shed_end
-    description: Bring the shed loads back when the cheap rate starts at 23:30.
+    description: Bring the shed loads back when the next cheap rate starts.
     triggers:
-      - trigger: time
-        at: "23:30:00"
-      # Catches a 23:30 missed while Home Assistant was down.
+      - trigger: state
+        entity_id: binary_sensor.import_rate_cheap
+        to: "on"
+      # Catches a cheap slot missed while Home Assistant was down. Predbat's
+      # entities aren't restored, so the rates may only arrive after start-up:
+      # check again once they do.
       - trigger: homeassistant
         event: start
+      - trigger: state
+        entity_id: binary_sensor.import_rate_cheap
+        from:
+          - unavailable
+          - unknown
+        to: "off"
+      # Without rates nothing can say when the cheap slot comes, so give the
+      # loads back rather than hold them off until Predbat recovers. Polled
+      # rather than a state trigger with for:, which a sensor unavailable
+      # from boot never starts; last_changed counts from boot then.
+      - trigger: time_pattern
+        minutes: "/5"
+        id: no_rates
     conditions:
       - condition: state
         entity_id: input_boolean.load_shed
         state: "on"
-      # Outside the peak window, or a shed from before today's 05:30: one
-      # left over from a day Home Assistant was down across 23:30.
+      # Cheap now; or a cheap run has begun since the shed began, one Home
+      # Assistant was down for; or no shed start time, or one over 24 hours
+      # old (the rates may no longer reach back to it). Only a cheap price
+      # after a dearer one counts as a run beginning: predbat.rates repeats
+      # some prices mid-run.
       - condition: template
         value_template: >
-          {{ not (today_at('05:30') <= now() < today_at('23:30'))
-             or state_attr('input_datetime.load_shed_since', 'timestamp') | float(0)
-                < as_timestamp(today_at('05:30')) }}
+          {% set since = state_attr('input_datetime.load_shed_since', 'timestamp') | float(0) %}
+          {% set ns = namespace(missed=false, prev=false) %}
+          {% if has_value('sensor.import_cheap_rate') %}
+            {% set low = states('sensor.import_cheap_rate') | float(0) %}
+            {% for t, v in (state_attr('predbat.rates', 'results') or {}) | dictsort %}
+              {% set d = as_timestamp(t, none) %}
+              {% set p = v | float(none) %}
+              {% if d is not none and p is not none %}
+                {% set cheap = p <= 0 or p <= low %}
+                {% if cheap and not ns.prev and since < d <= now().timestamp() %}
+                  {% set ns.missed = true %}
+                {% endif %}
+                {% set ns.prev = cheap %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          {% set c = states.binary_sensor.import_rate_cheap %}
+          {% set no_rates = c is none
+               or (c.state not in ['on', 'off'] and now() - c.last_changed > timedelta(hours=1)) %}
+          {# The poll only acts on missing rates. #}
+          {% if trigger.id == 'no_rates' %}
+            {{ no_rates }}
+          {% else %}
+            {{ no_rates
+               or is_state('binary_sensor.import_rate_cheap', 'on') or ns.missed
+               or since <= 0 or now().timestamp() - since > 86400 }}
+          {% endif %}
     actions:
       - action: input_boolean.turn_off
         target:
           entity_id: input_boolean.load_shed
 
-  # Any shed, by hand too, so the start-up check can tell its day.
+  # Any shed, by hand too, so the start-up check can tell whether a cheap slot
+  # has started since.
   - alias: Load shed record start
     id: load_shed_record_start
     triggers:
