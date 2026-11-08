@@ -62,8 +62,11 @@
 # The same hold applies, floor guard included, while either vehicle roller
 # door has been open for 10 minutes; driving a car in or out doesn't count.
 # The pedestrian door is ignored. An alert fires if the hold keeps the hut
-# below the floor for an hour. Occupancy doesn't start a warm session while
-# either roller door is open at all.
+# below the floor for an hour. While either roller door is open at all, an
+# off thermostat stays off (warm, floor and all) until both are shut, and
+# occupancy doesn't start a warm session. Heating already on, floor
+# included, carries on (at a warm target if warm is picked) until the 10
+# minutes are up.
 
 input_select:
   # No initial: so the mode survives a restart.
@@ -238,6 +241,9 @@ automation:
           - binary_sensor.tin_hut_heating_floor
           - binary_sensor.axle_export_event
           - binary_sensor.tin_hut_roller_door_open
+          # So heating held back by an open door starts as soon as it shuts.
+          - binary_sensor.tin_hut_door_left_closed_endstop_sensor
+          - binary_sensor.tin_hut_door_right_closed_endstop_sensor
           - input_number.tin_hut_heating_warm_target
         # The export event sensor's attributes change every minute; under
         # mode: restart each would cancel a run, start-up delay included.
@@ -290,12 +296,33 @@ automation:
           current: "{{ states('climate.tin_hut') }}"
           current_low: "{{ state_attr('climate.tin_hut', 'target_temp_low') | float(0) }}"
           floor: "{{ states('binary_sensor.tin_hut_heating_floor') }}"
+          # A roller door off its closed endstop at all keeps an off
+          # thermostat off, so nothing starts heating with a door open;
+          # heating already on only stops once the hold's 10 minutes are up.
+          # The door controllers reconnect several times a week, so an
+          # endstop unavailable for under 2 minutes counts as open here: an
+          # open door's reconnect blip mustn't start the heating. Longer, or
+          # missing, counts as shut, as in the hold, so a lost controller
+          # doesn't stop the floor; the 5 minute reconcile picks that up.
+          door_open: >
+            {% set ns = namespace(open=false) %}
+            {% for s in [states.binary_sensor.tin_hut_door_left_closed_endstop_sensor,
+                         states.binary_sensor.tin_hut_door_right_closed_endstop_sensor]
+                       if s is not none %}
+              {% if s.state == 'off'
+                    or (s.state in ['unavailable', 'unknown']
+                        and now() - s.last_changed < timedelta(minutes=2)) %}
+                {% set ns.open = true %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.open }}
           # off, warm, floor, or hold. Hold is setback with the floor sensor
           # unknown: leave the thermostat on or off as it is, but never at a
           # warm target.
           desired: >
             {%- if is_state('binary_sensor.axle_export_event', 'on')
-                   or is_state('binary_sensor.tin_hut_roller_door_open', 'on') %}off
+                   or is_state('binary_sensor.tin_hut_roller_door_open', 'on')
+                   or (door_open and current == 'off') %}off
             {%- elif is_state('input_select.tin_hut_heating_mode', 'warm') %}warm
             {%- elif floor == 'on' %}floor
             {%- elif floor == 'off' %}off
