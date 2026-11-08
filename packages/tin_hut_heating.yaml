@@ -62,7 +62,11 @@
 # The same hold applies, floor guard included, while either vehicle roller
 # door has been open for 10 minutes; driving a car in or out doesn't count.
 # The pedestrian door is ignored. An alert fires if the hold keeps the hut
-# below the floor for an hour.
+# below the floor for an hour. While either roller door is open at all, an
+# off thermostat stays off (warm, floor and all) until both are shut, and
+# occupancy doesn't start a warm session. Heating already on, floor
+# included, carries on (at a warm target if warm is picked) until the 10
+# minutes are up.
 
 input_select:
   # No initial: so the mode survives a restart.
@@ -141,9 +145,34 @@ template:
           {{ is_state('binary_sensor.tin_hut_door_left_closed_endstop_sensor', 'off')
              or is_state('binary_sensor.tin_hut_door_right_closed_endstop_sensor', 'off') }}
 
-  # The roller door hold is overriding the setback floor. A broken closed
-  # endstop wire reads as open, so this is also how a fault that would leave
-  # the hut unheated for days shows up.
+  # Either roller door not shut right now, with no delay: nothing starts
+  # heating while this is on. The door controllers reconnect several times a
+  # week, so an endstop unavailable for under 2 minutes counts as not shut:
+  # an open door's reconnect blip mustn't start the heating. Longer, or
+  # missing, counts as shut, as in the hold, so a lost controller doesn't
+  # stop the floor. now() re-renders it each minute, so the 2 minutes lapse
+  # on their own.
+  - binary_sensor:
+      - name: Tin Hut roller door not shut
+        unique_id: tin_hut_roller_door_not_shut
+        device_class: garage_door
+        state: >
+          {% set ns = namespace(open=false) %}
+          {% for s in [states.binary_sensor.tin_hut_door_left_closed_endstop_sensor,
+                       states.binary_sensor.tin_hut_door_right_closed_endstop_sensor]
+                     if s is not none %}
+            {% if s.state == 'off'
+                  or (s.state in ['unavailable', 'unknown']
+                      and now() - s.last_changed < timedelta(minutes=2)) %}
+              {% set ns.open = true %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.open }}
+
+  # A roller door is overriding the setback floor. A broken closed endstop
+  # wire reads as open, and a door controller that keeps dropping out without
+  # ever reading shut keeps the not-shut sensor on, so this is also how a fault
+  # that would leave the hut unheated for days shows up.
   - binary_sensor:
       - name: Tin Hut floor held off by roller door
         unique_id: tin_hut_floor_held_off_by_roller_door
@@ -151,7 +180,8 @@ template:
         delay_on:
           hours: 1
         state: >
-          {{ is_state('binary_sensor.tin_hut_roller_door_open', 'on')
+          {{ (is_state('binary_sensor.tin_hut_roller_door_open', 'on')
+              or not is_state('binary_sensor.tin_hut_roller_door_not_shut', 'off'))
              and is_state('binary_sensor.tin_hut_heating_floor', 'on') }}
 
   # Normal sleep is five minutes, so half an hour without waking means a flat
@@ -208,7 +238,7 @@ alert:
     message: >
       The Tin Hut is below the setback floor but the heating is held off, because a
       roller door has been reading open for over an hour. Shut the door, or check its
-      closed endstop if it is already shut.
+      closed endstop and door controller if it is already shut.
     done_message: The Tin Hut setback floor is no longer held off by a roller door.
     notifiers:
       - mobile_app_nothing_phone_2
@@ -237,6 +267,8 @@ automation:
           - binary_sensor.tin_hut_heating_floor
           - binary_sensor.axle_export_event
           - binary_sensor.tin_hut_roller_door_open
+          # So heating held back by an open door starts as soon as it shuts.
+          - binary_sensor.tin_hut_roller_door_not_shut
           - input_number.tin_hut_heating_warm_target
         # The export event sensor's attributes change every minute; under
         # mode: restart each would cancel a run, start-up delay included.
@@ -289,12 +321,18 @@ automation:
           current: "{{ states('climate.tin_hut') }}"
           current_low: "{{ state_attr('climate.tin_hut', 'target_temp_low') | float(0) }}"
           floor: "{{ states('binary_sensor.tin_hut_heating_floor') }}"
+          # A roller door not shut keeps an off thermostat off, so nothing
+          # starts heating with a door open; heating already on only stops
+          # once the hold's 10 minutes are up. Anything but off counts, so
+          # the sensor's unknown moment on a template reload starts nothing.
+          door_open: "{{ not is_state('binary_sensor.tin_hut_roller_door_not_shut', 'off') }}"
           # off, warm, floor, or hold. Hold is setback with the floor sensor
           # unknown: leave the thermostat on or off as it is, but never at a
           # warm target.
           desired: >
             {%- if is_state('binary_sensor.axle_export_event', 'on')
-                   or is_state('binary_sensor.tin_hut_roller_door_open', 'on') %}off
+                   or is_state('binary_sensor.tin_hut_roller_door_open', 'on')
+                   or (door_open and current == 'off') %}off
             {%- elif is_state('input_select.tin_hut_heating_mode', 'warm') %}warm
             {%- elif floor == 'on' %}floor
             {%- elif floor == 'off' %}off
@@ -367,7 +405,9 @@ automation:
   # and the delay_off holds each blip for five minutes. The lights switching
   # off can set one off, which turns the lights back on: on 17 October 2026
   # an empty hut showed occupied for 5-8½ minutes in every ten for an hour.
-  # Fifteen minutes rides that out.
+  # Fifteen minutes rides that out. It waits while either roller door is
+  # not shut (binary_sensor.tin_hut_roller_door_not_shut), and warms at the
+  # first check after both are.
   #
   # A setback chosen by a person sets a hold, and occupancy leaves the mode
   # alone until the hut has been empty for 15 minutes. "By a person" means
@@ -479,6 +519,12 @@ automation:
                 state: "on"
                 for:
                   minutes: 15
+              # Both roller doors shut, by the undelayed sensor rather than the
+              # hold, whose 10 minute delay let a warm start through on 8
+              # November 2026 with a door open. Only off counts as shut, as in
+              # the apply automation.
+              - condition: template
+                value_template: "{{ is_state('binary_sensor.tin_hut_roller_door_not_shut', 'off') }}"
             sequence:
               - action: input_select.select_option
                 target:
