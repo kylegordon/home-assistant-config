@@ -29,6 +29,8 @@ automation:
   - alias: Dehumidifier load shed
     id: dehumidifier_load_shed
     description: Turn the dehumidifier off for a load shed, and back on if the shed ends during the day.
+    # Queued so a shed change during the start-up delay isn't dropped.
+    mode: queued
     triggers:
       - trigger: state
         entity_id: input_boolean.load_shed
@@ -45,11 +47,24 @@ automation:
         entity_id: humidifier.dehumidifier
         to: "on"
         id: shed
+      # A shed and an on dehumidifier both restored at start-up change
+      # nothing, so neither trigger above fires.
+      - trigger: homeassistant
+        event: start
+        id: start
     actions:
+      # Device-backed entities need a moment to reconnect after a restart.
+      - if:
+          - condition: trigger
+            id: start
+        then:
+          - delay: "00:01:00"
       - choose:
           - conditions:
               - condition: trigger
-                id: shed
+                id:
+                  - shed
+                  - start
               - condition: state
                 entity_id: input_boolean.load_shed
                 state: "on"
