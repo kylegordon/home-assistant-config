@@ -62,7 +62,8 @@
 # The same hold applies, floor guard included, while either vehicle roller
 # door has been open for 10 minutes; driving a car in or out doesn't count.
 # The pedestrian door is ignored. An alert fires if the hold keeps the hut
-# below the floor for an hour.
+# below the floor for an hour. Occupancy doesn't start a warm session while
+# either roller door is open at all.
 
 input_select:
   # No initial: so the mode survives a restart.
@@ -367,7 +368,8 @@ automation:
   # and the delay_off holds each blip for five minutes. The lights switching
   # off can set one off, which turns the lights back on: on 17 October 2026
   # an empty hut showed occupied for 5-8½ minutes in every ten for an hour.
-  # Fifteen minutes rides that out.
+  # Fifteen minutes rides that out. It waits while either roller door is
+  # off its closed endstop, and warms at the first check after both are shut.
   #
   # A setback chosen by a person sets a hold, and occupancy leaves the mode
   # alone until the hut has been empty for 15 minutes. "By a person" means
@@ -479,6 +481,15 @@ automation:
                 state: "on"
                 for:
                   minutes: 15
+              # Both roller doors shut. The raw endstops, not the roller door
+              # hold sensor, whose 10 minute delay let a warm start through on
+              # 8 November 2026 with a door open. Same test as the hold, so an
+              # unavailable or missing endstop counts as shut here too; a state
+              # condition would error on a missing entity and block warm.
+              - condition: template
+                value_template: >
+                  {{ not (is_state('binary_sensor.tin_hut_door_left_closed_endstop_sensor', 'off')
+                          or is_state('binary_sensor.tin_hut_door_right_closed_endstop_sensor', 'off')) }}
             sequence:
               - action: input_select.select_option
                 target:
