@@ -26,6 +26,11 @@
 # does. After a restart the floor sensor starts again as off, so a floor
 # cycle in progress can stop short; it comes back on below the floor.
 #
+# While import is cheap and Predbat is charging the battery rather than
+# running the house from it, the floor is the higher cheap rate floor
+# (input_number.tin_hut_heating_cheap_floor, set to 14 °C), banking heat in
+# the slab on cold nights at the cheap rate.
+#
 # 12 °C rather than lower because of damp: cooling the hut's air as measured
 # on 27 Oct 2026 (62 % RH at 14.6 °C)
 # takes it to about 73 % at 12 °C but about 84 % at 10 °C, past the ~80 %
@@ -101,6 +106,17 @@ input_number:
     max: 14
     step: 0.5
     unit_of_measurement: "°C"
+  # The floor while import is cheap and Predbat is charging, so the house
+  # runs off the grid rather than the battery. Only raises the floor: set
+  # below the setback floor it does nothing. No initial, as above; set it
+  # once (14 °C).
+  tin_hut_heating_cheap_floor:
+    name: Tin Hut cheap rate setback floor
+    icon: mdi:thermometer-plus
+    min: 10
+    max: 14
+    step: 0.5
+    unit_of_measurement: "°C"
 
 input_boolean:
   # Someone has been in since the current warm session began. Kept in a
@@ -120,6 +136,16 @@ template:
   # state. Unavailable without a temperature reading or floor value, which
   # the apply automation treats as hold. Deploy with a restart, not a reload:
   # the old threshold sensor of the same name would push this one to _2.
+  #
+  # The floor is the cheap rate floor instead, if higher, while
+  # binary_sensor.import_rate_cheap is on and Predbat's run state starts
+  # Charging, Freeze charging or Hold charging: in those the house load comes
+  # from the grid, not the battery. Its run_state attribute rather than the
+  # state, which a warning replaces. Predbat updates it every 5 minutes; over
+  # 30 minutes old counts as stopped, as in load_shedding.yaml. Anything else,
+  # or any of these missing, leaves the setback floor alone. When the cheap slot ends the floor drops
+  # back and the heating stops unless the hut is under 1 °C above the
+  # setback floor.
   - binary_sensor:
       - name: Tin Hut heating floor
         unique_id: tin_hut_heating_floor
@@ -129,6 +155,16 @@ template:
         state: >
           {% set t = states('sensor.tin_hut_sensor_temperature') | float %}
           {% set f = states('input_number.tin_hut_heating_floor') | float %}
+          {% set p = states.predbat.status %}
+          {% set run = ((state_attr('predbat.status', 'run_state') or '') | string)
+                       .split(',')[0] | trim %}
+          {% if is_state('binary_sensor.import_rate_cheap', 'on')
+                and p is not none
+                and now() - p.last_updated < timedelta(minutes=30)
+                and run in ['Charging', 'Freeze charging', 'Hold charging']
+                and has_value('input_number.tin_hut_heating_cheap_floor') %}
+            {% set f = [f, states('input_number.tin_hut_heating_cheap_floor') | float] | max %}
+          {% endif %}
           {{ t < f or (this.state == 'on' and t <= f + 1) }}
 
   # Either roller door off its closed endstop for 10 minutes. The endstop
@@ -180,10 +216,14 @@ template:
         device_class: problem
         delay_on:
           hours: 1
+        # Against the setback floor only: the cheap rate floor calling for
+        # heat above it isn't the hut going cold.
         state: >
           {{ (is_state('binary_sensor.tin_hut_roller_door_open', 'on')
               or not is_state('binary_sensor.tin_hut_roller_door_not_shut', 'off'))
-             and is_state('binary_sensor.tin_hut_heating_floor', 'on') }}
+             and is_state('binary_sensor.tin_hut_heating_floor', 'on')
+             and states('sensor.tin_hut_sensor_temperature') | float(99)
+                 <= states('input_number.tin_hut_heating_floor') | float(-99) + 1 }}
 
   # Normal sleep is five minutes, so half an hour without waking means a flat
   # battery or a lost connection, and the floor guard is working from a stale
