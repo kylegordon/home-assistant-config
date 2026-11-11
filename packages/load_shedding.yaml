@@ -426,8 +426,8 @@ automation:
                 Predbat's plan now keeps the battery
                 {{ (state_attr('binary_sensor.battery_short_before_cheap_rate', 'low_kwh') | float(0)
                     - state_attr('binary_sensor.battery_short_before_cheap_rate', 'reserve_kwh') | float(0))
-                   | round(1) }} kWh above its reserve, so the Tin Hut heating and the
-                dehumidifier are back on. Another shed today lasts until the cheap rate.
+                   | round(1) }} kWh above its reserve, so the Tin Hut heating is
+                back on, and the dehumidifier if the house is humid. Another shed today lasts until the cheap rate.
               data:
                 tag: load_shed_released
       - action: input_boolean.turn_off
