@@ -2,7 +2,8 @@
 
 # Load shedding: when Predbat's plan says the battery will hit its reserve
 # before the next cheap import rate, shed the optional loads until that cheap
-# rate starts.
+# rate starts. An Octopus power-down session also sheds them, for as long as
+# the session runs (see Power-down sessions below).
 #
 # The shed loads read input_boolean.load_shed themselves:
 #   - tin_hut_heating.yaml holds the Tin Hut thermostat off, warm and floor
@@ -48,6 +49,20 @@
 # forecast-missing alert says why nothing sheds then. A shed turned on by hand
 # is never released early: it lasts until the next cheap slot starts, or
 # until a restart during a cheap slot.
+#
+# Power-down sessions: while the Octopus power-down calendar has a session
+# on, the loads are shed if nothing has shed them already. When the session
+# ends, a shed it started ends with it and the loads come back. A forecast
+# that went short during the session doesn't shed again until it clears and
+# goes short again, unless it went short in the session's last 10 minutes.
+# A shed already on when the session starts is kept, and isn't released
+# early or for missing rates until the session is over.
+# Turning the helper off by hand during a session brings the loads back for
+# the rest of it, unless Home Assistant restarts while the session is on or
+# the forecast goes short.
+#
+# The phone shows a persistent notification for as long as any shed is on,
+# saying why; it clears when the shed ends.
 
 input_boolean:
   # No initial: so a shed survives a restart.
@@ -58,6 +73,11 @@ input_boolean:
   # released early when the forecast recovers.
   load_shed_auto:
     name: Load shed automatic
+    icon: mdi:transmission-tower-off
+  # On while the current shed is one a power-down session started, the only
+  # kind that ends with the session.
+  load_shed_power_down:
+    name: Load shed power down
     icon: mdi:transmission-tower-off
 
 input_datetime:
@@ -276,17 +296,6 @@ automation:
       - action: input_boolean.turn_on
         target:
           entity_id: input_boolean.load_shed
-      - action: notify.mobile_app_nothing_phone_2
-        data:
-          title: Load shed
-          message: >
-            {% set n = as_datetime(states('sensor.next_cheap_import')) %}
-            Predbat's plan runs the battery down to its reserve before the next
-            cheap rate{{ ' at ' ~ (n | as_local).strftime('%H:%M') if n is not none else '' }},
-            so the Tin Hut heating and the dehumidifier are off until the
-            forecast recovers, or until then at the latest.
-          data:
-            tag: load_shed
 
   - alias: Load shed end
     id: load_shed_end
@@ -310,6 +319,11 @@ automation:
         from:
           - unavailable
           - unknown
+        to: "off"
+      # A shed held through a session may have outlived a cheap slot missed
+      # while Home Assistant was down: check once the session is over.
+      - trigger: state
+        entity_id: calendar.octopus_energy_a_0ed31652_octoplus_power_down
         to: "off"
       # Polled for missing rates (no state trigger with for: sees a sensor
       # unavailable from boot; last_changed counts from boot then) and for the
@@ -370,6 +384,19 @@ automation:
       - condition: state
         entity_id: input_boolean.load_shed
         state: "on"
+      # Nothing ends a shed during a power-down session but a cheap slot
+      # starting: a session's own shed ends with it (Load shed power down
+      # end), and any other shed holds at least until the session is over.
+      - condition: or
+        conditions:
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: calendar.octopus_energy_a_0ed31652_octoplus_power_down
+                state: "on"
+          - condition: state
+            entity_id: binary_sensor.import_rate_cheap
+            state: "on"
       # The poll acts only on missing rates and the early release.
       - condition: template
         value_template: >
@@ -423,8 +450,64 @@ automation:
         data:
           timestamp: "{{ now().timestamp() }}"
 
-  # Any shed ending, so a later hand-set shed isn't taken for an automatic one.
-  # Start-up covers a restart between Load shed start's two turn_ons.
+  - alias: Load shed power down start
+    id: load_shed_power_down_start
+    description: Shed optional loads while an Octopus power-down session runs.
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: calendar.octopus_energy_a_0ed31652_octoplus_power_down
+        to: "on"
+      # A session already on after a restart.
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: calendar.octopus_energy_a_0ed31652_octoplus_power_down
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.load_shed
+        state: "off"
+    actions:
+      # Before load_shed, so the shed is marked as the session's from its start.
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.load_shed_power_down
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.load_shed
+
+  - alias: Load shed power down end
+    id: load_shed_power_down_end
+    description: Bring the loads back when the power-down session that shed them ends.
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: calendar.octopus_energy_a_0ed31652_octoplus_power_down
+        to: "off"
+      # A session that ended while Home Assistant was down.
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: state
+        entity_id: calendar.octopus_energy_a_0ed31652_octoplus_power_down
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.load_shed_power_down
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.load_shed
+        state: "on"
+    actions:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.load_shed
+
+  # Any shed ending, so a later hand-set shed isn't taken for an automatic or
+  # power-down one. Start-up covers a restart between a start automation's
+  # two turn_ons. At start-up during a session the power-down mark is left:
+  # Load shed power down start, firing at the same moment, may just have set
+  # it, and sets it anyway if it sheds.
   - alias: Load shed record end
     id: load_shed_record_end
     triggers:
@@ -434,6 +517,7 @@ automation:
         to: "off"
       - trigger: homeassistant
         event: start
+        id: start
     conditions:
       - condition: state
         entity_id: input_boolean.load_shed
@@ -442,6 +526,60 @@ automation:
       - action: input_boolean.turn_off
         target:
           entity_id: input_boolean.load_shed_auto
+      - if:
+          - condition: template
+            value_template: >
+              {{ trigger.id != 'start'
+                 or not is_state('calendar.octopus_energy_a_0ed31652_octoplus_power_down', 'on') }}
+        then:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.load_shed_power_down
+
+  # A persistent phone notification for as long as any shed is on, by hand
+  # too, sent as it starts and again after a restart or automation reload.
+  # The start automations mark the kind of shed before turning it on.
+  - alias: Load shed notification
+    id: load_shed_notification
+    mode: queued
+    triggers:
+      - trigger: state
+        entity_id: input_boolean.load_shed
+        from: "off"
+        to: "on"
+      - trigger: homeassistant
+        event: start
+      - trigger: event
+        event_type: automation_reloaded
+    conditions:
+      - condition: state
+        entity_id: input_boolean.load_shed
+        state: "on"
+    actions:
+      - action: notify.mobile_app_nothing_phone_2
+        data:
+          title: Load shed
+          message: >
+            {% if is_state('input_boolean.load_shed_power_down', 'on') %}
+              {% set e = as_datetime(state_attr('calendar.octopus_energy_a_0ed31652_octoplus_power_down', 'end_time'), none) %}
+              Octopus power-down session{{ ' until ' ~ (e | as_local).strftime('%H:%M') if e is not none else '' }},
+              so the Tin Hut heating and the dehumidifier are off until it ends.
+            {% elif is_state('input_boolean.load_shed_auto', 'on') %}
+              {% set n = as_datetime(states('sensor.next_cheap_import'), none) %}
+              Predbat's plan runs the battery down to its reserve before the next
+              cheap rate{{ ' at ' ~ (n | as_local).strftime('%H:%M') if n is not none else '' }},
+              so the Tin Hut heating and the dehumidifier are off until the
+              forecast recovers, or until then at the latest.
+            {% else %}
+              Load shed is on, so the Tin Hut heating and the dehumidifier are
+              off until the next cheap rate, or until it is turned off.
+            {% endif %}
+          data:
+            tag: load_shed
+            persistent: true
+            sticky: true
+            # A resend after a restart replaces it quietly.
+            alert_once: true
 
   # A new peak may release a shed early again.
   - alias: Load shed release reset
