@@ -1,6 +1,110 @@
 ---
-# Dehumidifier schedule: off overnight, on during the day, and off during a
-# load shed (load_shedding.yaml).
+# Dehumidifier: off overnight (noise) and during a load shed
+# (load_shedding.yaml); during the day it runs while the house is humid.
+#
+# "Humid" is binary_sensor.house_humid: on once sensor.house_average_humidity
+# (sensors.yaml) rises above 60%, off once it falls below 55%, and unchanged
+# in between. The unit's own humidity sensor reads far too low (about 30% in
+# a 70% house), so its normal mode idles with only the fan running. Laundry
+# mode runs the compressor whatever that sensor says, so Home Assistant does
+# the switching instead.
+#
+# While the house average is unavailable, or 3 or more of its sensors are
+# missing (the median of the few left isn't the house), "humid" keeps its last
+# value, so the dehumidifier carries on as it was (still off overnight) and a
+# short dropout, such as a restart, doesn't switch it. The alert below
+# (phone and persistent notification, repeated daily) says when the average
+# is unavailable or 3 or more of its sensors are missing.
+template:
+  # Trigger-based so the state survives a restart; a threshold helper forgets
+  # which side of the 55-60% band it was on.
+  - trigger:
+      - trigger: state
+        entity_id:
+          - sensor.house_average_humidity
+          - sensor.house_humidity_sensors_missing
+      - trigger: homeassistant
+        event: start
+    binary_sensor:
+      - name: House humid
+        unique_id: house_humid
+        state: >
+          {% set h = states('sensor.house_average_humidity') | float(none) %}
+          {% set was = is_state('binary_sensor.house_humid', 'on') %}
+          {% set missing = states('sensor.house_humidity_sensors_missing') | int(99) %}
+          {{ was if h is none or missing >= 3 else h > 60 or (h >= 55 and was) }}
+  - sensor:
+      # Members of House Average Humidity (sensors.yaml) that are unavailable,
+      # deleted, or have reported nothing for 6 hours (a stuck sensor keeps its
+      # last value rather than going unavailable). Keep the list in step with
+      # sensors.yaml.
+      - name: House humidity sensors missing
+        unique_id: house_humidity_sensors_missing
+        state_class: measurement
+        state: >
+          {% set members = [
+            'sensor.front_hall_lywsd03mmc_humidity',
+            'sensor.craft_room_multi_sensor_humidity',
+            'sensor.guest_room_multi_sensor_humidity',
+            'sensor.living_room_multi_sensor_humidity',
+            'sensor.master_bedroom_multi_sensor_humidity',
+            'sensor.nook_multi_sensor_humidity',
+            'sensor.hallway_multi_sensor_humidity',
+            'sensor.study_multi_sensor_humidity',
+            'sensor.study_lywsd03mmc_humidity',
+            'sensor.bathroom_multi_sensor_humidity',
+            'sensor.ensuite_lywsd03mmc_humidity'] %}
+          {% set cutoff = now() - timedelta(hours=6) %}
+          {{ members | count - (expand(members)
+             | rejectattr('state', 'in', ['unavailable', 'unknown'])
+             | selectattr('last_reported', 'gt', cutoff)
+             | list | count) }}
+  - binary_sensor:
+      - name: House humidity average unreliable
+        unique_id: house_humidity_average_unreliable
+        device_class: problem
+        delay_on: "00:10:00"
+        state: >
+          {{ not has_value('sensor.house_average_humidity')
+             or not has_value('sensor.house_humidity_sensors_missing')
+             or states('sensor.house_humidity_sensors_missing') | int(0) >= 3 }}
+
+alert:
+  house_humidity_average_unreliable:
+    name: House humidity average unreliable
+    entity_id: binary_sensor.house_humidity_average_unreliable
+    state: "on"
+    repeat:
+      - 1440
+    can_acknowledge: true
+    skip_first: false
+    title: House humidity
+    message: >
+      {{ states('sensor.house_humidity_sensors_missing') }} of the house
+      humidity sensors are missing, or the house average is unavailable. The
+      dehumidifier follows this average.
+    done_message: The house humidity average is reliable again.
+    notifiers:
+      - mobile_app_nothing_phone_2
+      - persistent_notification
+    data:
+      tag: house_humidity_average_unreliable
+      timeout: 14400
+      notification_id: house_humidity_average_unreliable
+
+script:
+  dehumidifier_run:
+    alias: Dehumidifier run
+    sequence:
+      - action: humidifier.turn_on
+        target:
+          entity_id: humidifier.dehumidifier
+      - action: humidifier.set_mode
+        target:
+          entity_id: humidifier.dehumidifier
+        data:
+          mode: laundry
+
 automation:
   - alias: Dehumidifier off at night
     id: dehumidifier_off_at_night
@@ -21,14 +125,49 @@ automation:
       - condition: state
         entity_id: input_boolean.load_shed
         state: "off"
+      - condition: state
+        entity_id: binary_sensor.house_humid
+        state: "on"
     actions:
-      - action: humidifier.turn_on
-        target:
-          entity_id: humidifier.dehumidifier
+      - action: script.dehumidifier_run
+
+  - alias: Dehumidifier follows house humidity
+    id: dehumidifier_follows_house_humidity
+    # Queued so a quick humid/dry flip during a slow device call isn't dropped.
+    mode: queued
+    triggers:
+      - trigger: state
+        entity_id: binary_sensor.house_humid
+        to: "on"
+        id: humid
+      - trigger: state
+        entity_id: binary_sensor.house_humid
+        to: "off"
+        id: dry
+    actions:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: humid
+              - condition: state
+                entity_id: input_boolean.load_shed
+                state: "off"
+              - condition: time
+                after: "09:00:00"
+                before: "21:00:00"
+            sequence:
+              - action: script.dehumidifier_run
+          - conditions:
+              - condition: trigger
+                id: dry
+            sequence:
+              - action: humidifier.turn_off
+                target:
+                  entity_id: humidifier.dehumidifier
 
   - alias: Dehumidifier load shed
     id: dehumidifier_load_shed
-    description: Turn the dehumidifier off for a load shed, and back on if the shed ends during the day.
+    description: Keep the dehumidifier off during a load shed and overnight, and turn it back on if the shed ends during the day with the house humid.
     # Queued so a shed change during the start-up delay isn't dropped.
     mode: queued
     # The 5-minute recheck runs often; keep enough to see a start or restore.
@@ -73,9 +212,18 @@ automation:
                 id:
                   - shed
                   - start
-              - condition: state
-                entity_id: input_boolean.load_shed
-                state: "on"
+              # Overnight as well as during a shed: in laundry mode a missed
+              # 21:00 turn-off (unit offline, Home Assistant down) would
+              # otherwise run the compressor all night. This also turns off
+              # a unit switched on by hand overnight.
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: input_boolean.load_shed
+                    state: "on"
+                  - condition: time
+                    after: "21:00:00"
+                    before: "09:00:00"
               - condition: state
                 entity_id: humidifier.dehumidifier
                 state: "on"
@@ -100,7 +248,8 @@ automation:
               - condition: time
                 after: "09:00:00"
                 before: "21:00:00"
+              - condition: state
+                entity_id: binary_sensor.house_humid
+                state: "on"
             sequence:
-              - action: humidifier.turn_on
-                target:
-                  entity_id: humidifier.dehumidifier
+              - action: script.dehumidifier_run
