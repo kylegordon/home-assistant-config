@@ -3,8 +3,9 @@
 # (load_shedding.yaml); during the day it runs while the house is humid.
 #
 # "Humid" is binary_sensor.house_humid: on once sensor.house_average_humidity
-# (sensors.yaml) rises above 60%, off once it falls below 55%, and unchanged
-# in between. The unit's own humidity sensor reads far too low (about 30% in
+# (sensors.yaml) rises above input_number.dehumidifier_humidity_threshold
+# (set to 60%, the old fixed value), off once it falls 5% below that, and
+# unchanged in between. The unit's own humidity sensor reads far too low (about 30% in
 # a 70% house), so its normal mode idles with only the fan running. Laundry
 # mode runs the compressor whatever that sensor says, so Home Assistant does
 # the switching instead.
@@ -15,14 +16,29 @@
 # short dropout, such as a restart, doesn't switch it. The alert below
 # (phone and persistent notification, repeated daily) says when the average
 # is unavailable or 3 or more of its sensors are missing.
+input_number:
+  # The house average humidity the dehumidifier turns on above; it turns off
+  # 5% below. No initial: so a value set by hand survives a restart; a new
+  # install starts at the 50% minimum, so set it once (60% was the old fixed
+  # value). The template below falls back to 60% if the helper is missing.
+  dehumidifier_humidity_threshold:
+    name: Dehumidifier humidity threshold
+    icon: mdi:water-percent
+    min: 50
+    max: 80
+    step: 1
+    unit_of_measurement: "%"
+
 template:
-  # Trigger-based so the state survives a restart; a threshold helper forgets
-  # which side of the 55-60% band it was on.
+  # Trigger-based so the state survives a restart; a Threshold integration
+  # helper forgets which side of the band it was on.
   - trigger:
       - trigger: state
         entity_id:
           - sensor.house_average_humidity
           - sensor.house_humidity_sensors_missing
+          # A new threshold applies straight away.
+          - input_number.dehumidifier_humidity_threshold
       - trigger: homeassistant
         event: start
     binary_sensor:
@@ -32,7 +48,8 @@ template:
           {% set h = states('sensor.house_average_humidity') | float(none) %}
           {% set was = is_state('binary_sensor.house_humid', 'on') %}
           {% set missing = states('sensor.house_humidity_sensors_missing') | int(99) %}
-          {{ was if h is none or missing >= 3 else h > 60 or (h >= 55 and was) }}
+          {% set on_above = states('input_number.dehumidifier_humidity_threshold') | float(60) %}
+          {{ was if h is none or missing >= 3 else h > on_above or (h >= on_above - 5 and was) }}
   - sensor:
       # Members of House Average Humidity (sensors.yaml) that are unavailable,
       # deleted, or have reported nothing for 6 hours (a stuck sensor keeps its
