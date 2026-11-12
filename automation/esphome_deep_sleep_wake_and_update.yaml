@@ -16,6 +16,10 @@
 # ESPHome config prefixes entity names with ${friendly_name}, so a newly
 # adopted device gets a doubled prefix (e.g. sensor.x_monitor_x_monitor_voltage)
 # and its entities need renaming in HA.
+#
+# When adding a deep sleep device here, also add its node name to the
+# aioesphomeapi.reconnect_logic filter in logger.yaml, which hides the
+# "Can't connect to ESPHome API" warnings logged while it sleeps.
 alias: "ESPHome deep sleep devices - wake and update"
 id: esphome_deep_sleep_wake_and_update
 mode: parallel

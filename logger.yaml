@@ -1,4 +1,14 @@
 default: warn
+# Deep-sleeping ESPHome devices are unreachable most of the time by design, so
+# aioesphomeapi logs a "Can't connect to ESPHome API" warning every time one
+# sleeps. Drop those for the sleeping devices only; always-on devices must
+# still be reported. A new deep sleep device must be added to this regex and
+# to automation/esphome_deep_sleep_wake_and_update.yaml (keep the two in step).
+# Names are the ESPHome node names (device_name substitution). polestar is the
+# expected rename of the volvo monitor.
+filters:
+  aioesphomeapi.reconnect_logic:
+    - "^Can't connect to ESPHome API for ((land_rover|volvo|polestar|tr6|ac)_battery_monitor|front_hall_sensor|study_sensor|tin-hut-sensor)( @ |: )"
 logs:
   # pydeconz: debug
   homeassistant.components.openhome: debug
