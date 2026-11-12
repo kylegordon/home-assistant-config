@@ -4,8 +4,8 @@
 #
 # "Humid" is binary_sensor.house_humid: on once sensor.house_average_humidity
 # (sensors.yaml) rises above input_number.dehumidifier_humidity_threshold
-# (60% unless changed), off once it falls 5% below that, and unchanged in
-# between. The unit's own humidity sensor reads far too low (about 30% in
+# (set to 60%, the old fixed value), off once it falls 5% below that, and
+# unchanged in between. The unit's own humidity sensor reads far too low (about 30% in
 # a 70% house), so its normal mode idles with only the fan running. Laundry
 # mode runs the compressor whatever that sensor says, so Home Assistant does
 # the switching instead.
@@ -30,8 +30,8 @@ input_number:
     unit_of_measurement: "%"
 
 template:
-  # Trigger-based so the state survives a restart; a threshold helper forgets
-  # which side of the band it was on.
+  # Trigger-based so the state survives a restart; a Threshold integration
+  # helper forgets which side of the band it was on.
   - trigger:
       - trigger: state
         entity_id:
