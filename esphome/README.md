@@ -226,3 +226,18 @@ The configuration includes visual feedback via the built-in blue LED:
 - **Single blink (5s interval):** Not connected to WiFi
 - **Double blink (5s interval):** Not connected to Home Assistant API
 - **LED off:** Connected and operational
+
+## Car Battery Monitors
+
+`battery_monitor_1.yaml` to `battery_monitor_4.yaml` are Wemos D1 mini (ESP8266) boards that read a car battery's voltage on A0 through a resistor divider. They share `common/car_battery_monitor_common.yaml`, which deep sleeps for 10 minutes between readings. After each wake, `automation/esphome_deep_sleep_wake_and_update.yaml` presses the board's "Enter Deep Sleep" button once its 120 second awake window ends, or later if an ESPHome Update Manager install is pending. `input_boolean.esphome_ota_enable` calls `deep_sleep.prevent` on the board, which blocks only the automatic `run_duration` sleep, not that button.
+
+### Deep sleep wake wire
+
+Each board has a plain wire linking D0 (GPIO16) to RST. The ESP8266 wakes from deep sleep by pulsing GPIO16 low, which only resets the chip if GPIO16 is connected to RST ([ESPHome deep sleep docs](https://esphome.io/components/deep_sleep.html)).
+
+- **Required**: without the wire, or if it breaks, the board sleeps once and never wakes. Home Assistant keeps showing a deep sleep device's last readings while it is asleep, so the entities do not go unavailable: the voltage just stops updating and `binary_sensor.<device>_status` stays off. A power cycle or reset gives one awake window, after which it sleeps and stays dark again.
+- **D0 must stay free**: the monitors use only A0 (voltage) and D4 (LED); nothing else may use D0.
+- **Flashing**: the link can block USB serial flashing, so remove it to flash over USB. OTA updates are unaffected.
+- **Power**: run the boards from the car supply, not USB. On D1 mini-type boards the USB serial chip is also wired to RST and can hold the board in reset, stopping wake-up (for example while a host has the serial port open).
+
+The 10 minute sleep is well within the ESP8266's maximum deep sleep of about 3.5 hours.

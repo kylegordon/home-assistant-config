@@ -1,5 +1,17 @@
 ---
 # Inspired by https://www.reddit.com/r/homeautomation/comments/qiywpf/monitoring_a_car_battery_from_charged_over_first/
+#
+# Hardware requirement: a plain wire links D0 (GPIO16) to RST on every
+# monitor. The ESP8266 wakes from deep sleep by pulsing GPIO16, so without
+# that link the board sleeps once and never wakes. HA keeps the last
+# readings (they do not go unavailable); the status sensor stays off and
+# the voltage stops updating. See
+# https://esphome.io/components/deep_sleep.html and esphome/README.md.
+# - D0 must stay free: do not use it for anything else here.
+# - The link can block USB serial flashing; remove it to flash over USB.
+#   OTA updates are unaffected.
+# - Power from the car supply, not USB: on D1 mini-type boards the USB
+#   serial chip is also wired to RST and can hold it, stopping wake-up.
 packages:
   common: !include common.yaml
 
