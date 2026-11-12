@@ -17,6 +17,18 @@ input_boolean:
     icon: mdi:sleep
     initial: false
 
+input_number:
+  # Volume the Tin Hut radio starts at when someone walks in. No initial: so a
+  # value set by hand survives a restart; a new install starts at the 0
+  # minimum, so set it once (45 was the old fixed value).
+  tin_hut_radio_volume:
+    name: Tin Hut radio volume
+    icon: mdi:volume-high
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "%"
+
 template:
   - binary_sensor:
       - name: Tin Hut Occupied
@@ -63,6 +75,26 @@ automation:
           - idle
           - 'off'
           - paused
+      # Wake the player and set the volume before anything plays. Waking from
+      # standby resets it to the Linn's own startup volume, so setting it
+      # after playback starts is heard as a drop in volume.
+      - if:
+          - condition: state
+            entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+            state: 'off'
+        then:
+          - action: media_player.turn_on
+            target:
+              entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
+          - wait_template: "{{ not is_state('media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f', 'off') }}"
+            timeout: '00:00:10'
+            continue_on_timeout: true
+      - action: media_player.volume_set
+        continue_on_error: true
+        data:
+          volume_level: "{{ states('input_number.tin_hut_radio_volume') | float(45) / 100 }}"
+        target:
+          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
       # Resume the last radio station (saved by packages/linn.yaml)
       - if:
           - condition: template
@@ -91,11 +123,6 @@ automation:
               pin: 6
             target:
               entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
-      - action: media_player.volume_set
-        data:
-          volume_level: 0.45
-        target:
-          entity_id: media_player.openhome_uuid_4c494e4e_0026_0f22_646e_01560511013f
 
   - alias: Tin Hut Door Opened Outdoor Lights
     id: tin_hut_door_opened_outdoor_lights
