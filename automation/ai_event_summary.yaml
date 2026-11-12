@@ -1,0 +1,20 @@
+alias: AI Event Summary
+id: ai_event_summary
+description: ''
+use_blueprint:
+  path: valentinfrlch/event_summary.yaml
+  input:
+    # LLM Vision "Anthropic Claude" provider entry
+    provider: 01M1GN8ECBZ3K39355V6KVME4B
+    model: ''
+    # The blueprint pairs motion_sensors[i] with camera_entities[i]; keep the
+    # two lists in the same order
+    camera_entities:
+      - camera.back_door
+      - camera.driveway_tin_hut
+      - camera.driveway
+    motion_sensors:
+      - binary_sensor.back_door_motion
+      - binary_sensor.driveway_tin_hut_motion
+      - binary_sensor.driveway_motion
+    run_conditions: []
