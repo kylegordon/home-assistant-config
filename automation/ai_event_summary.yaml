@@ -17,4 +17,17 @@ use_blueprint:
       - binary_sensor.back_door_motion
       - binary_sensor.driveway_tin_hut_motion
       - binary_sensor.driveway_motion
+    # Kyle's Nothing Phone 2 (mobile_app device)
+    notify_device:
+      - 6d07b4e762f3081db92dcee2bb03dc1e
+    # Notify once, after the summary. Dynamic mode pre-notifies with a
+    # snapshot that every listed camera writes to the same file, so it often
+    # shows the wrong camera
+    notification_delivery: Consolidated
+    # Don't push summaries that found nothing
+    condition_notify:
+      - condition: template
+        value_template: >-
+          {{ response is defined
+             and 'no activity observed' not in response.response_text | lower }}
     run_conditions: []
