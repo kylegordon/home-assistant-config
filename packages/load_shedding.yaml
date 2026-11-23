@@ -37,9 +37,8 @@
 # to spare: short off for 30 minutes and the plan's lowest point at least
 # 2 kWh above the reserve. The margin and the wait stop a forecast that
 # improves because the loads are off from switching them straight back on.
-# That release happens once per peak: a shed that starts again after it lasts
-# until the next cheap slot, so the loads can't cycle on and off. Otherwise
-# the shed ends when the next cheap slot starts. A free session during the day
+# A shed that starts again later in the same peak is released the same way.
+# Otherwise the shed ends when the next cheap slot starts. A free session during the day
 # ends the shed, so the loads run on free power; when peak resumes the plan is
 # checked again. Turn the helper off by hand to bring the loads back early; it
 # sheds again if the forecast clears and goes short again, when peak next
@@ -85,12 +84,6 @@ input_datetime:
   # Home Assistant was down is cleared at start-up.
   load_shed_since:
     name: Load shed since
-    has_date: true
-    has_time: true
-  # When a shed was last released early, so it happens once per peak; reset
-  # to 1970 when a cheap slot starts.
-  load_shed_released:
-    name: Load shed released
     has_date: true
     has_time: true
 
@@ -334,7 +327,6 @@ automation:
         id: poll
     variables:
       since: "{{ state_attr('input_datetime.load_shed_since', 'timestamp') | float(0) }}"
-      released: "{{ state_attr('input_datetime.load_shed_released', 'timestamp') | float(0) }}"
       # Cheap run starts in Predbat's rates up to now. Only a cheap price after
       # a dearer one counts as a run beginning: predbat.rates repeats some
       # prices mid-run.
@@ -366,10 +358,7 @@ automation:
         {{ c is none
            or (c.state not in ['on', 'off'] and now() - c.last_changed > timedelta(hours=1)) }}
       # An automatic shed whose forecast has been clear for 30 minutes with the
-      # plan's lowest point 2 kWh above the reserve, and no early release yet
-      # this peak (none since a cheap slot started, or one over 24 hours ago,
-      # for a cheap start missed while Home Assistant was down). A time within
-      # a day of 1970 is the reset value, or never set.
+      # plan's lowest point 2 kWh above the reserve.
       release: >
         {% set s = states.binary_sensor.battery_short_before_cheap_rate %}
         {% set low = state_attr('binary_sensor.battery_short_before_cheap_rate', 'low_kwh') | float(none) %}
@@ -378,8 +367,7 @@ automation:
            and is_state('binary_sensor.import_rate_cheap', 'off')
            and s is not none and s.state == 'off'
            and now() - s.last_changed >= timedelta(minutes=30)
-           and low is not none and reserve is not none and low >= reserve + 2
-           and (released <= 86400 or now().timestamp() - released > 86400) }}
+           and low is not none and reserve is not none and low >= reserve + 2 }}
     conditions:
       - condition: state
         entity_id: input_boolean.load_shed
@@ -413,11 +401,6 @@ automation:
               {{ release and not no_rates and not missed
                  and not is_state('binary_sensor.import_rate_cheap', 'on') }}
         then:
-          - action: input_datetime.set_datetime
-            target:
-              entity_id: input_datetime.load_shed_released
-            data:
-              timestamp: "{{ now().timestamp() }}"
           # Its own tag: the clear notification below removes the load_shed one.
           - action: notify.mobile_app_nothing_phone_2
             data:
@@ -427,7 +410,7 @@ automation:
                 {{ (state_attr('binary_sensor.battery_short_before_cheap_rate', 'low_kwh') | float(0)
                     - state_attr('binary_sensor.battery_short_before_cheap_rate', 'reserve_kwh') | float(0))
                    | round(1) }} kWh above its reserve, so the Tin Hut heating is
-                back on, and the dehumidifier if the house is humid. Another shed today lasts until the cheap rate.
+                back on, and the dehumidifier if the house is humid.
               data:
                 tag: load_shed_released
       - action: input_boolean.turn_off
@@ -580,26 +563,6 @@ automation:
             sticky: true
             # A resend after a restart replaces it quietly.
             alert_once: true
-
-  # A new peak may release a shed early again.
-  - alias: Load shed release reset
-    id: load_shed_release_reset
-    triggers:
-      - trigger: state
-        entity_id: binary_sensor.import_rate_cheap
-        to: "on"
-      - trigger: homeassistant
-        event: start
-    conditions:
-      - condition: state
-        entity_id: binary_sensor.import_rate_cheap
-        state: "on"
-    actions:
-      - action: input_datetime.set_datetime
-        target:
-          entity_id: input_datetime.load_shed_released
-        data:
-          datetime: "1970-01-02 00:00:00"
 
   - alias: Load shed clear notification
     id: load_shed_clear_notification
